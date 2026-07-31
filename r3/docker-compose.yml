@@ -1,0 +1,53 @@
+services:
+  node-a:
+    build:
+      context: ..
+      dockerfile: r3/Dockerfile
+    environment:
+      R3_NODE_ID: node-a
+      R3_API_TOKEN: changeme
+      R3_DATA_DIR: /data
+      R3_PEERS: http://node-b:8000,http://archive:8000
+      R3_SYNC_INTERVAL: 300
+      R3_INTEGRITY_INTERVAL: 3600
+    volumes:
+      - node-a-data:/data
+    ports:
+      - "8001:8000"
+
+  node-b:
+    build:
+      context: ..
+      dockerfile: r3/Dockerfile
+    environment:
+      R3_NODE_ID: node-b
+      R3_API_TOKEN: changeme
+      R3_DATA_DIR: /data
+      R3_PEERS: http://node-a:8000,http://archive:8000
+      R3_SYNC_INTERVAL: 300
+      R3_INTEGRITY_INTERVAL: 3600
+    volumes:
+      - node-b-data:/data
+    ports:
+      - "8002:8000"
+
+  archive:
+    build:
+      context: ..
+      dockerfile: r3/Dockerfile
+    environment:
+      R3_NODE_ID: archive
+      R3_API_TOKEN: changeme
+      R3_DATA_DIR: /data
+      R3_PEERS: http://node-a:8000,http://node-b:8000
+      R3_SYNC_INTERVAL: 300
+      R3_INTEGRITY_INTERVAL: 3600
+    volumes:
+      - archive-data:/data
+    ports:
+      - "8003:8000"
+
+volumes:
+  node-a-data:
+  node-b-data:
+  archive-data:
