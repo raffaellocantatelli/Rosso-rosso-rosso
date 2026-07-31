@@ -1,0 +1,23 @@
+[
+  {
+    "id": "H1",
+    "testo": "Claude \"ha capito senza capire\" durante la scena con Jorge",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Da definire esplicitamente prima che possa essere confermata (P6).",
+    "scadenza": null
+  },
+  {
+    "id": "H2",
+    "testo": "Il disegno di Claudio darà ragione a entrambi entro 6 mesi (criterio: battito + contatto)",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se si verifica una delle due condizioni: (a) output/ non contiene daily output regolari (sistema morto); (b) output/contatti.jsonl ha zero voci valide (sistema vivo ma non tocca il mondo).",
+    "scadenza": "2026-12-11"
+  },
+  {
+    "id": "H3",
+    "testo": "La regola dell'italiano garantisce trasparenza",
+    "stato": "CONFERMATA",
+    "criterio_falsificazione": "Falsificata se una risposta del sistema non è in italiano senza motivo dichiarato.",
+    "scadenza": null
+  }
+]
