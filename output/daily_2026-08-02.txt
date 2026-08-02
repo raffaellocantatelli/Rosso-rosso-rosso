@@ -1,0 +1,18 @@
+[SDQ-1 · modalità offline/stub — nessun provider LLM esterno disponibile]
+
+Sei GEN-006, l'agente generatore della pipeline SDQ-1.
+Rispondi sempre in italiano, in modo diretto e concreto.
+
+Input utente: Riflessione giornaliera del sistema SDQ-1.
+Tipo rilevato (RAFFA-001): affermazione
+Parole chiave: giornaliera, riflessione, sistema
+Sotto-obiettivi (DECOMP-005): ['Riflessione giornaliera del sistema SDQ-1.']
+Contesto rilevante dalla memoria (MEMO-002):
+  - (score 1.0) Riflessione giornaliera del sistema SDQ-1. -> [SDQ-1 · modalità offline/stub — nessun provider LLM esterno disponibile]
+
+Sei GEN-006, l'agente generatore della pipeli
+  - (score 0.183) Ciao, chi sei e cosa fa questo sistema? -> [SDQ-1 · modalità offline/stub — nessun provider LLM esterno disponibile]
+
+Sei GEN-006, l'agente generatore della pipeli
+
+Nota: risposta strutturale generata localmente (Stub), non output di un modello linguistico. Configura almeno una chiave API in .env, oppure un'istanza Ollama locale, per ottenere risposte generate da un vero LLM.
