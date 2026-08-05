@@ -33,6 +33,7 @@ Il cuore del progetto. Una pipeline di 6 agenti che collaborano in sequenza, con
 ### Caratteristiche tecniche
 
 - **Router multi-provider** — cascata Anthropic → Gemini → DeepSeek → Ollama → Stub, con circuit breaker automatico
+- **RAFFA-001 con parole chiave pesate** — le parole chiave sono ordinate per frequenza e specificità, non alfabeticamente: prima le otto candidate venivano scelte in base all'iniziale, e il tema della frase spariva se cominciava per lettera alta. Distingue anche l'imperativo in testa (`crea il file`) dal verbo citato altrove (`il file che ho creato`)
 - **Vector State Store** — gli agenti condividono stato via pointer, non testo
 - **Memoria persistente con privacy** — avvolgi qualsiasi parte dell'input in `<private>...</private>`: il contenuto resta disponibile per la risposta corrente ma viene redatto (`[contenuto privato omesso]`) prima di essere salvato in `sdq1/memory/store.json`
 - **Citazioni** — MEMO-002 assegna un id (`mem#N`) a ogni voce recuperata; GEN-006 lo cita in risposta quando riusa quel contesto
