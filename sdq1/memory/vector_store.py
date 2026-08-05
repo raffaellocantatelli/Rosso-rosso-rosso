@@ -60,9 +60,34 @@ class VectorStore:
             return 0.0
         return dot / (norm1 * norm2)
 
+    def _next_id(self):
+        """Id monotono: max esistente + 1, non len(). Contare le voci
+        riassegna id già usati appena una viene rimossa, e ora gli id
+        finiscono nelle citazioni (mem#N) — devono restare stabili.
+        """
+        return max((e.get("id", 0) for e in self._entries), default=0) + 1
+
+    @staticmethod
+    def _dedup(scored):
+        """Collassa le voci con lo stesso input, tenendo la più recente.
+
+        Il run giornaliero usa sempre lo stesso prompt: senza questo filtro
+        retrieve() restituisce N copie della stessa riflessione a score 1.0,
+        che saturano il contesto ed escludono le voci davvero diverse. E
+        poiché la risposta incorpora i memory hits, ogni giorno il sistema
+        si riciterebbe addosso — auto-conferma, che P5 vieta.
+        """
+        migliori = {}
+        for score, entry in scored:
+            chiave = " ".join(entry["input"].lower().split())
+            attuale = migliori.get(chiave)
+            if attuale is None or entry.get("timestamp", 0) > attuale[1].get("timestamp", 0):
+                migliori[chiave] = (score, entry)
+        return list(migliori.values())
+
     def add(self, input_text, response_text):
         entry = {
-            "id": len(self._entries) + 1,
+            "id": self._next_id(),
             "input": self._redact(input_text),
             "response": self._redact(response_text),
             "timestamp": time.time(),
@@ -71,13 +96,15 @@ class VectorStore:
         self._save()
         return entry
 
-    def retrieve(self, query, top_k=3, min_score=0.0):
+    def retrieve(self, query, top_k=3, min_score=0.0, dedup=True):
         qv = self._vector(query)
         scored = []
         for entry in self._entries:
             score = self._cosine(qv, self._vector(entry["input"]))
             if score > min_score:
                 scored.append((score, entry))
+        if dedup:
+            scored = self._dedup(scored)
         scored.sort(key=lambda x: x[0], reverse=True)
         return [
             {"id": e["id"], "score": round(s, 3), "input": e["input"], "response": e["response"]}
