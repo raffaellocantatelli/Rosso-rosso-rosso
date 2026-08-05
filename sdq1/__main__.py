@@ -35,6 +35,10 @@ def build_parser():
     p.add_argument("--backup", action="store_true", help="Snapshot completo dello stato")
     p.add_argument("--restore", metavar="PATH", help="Ripristina uno snapshot")
 
+    p.add_argument("--memoria", metavar="QUERY", help="Cerca nella memoria (MEMO-002) senza eseguire la pipeline")
+    p.add_argument("--memoria-top-k", type=int, default=3, help="Quante voci di memoria recuperare (default 3)")
+    p.add_argument("--memoria-soglia", type=float, default=0.0, help="Punteggio minimo di similarità per una voce di memoria (default 0.0)")
+
     p.add_argument("--sar", metavar="TENSIONE", help='Es. "Controllo ↔ Fiducia"')
     p.add_argument("--sar-stato", action="store_true", dest="sar_stato")
 
@@ -95,6 +99,17 @@ def main(argv=None):
             print(f"  - {f}")
         return
 
+    if args.memoria:
+        risultati = memory.retrieve(args.memoria, top_k=args.memoria_top_k, min_score=args.memoria_soglia)
+        if not risultati:
+            print("Nessuna voce di memoria corrisponde alla query.")
+            return
+        for r in risultati:
+            print(f"[mem#{r['id']}] (score {r['score']})")
+            print(f"  input:    {r['input']}")
+            print(f"  risposta: {r['response'][:200]}")
+        return
+
     if args.sar:
         risultato = sar_reflect.reflect(args.sar)
         print(f"=== SAR — {risultato['tensione']} ===\n")
@@ -120,7 +135,10 @@ def main(argv=None):
         sys.exit(1)
 
     profilo = profilo_da_args(args)
-    ctx = pipeline.esegui(args.messaggio, profilo, router, memory)
+    ctx = pipeline.esegui(
+        args.messaggio, profilo, router, memory,
+        memo_top_k=args.memoria_top_k, memo_min_score=args.memoria_soglia,
+    )
 
     print(ctx.final)
     print(f"\n[provider: {ctx.provider_used} | profilo: {profilo}]", file=sys.stderr)

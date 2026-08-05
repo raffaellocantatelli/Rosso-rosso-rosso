@@ -18,7 +18,8 @@ def build_prompt(ctx):
     if ctx.memory_hits:
         righe.append("Contesto rilevante dalla memoria (MEMO-002):")
         for hit in ctx.memory_hits:
-            righe.append(f"  - (score {hit['score']}) {hit['input']} -> {hit['response'][:120]}")
+            righe.append(f"  - [mem#{hit['id']}] (score {hit['score']}) {hit['input']} -> {hit['response'][:120]}")
+        righe.append("Se usi un elemento di memoria nella risposta, cita il suo id tra parentesi quadre, es. [mem#3].")
     if ctx.manipulation.get("detected"):
         righe.append(f"Attenzione (SENTIN-004): segnali di manipolazione rilevati: {ctx.manipulation['signals']}")
         righe.append(f"Bisogno nascosto ipotizzato: {ctx.manipulation['bisogno_nascosto']}")

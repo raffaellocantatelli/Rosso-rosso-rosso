@@ -13,6 +13,8 @@ import time
 from collections import Counter
 
 TOKEN_RE = re.compile(r"[a-zàèéìòùA-Z]{3,}")
+PRIVATE_RE = re.compile(r"<private>.*?</private>", re.IGNORECASE | re.DOTALL)
+REDACTED_MARKER = "[contenuto privato omesso]"
 DEFAULT_PATH = os.path.join(os.path.dirname(__file__), "store.json")
 
 
@@ -38,6 +40,17 @@ class VectorStore:
         return Counter(tokens)
 
     @staticmethod
+    def _redact(text):
+        """Rimuove i blocchi <private>...</private> prima della persistenza.
+
+        Il testo originale (non redatto) resta disponibile nel Context per
+        la generazione della risposta corrente; solo ciò che viene salvato
+        su disco passa da qui.
+        """
+        redatto = PRIVATE_RE.sub(REDACTED_MARKER, text)
+        return redatto if redatto.strip() else REDACTED_MARKER
+
+    @staticmethod
     def _cosine(v1, v2):
         comuni = set(v1) & set(v2)
         dot = sum(v1[t] * v2[t] for t in comuni)
@@ -50,24 +63,24 @@ class VectorStore:
     def add(self, input_text, response_text):
         entry = {
             "id": len(self._entries) + 1,
-            "input": input_text,
-            "response": response_text,
+            "input": self._redact(input_text),
+            "response": self._redact(response_text),
             "timestamp": time.time(),
         }
         self._entries.append(entry)
         self._save()
         return entry
 
-    def retrieve(self, query, top_k=3):
+    def retrieve(self, query, top_k=3, min_score=0.0):
         qv = self._vector(query)
         scored = []
         for entry in self._entries:
             score = self._cosine(qv, self._vector(entry["input"]))
-            if score > 0:
+            if score > min_score:
                 scored.append((score, entry))
         scored.sort(key=lambda x: x[0], reverse=True)
         return [
-            {"score": round(s, 3), "input": e["input"], "response": e["response"]}
+            {"id": e["id"], "score": round(s, 3), "input": e["input"], "response": e["response"]}
             for s, e in scored[:top_k]
         ]
 

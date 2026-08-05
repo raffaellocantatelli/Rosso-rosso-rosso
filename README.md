@@ -34,6 +34,10 @@ Il cuore del progetto. Una pipeline di 6 agenti che collaborano in sequenza, con
 
 - **Router multi-provider** — cascata Anthropic → Gemini → DeepSeek → Ollama → Stub, con circuit breaker automatico
 - **Vector State Store** — gli agenti condividono stato via pointer, non testo
+- **Memoria persistente con privacy** — avvolgi qualsiasi parte dell'input in `<private>...</private>`: il contenuto resta disponibile per la risposta corrente ma viene redatto (`[contenuto privato omesso]`) prima di essere salvato in `sdq1/memory/store.json`
+- **Citazioni** — MEMO-002 assegna un id (`mem#N`) a ogni voce recuperata; GEN-006 lo cita in risposta quando riusa quel contesto
+- **Ricerca diretta in memoria** — `--memoria "query"` interroga lo store senza eseguire l'intera pipeline
+- **Recupero configurabile** — `--memoria-top-k` e `--memoria-soglia` controllano quante voci vengono iniettate nel prompt e con quale punteggio minimo di similarità
 - **Circuit Breaker** — salta i provider morti, si riapre da solo dopo il cooldown
 - **Hedging** — per i nodi critici lancia due provider in parallelo, vince il primo
 - **Response Cache** — evita chiamate duplicate entro 5 minuti
@@ -67,6 +71,12 @@ python -m sdq1 --economia "Il tuo messaggio"
 
 # Backup
 python -m sdq1 --backup
+
+# Cerca nella memoria senza eseguire la pipeline
+python -m sdq1 --memoria "SDQ-1"
+
+# Limita/filtra il contesto iniettato dalla memoria
+python -m sdq1 "Il tuo messaggio" --memoria-top-k 5 --memoria-soglia 0.1
 ```
 
 Senza nessuna chiave API configurata, la cascata arriva sempre a **Stub**: il sistema funziona comunque, in modo trasparente (etichetta ogni risposta come offline), invece di fallire silenziosamente o fingere di essere un modello che non c'è.
