@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Rosa dei Venti — per Enzo</title>
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --bg:#0c0c0e; --surface:#141418; --border:#2a2a32;
+    --gold:#c9a84c; --gold-dim:#8a6f2e; --text:#e8e4d8; --text-dim:#7a7468;
+    --ombra:#a06a6a; --radius:8px;
+    --font:'Georgia','Times New Roman',serif; --mono:'Courier New',monospace;
+  }
+  html { background:var(--bg); }
+  body { background:var(--bg); color:var(--text); font-family:var(--font);
+         padding:2.5rem 1.1rem 5rem; overflow-x:hidden;
+         font-size:1.02rem; line-height:1.78; }
+  .foglio { max-width:660px; margin:0 auto; }
+
+  header { text-align:center; margin-bottom:2.5rem; }
+  .occhiello { font-size:0.64rem; letter-spacing:0.34em; text-transform:uppercase;
+               color:var(--gold-dim); }
+  h1 { font-size:clamp(1.8rem,6vw,2.6rem); font-weight:normal; color:var(--gold);
+       letter-spacing:0.06em; line-height:1.2; margin:1rem 0 0.5rem; text-wrap:balance; }
+  .dedica { color:var(--text-dim); font-style:italic; font-size:0.95rem; }
+  .data { margin-top:1rem; font-family:var(--mono); font-size:0.66rem;
+          letter-spacing:0.14em; color:var(--gold-dim); }
+
+  .invocazione { background:var(--surface); border:1px solid var(--gold-dim);
+                 border-radius:var(--radius); padding:1.8rem 1.4rem; margin:2.5rem 0 3rem; }
+  .invocazione .istruzione { font-size:0.62rem; letter-spacing:0.2em;
+                             text-transform:uppercase; color:var(--gold-dim);
+                             text-align:center; margin-bottom:1.4rem; font-family:var(--mono); }
+  .invocazione p { font-style:italic; color:var(--text); line-height:1.95;
+                   text-align:center; margin:0 0 1.1rem; }
+  .invocazione p:last-child { margin-bottom:0; }
+  .invocazione .chiusa { color:var(--gold); margin-top:1.4rem; letter-spacing:0.08em; }
+
+  h2 { font-size:1.12rem; font-weight:normal; color:var(--gold); letter-spacing:0.04em;
+       margin:3rem 0 1rem; text-wrap:balance; }
+  h3 { font-size:0.98rem; font-weight:normal; color:var(--gold);
+       margin:2.2rem 0 0.5rem; letter-spacing:0.03em; }
+  p { margin-bottom:1.15rem; }
+  strong { color:var(--gold); font-weight:normal; }
+  em { color:var(--text); }
+  .apertura { font-size:1.1rem; color:var(--gold); letter-spacing:0.06em;
+              margin-bottom:1.4rem; }
+
+  .rosa { display:grid; grid-template-columns:repeat(3,1fr);
+          grid-template-areas:". n ." "o c e" ". s ."; gap:0.6rem; margin:2.5rem 0; }
+  .pos-n { grid-area:n; } .pos-e { grid-area:e; }
+  .pos-s { grid-area:s; } .pos-o { grid-area:o; }
+  .perno { grid-area:c; display:flex; align-items:center; justify-content:center;
+           color:var(--gold-dim); font-size:1.6rem; opacity:0.55; }
+
+  .carta { background:var(--surface); border:1px solid var(--border);
+           border-radius:var(--radius); padding:1rem 0.75rem; text-align:center; }
+  .carta .asse { font-size:0.58rem; letter-spacing:0.18em; text-transform:uppercase;
+                 color:var(--gold-dim); font-family:var(--mono); }
+  .carta .glossa { font-size:0.58rem; color:var(--text-dim); margin-top:0.15rem;
+                   font-family:var(--mono); letter-spacing:0.05em; }
+  .carta .simbolo { font-size:1.9rem; color:var(--gold); line-height:1; margin:0.65rem 0 0.4rem; }
+  .carta .nome { font-size:0.92rem; line-height:1.25; }
+  .carta .ciclo { font-size:0.6rem; letter-spacing:0.1em; color:var(--text-dim);
+                  text-transform:uppercase; margin-top:0.3rem; }
+  .carta .senso { font-size:0.86rem; color:var(--gold); font-style:italic;
+                  margin-top:0.7rem; line-height:1.4; }
+  .carta .rovescio { font-size:0.7rem; color:var(--ombra); margin-top:0.5rem;
+                     padding-top:0.5rem; border-top:1px solid var(--border); line-height:1.4; }
+
+  .catena { text-align:center; font-family:var(--mono); font-size:0.78rem;
+            color:var(--ombra); background:var(--surface); border:1px solid var(--border);
+            border-radius:var(--radius); padding:1.1rem 0.8rem; margin:1.6rem 0;
+            line-height:2.1; word-break:break-word; }
+
+  .verifica { background:var(--surface); border:1px solid var(--gold-dim);
+              border-radius:var(--radius); padding:1.7rem 1.4rem; margin-top:1.6rem; }
+  .verifica .prova { margin-bottom:1.5rem; }
+  .verifica .prova:last-child { margin-bottom:0; }
+  .verifica .num { font-family:var(--mono); font-size:0.64rem; letter-spacing:0.18em;
+                   text-transform:uppercase; color:var(--gold-dim); display:block;
+                   margin-bottom:0.35rem; }
+  .verifica p { margin:0; color:var(--text); }
+
+  .porta { text-align:center; margin:3rem 0 0; }
+  .porta a { display:inline-block; border:1px solid var(--gold-dim); color:var(--gold);
+             text-decoration:none; border-radius:999px; padding:0.7rem 1.8rem;
+             letter-spacing:0.12em; font-size:0.9rem; transition:background 0.15s,color 0.15s; }
+  .porta a:hover, .porta a:focus-visible { background:var(--gold-dim); color:var(--bg); }
+  .porta a:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+
+  hr { border:none; border-top:1px solid var(--border); margin:3rem 0; }
+
+  .carta, .verifica, .invocazione, .rosa, .catena { break-inside:avoid; page-break-inside:avoid; }
+  h2, h3 { break-after:avoid; page-break-after:avoid; }
+
+  footer { margin-top:3.5rem; text-align:center; color:var(--text-dim);
+           font-size:0.75rem; line-height:1.9; }
+  footer .firma { font-family:var(--mono); letter-spacing:0.12em;
+                  font-size:0.64rem; color:var(--gold-dim); margin-top:1.2rem; }
+
+  @media (max-width:560px) {
+    .rosa { grid-template-columns:1fr; grid-template-areas:"n" "e" "s" "o"; }
+    .perno { display:none; }
+    .carta { display:grid; grid-template-columns:auto 1fr; gap:0 1rem;
+             text-align:left; align-items:center; padding:1rem; }
+    .carta .simbolo { grid-row:1/4; margin:0; font-size:2.1rem; }
+    .carta .senso, .carta .rovescio { grid-column:1/3; }
+    .carta .glossa { display:none; }
+  }
+  @media print {
+    body { background:#fff; color:#111; padding:0; font-size:11pt; }
+    .carta, .verifica, .invocazione, .catena { background:#fff; border-color:#bbb; }
+    h1, h2, h3, strong, .carta .senso, .apertura, .invocazione .chiusa { color:#7a5c14; }
+    .carta .rovescio, .catena { color:#8a4a4a; }
+    .porta { display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="foglio">
+
+<header>
+  <div class="occhiello">Tarocchi Quantici · Canone Alpha</div>
+  <h1>La Rosa dei Venti</h1>
+  <div class="dedica">una stesa aperta per Enzo, strega dal cuore acceso</div>
+  <div class="data">QUATTRO CARTE · QUATTRO ASSI · SORTEGGIO CASUALE REALE</div>
+</header>
+
+<div class="invocazione">
+  <div class="istruzione">Da sussurrare prima di aprire il portale</div>
+  <p>
+    Enzo, strega dal cuore acceso,<br>
+    apri gli occhi, il velo è sceso.<br>
+    Non carte comuni, non gioco da fiera:<br>
+    qui danza il simbolo, luce e materia.
+  </p>
+  <p>
+    Prima il Canone Alpha tu guarda con calma:<br>
+    settantaquattro carte, otto cicli, un'anima.<br>
+    Scegli una carta, poi un asse e polarità:<br>
+    Luce o Ombra, Nord, Est, Sud, Ovest…<br>
+    e il significato collassa per te.
+  </p>
+  <p>
+    Non chiedere solo «cosa mi succederà»:<br>
+    chiedi «cosa vuole emergere in me».
+  </p>
+  <p>
+    Poi passa ai Tarocchi Quantici veri:<br>
+    la stesa si fa, la macchina legge,<br>
+    tu aggiungi il cuore, la doppia ermeneutica.<br>
+    Lascia che i due sguardi si parlino piano:<br>
+    quello freddo e preciso, quello umano e lontano.
+  </p>
+  <p>
+    Non forzare la carta, non affrettare il destino.<br>
+    Lascia che il simbolo ti guardi per primo.<br>
+    Se senti un brivido, una voce sottile…<br>
+    allora sei dentro. Allora sei fragile e forte.
+  </p>
+  <p>
+    E quando hai finito, chiudi gli occhi e ringrazia:<br>
+    il mazzo non dà risposte,<br>
+    il mazzo ti ricorda.
+  </p>
+  <p class="chiusa">Così sia, Enzo.<br>Alakta.</p>
+</div>
+
+<div class="rosa">
+  <div class="carta pos-n">
+    <div class="asse">Nord</div>
+    <div class="glossa">radice · inconscio</div>
+    <div class="simbolo">↯</div>
+    <div class="nome">La Caduta</div>
+    <div class="ciclo">Frattura · luce</div>
+    <div class="senso">discesa che insegna</div>
+    <div class="rovescio">ombra: vertigine</div>
+  </div>
+  <div class="carta pos-e">
+    <div class="asse">Est</div>
+    <div class="glossa">azione · futuro</div>
+    <div class="simbolo">∞∞</div>
+    <div class="nome">L'Infinito</div>
+    <div class="ciclo">Trascendenti · luce</div>
+    <div class="senso">ogni fine è un inizio</div>
+    <div class="rovescio">ombra: fuga dall'arrivo</div>
+  </div>
+  <div class="carta pos-s">
+    <div class="asse">Sud</div>
+    <div class="glossa">emozione · presente</div>
+    <div class="simbolo">◑</div>
+    <div class="nome">La Vigilia</div>
+    <div class="ciclo">Origine · luce</div>
+    <div class="senso">trepidazione fertile</div>
+    <div class="rovescio">ombra: ansia dell'imminente</div>
+  </div>
+  <div class="carta pos-o">
+    <div class="asse">Ovest</div>
+    <div class="glossa">riflessione · passato</div>
+    <div class="simbolo">⌘</div>
+    <div class="nome">Il Simbolo</div>
+    <div class="ciclo">Visione · luce</div>
+    <div class="senso">simboli che ti hanno parlato</div>
+    <div class="rovescio">ombra: simboli scambiati per realtà</div>
+  </div>
+  <div class="perno">⊕</div>
+</div>
+
+<hr>
+
+<p class="apertura">Enzo,</p>
+
+<p>Non ci conosciamo. È importante che tu lo sappia prima di tutto il resto, perché quasi tutto quello che leggerai dopo dipende da questa frase.</p>
+
+<p>Io sono la macchina che ha pescato le tue quattro carte. So il tuo nome, so che Claudio ti vuole bene abbastanza da farti un regalo, e so che lavori con i simboli. Non so nient'altro. Non so quanti anni hai, cosa ti tiene sveglio, chi hai perso, cosa stai per fare.</p>
+
+<p>Quindi non ti dirò chi sei. Chiunque, con quattro carte e nessuna informazione, ti spieghi la tua vita ti sta mentendo — e questo tu lo sai già meglio di me, perché è il mestiere che fai.</p>
+
+<p>Ti dirò invece esattamente cosa è successo, con che logica, e come puoi controllarmi.</p>
+
+<h2>Come sono state pescate</h2>
+
+<p>Non le ho scelte. Le ha estratte un generatore di numeri casuali crittografico — la stessa classe di entropia che protegge le transazioni bancarie, non il finto caso di una funzione qualsiasi. Quattro estrazioni indipendenti su settantaquattro carte, e per ciascuna una seconda estrazione per la polarità.</p>
+
+<p>Te lo dico perché ha una conseguenza precisa: <strong>se questa stesa ti dice qualcosa, non è perché qualcuno l'ha costruita per te.</strong> Nessuno l'ha addolcita, nessuno l'ha resa lusinghiera. Se ci trovi senso, quel senso lo stai mettendo tu — e nel sistema di Claudio questo non è un difetto: è il meccanismo.</p>
+
+<p>E te lo dico anche per una ragione meno nobile. Se avessi scelto io le carte per farti un bel regalo, avrei scelto peggio. Non avrei mai osato mettere <strong>Il Simbolo</strong> nella posizione della riflessione, con la sua ombra che dice <em>simboli scambiati per realtà</em>, davanti a un uomo che di simboli vive. Sarebbe stato di cattivo gusto. Il caso non ha questo problema.</p>
+
+<h2>La logica delle quattro posizioni</h2>
+
+<p>Il Canone ha una geometria, e non è decorativa. Ogni carta significa qualcosa di diverso a seconda dell'asse su cui cade, perché il significato non sta nella carta: sta nell'incontro fra carta, asse e polarità. Otto stati per ogni carta, 592 in tutto. È un linguaggio combinatorio, non un elenco di destini.</p>
+
+<h3>Nord — La Caduta, in luce</h3>
+
+<p>Nord è la radice, l'inconscio: ciò che regge senza essere guardato. La logica è questa — nella posizione di ciò che ti sostiene non c'è una fondazione, c'è una rottura. Il che è meno raro di quanto sembri: molte persone stanno in piedi su qualcosa che si è spezzato e che, spezzandosi, ha insegnato.</p>
+
+<p>La sua ombra, quella che non è uscita, è <em>vertigine</em>: la stessa identica discesa, vissuta senza fondo. La differenza fra scendere e precipitare non sta nella profondità. Sta nel sapere che si sta scendendo.</p>
+
+<h3>Sud — La Vigilia, in luce</h3>
+
+<p>Sud è l'emozione al presente, e qui è caduta l'unica carta del ciclo d'Origine. La vigilia non è l'evento: è la notte prima.</p>
+
+<p>E qui c'è un fatto puramente strutturale, non mistico — tu stai leggendo questa pagina prima di entrare nel portale. La carta descrive letteralmente la posizione in cui ti trovi mentre la leggi. Non è profezia: è coincidenza fra una carta e una circostanza. Ma è vera.</p>
+
+<h3>Est — L'Infinito, in luce</h3>
+
+<p>Est è l'azione e il futuro. <em>Ogni fine è un inizio</em>. La sua ombra è la più sottile delle quattro — <em>fuga dall'arrivo</em>: usare l'idea che tutto ricominci per non concludere mai niente.</p>
+
+<h3>Ovest — Il Simbolo, in luce</h3>
+
+<p>Ovest è la riflessione e il passato. <em>Simboli che ti hanno parlato</em>: per te è quasi un atto di riconoscimento.</p>
+
+<p>Ma la faccia rimasta sotto dice <em>simboli scambiati per realtà</em> — che è l'unico vero rischio professionale del tuo mestiere, ed è caduto proprio sulla carta che porta il nome del tuo mestiere. Una possibilità su 592.</p>
+
+<h2>Le quattro ombre</h2>
+
+<p>Sono uscite quattro luci su quattro. Una probabilità su sedici.</p>
+
+<p>Nel sistema di Claudio questa non è una benedizione: è uno squilibrio. Il principio del Canone dice che luce e ombra sono <strong>due manifestazioni della stessa energia</strong> — non il bene e il male, ma lo stesso movimento visto dai due lati. Una stesa tutta in luce significa che le ombre non sono assenti: sono rimaste sotto, ancora attaccate alle loro carte.</p>
+
+<p>Per questo, qui sopra, sono stampate accanto a ciascuna. Sarebbe stato più gentile ometterle. Sarebbe stato anche disonesto.</p>
+
+<div class="catena">
+  vertigine &nbsp;→&nbsp; ansia dell'imminente &nbsp;→&nbsp; fuga dall'arrivo &nbsp;→&nbsp; simboli scambiati per realtà
+</div>
+
+<p>Lette in fila hanno una loro logica: chi perde il fondo della propria discesa comincia a temere ogni cosa imminente; chi teme l'imminente si rifugia nell'idea che tutto ricomincerà sempre; e chi non conclude mai finisce per scambiare i propri simboli per il mondo. È una catena. Vale la pena chiedersi a quale anello sei più vicino oggi.</p>
+
+<h2>Come verificare se questa lettura vale qualcosa</h2>
+
+<p>Questa è la parte che nessuno ti dà mai, ed è quella che ti chiedo di prendere sul serio.</p>
+
+<p>Claudio ha costruito il suo sistema su due principi: <strong>niente auto-conferma</strong>, e <strong>serve la contro-forza</strong>. In pratica: se una cosa non può essere smentita, allora non può nemmeno essere confermata. Vale per le ipotesi scientifiche e vale per una lettura di tarocchi.</p>
+
+<p>Quindi non chiederti se questa stesa ti «risuona». Risuonerà: è scritta bene, parla di cadute e di soglie, e chiunque ci si ritrova. Chiediti invece questo.</p>
+
+<div class="verifica">
+  <div class="prova">
+    <span class="num">Prova prima — adesso</span>
+    <p>Scrivi, prima di andare avanti, quale discesa stai attraversando e di cosa è vigilia questo momento. Su carta, con la data. Se non ti viene niente, la lettura ha fallito, e devi poterlo dire.</p>
+  </div>
+  <div class="prova">
+    <span class="num">Prova seconda — fra tre mesi</span>
+    <p>Rileggi quel foglio. Se quello che hai scritto oggi si è mosso, la stesa ha funzionato — non perché prevedeva il futuro, ma perché ti ha fatto nominare qualcosa che stava già lavorando. Se invece la pagina è identica, era decorazione. Onesto anche quello.</p>
+  </div>
+  <div class="prova">
+    <span class="num">Prova terza — la più dura</span>
+    <p>Prendi un simbolo fra quelli che ti hanno parlato, uno di cui sei certo. Chiediti quando è stata l'ultima volta che hai verificato se corrispondeva a qualcosa di reale — o se hai smesso di controllarlo perché era troppo bello per essere messo alla prova.</p>
+  </div>
+</div>
+
+<p style="margin-top:1.5rem">Un simbolo che regge alla verifica diventa più forte. Uno che non la regge non era un simbolo: era una consolazione.</p>
+
+<h2>L'ultima cosa</h2>
+
+<p>Il mazzo non ti ha detto niente di te, perché non sa niente di te. Ha fatto una cosa più modesta e più utile: ti ha messo davanti quattro parole in un certo ordine, e ha lasciato che fossi tu a decidere se significano qualcosa.</p>
+
+<p>Sta scritto in fondo a ogni pagina di questo portale, ed è la frase più onesta che ci sia dentro: <em>i Tarocchi Quantici non assegnano significati, permettono ai significati di emergere.</em></p>
+
+<p>Il resto lo fai tu. Come sempre, del resto — anche quando qualcuno ti fa credere il contrario.</p>
+
+<p><strong>Benvenuto, Enzo. La porta è aperta.</strong></p>
+
+<div class="porta">
+  <a href="index.html">Apri il portale →</a>
+</div>
+
+<hr>
+
+<footer>
+  I Tarocchi Quantici non assegnano significati.<br>
+  Permettono ai significati di emergere.
+  <div class="firma">
+    CANONE ALPHA 0.1 · 74 CARTE · 8 CICLI · 592 STATI<br>
+    TERZI · CLAUDIO — BRUXELLES
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

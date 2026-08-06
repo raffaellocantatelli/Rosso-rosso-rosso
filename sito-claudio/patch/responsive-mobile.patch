@@ -1,0 +1,75 @@
+diff --git a/public/libro.html b/public/libro.html
+index f812024..27dedc4 100644
+--- a/public/libro.html
++++ b/public/libro.html
+@@ -66,10 +66,19 @@
+   .micro { color: #c96a5a; font-size: 0.82em; }
+   .pack { font-size: 0.78rem; color: var(--text-dim); margin: 0; }
+ 
+-  table.semplice { border-collapse: collapse; font-size: 0.85rem; margin: 0.5rem 0 1rem; }
++  table.semplice { border-collapse: collapse; font-size: 0.85rem; margin: 0.5rem 0 1rem;
++                   max-width: 100%; }
+   table.semplice td { padding: 0.25rem 0.7rem 0.25rem 0; border-bottom: 1px solid var(--border); }
++
++  /* Su telefono le tabelle non si restringono sotto la larghezza dei loro
++     contenuti: le rendiamo scorrevoli dentro sé stesse invece di far
++     scorrere di lato l'intera pagina. */
++  @media screen and (max-width: 640px) {
++    table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch;
++            max-width: 100%; }
++  }
+   .accordo { display: inline-block; vertical-align: top; width: 100%;
+-             max-width: 330px; margin: 0 1.2rem 0.8rem 0; }
++             max-width: min(330px, 100%); margin: 0 1.2rem 0.8rem 0; }
+ 
+   .avvertenza-box { border: 1px solid var(--red); border-radius: 8px;
+       padding: 1.2rem 1.5rem; margin: 2rem 0; font-size: 0.88rem; }
+diff --git a/public/opera.html b/public/opera.html
+index 97a97a0..5b64e79 100644
+--- a/public/opera.html
++++ b/public/opera.html
+@@ -69,6 +69,10 @@
+   @media (max-width: 760px) {
+     .lettore { flex-direction: column; }
+     .indice { position: static; max-height: 40vh; flex: none; width: 100%; }
++    /* In colonna l'asse trasversale è la larghezza: con align-items:flex-start
++       .pagina si dimensionava sul contenuto (le tabelle) e usciva dallo schermo.
++       width:100% la riporta dentro il contenitore, come già fa .indice. */
++    .pagina { width: 100%; }
+   }
+ </style>
+ </head>
+diff --git a/public/opuscolo.html b/public/opuscolo.html
+index 50dfd32..40a5452 100644
+--- a/public/opuscolo.html
++++ b/public/opuscolo.html
+@@ -62,6 +62,13 @@
+     }
+     .a6.visible { display: block; }
+ 
++    /* Il formato A6 è largo 105mm ≈ 397px: su uno schermo da 390px esce di
++       poco. Solo a video, e solo sotto i 430px, la scheda si adatta alla
++       larghezza disponibile. In stampa resta A6 esatto. */
++    @media screen and (max-width: 430px) {
++      .a6 { width: 100%; max-width: 105mm; padding: 8mm 6mm; }
++    }
++
+     /* ── Tipografia ──────────────────────────────────── */
+     .titolo-sistema {
+       font-family: 'Inter', sans-serif;
+diff --git a/public/valigia.html b/public/valigia.html
+index 69886b0..8b6fb27 100644
+--- a/public/valigia.html
++++ b/public/valigia.html
+@@ -74,6 +74,11 @@
+   table.spec td { padding: 0.45rem 0.8rem; border-bottom: 1px solid var(--border);
+                   vertical-align: top; }
+   table.spec td:first-child { color: var(--gold-dim); white-space: nowrap; width: 34%; }
++  /* Su schermi molto stretti la prima colonna, tenuta su una riga sola,
++     allargava la tabella oltre il bordo: qui può andare a capo. */
++  @media screen and (max-width: 420px) {
++    table.spec td:first-child { white-space: normal; }
++  }
+   .costo-tot td { color: var(--gold) !important; }
+ 
+   .colonne { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
