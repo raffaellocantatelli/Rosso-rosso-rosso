@@ -14,8 +14,8 @@ Copiare la cartella `raffaello/` (senza questo file) nella root di
 python -m raffaello.test_raffaello   # 20 test
 ```
 
-Fatto il travaso, questo branch (`claude/raffaello-transito`) si può
-cancellare.
+Fatto il travaso, questa cartella si può cancellare da questa repo: qui non
+ha nessun ruolo.
 
 ## Perché qui non gira
 
