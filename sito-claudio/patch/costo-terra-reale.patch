@@ -1,0 +1,286 @@
+diff --git a/flight_hunter/costi.py b/flight_hunter/costi.py
+index 9915d4d..5610a9c 100644
+--- a/flight_hunter/costi.py
++++ b/flight_hunter/costi.py
+@@ -4,29 +4,79 @@ Il prezzo del biglietto è solo una parte. Qui si sommano: bagagli, tratte via
+ terra per il posizionamento, notti forzate, e un margine di rischio per i
+ self-transfer (biglietti separati = nessuna protezione se perdi la coincidenza).
+ Tutte stime prudenziali, parametrizzabili.
++
++Nota sulla stima a terra
++────────────────────────
++La formula generica (€/km con un minimo) descrive bene un treno regionale, ma
++sottostima gli aeroporti low cost lontani dalla città di cui portano il nome:
++là il collegamento è spesso una navetta in regime di monopolio, e il prezzo non
++segue i chilometri. Charleroi dista ~50 km da Bruxelles — la formula darebbe
++4,50 €, il minimo la porta a 8 €, la navetta ne costa fra 13,90 e 19.
++
++Per questo esiste TRASFERIMENTI_NOTI: una tabella di prezzi verificati alla
++fonte, con data, che scavalca la formula. Ogni voce va verificata davvero.
++Meglio una tabella corta e vera che una lunga e inventata.
+ """
+ from __future__ import annotations
+ 
+ from dataclasses import dataclass
+ 
++# Navette aeroportuali in regime di monopolio: (minimo prenotando in anticipo,
++# prezzo standard) in euro, per tratta, una persona.
++# Chiave: codice IATA dell'aeroporto da raggiungere via terra.
++TRASFERIMENTI_NOTI: dict[str, tuple[float, float]] = {
++    # Flibco, Bruxelles ↔ Brussels South Charleroi. Verificato il 10/08/2026:
++    # early booking da 13,90 €, tariffa standard ~19 €.
++    "CRL": (13.90, 19.00),
++    # Da aggiungere solo dopo verifica alla fonte, con la data nel commento:
++    # "BVA" (Parigi Beauvais), "HHN" (Francoforte Hahn), "NRN" (Weeze)…
++}
++
+ 
+ @dataclass(frozen=True)
+ class ParametriCosto:
+     bagaglio_stiva: float = 30.0      # € per tratta-biglietto low cost
+     notte: float = 35.0               # € ostello/guesthouse per notte forzata
+     terra_eur_km: float = 0.09        # € al km per bus/treno regionale
+-    terra_minimo: float = 8.0         # € minimo di una tratta via terra
++    terra_minimo: float = 8.0         # € minimo di una tratta via terra (limite
++                                      # inferiore: per gli aeroporti in
++                                      # TRASFERIMENTI_NOTI vale il prezzo vero)
+     margine_self_transfer: float = 15.0  # € accantonati per ogni coincidenza fai-da-te
+     ore_minime_scalo: float = 3.0     # sotto questa soglia il rischio sale
+ 
+ 
+-def costo_terra(km: float, p: ParametriCosto = ParametriCosto()) -> float:
+-    """Stima bus/treno per il posizionamento verso un altro aeroporto."""
++def costo_terra(km: float, p: ParametriCosto = ParametriCosto(),
++                iata: str | None = None) -> float:
++    """Stima bus/treno per il posizionamento verso un altro aeroporto.
++
++    Se `iata` è un aeroporto con navetta a prezzo noto, si usa la media fra
++    tariffa anticipata e tariffa standard invece della formula chilometrica.
++    """
+     if km < 1:
+         return 0.0
++    noto = TRASFERIMENTI_NOTI.get(iata or "")
++    if noto is not None:
++        minimo, standard = noto
++        return round((minimo + standard) / 2, 2)
+     return round(max(p.terra_minimo, km * p.terra_eur_km), 2)
+ 
+ 
++def intervallo_terra(km: float, p: ParametriCosto = ParametriCosto(),
++                     iata: str | None = None) -> tuple[float, float]:
++    """Estremi plausibili del costo a terra: (prenotando presto, tariffa piena).
++
++    Per gli aeroporti non censiti i due estremi coincidono: non sappiamo di
++    più, e fingere una forbice sarebbe peggio che ammettere un punto solo.
++    """
++    if km < 1:
++        return (0.0, 0.0)
++    noto = TRASFERIMENTI_NOTI.get(iata or "")
++    if noto is not None:
++        return noto
++    stima = round(max(p.terra_minimo, km * p.terra_eur_km), 2)
++    return (stima, stima)
++
++
+ def ore_terra(km: float) -> float:
+     """Tempo stimato del trasferimento via terra (media 75 km/h porta a porta)."""
+     return round(km / 75.0, 1) if km >= 1 else 0.0
+diff --git a/flight_hunter/grafo.py b/flight_hunter/grafo.py
+index aa5f77e..fb99d83 100644
+--- a/flight_hunter/grafo.py
++++ b/flight_hunter/grafo.py
+@@ -53,7 +53,7 @@ def esplora(origini: list[tuple[Aeroporto, float]], desti: set[str],
+     heap: list[tuple[float, int, str, tuple[str, ...]]] = []
+     migliori: dict[tuple[str, int], float] = {}
+     for a, km in origini:
+-        costo = costo_terra(km, p)
++        costo = costo_terra(km, p, a.iata)
+         heapq.heappush(heap, (costo, 0, a.iata, (a.iata,)))
+         migliori[(a.iata, 0)] = costo
+ 
+diff --git a/flight_hunter/motore.py b/flight_hunter/motore.py
+index 077eb9e..bce1a58 100644
+--- a/flight_hunter/motore.py
++++ b/flight_hunter/motore.py
+@@ -360,7 +360,9 @@ def _mete_nel_range(origine: str, dal: str, al: str, raggio_origine: float,
+ 
+     migliore: dict[str, MetaPossibile] = {}
+     for a, km in origini:
+-        c_terra = costo_terra(km, p)
++        # a.iata permette di usare il prezzo reale della navetta quando lo
++        # conosciamo, invece della stima chilometrica che lo sottostima.
++        c_terra = costo_terra(km, p, a.iata)
+         c_bag = p.bagaglio_stiva if bagaglio else 0.0
+         for f in fonti:
+             try:
+diff --git a/flight_hunter/oracolo.py b/flight_hunter/oracolo.py
+index c33c6f9..5cc8454 100644
+--- a/flight_hunter/oracolo.py
++++ b/flight_hunter/oracolo.py
+@@ -16,7 +16,7 @@ import hashlib
+ from dataclasses import dataclass, field
+ from datetime import date, datetime, timedelta
+ 
+-from .costi import ParametriCosto
++from .costi import TRASFERIMENTI_NOTI, ParametriCosto
+ from .motore import MetaPossibile, _mete_nel_range
+ 
+ _MESI = ("gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio",
+@@ -97,6 +97,10 @@ class Responso:
+                 "nome": m.nome, "paese": m.paese, "iata": m.iata, "da": m.da,
+                 "giorno": m.giorno, "totale": m.totale, "prezzo_volo": m.prezzo_volo,
+                 "costo_terra": m.costo_terra,
++                # Estremi del totale quando la navetta ha due tariffe note.
++                # Coincidono con "totale" per gli aeroporti non censiti.
++                "totale_min": _intervallo_totale(m)[0],
++                "totale_max": _intervallo_totale(m)[1],
+             },
+             "alternative": [
+                 {"nome": a.nome, "paese": a.paese, "da": a.da,
+@@ -120,6 +124,32 @@ def _scelta(opzioni: tuple, seme: str) -> str:
+     return opzioni[h % len(opzioni)]
+ 
+ 
++def _intervallo_totale(m: MetaPossibile) -> tuple[float, float]:
++    """Estremi del totale: navetta prenotata presto, oppure a tariffa piena.
++
++    Per gli aeroporti non censiti in TRASFERIMENTI_NOTI i due estremi
++    coincidono con il totale: non sappiamo di più.
++    """
++    noto = TRASFERIMENTI_NOTI.get(m.da)
++    if noto is None:
++        return (m.totale, m.totale)
++    minimo, standard = noto
++    base = m.totale - m.costo_terra
++    return (round(base + minimo, 2), round(base + standard, 2))
++
++
++def _prezzo_testo(m: MetaPossibile) -> str:
++    """Il totale, come intervallo quando la navetta ha due tariffe note.
++
++    Dire «23€» quando la stessa navetta costa fra 13,90 e 19 a seconda di
++    quando la prenoti è la stessa omissione che questo strumento denuncia.
++    """
++    basso, alto = _intervallo_totale(m)
++    if round(basso) == round(alto):
++        return f"{basso:.0f}€"
++    return f"{basso:.0f}–{alto:.0f}€ secondo quando prenoti la navetta"
++
++
+ def _componi_responso(origine: str, m: MetaPossibile) -> str:
+     seme = f"{origine}|{date.today().isoformat()}|{m.iata}"
+     apertura = _scelta(_APERTURE, seme + "a")
+@@ -128,7 +158,7 @@ def _componi_responso(origine: str, m: MetaPossibile) -> str:
+     quando = _data_testo(m.giorno)
+     via = "" if m.da == _sigla_origine(origine, m) else f" (via {m.da})"
+     return (f"{apertura} {m.nome} — {m.paese}. {verso} "
+-            f"Si parte {quando}{via}, per {m.totale:.0f}€. {chiusura}")
++            f"Si parte {quando}{via}, per {_prezzo_testo(m)}. {chiusura}")
+ 
+ 
+ def _sigla_origine(origine: str, m: MetaPossibile) -> str:
+diff --git a/tests/test_costi_terra.py b/tests/test_costi_terra.py
+new file mode 100644
+index 0000000..26e56c4
+--- /dev/null
++++ b/tests/test_costi_terra.py
+@@ -0,0 +1,99 @@
++"""Il costo a terra è il perno della tesi di Flight Hunter.
++
++Se questo numero è sbagliato, «il prezzo minimo reale» non è reale. Questi
++test bloccano le due regressioni che contano: che la formula chilometrica
++torni a mangiarsi i prezzi verificati, e che il responso torni a dichiarare
++un numero secco dove esiste una forbice.
++"""
++import sys
++import pathlib
++
++sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
++
++from flight_hunter.costi import (  # noqa: E402
++    TRASFERIMENTI_NOTI,
++    ParametriCosto,
++    costo_terra,
++    intervallo_terra,
++)
++from flight_hunter.motore import MetaPossibile  # noqa: E402
++from flight_hunter.oracolo import _intervallo_totale, _prezzo_testo  # noqa: E402
++
++
++def _meta(da: str, prezzo_volo: float, c_terra: float) -> MetaPossibile:
++    return MetaPossibile(
++        iata="MAN", nome="Manchester", paese="Regno Unito", da=da,
++        prezzo_volo=prezzo_volo, costo_terra=c_terra, costo_bagagli=0.0,
++        totale=round(prezzo_volo + c_terra, 2), giorno="2026-09-04",
++    )
++
++
++# ── la formula generica ──────────────────────────────────────────────────
++
++def test_stessa_citta_non_costa_nulla():
++    assert costo_terra(0.0) == 0.0
++    assert intervallo_terra(0.0) == (0.0, 0.0)
++
++
++def test_tratta_lunga_segue_i_chilometri():
++    p = ParametriCosto()
++    assert costo_terra(300.0, p) == round(300.0 * p.terra_eur_km, 2)
++
++
++def test_tratta_corta_sconosciuta_usa_il_minimo():
++    p = ParametriCosto()
++    # 50 km × 0,09 = 4,50 €, sotto il minimo: deve restituire il minimo.
++    assert costo_terra(50.0, p, "ZZZ") == p.terra_minimo
++
++
++# ── i prezzi verificati scavalcano la formula ────────────────────────────
++
++def test_charleroi_usa_il_prezzo_verificato_non_la_formula():
++    p = ParametriCosto()
++    generico = costo_terra(50.0, p)
++    reale = costo_terra(50.0, p, "CRL")
++    assert reale > generico, "la navetta di Charleroi costa piu' del minimo generico"
++    minimo, standard = TRASFERIMENTI_NOTI["CRL"]
++    assert reale == round((minimo + standard) / 2, 2)
++
++
++def test_intervallo_charleroi_ha_due_estremi_distinti():
++    basso, alto = intervallo_terra(50.0, iata="CRL")
++    assert basso < alto
++    assert (basso, alto) == TRASFERIMENTI_NOTI["CRL"]
++
++
++def test_aeroporto_sconosciuto_non_finge_una_forbice():
++    basso, alto = intervallo_terra(50.0, iata="ZZZ")
++    assert basso == alto
++
++
++def test_il_prezzo_noto_non_si_applica_se_sei_gia_li():
++    # km < 1 significa che l'aeroporto e' quello di casa: nessun trasferimento.
++    assert costo_terra(0.0, iata="CRL") == 0.0
++
++
++# ── il responso dell'Oracolo ─────────────────────────────────────────────
++
++def test_responso_dichiara_la_forbice_su_charleroi():
++    m = _meta("CRL", 14.99, costo_terra(50.0, iata="CRL"))
++    testo = _prezzo_testo(m)
++    assert "–" in testo, f"atteso un intervallo, ottenuto {testo!r}"
++    assert "navetta" in testo
++    basso, alto = _intervallo_totale(m)
++    assert basso == round(14.99 + TRASFERIMENTI_NOTI["CRL"][0], 2)
++    assert alto == round(14.99 + TRASFERIMENTI_NOTI["CRL"][1], 2)
++
++
++def test_responso_resta_un_numero_secco_dove_non_sappiamo():
++    m = _meta("ZZZ", 14.99, 8.0)
++    testo = _prezzo_testo(m)
++    assert "–" not in testo
++    assert _intervallo_totale(m) == (m.totale, m.totale)
++
++
++def test_il_totale_reale_supera_la_vecchia_stima():
++    """La correzione deve alzare il prezzo, non abbassarlo: era questo il punto."""
++    vecchio = round(14.99 + 8.0, 2)          # com'era prima: 22,99 €
++    nuovo = round(14.99 + costo_terra(50.0, iata="CRL"), 2)
++    assert nuovo > vecchio
