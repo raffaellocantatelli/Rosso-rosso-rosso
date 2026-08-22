@@ -164,6 +164,33 @@ curl -X POST http://localhost:8001/documents \
   -F "file=@myfile.txt"
 ```
 
+---
+
+## Trasmissione Ciclica con Ricezione
+
+Script standalone ([`trasmissione_ciclica.py`](trasmissione_ciclica.py)) del Protocollo Oro Rosso Rosso Rosso: trasmette ciclicamente un messaggio e resta in ascolto di risposte su quattro canali in parallelo — file, stdin, UDP e webhook HTTP.
+
+```bash
+python3 trasmissione_ciclica.py
+```
+
+Ogni trasmissione aggiorna `trasmissione_state.json` (contatori, timestamp, hash SHA-256 del messaggio) e viene registrata in `trasmissioni.log`. Ogni segnale ricevuto finisce in `ricezioni.log` e in un file dedicato sotto `ricevuti/`, con fonte e data.
+
+| Variabile | Default | Descrizione |
+|---|---|---|
+| `R3_MESSAGE_FILE` | `messaggio_parallelo.txt` | Messaggio da trasmettere (creato col testo di default se assente) |
+| `R3_RECEPTION_FILE` | `segnale_ricevuto.txt` | File sorvegliato ogni 3s per nuove risposte |
+| `R3_STATE_FILE` | `trasmissione_state.json` | Stato persistente |
+| `R3_LOG_FILE` | `trasmissione.log` | Log tecnico (UDP, webhook, errori) |
+| `R3_TRANSMISSION_LOG` | `trasmissioni.log` | Log delle trasmissioni |
+| `R3_RECEPTION_LOG` | `ricezioni.log` | Log delle ricezioni |
+| `R3_TRANSMISSION_INTERVAL` | `60` | Secondi fra una trasmissione e la successiva |
+| `R3_UDP_LISTEN_PORT` | `9999` | Porta UDP in ascolto |
+| `R3_TRANSMISSION_TARGET` | — | `host:porta` UDP verso cui inviare (opzionale) |
+| `R3_WEBHOOK_URL` | — | Endpoint HTTP POST che riceve il record JSON (opzionale) |
+
+Chiusura pulita con `Ctrl+C` o `SIGTERM`: i thread si fermano entro un secondo e lo stato viene salvato.
+
 ## Licenza
 
 _Da definire._

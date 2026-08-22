@@ -4,3 +4,12 @@ __pycache__/
 output/backups/*
 !output/backups/.gitkeep
 r3/data/
+
+# Trasmissione ciclica (artefatti di runtime)
+messaggio_parallelo.txt
+segnale_ricevuto.txt
+trasmissione_state.json
+trasmissione.log
+trasmissioni.log
+ricezioni.log
+ricevuti/
