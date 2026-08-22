@@ -55,6 +55,10 @@ DEFAULT_MESSAGE = (
 # Flag globale per il controllo dei thread
 running = True
 
+# Serializza le ricezioni: file_watcher, udp_listener e stdin_listener
+# aggiornano gli stessi contatori e la stessa cartella ricevuti/
+reception_lock = threading.Lock()
+
 # ============================================================
 # UTILITY
 # ============================================================
@@ -165,19 +169,22 @@ def transmission_loop(state: dict, message: str):
 # ============================================================
 
 def process_received(state: dict, content: str, source: str = "unknown"):
-    now = now_iso()
-    state["last_reception"] = now
-    state["reception_count"] += 1
-    save_state(state)
+    with reception_lock:
+        now = now_iso()
+        state["last_reception"] = now
+        state["reception_count"] += 1
+        save_state(state)
 
-    log_event(RECEPTION_LOG, "reception", content)
+        log_event(RECEPTION_LOG, "reception", content)
 
-    os.makedirs("ricevuti", exist_ok=True)
-    filename = f"ricevuti/segnale_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.txt"
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(f"Fonte: {source}\nData: {now}\nContenuto:\n{content}")
+        os.makedirs("ricevuti", exist_ok=True)
+        # Microsecondi nel nome: due segnali nello stesso secondo non si sovrascrivono
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
+        filename = f"ricevuti/segnale_{stamp}.txt"
+        with open(filename, "x", encoding="utf-8") as f:
+            f.write(f"Fonte: {source}\nData: {now}\nContenuto:\n{content}")
 
-    print(f"\n🔴🔶 SEGNALE RICEVUTO [{source}]: {content[:120]}...\n")
+        print(f"\n🔴🔶 SEGNALE RICEVUTO [{source}]: {content[:120]}...\n")
 
 def file_watcher(state: dict):
     if not os.path.exists(RECEPTION_FILE):
