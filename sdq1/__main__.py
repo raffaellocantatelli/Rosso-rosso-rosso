@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from .llm.router import Router
+from .llm.router import Router, COME_ATTIVARE, REAL_PROVIDERS
 from .memory.vector_store import VectorStore
 from .agents import pipeline
 from .monitoring.health import run_health_check
@@ -31,6 +31,7 @@ def build_parser():
     profilo.add_argument("--locale", action="store_true", help="Ollama -> Gemini -> Stub")
     profilo.add_argument("--no-api", action="store_true", help="Solo Stub, offline puro")
 
+    p.add_argument("--check", action="store_true", help="Il Core è acceso? Diagnostica dei provider")
     p.add_argument("--health", action="store_true", help="Stato del sistema")
     p.add_argument("--backup", action="store_true", help="Snapshot completo dello stato")
     p.add_argument("--restore", metavar="PATH", help="Ripristina uno snapshot")
@@ -56,6 +57,41 @@ def profilo_da_args(args):
     return "default"
 
 
+BANNER_SPENTO = (
+    "==============================================================\n"
+    "  IL CORE È SPENTO — QUESTO NON È PENSIERO\n"
+    "  Nessun provider LLM disponibile: il testo qui sotto è una\n"
+    "  ricostruzione strutturale locale (Stub), non l'output di un\n"
+    "  modello. Esegui `python -m sdq1 --check` per accenderlo.\n"
+    "==============================================================\n"
+)
+
+
+def cmd_check(router):
+    """Dice, senza ambiguità, se il Core può pensare e cosa manca."""
+    stato = router.stato_provider()
+    reali = router.provider_reali_disponibili()
+
+    print("=== SDQ-1 · Il Core è acceso? ===\n")
+    for nome in REAL_PROVIDERS:
+        segno = "OK  " if stato.get(nome) else "--  "
+        riga = f"  {segno}{nome}"
+        if not stato.get(nome):
+            riga += f"  →  {COME_ATTIVARE[nome]}"
+        print(riga)
+
+    print()
+    if reali:
+        print(f"CORE ACCESO — provider disponibili: {', '.join(reali)}")
+        print("Le riflessioni giornaliere saranno generate da un modello vero.")
+        return 0
+
+    print("CORE SPENTO — nessun provider reale disponibile.")
+    print("Il sistema continuerà a produrre file, ma saranno output Stub:")
+    print("attività senza pensiero. Per accenderlo basta UNA delle righe sopra.")
+    return 1
+
+
 def cmd_contatto(args):
     if not args.tipo:
         print("Errore: --contatto richiede almeno --tipo", file=sys.stderr)
@@ -77,6 +113,9 @@ def main(argv=None):
     args = build_parser().parse_args(argv)
     router = Router()
     memory = VectorStore()
+
+    if args.check:
+        sys.exit(cmd_check(router))
 
     if args.health:
         record = run_health_check(router, memory)
@@ -120,7 +159,16 @@ def main(argv=None):
         sys.exit(1)
 
     profilo = profilo_da_args(args)
-    ctx = pipeline.esegui(args.messaggio, profilo, router, memory)
+    try:
+        ctx = pipeline.esegui(args.messaggio, profilo, router, memory)
+    except RuntimeError as exc:
+        # Nessun provider reale: non inventiamo un output: usciamo con errore,
+        # così il fallback esplicito del chiamante (--economia, --no-api) parte.
+        print(f"[sdq1] {exc}", file=sys.stderr)
+        sys.exit(2)
+
+    if ctx.provider_used and ctx.provider_used.startswith("stub"):
+        print(BANNER_SPENTO)
 
     print(ctx.final)
     print(f"\n[provider: {ctx.provider_used} | profilo: {profilo}]", file=sys.stderr)
