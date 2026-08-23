@@ -1,0 +1,191 @@
+{
+  "algoritmo": "sha256",
+  "file": {
+    ".github/workflows/daily.yml": {
+      "byte": 2098,
+      "sha256": "9dccebd54cc1f6dd3e0a510e0a56484279a9bed352edc35648acb3c6f27d6b88"
+    },
+    "CLAUDE.md": {
+      "byte": 6236,
+      "sha256": "1c60394c300f49b45fa6f630c2b2a04202f501f485b3a6be5b4c2c21ea9fe9f7"
+    },
+    "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
+      "byte": 291,
+      "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
+    },
+    "README.md": {
+      "byte": 8185,
+      "sha256": "715cfcefdab72fcbb9b3c825aebab87d108959208d4c34b6dc9613209daf9b39"
+    },
+    "manifesto_integrita.py": {
+      "byte": 4408,
+      "sha256": "e9720ea754e8b3120f21cb484c90f100b2dd998412810e0acbc5d8130a07e9a2"
+    },
+    "r3/README.md": {
+      "byte": 6155,
+      "sha256": "a4ccaeb06ec4a960424b4fe9d9adbe808bb43f5eea41f64173d2477ee0aae427"
+    },
+    "r3/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "r3/config.py": {
+      "byte": 397,
+      "sha256": "bf7e6b4ba61153f064f5962b39fa46904818315fb5b943c5b7a71f99e686b5cb"
+    },
+    "r3/crypto.py": {
+      "byte": 954,
+      "sha256": "ec40a025e058860abf520f4a7038e5534c6bfaa0a27311d4abb557325ffe59ab"
+    },
+    "r3/db.py": {
+      "byte": 2212,
+      "sha256": "d58d3ec9a0dc3dc3e50619642649b8229690a8f4391bd99c0cbcd27db879e93f"
+    },
+    "r3/docker-compose.yml": {
+      "byte": 1132,
+      "sha256": "886f5448a35d41b939846a4b77aaf4ca54daa4a075eddb54ff2f00576bfc6d5f"
+    },
+    "r3/node.py": {
+      "byte": 7498,
+      "sha256": "1d0b8a3e7f32ce2d38e8560fed896c3a4d489363a5e1c28545cf0cc5fd8b03a1"
+    },
+    "r3/storage.py": {
+      "byte": 1197,
+      "sha256": "b64d1cae1327400338b906d906ed67ca382416f502074f1fdc98b56fbf16776b"
+    },
+    "r3/sync.py": {
+      "byte": 3925,
+      "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
+    },
+    "registro_ipotesi.json": {
+      "byte": 922,
+      "sha256": "7f8346854a4adf92b630b6dccf672fa2d3c89d3d8a3798620fae47a6e4093817"
+    },
+    "registro_ipotesi.py": {
+      "byte": 3505,
+      "sha256": "d9606332cc9b38d6812d0d698f70a11d10248a1a39c4138e9a4199d5b10c1d1f"
+    },
+    "sdq1/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdq1/__main__.py": {
+      "byte": 6086,
+      "sha256": "f2a3e0fd865185c7cc4237d400b5f4946a75ae5ddd0806aff0d6797e875092c5"
+    },
+    "sdq1/agents/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdq1/agents/decomp.py": {
+      "byte": 336,
+      "sha256": "00415defc8f4c5e3271c79cdd63e2d7afe2cc082b7b0b92102fcbce44497ad7a"
+    },
+    "sdq1/agents/gen.py": {
+      "byte": 1921,
+      "sha256": "9249c92dd41168e3903ce74f676a561ed30f493e5d300c971a198d3bb6e3c647"
+    },
+    "sdq1/agents/memo.py": {
+      "byte": 384,
+      "sha256": "ab0aa221da78b9f728069b5ec80bc7eea358c96e1ec26d0eb06fce4cf4136e00"
+    },
+    "sdq1/agents/pipeline.py": {
+      "byte": 460,
+      "sha256": "8a7ac29585d61367d6eabbf14bee279d400c31241a607b54fbb9ee6bcbf71963"
+    },
+    "sdq1/agents/raffa.py": {
+      "byte": 1110,
+      "sha256": "8e5370c3357e22fa49a958df8ce82378de2a324cb6cff024009b8ba1d25b4d1d"
+    },
+    "sdq1/agents/sentin.py": {
+      "byte": 1391,
+      "sha256": "57dd857e73b15f4e3b0b0ed96f75d76f816b17bef740f4c332005bddc37db840"
+    },
+    "sdq1/agents/wave.py": {
+      "byte": 210,
+      "sha256": "ec2f5f10c3e31d65d14beec61a164b4bbea7b2e792534c1e86a5c5e4483f695f"
+    },
+    "sdq1/backup.py": {
+      "byte": 1516,
+      "sha256": "8bbda1d381f589ca780276b0c5a9f4cad74c8ab45455f64c9b83abd7cf2be07e"
+    },
+    "sdq1/context.py": {
+      "byte": 557,
+      "sha256": "a869b03228d4bfdef17fbae1619dd2b7a7c87ecec4d2683880a29bebcb6efbd2"
+    },
+    "sdq1/llm/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdq1/llm/cache.py": {
+      "byte": 808,
+      "sha256": "6e84c744865e6f8666bdb8fbea45acff5c720e4001af2fa28b47a2395a0118c3"
+    },
+    "sdq1/llm/circuit_breaker.py": {
+      "byte": 1169,
+      "sha256": "c119c2a6e7f3bdb36a88bb2f5f6859d14810a79f06fd0e8db7702c2f1ed64eb7"
+    },
+    "sdq1/llm/providers/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdq1/llm/providers/anthropic_provider.py": {
+      "byte": 1058,
+      "sha256": "7479b566c8fe9181d305ceb933f5db0899eb95d176a1e5e0461ad14c8f16e7d6"
+    },
+    "sdq1/llm/providers/base.py": {
+      "byte": 181,
+      "sha256": "0602f6fe268bc8635bd456201d17d06259db7e219307dafb970c865bf1607a10"
+    },
+    "sdq1/llm/providers/deepseek_provider.py": {
+      "byte": 742,
+      "sha256": "584cce14e7e3d04a9c36aca9679be529c3f65e4b32ff71ab037d77f42ac49d19"
+    },
+    "sdq1/llm/providers/gemini_provider.py": {
+      "byte": 822,
+      "sha256": "7971dee07e972f1eab0b328439a467737d46f4eb386a4a5ba8c21c69e71124a0"
+    },
+    "sdq1/llm/providers/ollama_provider.py": {
+      "byte": 844,
+      "sha256": "0bb6b85dba568f37a864f8f4b2acd627750ca80d3d34ed16864e0b86dcbd0cbd"
+    },
+    "sdq1/llm/providers/stub_provider.py": {
+      "byte": 791,
+      "sha256": "cedd53ddc846a0fc471663e57afe605652fd6c7c435b218b61f8b6813fac3ca4"
+    },
+    "sdq1/llm/router.py": {
+      "byte": 4478,
+      "sha256": "72b2dab629cab165755daa9dc891929ca32595772a5b26656032310b0696f33f"
+    },
+    "sdq1/memory/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdq1/memory/vector_store.py": {
+      "byte": 2353,
+      "sha256": "442e2394782dd9c2d022a8b282d5e2119892e861b4a00451e11caa80e5939317"
+    },
+    "sdq1/monitoring/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdq1/monitoring/health.py": {
+      "byte": 852,
+      "sha256": "cc0289503a9470ebc8994a6fdae35f724e20fb05c4d9201504959e76ed627985"
+    },
+    "sdq1/sar/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sdq1/sar/reflect.py": {
+      "byte": 2092,
+      "sha256": "ac6efb653d21dd1461ec077eeaca7ab0ff5eab87ede5c9beb4a307fdcbefb44d"
+    },
+    "trasmissione_ciclica.py": {
+      "byte": 9914,
+      "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
+    }
+  },
+  "generato": "2026-08-23T20:56:16.333642+00:00",
+  "origine": "Claudio Terzi [CT-LGAI-001]"
+}
