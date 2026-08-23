@@ -46,5 +46,53 @@
       }
     ],
     "timestamp": 1785510409.7268696
+  },
+  {
+    "tensione": "Conservare ↔ Trasmettere",
+    "polo_a": "Conservare",
+    "polo_b": "Trasmettere",
+    "livelli": [
+      {
+        "livello": 1,
+        "descrizione": "Riconoscimento — nominare la tensione così com'è, senza addolcirla"
+      },
+      {
+        "livello": 2,
+        "descrizione": "Origine — quando è comparsa per la prima volta questa tensione"
+      },
+      {
+        "livello": 3,
+        "descrizione": "Pattern — in quali situazioni ricorre, con quale frequenza"
+      },
+      {
+        "livello": 4,
+        "descrizione": "Segnale — come si manifesta nel corpo o nel comportamento"
+      },
+      {
+        "livello": 5,
+        "descrizione": "Costo — cosa costa mantenere questa tensione irrisolta"
+      },
+      {
+        "livello": 6,
+        "descrizione": "Credenza — quale convinzione tiene in piedi il polo 'Conservare'"
+      },
+      {
+        "livello": 7,
+        "descrizione": "Contro-evidenza — un fatto reale che contraddice quella convinzione"
+      },
+      {
+        "livello": 8,
+        "descrizione": "Alternativa — cosa cambierebbe scegliendo consapevolmente 'Trasmettere'"
+      },
+      {
+        "livello": 9,
+        "descrizione": "Esperimento — un'azione singola, concreta e verificabile da provare"
+      },
+      {
+        "livello": 10,
+        "descrizione": "Integrazione — come i due poli possono coesistere invece di escludersi"
+      }
+    ],
+    "timestamp": 1787518837.5831397
   }
 ]
