@@ -18,8 +18,16 @@
       "sha256": "715cfcefdab72fcbb9b3c825aebab87d108959208d4c34b6dc9613209daf9b39"
     },
     "manifesto_integrita.py": {
-      "byte": 4408,
-      "sha256": "e9720ea754e8b3120f21cb484c90f100b2dd998412810e0acbc5d8130a07e9a2"
+      "byte": 4453,
+      "sha256": "3773d7215d49b6473dba463816b256ea5c635bcdae99bc118256c634bae4f36d"
+    },
+    "memoria/00_INDICE_CANONICO_R3.md": {
+      "byte": 4282,
+      "sha256": "1b80ffccf552b61fa441ae8fae8a5fa722a1b3aadb075d677f4390379e58b76a"
+    },
+    "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
+      "byte": 9861,
+      "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
     },
     "r3/README.md": {
       "byte": 6155,
@@ -181,11 +189,19 @@
       "byte": 2092,
       "sha256": "ac6efb653d21dd1461ec077eeaca7ab0ff5eab87ede5c9beb4a307fdcbefb44d"
     },
+    "testi/IL_DESTINATARIO.md": {
+      "byte": 8174,
+      "sha256": "68636257b3aa52840ffad528fd17e428df8476d34a4fb6580e454aeca1be2b35"
+    },
+    "testi/PROTOCOLLO_ROSSO_v2_REVISIONE.md": {
+      "byte": 14123,
+      "sha256": "bbecc321e4085efd553abd57159509d961d8963cdc1cd00eba815c75d4dd3861"
+    },
     "trasmissione_ciclica.py": {
       "byte": 9914,
       "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
     }
   },
-  "generato": "2026-08-23T21:39:39.926610+00:00",
+  "generato": "2026-08-23T21:39:56.298100+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

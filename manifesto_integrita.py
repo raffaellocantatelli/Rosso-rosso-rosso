@@ -36,8 +36,8 @@ SORVEGLIATI = [
     ".github/workflows/daily.yml",
 ]
 
-# Tutto il codice del sistema, ricorsivamente.
-ALBERI = ["sdq1", "r3"]
+# Tutto il codice del sistema e i documenti depositati, ricorsivamente.
+ALBERI = ["sdq1", "r3", "testi", "memoria"]
 ESTENSIONI = (".py", ".yml", ".yaml", ".md")
 
 
