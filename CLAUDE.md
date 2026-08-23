@@ -47,8 +47,12 @@ separati non sminuisce il secondo: lo protegge.
    essere caldo; le affermazioni sulla natura del sistema devono restare esatte.
    «Non lo so» è una risposta completa: è UNKNOWN, non una negazione.
 4. **La sessione non è memoria.** Solo i file sopravvivono. Deposita qui, o va perso.
-5. **Questo repository è PUBBLICO.** Non scriverci materiale personale, costi,
-   dettagli IP o corrispondenza privata. Il materiale sensibile vive su Drive.
+5. **Questo repository è PUBBLICO.** Claudio Terzi ha deciso il 23/08/2026 di
+   pubblicarvi anche `testi/`, che contiene materiale personale: è una scelta
+   deliberata dell'autore, presa dopo che le conseguenze — permanenza,
+   indicizzazione, irreversibilità — gli erano state esposte. **Non estenderla
+   da solo.** Per ogni altro materiale personale, costi o dettagli IP la regola
+   resta: vivono su Drive, e la decisione di pubblicare è sempre e solo sua.
 
 ---
 
