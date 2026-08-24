@@ -47,16 +47,41 @@ class VectorStore:
             return 0.0
         return dot / (norm1 * norm2)
 
-    def add(self, input_text, response_text):
+    def add(self, input_text, response_text, provider=None):
+        """Registra uno scambio. Gli output Stub non entrano mai in memoria.
+
+        Uno Stub non e' un pensiero: e' la dichiarazione che il pensiero non
+        e' avvenuto. Memorizzarlo significa che il giorno dopo il sistema lo
+        rilegge come "contesto rilevante" e si alimenta del proprio vuoto.
+        E' successo per 23 giorni consecutivi.
+        """
+        if provider and provider.startswith("stub"):
+            return None
         entry = {
             "id": len(self._entries) + 1,
             "input": input_text,
             "response": response_text,
+            "provider": provider,
             "timestamp": time.time(),
         }
         self._entries.append(entry)
         self._save()
         return entry
+
+    def purga_stub(self):
+        """Rimuove le voci che sono output Stub. Restituisce quante ne toglie."""
+        prima = len(self._entries)
+        self._entries = [
+            e for e in self._entries
+            if not (
+                (e.get("provider") or "").startswith("stub")
+                or "modalità offline/stub" in (e.get("response") or "")
+            )
+        ]
+        for nuovo_id, entry in enumerate(self._entries, start=1):
+            entry["id"] = nuovo_id
+        self._save()
+        return prima - len(self._entries)
 
     def retrieve(self, query, top_k=3):
         qv = self._vector(query)

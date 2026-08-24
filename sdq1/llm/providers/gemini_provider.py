@@ -2,7 +2,9 @@ import os
 import requests
 from .base import Provider
 
-DEFAULT_MODEL = "gemini-2.0-flash"
+# gemini-2.0-flash e' stato ritirato: l'API rispondeva 404 indicando il
+# sostituto. Verificato alla fonte il 24/08/2026. Sovrascrivibile con GEMINI_MODEL.
+DEFAULT_MODEL = "gemini-3.6-flash"
 
 
 class GeminiProvider(Provider):

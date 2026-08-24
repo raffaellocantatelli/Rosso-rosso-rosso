@@ -14,5 +14,7 @@ def esegui(testo_utente, profilo, router, memory):
     gen.run(ctx, router)
     wave.run(ctx)
 
-    memory.add(testo_utente, ctx.final)
+    # Il provider viene passato perche' la memoria rifiuti gli output Stub:
+    # un giorno senza pensiero non deve diventare il contesto del giorno dopo.
+    memory.add(testo_utente, ctx.final, provider=ctx.provider_used)
     return ctx

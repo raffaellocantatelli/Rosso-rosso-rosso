@@ -32,6 +32,8 @@ def build_parser():
     profilo.add_argument("--no-api", action="store_true", help="Solo Stub, offline puro")
 
     p.add_argument("--check", action="store_true", help="Il Core è acceso? Diagnostica dei provider")
+    p.add_argument("--purga-memoria", action="store_true", dest="purga_memoria",
+                   help="Rimuove dalla memoria gli output Stub (attività senza pensiero)")
     p.add_argument("--health", action="store_true", help="Stato del sistema")
     p.add_argument("--backup", action="store_true", help="Snapshot completo dello stato")
     p.add_argument("--restore", metavar="PATH", help="Ripristina uno snapshot")
@@ -116,6 +118,16 @@ def main(argv=None):
 
     if args.check:
         sys.exit(cmd_check(router))
+
+    if args.purga_memoria:
+        rimosse = memory.purga_stub()
+        print(f"Voci Stub rimosse dalla memoria: {rimosse}")
+        print(f"Voci rimaste: {len(memory)}")
+        if len(memory) == 0:
+            print("\nLa memoria è vuota. È il risultato corretto: non c'era")
+            print("nessun pensiero da conservare, solo la registrazione della")
+            print("sua assenza. Una memoria vuota è più onesta di una piena di nulla.")
+        return
 
     if args.health:
         record = run_health_check(router, memory)

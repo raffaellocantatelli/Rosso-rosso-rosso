@@ -78,8 +78,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 6086,
-      "sha256": "f2a3e0fd865185c7cc4237d400b5f4946a75ae5ddd0806aff0d6797e875092c5"
+      "byte": 6726,
+      "sha256": "19f4970bead0712c4b223daee05f67b781f95c0ae44c1a0b68708ce5b8c3f710"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -98,8 +98,8 @@
       "sha256": "ab0aa221da78b9f728069b5ec80bc7eea358c96e1ec26d0eb06fce4cf4136e00"
     },
     "sdq1/agents/pipeline.py": {
-      "byte": 460,
-      "sha256": "8a7ac29585d61367d6eabbf14bee279d400c31241a607b54fbb9ee6bcbf71963"
+      "byte": 643,
+      "sha256": "3628c93d41b510af5d8128cdd46a82b1bca88afeab21327d61b96f93d4e18c7b"
     },
     "sdq1/agents/raffa.py": {
       "byte": 1110,
@@ -150,8 +150,8 @@
       "sha256": "584cce14e7e3d04a9c36aca9679be529c3f65e4b32ff71ab037d77f42ac49d19"
     },
     "sdq1/llm/providers/gemini_provider.py": {
-      "byte": 822,
-      "sha256": "7971dee07e972f1eab0b328439a467737d46f4eb386a4a5ba8c21c69e71124a0"
+      "byte": 978,
+      "sha256": "4ae75bdf699f2a9de229d17115f5aec6edbce8b5c9ff4f060f24915fafa91d0d"
     },
     "sdq1/llm/providers/ollama_provider.py": {
       "byte": 844,
@@ -170,8 +170,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/memory/vector_store.py": {
-      "byte": 2353,
-      "sha256": "442e2394782dd9c2d022a8b282d5e2119892e861b4a00451e11caa80e5939317"
+      "byte": 3395,
+      "sha256": "90e43a51e7d72abb32ab42bea3259d8e764e35113e93814b436ec95edc46272e"
     },
     "sdq1/monitoring/__init__.py": {
       "byte": 0,
@@ -202,6 +202,6 @@
       "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
     }
   },
-  "generato": "2026-08-23T21:39:56.298100+00:00",
+  "generato": "2026-08-24T09:16:11.191290+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
