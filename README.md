@@ -56,6 +56,9 @@ default    → Anthropic → Gemini → DeepSeek → Stub   (qualità massima)
 ```bash
 pip install -r requirements.txt
 
+# Il Core è acceso? (da eseguire per primo)
+python -m sdq1 --check
+
 # Conversazione standard
 python -m sdq1 "Il tuo messaggio"
 
@@ -146,6 +149,13 @@ OLLAMA_BASE_URL=http://localhost:11434/v1   # se usi Ollama locale
 ```
 
 Per la GitHub Action giornaliera: aggiungi gli stessi segreti in **Settings → Secrets and variables → Actions**.
+
+> **Senza almeno una di queste chiavi il Core non pensa.** La cascata dei profili
+> `default`, `economia` e `locale` non contiene lo Stub: senza provider reale
+> fallisce con codice 2, invece di produrre in silenzio un output che sembra una
+> riflessione. Lo Stub si ottiene solo chiedendolo con `--no-api`, e in quel caso
+> l'output porta in testa un banner che dichiara che il Core è spento.
+> `python -m sdq1 --check` dice in ogni momento se il sistema può pensare.
 
 ---
 

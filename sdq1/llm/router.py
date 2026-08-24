@@ -9,11 +9,25 @@ from .providers.stub_provider import StubProvider
 from .circuit_breaker import CircuitBreaker
 from .cache import ResponseCache
 
+# Lo stub NON compare nelle cascate reali: se ci fosse, ogni profilo
+# riuscirebbe sempre e il fallback esplicito (--economia, --no-api) non
+# verrebbe mai raggiunto. Chi vuole lo stub lo chiede con --no-api.
 PROFILES = {
-    "default": ["anthropic", "gemini", "deepseek", "stub"],
-    "economia": ["gemini", "deepseek", "stub"],
-    "locale": ["ollama", "gemini", "stub"],
+    "default": ["anthropic", "gemini", "deepseek"],
+    "economia": ["gemini", "deepseek"],
+    "locale": ["ollama", "gemini"],
     "no-api": ["stub"],
+}
+
+# Provider che parlano davvero con un modello linguistico.
+REAL_PROVIDERS = ("anthropic", "gemini", "deepseek", "ollama")
+
+# Come si accende ciascun provider, per la diagnostica di `--check`.
+COME_ATTIVARE = {
+    "anthropic": "ANTHROPIC_API_KEY in .env (o nei secrets della Action)",
+    "gemini": "GOOGLE_API_KEY in .env (o nei secrets della Action)",
+    "deepseek": "DEEPSEEK_API_KEY in .env (o nei secrets della Action)",
+    "ollama": "un'istanza Ollama in ascolto su OLLAMA_BASE_URL (default http://localhost:11434/v1)",
 }
 
 
@@ -31,6 +45,14 @@ class Router:
 
     def cascade(self, profile):
         return PROFILES.get(profile, PROFILES["default"])
+
+    def stato_provider(self):
+        """Disponibilità di ogni provider, per la diagnostica e l'health check."""
+        return {name: p.available() for name, p in self.providers.items()}
+
+    def provider_reali_disponibili(self):
+        """Provider che possono davvero generare testo con un modello."""
+        return [n for n in REAL_PROVIDERS if self.providers[n].available()]
 
     def generate(self, prompt, profile="default", hedge=False):
         cached = self.cache.get(prompt, profile)
@@ -62,7 +84,15 @@ class Router:
                 self.breaker.record_failure(name)
                 errors.append(f"{name}: {exc}")
 
-        raise RuntimeError("Tutti i provider della cascata hanno fallito: " + "; ".join(errors))
+        if errors:
+            raise RuntimeError(
+                f"Tutti i provider del profilo '{profile}' hanno fallito: " + "; ".join(errors)
+            )
+        raise RuntimeError(
+            f"Nessun provider del profilo '{profile}' è disponibile "
+            f"({', '.join(order)}). Il Core non può generare. "
+            "Esegui `python -m sdq1 --check` per sapere cosa manca."
+        )
 
     def _hedge(self, prompt, names):
         results = {}

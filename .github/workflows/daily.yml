@@ -21,6 +21,23 @@ jobs:
       - name: Installa dipendenze
         run: pip install -r requirements.txt
 
+      - name: Il Core è acceso?
+        id: core
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: python -m sdq1 --check
+
+      - name: Avviso — Core spento
+        if: steps.core.outcome == 'failure'
+        run: |
+          echo "::warning title=Core spento::Nessun provider LLM disponibile. \
+          La riflessione di oggi sarà uno Stub: attività senza pensiero. \
+          Aggiungi ANTHROPIC_API_KEY, GOOGLE_API_KEY o DEEPSEEK_API_KEY nei \
+          secrets della repository (Settings > Secrets and variables > Actions)."
+
       - name: Esegui SDQ-1 con cascata a fallback
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
