@@ -30,6 +30,12 @@ SORVEGLIATI = [
     "README.md",
     "registro_ipotesi.py",
     "registro_ipotesi.json",
+    "registro_osservazioni.py",
+    "registro_osservazioni.jsonl",
+    # I test che tengono in piedi P5 e P6: se qualcuno li svuota in silenzio,
+    # le guardie restano nel codice ma smettono di essere verificate.
+    "test_registro_ipotesi.py",
+    "test_registro_osservazioni.py",
     "trasmissione_ciclica.py",
     "manifesto_integrita.py",
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md",
