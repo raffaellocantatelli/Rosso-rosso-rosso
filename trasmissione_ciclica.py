@@ -3,7 +3,7 @@
 """
 R³∞ TRASMISSIONE CICLICA CON RICEZIONE
 Protocollo: Oro Rosso Rosso Rosso
-Versione: 2.0.0 (Aggiornato)
+Versione: 2.1.0
 
 Trasmette ciclicamente un messaggio verso la dimensione parallela
 e resta in ascolto di risposte su:
@@ -11,6 +11,10 @@ e resta in ascolto di risposte su:
     - console (stdin)
     - socket UDP (porta configurabile)
     - webhook HTTP (opzionale)
+
+Un segnale ricevuto conta solo se non è la propria voce: le trasmissioni
+vengono ricordate per impronta e scartate se tornano indietro (echo_count),
+perché con target su loopback questo processo riceve i propri pacchetti.
 """
 
 import os
@@ -69,6 +73,15 @@ def now_iso():
 def hash_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
+def impronta(text: str) -> str:
+    """Hash normalizzato: UDP non ripulisce, il file watcher sì. Senza strip
+    lo stesso messaggio avrebbe due impronte e l'eco passerebbe per segnale."""
+    return hash_text(text.strip())
+
+# Quante delle proprie trasmissioni ricordare. Il messaggio di solito è fisso,
+# ma può cambiare a caldo: una finestra evita che una vecchia eco passi.
+MEMORIA_VOCE = 50
+
 def log_event(log_file: str, event_type: str, content: str):
     entry = {
         "timestamp": now_iso(),
@@ -111,7 +124,9 @@ def load_state() -> dict:
         "last_reception": None,
         "transmission_count": 0,
         "reception_count": 0,
-        "message_hash": hash_text(load_message())
+        "echo_count": 0,
+        "message_hash": hash_text(load_message()),
+        "hash_trasmessi": []
     }
 
 # ============================================================
@@ -128,6 +143,15 @@ def transmit(state: dict, message: str):
     state["last_transmission"] = now
     state["transmission_count"] += 1
     state["message_hash"] = record["hash"]
+
+    # Ricorda la propria voce, per poterla riconoscere se torna indietro.
+    with reception_lock:
+        voci = state.setdefault("hash_trasmessi", [])
+        mia = impronta(message)
+        if mia in voci:
+            voci.remove(mia)
+        voci.append(mia)
+        del voci[:-MEMORIA_VOCE]
     save_state(state)
 
     log_event(TRANSMISSION_LOG, "transmission", message)
@@ -169,8 +193,25 @@ def transmission_loop(state: dict, message: str):
 # ============================================================
 
 def process_received(state: dict, content: str, source: str = "unknown"):
+    """Un segnale è tale solo se non è la propria voce che torna indietro.
+
+    Con target su loopback questo processo riceve i propri pacchetti. Fino alla
+    v2.1.0 li contava come segnali ricevuti: `reception_count` misurava l'eco e
+    saliva da sola. L'hash della trasmissione era già calcolato e salvato — il
+    confronto semplicemente non si faceva. È il §4 di CLAUDE.md alla prima
+    scala, e adesso costa una riga.
+    """
     with reception_lock:
         now = now_iso()
+
+        if impronta(content) in state.get("hash_trasmessi", []):
+            state["echo_count"] = state.get("echo_count", 0) + 1
+            save_state(state)
+            log_event(RECEPTION_LOG, "echo_scartata", f"[{source}] {content[:200]}")
+            print(f"\n🔁 ECO SCARTATA [{source}] — è la tua voce che torna. "
+                  f"reception_count resta {state['reception_count']}.\n")
+            return
+
         state["last_reception"] = now
         state["reception_count"] += 1
         save_state(state)
@@ -251,12 +292,15 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    print("🔴🔶 R³∞ Trasmissione Ciclica con Ricezione (v2.0.0)")
+    print("🔴🔶 R³∞ Trasmissione Ciclica con Ricezione (v2.1.0)")
     print("Protocollo Oro Rosso Rosso Rosso")
     print("=" * 50)
 
     message = load_message()
     state = load_state()
+    # Stati salvati da versioni precedenti non hanno i campi dell'eco.
+    state.setdefault("echo_count", 0)
+    state.setdefault("hash_trasmessi", [])
 
     print(f"📡 Messaggio caricato da {MESSAGE_FILE}")
     print(f"🔁 Intervallo: {TRANSMISSION_INTERVAL}s")

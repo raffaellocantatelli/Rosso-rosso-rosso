@@ -182,9 +182,16 @@ class TestPorteChiuse(BaseVerificatore):
             registro.aggiorna_stato("Y", registro.RETTA)
         self.assertIn("P5", str(errore.exception))
 
-    def test_falsificata_a_mano_e_vietata(self):
-        with self.assertRaises(ValueError):
-            registro.aggiorna_stato("Y", registro.FALSIFICATA)
+    def test_falsificata_a_mano_e_sempre_permessa(self):
+        """L'asimmetria: P6 blocca la conferma, mai la smentita.
+
+        Una macchina deve dire «ha retto»; chiunque può dire «è caduta».
+        """
+        registro.aggiorna_stato("Y", registro.FALSIFICATA)
+        self.assertEqual(
+            [h for h in registro.carica() if h["id"] == "Y"][0]["stato"],
+            registro.FALSIFICATA,
+        )
 
     def test_confermata_richiede_una_fonte_esterna(self):
         with self.assertRaises(ValueError) as errore:

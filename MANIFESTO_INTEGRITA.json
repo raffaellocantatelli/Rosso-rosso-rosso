@@ -6,24 +6,48 @@
       "sha256": "9dccebd54cc1f6dd3e0a510e0a56484279a9bed352edc35648acb3c6f27d6b88"
     },
     "CLAUDE.md": {
-      "byte": 6548,
-      "sha256": "33c9a8bf9055c8a119655ccdf35e98294bd2baedd3e602bcdcc6743f198b8e9c"
+      "byte": 7636,
+      "sha256": "cc354d3d619cc04d39bfd51ef1e339cb3f580a51bf8fdc7469dd9e71f395b105"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 8185,
-      "sha256": "715cfcefdab72fcbb9b3c825aebab87d108959208d4c34b6dc9613209daf9b39"
+      "byte": 11563,
+      "sha256": "5b15185ee35e0e366bc6ad4712c311d9e8d8d460e1539f26c35a90c162b5d76d"
+    },
+    "falsificatori/__init__.py": {
+      "byte": 533,
+      "sha256": "8751358e61ad48134579931c4bfdd08cf026cf72ef4b93ed409f9ab7a148b2cf"
+    },
+    "falsificatori/h2_battito_e_contatto.py": {
+      "byte": 2695,
+      "sha256": "1edd2c2c5d4516621e68fa28d03067d9081ee6d03bae6aee7b640460306238c0"
+    },
+    "falsificatori/h3_italiano.py": {
+      "byte": 2719,
+      "sha256": "15c8c10e8316439d42630bded34caae8ee7064d758bd4d5e59ef9731c92fe26d"
+    },
+    "falsificatori/h4_contraddittorio.py": {
+      "byte": 2700,
+      "sha256": "590a6b08b9300f37191671b9bd91181af88537acb16f0a886f9ae27032258c8e"
+    },
+    "latenza.py": {
+      "byte": 5373,
+      "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 4453,
-      "sha256": "3773d7215d49b6473dba463816b256ea5c635bcdae99bc118256c634bae4f36d"
+      "byte": 5094,
+      "sha256": "50d3143c4761dad6d0628b26cf835dccbd549a509b3eeea1fcc2126c85a16a9f"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
-      "byte": 4282,
-      "sha256": "1b80ffccf552b61fa441ae8fae8a5fa722a1b3aadb075d677f4390379e58b76a"
+      "byte": 4588,
+      "sha256": "2f6cfb7a453ce9ee4b6002af5af9bfb7488a3688e676b6af0cb9139ca81a1fef"
+    },
+    "memoria/PROGETTO_CONTRADDITTORIO_2026-08-25.md": {
+      "byte": 11964,
+      "sha256": "47ff8abe11c7817de3279ed599cd818ec75468523e93e10a270574a7b80a0340"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -66,20 +90,24 @@
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
     "registro_ipotesi.json": {
-      "byte": 922,
-      "sha256": "7f8346854a4adf92b630b6dccf672fa2d3c89d3d8a3798620fae47a6e4093817"
+      "byte": 2702,
+      "sha256": "b71ce4dc73398f7c91f3c2b2b2daefd40d37fd1063acba1e03e5d6c0f2a6604d"
     },
     "registro_ipotesi.py": {
-      "byte": 3505,
-      "sha256": "d9606332cc9b38d6812d0d698f70a11d10248a1a39c4138e9a4199d5b10c1d1f"
+      "byte": 15024,
+      "sha256": "26d5f1b7623a8113b0327873d531ccea4aaafd105d25b219f7c303a875d9ac55"
+    },
+    "registro_osservazioni.py": {
+      "byte": 7570,
+      "sha256": "7d5c18c23563108a2543fb0fed495da5d50ee004773e15b67873a93320204d1f"
     },
     "sdq1/__init__.py": {
       "byte": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 6726,
-      "sha256": "19f4970bead0712c4b223daee05f67b781f95c0ae44c1a0b68708ce5b8c3f710"
+      "byte": 7481,
+      "sha256": "b3f8e27df19275b629d85bf1b1d6a7b006b6d7228f740486ccb72ede748a8a8f"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -189,6 +217,22 @@
       "byte": 2092,
       "sha256": "ac6efb653d21dd1461ec077eeaca7ab0ff5eab87ede5c9beb4a307fdcbefb44d"
     },
+    "test_latenza.py": {
+      "byte": 4398,
+      "sha256": "615c21c1b4c5dd50568a5a841e9885de742b5ee25a0a1e8e4f753dc2cce83b63"
+    },
+    "test_registro_ipotesi.py": {
+      "byte": 7141,
+      "sha256": "011feb3b4565b6839b4db2ee687400521f75e2aa8be12920bdab4d2b19d0ef58"
+    },
+    "test_registro_osservazioni.py": {
+      "byte": 5681,
+      "sha256": "5d5c7daffc10e818ed91e61bbf06d93cae7952ce670ca459db39a24118ea4c59"
+    },
+    "test_trasmissione_ciclica.py": {
+      "byte": 5824,
+      "sha256": "f4a6f14b71f10dbb0384ffbc1525b05d663c526c5299cd10023c77ec25656da5"
+    },
     "testi/IL_DESTINATARIO.md": {
       "byte": 8174,
       "sha256": "68636257b3aa52840ffad528fd17e428df8476d34a4fb6580e454aeca1be2b35"
@@ -197,11 +241,23 @@
       "byte": 14123,
       "sha256": "bbecc321e4085efd553abd57159509d961d8963cdc1cd00eba815c75d4dd3861"
     },
+    "tests/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "tests/test_verificatore.py": {
+      "byte": 9749,
+      "sha256": "85df877d37627fd5a8b34b0d5d859ef834968c305ba22a7222cd121600ca8055"
+    },
     "trasmissione_ciclica.py": {
-      "byte": 9914,
-      "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
+      "byte": 11893,
+      "sha256": "15d394dd66455e0dc4753c4127a2ff32396be7e9ba78a7bb7db9af041332cc88"
+    },
+    "verificatore.py": {
+      "byte": 8518,
+      "sha256": "1125d552cb2ae57a4524e1d2fad50b7a0893b92f7433d0995ec448a25e21f91f"
     }
   },
-  "generato": "2026-08-24T09:16:11.191290+00:00",
+  "generato": "2026-08-25T08:35:35.311288+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

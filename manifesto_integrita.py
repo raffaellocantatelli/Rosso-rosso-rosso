@@ -30,14 +30,27 @@ SORVEGLIATI = [
     "README.md",
     "registro_ipotesi.py",
     "registro_ipotesi.json",
+    "registro_osservazioni.py",
+    "registro_osservazioni.jsonl",
+    # I test che tengono in piedi P5 e P6: se qualcuno li svuota in silenzio,
+    # le guardie restano nel codice ma smettono di essere verificate.
+    "test_registro_ipotesi.py",
+    "test_registro_osservazioni.py",
+    "latenza.py",
+    "test_latenza.py",
+    "test_trasmissione_ciclica.py",
     "trasmissione_ciclica.py",
     "manifesto_integrita.py",
+    # Il verificatore e i suoi falsificatori: sono la guardia che esegue P5/P6
+    # invece di leggerli. Se qualcuno li ammorbidisce in silenzio, il registro
+    # continua a dire RETTA senza che niente sia stato messo alla prova.
+    "verificatore.py",
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md",
     ".github/workflows/daily.yml",
 ]
 
 # Tutto il codice del sistema e i documenti depositati, ricorsivamente.
-ALBERI = ["sdq1", "r3", "testi", "memoria"]
+ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests"]
 ESTENSIONI = (".py", ".yml", ".yaml", ".md")
 
 
