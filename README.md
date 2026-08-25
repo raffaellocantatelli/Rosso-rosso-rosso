@@ -10,10 +10,11 @@ Non è un chatbot. È un'infrastruttura per elaborare input complessi attraverso
 
 Creato da Claudio Terzi, Bruxelles.
 
-Il repository contiene due sistemi indipendenti:
+Il repository contiene tre sistemi indipendenti:
 
 - **[`sdq1/`](#sdq-1--sistema-di-quadranti-v15)** — la pipeline multi-agente (il cuore del progetto)
 - **[`r3/`](#r3--knowledge-redundancy-system)** — sistema di ridondanza documentale a 3 nodi
+- **[`protocollo-rosso-bot/`](#protocollo-rosso-bot--il-protocollo-in-conversazione)** — il Protocollo Rosso in forma di bot Telegram
 
 ---
 
@@ -173,6 +174,31 @@ curl -X POST http://localhost:8001/documents \
   -H "Authorization: Bearer changeme" \
   -F "file=@myfile.txt"
 ```
+
+---
+
+## protocollo-rosso-bot — Il Protocollo in conversazione
+
+Bot Telegram ([`protocollo-rosso-bot/`](protocollo-rosso-bot/)) che fa attraversare il *Protocollo Rosso Rosso Rosso* v2.0 un comando alla volta: la tesi grande dichiarata come `IPOTESI`, i due strati, P5 e P6, il Santuario del Capitolo 4, i tre veli.
+
+È il lato trasmissione del progetto: a differenza del resto, questo codice esiste per essere usato da qualcuno che non è Claudio.
+
+```bash
+cd protocollo-rosso-bot
+pip install -r requirements.txt
+cp .env.example .env          # token da @BotFather
+python -m bot.main --check    # il bot può partire? (da eseguire per primo)
+python -m bot.main
+```
+
+Due cose che il bot registra in SQLite e non arrotonda:
+
+- **le possibilità** depositate con `/tieni_aperto` nascono `IPOTESI` e nessuna funzione le chiude o le promuove a fatto — un test fallisce se qualcuno la aggiunge. Chi non sa dichiarare come potrebbe cadere ottiene `UNKNOWN` scritto in chiaro (P6);
+- **le azioni** registrate con `/azione` chiedono chi altro può controllarle (P5). Senza verifica esterna vengono salvate come tali, e il totale mostrato conta solo quelle verificabili.
+
+Il gesto della candela nel Santuario è cronometrato davvero: sotto i 20 secondi la visita viene registrata come *incompleta*, e il bot lo dice invece di congratularsi.
+
+Senza `TELEGRAM_BOT_TOKEN` il bot esce con **codice 2**, come `python -m sdq1 --check`. Test: `cd protocollo-rosso-bot && PYTHONPATH=. python -m unittest discover -s tests` (30 test, nessuna rete richiesta).
 
 ---
 
