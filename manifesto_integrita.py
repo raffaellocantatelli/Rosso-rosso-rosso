@@ -38,6 +38,7 @@ SORVEGLIATI = [
     "test_registro_osservazioni.py",
     "latenza.py",
     "test_latenza.py",
+    "test_trasmissione_ciclica.py",
     "trasmissione_ciclica.py",
     "manifesto_integrita.py",
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md",
