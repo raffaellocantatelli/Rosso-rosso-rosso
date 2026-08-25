@@ -11,8 +11,10 @@ campo pieno che non dichiara nulla, e per il registro vale quanto il vuoto:
 `criterio_definito` lo riconosce come tale e `aggiorna_stato` rifiuta di
 confermare l'ipotesi che lo porta.
 """
+import argparse
 import json
 import os
+import sys
 
 REGISTRO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "registro_ipotesi.json")
 
@@ -133,6 +135,40 @@ def aggiorna_stato(id_, nuovo_stato):
     return ipotesi
 
 
+def definisci_criterio(id_, criterio):
+    """Scrive il criterio dove non c'era. Non riscrive quello che ne ha già uno.
+
+    Serve per l'ipotesi registrata prima che il suo criterio esistesse (H1). Il
+    divieto di riscrittura è la stessa contro-forza di P6 vista da dopo: un
+    criterio che si può cambiare quando i dati sono già arrivati non è un
+    bersaglio, è un commento. Chi vuole un criterio diverso registra un'ipotesi
+    nuova, e la vecchia resta a memoria di cosa si era previsto.
+    """
+    if not criterio_definito(criterio):
+        raise ValueError(
+            "P6 violato: il criterio deve dire cosa smentirebbe l'ipotesi. "
+            "Un segnaposto non è un criterio."
+        )
+    ipotesi = _load()
+    for h in ipotesi:
+        if h["id"] != id_:
+            continue
+        if criterio_definito(h.get("criterio_falsificazione", "")):
+            raise ValueError(
+                f"{id_} dichiara già un criterio. Riscriverlo sposta il bersaglio: "
+                "registra un'ipotesi nuova con aggiungi()."
+            )
+        if h["stato"] != APERTA:
+            raise ValueError(
+                f"{id_} è {h['stato']}: darle un criterio adesso giustificherebbe a "
+                "posteriori un verdetto già emesso."
+            )
+        h["criterio_falsificazione"] = criterio
+        _save(ipotesi)
+        return ipotesi
+    raise KeyError(f"Ipotesi {id_} non trovata")
+
+
 def stato_corrente():
     return _load()
 
@@ -152,5 +188,26 @@ def stampa_stato():
         print()
 
 
-if __name__ == "__main__":
+def _cli(argv=None):
+    parser = argparse.ArgumentParser(
+        description="Registro Ipotesi R³∞ — P5: niente auto-conferma | P6: serve la contro-forza."
+    )
+    parser.add_argument(
+        "--criterio", nargs=2, metavar=("ID", "TESTO"),
+        help="scrive il criterio di falsificazione di un'ipotesi che non ne ha ancora uno",
+    )
+    args = parser.parse_args(argv)
+    if args.criterio:
+        id_, testo = args.criterio
+        try:
+            definisci_criterio(id_, testo)
+        except (ValueError, KeyError) as e:
+            print(f"Rifiutato: {e.args[0] if e.args else e}", file=sys.stderr)
+            return 1
+        print(f"Criterio scritto per {id_}. Da ora {id_} è falsificabile, quindi confermabile.\n")
     stampa_stato()
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(_cli())

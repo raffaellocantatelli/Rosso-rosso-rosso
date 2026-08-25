@@ -89,6 +89,50 @@ def test_aggiungi_rifiuta_il_segnaposto(tmp_path):
             raise AssertionError(f"criterio accettato ma non dichiarato: {criterio!r}")
 
 
+def test_definisci_criterio_riempie_il_vuoto(tmp_path):
+    """Il caso H1: l'ipotesi c'è, il criterio no, e finora non c'era modo di scriverlo."""
+    percorso = _registro_isolato(tmp_path, _ipotesi(reg.CRITERIO_DA_DEFINIRE))
+    reale = "Falsificata se in un test cieco il criterio non regge su dati nuovi."
+    reg.definisci_criterio("HX", reale)
+    assert json.loads(percorso.read_text(encoding="utf-8"))[0]["criterio_falsificazione"] == reale
+    # e ora, con un criterio vero, la conferma non è più bloccata da P6
+    assert reg.aggiorna_stato("HX", reg.CONFERMATA)[0]["stato"] == reg.CONFERMATA
+
+
+def test_definisci_criterio_non_riscrive(tmp_path):
+    """Un bersaglio che si sposta non è un bersaglio."""
+    gia = "Falsificata se il contatore resta a zero al 2026-12-11."
+    percorso = _registro_isolato(tmp_path, _ipotesi(gia))
+    try:
+        reg.definisci_criterio("HX", "Falsificata se qualcosa di molto piu comodo.")
+    except ValueError as e:
+        assert "sposta il bersaglio" in str(e)
+    else:
+        raise AssertionError("criterio riscritto: il bersaglio si è spostato")
+    assert json.loads(percorso.read_text(encoding="utf-8"))[0]["criterio_falsificazione"] == gia
+
+
+def test_definisci_criterio_rifiuta_segnaposto(tmp_path):
+    _registro_isolato(tmp_path, _ipotesi(reg.CRITERIO_DA_DEFINIRE))
+    try:
+        reg.definisci_criterio("HX", "da definire meglio piu avanti")
+    except ValueError as e:
+        assert "P6" in str(e)
+    else:
+        raise AssertionError("segnaposto accettato come criterio")
+
+
+def test_definisci_criterio_non_giustifica_a_posteriori(tmp_path):
+    """Dare un criterio a un verdetto già emesso è scrivere la scommessa dopo la corsa."""
+    _registro_isolato(tmp_path, _ipotesi(reg.CRITERIO_DA_DEFINIRE, stato=reg.FALSIFICATA))
+    try:
+        reg.definisci_criterio("HX", "Falsificata se il contatore resta a zero.")
+    except ValueError as e:
+        assert "a posteriori" in str(e)
+    else:
+        raise AssertionError("criterio scritto a verdetto già emesso")
+
+
 def test_ipotesi_sconosciuta(tmp_path):
     _registro_isolato(tmp_path, _ipotesi("Falsificata se il contatore resta a zero."))
     try:
