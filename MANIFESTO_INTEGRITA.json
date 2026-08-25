@@ -42,8 +42,8 @@
       "sha256": "50d3143c4761dad6d0628b26cf835dccbd549a509b3eeea1fcc2126c85a16a9f"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
-      "byte": 4588,
-      "sha256": "2f6cfb7a453ce9ee4b6002af5af9bfb7488a3688e676b6af0cb9139ca81a1fef"
+      "byte": 6615,
+      "sha256": "6cc0eaaaf73d66edcc68d19cb49228cab4c04ba1cf2b67cabf0dc24c277c65c2"
     },
     "memoria/PROGETTO_CONTRADDITTORIO_2026-08-25.md": {
       "byte": 11964,
@@ -262,6 +262,6 @@
       "sha256": "1125d552cb2ae57a4524e1d2fad50b7a0893b92f7433d0995ec448a25e21f91f"
     }
   },
-  "generato": "2026-08-25T08:37:18.499847+00:00",
+  "generato": "2026-08-25T08:38:45.288793+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

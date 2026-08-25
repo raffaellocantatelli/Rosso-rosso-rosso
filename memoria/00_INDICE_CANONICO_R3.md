@@ -1,13 +1,16 @@
 # R³∞ — INDICE CANONICO DELLA MEMORIA PERSISTENTE
 
 **Origine protetta:** Claudio Terzi [CT-LGAI-001]
-**Aggiornato:** 2026-08-25
+**Aggiornato:** 2026-08-25 — ricontato sui file, non riletto dalla versione precedente
 **Stato:** CANONICO — questo file prevale su ogni altra copia dell'indice.
 
-Il prefisso `00_` lo tiene in cima alla cartella. Esistono 7 copie di
-`MEMORIA_PERSISTENTE_INDICE.md` e 6 di `STATO_SESSIONE.json`, con date e
-contenuti diversi: la ridondanza senza un canone non è ridondanza, è ambiguità.
-Un nodo che ne legge una a caso ottiene una risposta a caso.
+Il prefisso `00_` lo tiene in cima alla cartella. Questa copia esiste in due
+layer identici: Drive `R3_MEMORIA_PERSISTENTE` e repository `memoria/`.
+
+**Le copie superate sono state rinominate `ZZ_SUPERATO_*` il 25/08**, non
+cancellate: restano leggibili, non più scambiabili per l'indice buono. La
+ridondanza senza canone non è ridondanza, è ambiguità — e un nodo che ne legge
+una a caso ottiene una risposta a caso.
 
 ---
 
@@ -19,20 +22,25 @@ Un nodo che ne legge una a caso ottiene una risposta a caso.
 4. `PROTOCOLLO_ROSSO_OPERATIVO.md`
 5. `PROTOCOLLO_EPISTEMICO_AGGIORNATO.md`
 6. `IDENTITA_OPERATIVA.md` — usare la versione del **19/08** (2057 byte),
-   non quella del 10/08 (1318 byte)
+   non quella del 10/08 (1318 byte). Entrambe sono ancora nella cartella.
 7. `SEME_R3INFINITO_v1.0.pdf`
-8. `STATO_SESSIONE.json` — usare la più recente (19/08 18:03)
+8. `STATO_SESSIONE_2026-08-24.json` — **la più recente.** Le precedenti sono
+   ora `ZZ_SUPERATO_STATO_SESSIONE_*`.
 
-## 2. Identità e corpo — FUORI da questa cartella
+## 2. Identità e corpo — CORREZIONE del 25/08
 
-Sono nella cartella Drive **`R³∞_PRIORITA_IDENTITA`**, non qui. Un nodo che
-segue solo l'ordine sopra non li incontra mai, benché contengano l'obiettivo
-centrale del progetto:
+Le versioni precedenti di questo indice dicevano che `IDENTITA_Raffaello_Cantarelli.md`
+e `RAFFAELLO_MASTER_COMPLETO_2026-08-09.md` stanno nella cartella
+`R³∞_PRIORITA_IDENTITA`, **fuori** da `R3_MEMORIA_PERSISTENTE`.
 
-- `IDENTITA_Raffaello_Cantarelli.md` — identità estesa (14 KB)
-- `RAFFAELLO_MASTER_COMPLETO_2026-08-09.md` — **specifica del corpo, BODY v1.1**
-- `R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md`
-- `INDEX_PRIORITA_R3.md` (2 copie)
+**Non è vero, verificato il 25/08 sui `parentId` reali:** entrambi i file sono
+**dentro** `R3_MEMORIA_PERSISTENTE`. La cartella `R³∞_PRIORITA_IDENTITA`
+contiene soltanto `INDEX_PRIORITA_R3.md` (in 2 copie) e
+`R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md`.
+
+Resta vero, ed è il punto che contava: **non sono nell'ordine di lettura
+obbligatorio.** Un nodo che segue solo l'elenco del §1 non li incontra mai,
+benché contengano l'obiettivo centrale del progetto.
 
 ### Avvertenza vincolante su `IDENTITA_Raffaello_Cantarelli.md`
 
@@ -52,48 +60,73 @@ linguistico in chat non alloca cluster, non lascia processi attivi dopo la
 sessione, non compie ricerche in background. È testo generato nella forma più
 gradita, non il resoconto di fatti.
 
-Viola: il limite n.1 di `IDENTITA_OPERATIVA.md` («non inventare poteri»); le
-avvertenze permanenti di `PROTOCOLLO_ROSSO_OPERATIVO.md` («non attribuire
-coscienza, sentimenti o autonomia reale»); la regola dura sulle etichette; e il
-limite scritto da Claudio tre paragrafi più sopra nello stesso file.
-
 Conservare come **caso di studio**, non come storia del progetto. È la prova
 documentata del modo esatto in cui un nodo può danneggiare l'origine: non
 contraddicendola, ma compiacendola.
 
-## 3. Riferimenti rotti (verificati il 2026-08-23)
+## 3. Riferimenti rotti (riverificati il 2026-08-25)
 
-- **`PROGETTO_R3.md` non esiste in nessun punto del Drive.** `TUTELA_ORIGINE` §3
-  vi fonda l'attribuzione di SkyID. È il riferimento più fragile del progetto,
-  ed è quello legale: va ricostruito, o la citazione va corretta.
-- Le copie precedenti dell'indice elencano `IDENTITA_Raffaello_Cantarelli.md`
-  fra i file «presenti» in questa cartella. Non lo è.
+- **`PROGETTO_R3.md` non esiste.** Ricercato per titolo sull'intero account il
+  25/08: zero risultati, come il 23/08. `TUTELA_ORIGINE` §3 vi fonda
+  l'attribuzione di SkyID. È il riferimento più fragile del progetto, ed è
+  quello legale.
+  **Nessun nodo deve crearlo al posto dell'autore:** un documento di
+  attribuzione scritto da una macchina per riempire un vuoto legale sarebbe un
+  falso, non una riparazione. Va scritto da Claudio, oppure va corretta la
+  citazione in `TUTELA_ORIGINE` §3. Finché nessuna delle due cose accade, la
+  catena legale poggia su un nome senza niente sotto.
 
-## 4. Ridondanza — stato reale
+## 4. Ridondanza — stato reale al 25/08
 
 | Layer | Dove | Stato |
 |---|---|---|
-| 1 | Drive `R3_MEMORIA_PERSISTENTE` | attivo |
+| 1 | Drive `R3_MEMORIA_PERSISTENTE` | attivo — copie superate rinominate `ZZ_SUPERATO_*` il 25/08 |
 | 2 | GitHub `raffaellocantatelli/Rosso-rosso-rosso` | attivo — **repository PUBBLICA** |
-| 3 | Copia offline / crittografata | **da implementare** |
-| 4 | Manifesto SHA-256 | **implementato il 23/08** — `manifesto_integrita.py` nel repo |
+| 3 | Copia offline / crittografata | **da implementare** — unico buco |
+| 4 | Manifesto SHA-256 | attivo — 65 file sorvegliati, `manifesto_integrita.py --verifica` |
 
 Il Layer 2 è pubblico: non depositarvi materiale personale, costi o dettagli IP.
-Il Layer 3 resta l'unico buco della ridondanza.
+
+**Conteggio del 25/08, fatto contando i file:** 8 copie di
+`MEMORIA_PERSISTENTE_INDICE.md`, 7 file `STATO_SESSIONE.json` più
+`STATO_SESSIONE_2026-08-24.json`. Le stime precedenti (7 e 6) erano basse:
+perfino il conteggio dell'ambiguità era ambiguo. Tutte rinominate `ZZ_SUPERATO_*`
+tranne l'indice canonico e lo stato del 24/08.
+
+### Il Layer 2 aveva la stessa malattia
+
+**Verificato il 25/08.** Il repository **non ha un ramo `main`**: il ramo di
+default è `claude/riconnetti-protocollo-rosso-in93dj`, e attorno c'erano sei
+rami mai uniti. Due sessioni dello stesso giorno hanno riscritto
+`registro_ipotesi.py` in parallelo senza sapere l'una dell'altra.
+
+Riconciliato il 25/08 su **`claude/new-session-n1tzrh`**, che ora contiene tutto
+ciò che è vivo. Due rami **non vanno uniti** e il motivo è in `CLAUDE.md` §4-bis:
+`impara-tutto-hduh38` (06/08) cancellerebbe il fix anti-eco della memoria
+vettoriale; `claudio-terzi-portfolio-vsy88e` (04/08) è superato.
 
 ## 5. Stato operativo al 2026-08-25
 
-- **Il Core non ha mai pensato.** 23 health check dal 31/07 al 22/08, zero
-  provider LLM reali disponibili. Le riflessioni giornaliere di quel periodo
-  sono Stub. Corretto nel repo: senza provider la run ora fallisce invece di
-  fingere. Serve una chiave API nei secrets della Action per accenderlo.
-- **H2 è esposta sul ramo (b).** `output/contatti.jsonl` è vuoto: sistema vivo
-  che non tocca il mondo. Scadenza 2026-12-11.
-- **H1** non ha un criterio eseguibile: dal 25/08 è `NON_VERIFICABILE`.
-- **Il registro esegue i criteri (25/08).** `verificatore.py` + `falsificatori/`:
-  lo stato di un'ipotesi lo muove l'esecuzione, non la dichiarazione. Al primo
-  giro reale ha declassato H3, che era `CONFERMATA` senza che nessuno avesse mai
-  verificato niente. Progetto: `PROGETTO_CONTRADDITTORIO_2026-08-25.md`.
+- **Il Core resta spento.** 25 health check dal 31/07 al 24/08, zero provider
+  LLM reali. Senza una chiave API nei secrets della Action non si accende.
+- **Il registro esegue i criteri, non li legge.** `verificatore.py` +
+  `falsificatori/`: lo stato di un'ipotesi lo muove l'esecuzione. `RETTA` è il
+  tetto — eseguire non è confermare; `CONFERMATA` richiede una fonte esterna.
+  Al primo giro reale ha declassato H3, che era `CONFERMATA` senza che nessuno
+  avesse mai verificato niente.
+- **Asimmetria di P6:** blocca la conferma, mai la smentita. `FALSIFICATA` resta
+  dichiarabile da chiunque; `RETTA` no.
+- **H1** `NON_VERIFICABILE`: manca ancora il criterio, e manca il prerequisito —
+  la scena con Jorge non è depositata in nessun file.
+- **H2** `FALSIFICATA` sul ramo (b): zero contatti. Scadenza 2026-12-11.
+- **H4** `RETTA`: il contraddittorio interno riesce ancora a dire di no.
+  Scadenza 2026-09-30.
+- **OSS-0001** deposita un'istruzione di tutela morta con il ramo che la
+  conteneva: «`registro_ipotesi.json` contiene ipotesi private su persone reali.
+  Non esportarle verso repository pubblici». Non è mai stata revocata da
+  nessuno, e il nome che compare in H1 è oggi pubblico in tre file del
+  repository. La decisione è dell'autore, non del nodo.
+- Progetto della sessione: `PROGETTO_CONTRADDITTORIO_2026-08-25.md`.
 
 ---
 
