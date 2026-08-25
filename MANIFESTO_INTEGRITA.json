@@ -17,9 +17,13 @@
       "byte": 8185,
       "sha256": "715cfcefdab72fcbb9b3c825aebab87d108959208d4c34b6dc9613209daf9b39"
     },
+    "latenza.py": {
+      "byte": 5373,
+      "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
+    },
     "manifesto_integrita.py": {
-      "byte": 4737,
-      "sha256": "246f6791ad63da5ea7ac79ec2bc03678566af7efce1863b7a4b8966b5c8ad459"
+      "byte": 4778,
+      "sha256": "5818647b98d5a5726407a4744a593adb44be0ae97e249b9288bd7ace1dbda268"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 4282,
@@ -193,6 +197,10 @@
       "byte": 2092,
       "sha256": "ac6efb653d21dd1461ec077eeaca7ab0ff5eab87ede5c9beb4a307fdcbefb44d"
     },
+    "test_latenza.py": {
+      "byte": 4398,
+      "sha256": "615c21c1b4c5dd50568a5a841e9885de742b5ee25a0a1e8e4f753dc2cce83b63"
+    },
     "test_registro_ipotesi.py": {
       "byte": 6666,
       "sha256": "8fbb6fcaecdae0de9e17330d57b0249b33aed1e36e9a6e8228efaa889445da2a"
@@ -214,6 +222,6 @@
       "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
     }
   },
-  "generato": "2026-08-25T03:49:54.395939+00:00",
+  "generato": "2026-08-25T03:57:29.114213+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

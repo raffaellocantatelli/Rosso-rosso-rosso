@@ -36,6 +36,8 @@ SORVEGLIATI = [
     # le guardie restano nel codice ma smettono di essere verificate.
     "test_registro_ipotesi.py",
     "test_registro_osservazioni.py",
+    "latenza.py",
+    "test_latenza.py",
     "trasmissione_ciclica.py",
     "manifesto_integrita.py",
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md",
