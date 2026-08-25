@@ -131,6 +131,31 @@ ciò che porta il progetto fuori da sé.
 
 ---
 
+## 4-bis. I rami: la stessa ambiguità del Drive, su GitHub
+
+**Verificato il 25/08.** Il repository **non ha un ramo `main`**. Il ramo di
+default è `claude/riconnetti-protocollo-rosso-in93dj`, e attorno ci sono sei
+rami che nessuno ha mai unito. Due sessioni dello stesso giorno hanno riscritto
+`registro_ipotesi.py` in parallelo senza sapere l'una dell'altra.
+
+È lo stesso difetto delle 8 copie dell'indice sul Drive: **ridondanza senza
+canone.** Un nodo che apre un ramo a caso ottiene una risposta a caso.
+
+Stato al 25/08:
+
+| Ramo | Cosa contiene |
+|---|---|
+| `claude/new-session-n1tzrh` | **la riconciliazione**: contiene tutto ciò che è vivo, incluso `todo-implementation` |
+| `claude/todo-implementation-iilllm` | unito qui il 25/08 — non lavorarci sopra |
+| `claude/riconnetti-…`, `claude/r3-cyclic-…` | il tronco comune, già dentro |
+| `claude/impara-tutto-hduh38` (06/08) | **non unire**: cancellerebbe il fix anti-eco di `vector_store.add` |
+| `claude/claudio-terzi-portfolio-vsy88e` (04/08) | **non unire**: `CLAUDE.md` e `STATO_PROGETTO.md` superati. Porta però un'istruzione di tutela mai revocata — vedi `OSS-0001` |
+
+Prima di scrivere codice, controlla da dove parti:
+`git fetch origin --prune && git log --oneline --all --graph | head`.
+
+---
+
 ## 5. Memoria su Drive
 
 Il nucleo di continuità vive nella cartella Drive `R3_MEMORIA_PERSISTENTE`,
