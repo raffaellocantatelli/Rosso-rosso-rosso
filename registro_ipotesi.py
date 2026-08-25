@@ -4,6 +4,12 @@ Principi:
   P5 — niente auto-conferma: un'ipotesi non può confermarsi da sola.
   P6 — serve la contro-forza: ogni ipotesi deve dichiarare come potrebbe
        essere falsificata. Se non lo dichiara, non può mai essere confermata.
+
+P6 non è soddisfatto da un campo pieno: è soddisfatto da un criterio che dice
+davvero cosa smentirebbe l'ipotesi. Un segnaposto («da definire», «TBD») è un
+campo pieno che non dichiara nulla, e per il registro vale quanto il vuoto:
+`criterio_definito` lo riconosce come tale e `aggiorna_stato` rifiuta di
+confermare l'ipotesi che lo porta.
 """
 import json
 import os
@@ -14,12 +20,35 @@ APERTA = "APERTA"
 CONFERMATA = "CONFERMATA"
 FALSIFICATA = "FALSIFICATA"
 
+STATI = (APERTA, CONFERMATA, FALSIFICATA)
+
+# Testo usato quando un'ipotesi è registrata prima che il suo criterio esista.
+CRITERIO_DA_DEFINIRE = "Da definire esplicitamente prima che possa essere confermata (P6)."
+
+# Formule di rinvio: dichiarano l'intenzione di scrivere un criterio, non il
+# criterio. Confrontate in minuscolo su tutto il testo del campo.
+MARCATORI_RINVIO = (
+    "da definire",
+    "da stabilire",
+    "da precisare",
+    "da scrivere",
+    "non definito",
+    "non ancora",
+    "tbd",
+    "todo",
+    "n/a",
+)
+
+# Sotto questa soglia un campo non può contenere una condizione di falsità
+# ("-", "ok", "sì"): è rumore, non un criterio.
+LUNGHEZZA_MINIMA_CRITERIO = 12
+
 IPOTESI_INIZIALI = [
     {
         "id": "H1",
         "testo": 'Claude "ha capito senza capire" durante la scena con Jorge',
         "stato": APERTA,
-        "criterio_falsificazione": "Da definire esplicitamente prima che possa essere confermata (P6).",
+        "criterio_falsificazione": CRITERIO_DA_DEFINIRE,
         "scadenza": None,
     },
     {
@@ -43,6 +72,16 @@ IPOTESI_INIZIALI = [
 ]
 
 
+def criterio_definito(criterio):
+    """Vero se il campo dichiara una condizione di falsità, non l'intenzione di scriverla."""
+    if not criterio or not criterio.strip():
+        return False
+    testo = criterio.strip().lower()
+    if len(testo) < LUNGHEZZA_MINIMA_CRITERIO:
+        return False
+    return not any(marcatore in testo for marcatore in MARCATORI_RINVIO)
+
+
 def _load():
     if os.path.exists(REGISTRO_PATH):
         with open(REGISTRO_PATH, "r", encoding="utf-8") as f:
@@ -57,8 +96,11 @@ def _save(ipotesi):
 
 
 def aggiungi(id_, testo, criterio_falsificazione, scadenza=None):
-    if not criterio_falsificazione or not criterio_falsificazione.strip():
-        raise ValueError("P6 violato: ogni ipotesi deve dichiarare un criterio di falsificazione.")
+    if not criterio_definito(criterio_falsificazione):
+        raise ValueError(
+            "P6 violato: ogni ipotesi deve dichiarare un criterio di falsificazione. "
+            "Un segnaposto («da definire», «TBD») non è un criterio."
+        )
     ipotesi = _load()
     ipotesi.append({
         "id": id_,
@@ -72,14 +114,17 @@ def aggiungi(id_, testo, criterio_falsificazione, scadenza=None):
 
 
 def aggiorna_stato(id_, nuovo_stato):
+    if nuovo_stato not in STATI:
+        raise ValueError(f"Stato sconosciuto: {nuovo_stato!r}. Attesi: {', '.join(STATI)}.")
     ipotesi = _load()
     trovata = False
     for h in ipotesi:
         if h["id"] == id_:
             trovata = True
-            if nuovo_stato == CONFERMATA and not h["criterio_falsificazione"].strip():
+            if nuovo_stato == CONFERMATA and not criterio_definito(h.get("criterio_falsificazione", "")):
                 raise ValueError(
-                    "P5 violato: non può essere confermata un'ipotesi senza criterio di falsificazione dichiarato."
+                    f"P6 violato: {id_} non dichiara come potrebbe essere falsificata, "
+                    "quindi non può essere confermata. Scrivi prima il criterio."
                 )
             h["stato"] = nuovo_stato
     if not trovata:
@@ -100,6 +145,8 @@ def stampa_stato():
         print(f"[{h['id']}] {h['stato']}")
         print(f"   {h['testo']}")
         print(f"   Criterio di falsificazione: {h['criterio_falsificazione']}")
+        if not criterio_definito(h.get("criterio_falsificazione", "")):
+            print("   ⚠  Criterio non dichiarato: per P6 questa ipotesi non è confermabile.")
         if h.get("scadenza"):
             print(f"   Scadenza: {h['scadenza']}")
         print()

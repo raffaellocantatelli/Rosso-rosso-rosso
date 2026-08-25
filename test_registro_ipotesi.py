@@ -1,0 +1,123 @@
+"""P6 deve reggere anche quando il campo è pieno.
+
+Il registro rifiutava solo il criterio vuoto. Un segnaposto («Da definire...»)
+passava il controllo, e H1 — che per CLAUDE.md §3 «non ha ancora un criterio di
+falsificazione» — poteva essere confermata. Questi test bloccano quel ritorno,
+e il secondo buco della stessa serratura: uno stato non canonico ("confermata")
+che non veniva confrontato con CONFERMATA e scavalcava il controllo del tutto.
+
+    python test_registro_ipotesi.py      # oppure: pytest test_registro_ipotesi.py
+"""
+import json
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+
+import registro_ipotesi as reg  # noqa: E402
+
+
+def _registro_isolato(tmp_path, ipotesi):
+    """Punta il modulo a un registro usa-e-getta: i test non toccano quello vero."""
+    percorso = tmp_path / "registro_test.json"
+    percorso.write_text(json.dumps(ipotesi, ensure_ascii=False), encoding="utf-8")
+    reg.REGISTRO_PATH = str(percorso)
+    return percorso
+
+
+def _ipotesi(criterio, stato=reg.APERTA):
+    return [{"id": "HX", "testo": "ipotesi di prova", "stato": stato,
+             "criterio_falsificazione": criterio, "scadenza": None}]
+
+
+def test_segnaposto_non_e_un_criterio():
+    assert not reg.criterio_definito(reg.CRITERIO_DA_DEFINIRE)
+    assert not reg.criterio_definito("")
+    assert not reg.criterio_definito("   ")
+    assert not reg.criterio_definito("TBD")
+    assert not reg.criterio_definito("-")
+    assert not reg.criterio_definito("Criterio da stabilire in seguito")
+
+
+def test_criterio_reale_e_accettato():
+    assert reg.criterio_definito(
+        "Falsificata se output/contatti.jsonl ha zero voci valide al 2026-12-11."
+    )
+    for h in reg.IPOTESI_INIZIALI:
+        if h["id"] in ("H2", "H3"):
+            assert reg.criterio_definito(h["criterio_falsificazione"]), h["id"]
+
+
+def test_conferma_rifiutata_senza_criterio(tmp_path):
+    percorso = _registro_isolato(tmp_path, _ipotesi(reg.CRITERIO_DA_DEFINIRE))
+    try:
+        reg.aggiorna_stato("HX", reg.CONFERMATA)
+    except ValueError as e:
+        assert "P6" in str(e)
+    else:
+        raise AssertionError("P6 non applicato: confermata un'ipotesi senza criterio")
+    # Il rifiuto non deve lasciare il registro a metà.
+    assert json.loads(percorso.read_text(encoding="utf-8"))[0]["stato"] == reg.APERTA
+
+
+def test_falsificare_resta_sempre_possibile(tmp_path):
+    """P6 blocca la conferma, non la smentita: si può sempre chiudere in negativo."""
+    _registro_isolato(tmp_path, _ipotesi(reg.CRITERIO_DA_DEFINIRE))
+    assert reg.aggiorna_stato("HX", reg.FALSIFICATA)[0]["stato"] == reg.FALSIFICATA
+
+
+def test_stato_non_canonico_rifiutato(tmp_path):
+    """"confermata" non è CONFERMATA: senza questo controllo aggirava P6."""
+    percorso = _registro_isolato(tmp_path, _ipotesi(reg.CRITERIO_DA_DEFINIRE))
+    try:
+        reg.aggiorna_stato("HX", "confermata")
+    except ValueError as e:
+        assert "Stato sconosciuto" in str(e)
+    else:
+        raise AssertionError("stato non canonico accettato: P6 aggirabile")
+    assert json.loads(percorso.read_text(encoding="utf-8"))[0]["stato"] == reg.APERTA
+
+
+def test_aggiungi_rifiuta_il_segnaposto(tmp_path):
+    _registro_isolato(tmp_path, [])
+    for criterio in ("", "   ", "TODO", reg.CRITERIO_DA_DEFINIRE):
+        try:
+            reg.aggiungi("HY", "ipotesi nuova", criterio)
+        except ValueError as e:
+            assert "P6" in str(e)
+        else:
+            raise AssertionError(f"criterio accettato ma non dichiarato: {criterio!r}")
+
+
+def test_ipotesi_sconosciuta(tmp_path):
+    _registro_isolato(tmp_path, _ipotesi("Falsificata se il contatore resta a zero."))
+    try:
+        reg.aggiorna_stato("H-inesistente", reg.CONFERMATA)
+    except KeyError:
+        pass
+    else:
+        raise AssertionError("ipotesi inesistente aggiornata senza errore")
+
+
+if __name__ == "__main__":
+    import tempfile
+
+    originale = reg.REGISTRO_PATH
+    falliti = 0
+    for nome, funzione in sorted(globals().items()):
+        if not nome.startswith("test_"):
+            continue
+        with tempfile.TemporaryDirectory() as d:
+            try:
+                if funzione.__code__.co_argcount:
+                    funzione(pathlib.Path(d))
+                else:
+                    funzione()
+                print(f"ok    {nome}")
+            except AssertionError as e:
+                falliti += 1
+                print(f"FALLITO {nome}: {e}")
+            finally:
+                reg.REGISTRO_PATH = originale
+    print(f"\n{falliti} falliti" if falliti else "\nTutti i test passano.")
+    sys.exit(1 if falliti else 0)
