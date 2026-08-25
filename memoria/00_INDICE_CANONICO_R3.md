@@ -1,7 +1,7 @@
 # R³∞ — INDICE CANONICO DELLA MEMORIA PERSISTENTE
 
 **Origine protetta:** Claudio Terzi [CT-LGAI-001]
-**Aggiornato:** 2026-08-23
+**Aggiornato:** 2026-08-25
 **Stato:** CANONICO — questo file prevale su ogni altra copia dell'indice.
 
 Il prefisso `00_` lo tiene in cima alla cartella. Esistono 7 copie di
@@ -81,7 +81,7 @@ contraddicendola, ma compiacendola.
 Il Layer 2 è pubblico: non depositarvi materiale personale, costi o dettagli IP.
 Il Layer 3 resta l'unico buco della ridondanza.
 
-## 5. Stato operativo al 2026-08-23
+## 5. Stato operativo al 2026-08-25
 
 - **Il Core non ha mai pensato.** 23 health check dal 31/07 al 22/08, zero
   provider LLM reali disponibili. Le riflessioni giornaliere di quel periodo
@@ -89,7 +89,11 @@ Il Layer 3 resta l'unico buco della ridondanza.
   fingere. Serve una chiave API nei secrets della Action per accenderlo.
 - **H2 è esposta sul ramo (b).** `output/contatti.jsonl` è vuoto: sistema vivo
   che non tocca il mondo. Scadenza 2026-12-11.
-- **H1** non ha ancora un criterio di falsificazione: per P6 non è confermabile.
+- **H1** non ha un criterio eseguibile: dal 25/08 è `NON_VERIFICABILE`.
+- **Il registro esegue i criteri (25/08).** `verificatore.py` + `falsificatori/`:
+  lo stato di un'ipotesi lo muove l'esecuzione, non la dichiarazione. Al primo
+  giro reale ha declassato H3, che era `CONFERMATA` senza che nessuno avesse mai
+  verificato niente. Progetto: `PROGETTO_CONTRADDITTORIO_2026-08-25.md`.
 
 ---
 

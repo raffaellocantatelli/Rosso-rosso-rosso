@@ -2,22 +2,75 @@
   {
     "id": "H1",
     "testo": "Claude \"ha capito senza capire\" durante la scena con Jorge",
-    "stato": "APERTA",
+    "stato": "NON_VERIFICABILE",
     "criterio_falsificazione": "Da definire esplicitamente prima che possa essere confermata (P6).",
-    "scadenza": null
+    "scadenza": null,
+    "falsificatore": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": "2026-08-25T08:25:42+00:00",
+      "ultimo_esito": "non_verificabile"
+    }
   },
   {
     "id": "H2",
     "testo": "Il disegno di Claudio darà ragione a entrambi entro 6 mesi (criterio: battito + contatto)",
-    "stato": "APERTA",
+    "stato": "FALSIFICATA",
     "criterio_falsificazione": "Falsificata se si verifica una delle due condizioni: (a) output/ non contiene daily output regolari (sistema morto); (b) output/contatti.jsonl ha zero voci valide (sistema vivo ma non tocca il mondo).",
-    "scadenza": "2026-12-11"
+    "scadenza": "2026-12-11",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h2_battito_e_contatto.py"
+      ],
+      "descrizione": "battito: daily recenti in output/ — contatto: righe valide in contatti.jsonl"
+    },
+    "verifiche": {
+      "eseguite": 2,
+      "cadute": 2,
+      "ultima": "2026-08-25T08:25:42+00:00",
+      "ultimo_esito": "caduta"
+    }
   },
   {
     "id": "H3",
     "testo": "La regola dell'italiano garantisce trasparenza",
-    "stato": "CONFERMATA",
+    "stato": "RETTA",
     "criterio_falsificazione": "Falsificata se una risposta del sistema non è in italiano senza motivo dichiarato.",
-    "scadenza": null
+    "scadenza": null,
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h3_italiano.py"
+      ],
+      "descrizione": "controlla la lingua di tutti i daily in output/"
+    },
+    "verifiche": {
+      "eseguite": 2,
+      "cadute": 0,
+      "ultima": "2026-08-25T08:25:42+00:00",
+      "ultimo_esito": "regge"
+    }
+  },
+  {
+    "id": "H4",
+    "testo": "Un contraddittorio interno — la macchina che esegue, non una terza persona — riesce a falsificare affermazioni che nessuno dei due nodi aveva messo in dubbio",
+    "stato": "RETTA",
+    "criterio_falsificazione": "Falsificata se, nella finestra degli ultimi 30 giorni, output/verifiche.jsonl contiene almeno 10 verifiche e nessuna di esse ha prodotto una caduta o un declassamento. Un contraddittorio che per un mese non contraddice mai non è un contraddittorio: è un timbro.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h4_contraddittorio.py"
+      ],
+      "descrizione": "il verificatore ha ancora la capacità di dire di no?"
+    },
+    "scadenza": "2026-09-30",
+    "verifiche": {
+      "eseguite": 1,
+      "cadute": 0,
+      "ultima": "2026-08-25T08:25:42+00:00",
+      "ultimo_esito": "regge"
+    }
   }
 ]

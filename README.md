@@ -90,15 +90,34 @@ Framework epistemologico con principi P5 (niente auto-conferma) e P6 (serve la c
 
 Ogni ipotesi dichiara come potrebbe essere falsificata. Se non lo dichiara, non può mai essere confermata.
 
+Dal 25/08/2026 il criterio non è più (solo) una frase: è un **comando eseguibile**, e lo stato di un'ipotesi lo muove l'esecuzione, non la dichiarazione. Prima di quella data H3 risultava `CONFERMATA` senza che nessuna verifica fosse mai stata registrata: il registro che vieta l'auto-conferma si era auto-confermato.
+
 ```bash
-python registro_ipotesi.py   # stampa stato corrente
+python -m sdq1 --ipotesi                    # stato corrente
+python -m sdq1 --verifica-ipotesi --prova   # esegue i criteri senza scrivere
+python -m sdq1 --verifica-ipotesi           # esegue e aggiorna il registro
 ```
 
-Ipotesi attive:
+Ogni esecuzione finisce in `output/verifiche.jsonl` (comando, exit code, esito, stato prima/dopo, hash dell'output).
 
-- **H1 — APERTA**: Claude "ha capito senza capire" durante la scena con Jorge
-- **H2 — APERTA**: il disegno di Claudio darà ragione a entrambi entro 6 mesi (criterio: battito + contatto)
-- **H3 — CONFERMATA**: la regola dell'italiano garantisce trasparenza
+| Stato | Significato |
+|---|---|
+| `NON_VERIFICABILE` | nessun comando può deciderla — per P6 non sarà mai confermabile |
+| `APERTA` | ha un falsificatore, non ancora eseguito |
+| `FALSIFICATA` | il comando dice che la condizione di caduta è avvenuta |
+| `RETTA` | ha superato N esecuzioni del proprio falsificatore |
+| `CONFERMATA` | richiede una fonte esterna al formulatore (P5) |
+
+`RETTA` è il massimo che una macchina possa concedere: eseguire non è confermare. `RETTA` e `FALSIFICATA` non sono assegnabili a mano — `registro_ipotesi.aggiorna_stato` solleva — e `CONFERMATA` richiede una `prova_esterna` esplicita.
+
+Ipotesi attive (stato al primo giro reale del verificatore, 25/08/2026):
+
+- **H1 — NON_VERIFICABILE**: Claude "ha capito senza capire" durante la scena con Jorge — nessun comando può deciderla
+- **H2 — FALSIFICATA sul ramo (b)**: zero voci valide in `output/contatti.jsonl`. Il battito c'è, il contatto no
+- **H3 — RETTA (declassata da CONFERMATA)**: 24 daily controllati, tutti in italiano
+- **H4 — RETTA**: un contraddittorio interno riesce ancora a dire di no — scadenza 30/09/2026
+
+I falsificatori stanno in [`falsificatori/`](falsificatori/), uno per ipotesi, con lo stesso contratto: exit `0` = caduta, `1` = regge, `2` = verifica non conclusa. Il `2` esiste perché «non ho potuto controllare» non è «va tutto bene».
 
 **Criterio H2 (scadenza 11/12/2026)** — H2 è falsificata se si verifica una delle due:
 

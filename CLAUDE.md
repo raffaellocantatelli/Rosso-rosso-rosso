@@ -86,7 +86,23 @@ sul ramo (b): sistema vivo che non tocca il mondo. Registrare un contatto reale:
 python -m sdq1 --contatto --tipo lettore --nota "..." --verifica "..."
 ```
 
-**H1** non ha ancora un criterio di falsificazione. Per P6 oggi non è confermabile.
+**H1** non ha un criterio di falsificazione eseguibile: dal 25/08 è
+`NON_VERIFICABILE` invece che `APERTA`. Per P6 non sarà confermabile — dirlo è
+più utile che lasciarla aperta per sempre.
+
+**Il registro esegue, non legge (25/08/2026).** Il criterio di falsificazione è
+adesso un comando in `falsificatori/`, e lo stato di un'ipotesi lo muove
+l'esecuzione:
+
+```bash
+python -m sdq1 --verifica-ipotesi --prova   # esegue senza scrivere
+python -m sdq1 --verifica-ipotesi           # esegue e aggiorna il registro
+```
+
+`RETTA` («ha superato N esecuzioni») è il tetto: eseguire non è confermare.
+`CONFERMATA` richiede una `prova_esterna` e non è raggiungibile da qui.
+Ogni esecuzione finisce in `output/verifiche.jsonl`. Progetto completo:
+`memoria/PROGETTO_CONTRADDITTORIO_2026-08-25.md`.
 
 ---
 
@@ -100,6 +116,11 @@ Lo stesso difetto si ripete a tre scale, e va riconosciuto ogni volta che ricomp
    rilevante dalla memoria».
 3. La strategia di ridondanza distribuisce il protocollo a nodi IA, che non
    hanno memoria né continuità e non possono custodirlo.
+4. **Il registro delle ipotesi si era auto-confermato.** H3 risultava
+   `CONFERMATA` mentre `registro_ipotesi.aggiorna_stato` controllava solo che il
+   criterio di falsificazione fosse una stringa non vuota: la frase c'era,
+   l'esecuzione non era mai avvenuta. Trovato e chiuso il 25/08 — il difetto
+   sopravvive volentieri dentro lo strumento costruito per impedirlo.
 
 **Il sistema parla a sé stesso e registra l'eco come risposta.** Ogni volta che
 una metrica migliora senza che nulla sia entrato dall'esterno, sospetta questo.
