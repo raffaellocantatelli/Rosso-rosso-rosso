@@ -3,7 +3,7 @@ from ..context import Context
 from . import raffa, decomp, memo, sentin, gen, wave
 
 
-def esegui(testo_utente, profilo, router, memory):
+def esegui(testo_utente, profilo, router, memory, memorizza=True):
     ctx = Context(testo_utente)
     ctx.meta["profile"] = profilo
 
@@ -16,5 +16,12 @@ def esegui(testo_utente, profilo, router, memory):
 
     # Il provider viene passato perche' la memoria rifiuti gli output Stub:
     # un giorno senza pensiero non deve diventare il contesto del giorno dopo.
-    memory.add(testo_utente, ctx.final, provider=ctx.provider_used)
+    #
+    # memorizza=False serve al daily. Il fix del 22/08 fermava solo gli Stub,
+    # ma il difetto non era lo Stub: era che il sistema rileggeva le proprie
+    # riflessioni come "contesto rilevante". Con un provider vero succedeva
+    # di nuovo, senza nemmeno il banner ad avvisare. Il verbale del daily e'
+    # il file in output/, non una voce di memoria.
+    if memorizza:
+        memory.add(testo_utente, ctx.final, provider=ctx.provider_used)
     return ctx

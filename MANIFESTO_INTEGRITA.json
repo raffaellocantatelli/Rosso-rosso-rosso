@@ -2,8 +2,8 @@
   "algoritmo": "sha256",
   "file": {
     ".github/workflows/daily.yml": {
-      "byte": 2098,
-      "sha256": "9dccebd54cc1f6dd3e0a510e0a56484279a9bed352edc35648acb3c6f27d6b88"
+      "byte": 2030,
+      "sha256": "251297be1b641d6f938725cb43b9ca80490b90919e59cbe00a48bc88db2fa45b"
     },
     "CLAUDE.md": {
       "byte": 9980,
@@ -110,8 +110,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 7481,
-      "sha256": "b3f8e27df19275b629d85bf1b1d6a7b006b6d7228f740486ccb72ede748a8a8f"
+      "byte": 8214,
+      "sha256": "0d17074bdcf2ce32dc3646ae031f8d7bad8edc04955878787657bbcf08abea3d"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -130,8 +130,8 @@
       "sha256": "ab0aa221da78b9f728069b5ec80bc7eea358c96e1ec26d0eb06fce4cf4136e00"
     },
     "sdq1/agents/pipeline.py": {
-      "byte": 643,
-      "sha256": "3628c93d41b510af5d8128cdd46a82b1bca88afeab21327d61b96f93d4e18c7b"
+      "byte": 1046,
+      "sha256": "f6b27a96249afb68c128dc847885e7a6474680a775934f86a73e67639dca66f4"
     },
     "sdq1/agents/raffa.py": {
       "byte": 1110,
@@ -152,6 +152,10 @@
     "sdq1/context.py": {
       "byte": 557,
       "sha256": "a869b03228d4bfdef17fbae1619dd2b7a7c87ecec4d2683880a29bebcb6efbd2"
+    },
+    "sdq1/daily.py": {
+      "byte": 5133,
+      "sha256": "79ea3a8f8714589237ab12bd45c5abb1af729fc870ec6426bf4379a1c95b2679"
     },
     "sdq1/llm/__init__.py": {
       "byte": 0,
@@ -250,8 +254,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "tests/test_verificatore.py": {
-      "byte": 9749,
-      "sha256": "85df877d37627fd5a8b34b0d5d859ef834968c305ba22a7222cd121600ca8055"
+      "byte": 11376,
+      "sha256": "340ceff102fe5ab1101a4661c4471f0ef2e468e3bb237b744c795f0946047b4e"
     },
     "trasmissione_ciclica.py": {
       "byte": 11893,
@@ -262,6 +266,6 @@
       "sha256": "1125d552cb2ae57a4524e1d2fad50b7a0893b92f7433d0995ec448a25e21f91f"
     }
   },
-  "generato": "2026-08-26T00:06:09.536467+00:00",
+  "generato": "2026-08-26T00:16:11.409714+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

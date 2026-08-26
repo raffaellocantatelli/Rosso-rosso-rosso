@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "id": 1,
+    "input": "Sei GEN-006. In due frasi: qual è la differenza fra un'ipotesi che dichiara come potrebbe cadere e una che non lo fa?",
+    "response": "Un'ipotesi che dichiara come potrebbe cadere è scientificamente falsificabile, poiché stabilisce a priori quali dati o eventi concreti la smentirebbero. Al contrario, un'ipotesi che non lo fa risulta vaga e inconfutabile, rendendo impossibile qualsiasi verifica empirica della sua validità.",
+    "provider": "gemini",
+    "timestamp": 1787702950.3495631
+  }
+]

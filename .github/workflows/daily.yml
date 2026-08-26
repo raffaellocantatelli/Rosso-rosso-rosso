@@ -46,10 +46,9 @@ jobs:
         run: |
           mkdir -p output
           DATE=$(date -u +%F)
-          PROMPT="Riflessione giornaliera del sistema SDQ-1."
-          python -m sdq1 "$PROMPT" > "output/daily_${DATE}.txt" \
-            || python -m sdq1 --economia "$PROMPT" > "output/daily_${DATE}.txt" \
-            || python -m sdq1 --no-api "$PROMPT" > "output/daily_${DATE}.txt"
+          python -m sdq1 --daily > "output/daily_${DATE}.txt" \
+            || python -m sdq1 --daily --economia > "output/daily_${DATE}.txt" \
+            || python -m sdq1 --daily --no-api > "output/daily_${DATE}.txt"
           python -m sdq1 --health
 
       - name: Committa l'output

@@ -232,3 +232,46 @@ class TestFalsificatoriReali(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestDailyNonSiRilegge(unittest.TestCase):
+    """Il daily non deve tornare domani come «contesto rilevante».
+
+    Il fix del 22/08 fermava solo gli Stub. Il difetto pero' non era lo Stub:
+    era il sistema che rilegge le proprie riflessioni. Con un provider vero
+    succedeva di nuovo, e senza banner ad avvisare.
+    """
+
+    def test_memorizza_false_non_scrive_in_memoria(self):
+        from sdq1.agents import pipeline
+
+        class MemoriaFinta:
+            def __init__(self):
+                self.scritte = []
+
+            def retrieve(self, _testo):
+                return []
+
+            def add(self, *args, **kwargs):
+                self.scritte.append(args)
+
+        class RouterFinto:
+            def generate(self, _prompt, profile="default"):
+                return "riflessione di prova, abbastanza lunga da non sembrare debole", "finto"
+
+        memoria = MemoriaFinta()
+        pipeline.esegui("prompt del daily", "default", RouterFinto(), memoria,
+                        memorizza=False)
+        self.assertEqual(memoria.scritte, [], "il daily e' entrato in memoria")
+
+        pipeline.esegui("una domanda vera", "default", RouterFinto(), memoria)
+        self.assertEqual(len(memoria.scritte), 1, "una domanda normale deve entrare")
+
+    def test_il_prompt_del_daily_porta_i_fatti(self):
+        from sdq1 import daily
+
+        prompt = daily.costruisci_prompt(fatti={"health": {"rilevazioni_totali": 3}})
+        self.assertIn("DATI", prompt)
+        self.assertIn("rilevazioni_totali", prompt)
+        self.assertIn("UNKNOWN", prompt)
+        self.assertIn("NON inventare metriche", prompt)
