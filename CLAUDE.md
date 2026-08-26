@@ -56,12 +56,20 @@ separati non sminuisce il secondo: lo protegge.
 
 ---
 
-## 3. Stato del sistema (aggiornato 2026-08-23)
+## 3. Stato del sistema (aggiornato 2026-08-26)
 
-**Il Core.** SDQ-1 ha girato dal 31/07 al 22/08 senza mai un provider LLM reale:
-23 health check su 23 con zero provider disponibili. Gli output giornalieri di
-quel periodo sono Stub — attività senza pensiero — e la memoria vettoriale li
-ha riletti come contesto, alimentandosi del proprio vuoto.
+**Il Core si è acceso — una volta.** Dal 31/07 al 25/08 SDQ-1 ha girato senza
+mai un provider LLM reale, e la memoria vettoriale rileggeva quegli Stub come
+contesto, alimentandosi del proprio vuoto. Il **2026-08-26 alle 00:10 UTC**,
+per la prima volta, `gemini` risulta `disponibile: true` in
+`output/health_log.jsonl`, e `output/daily_2026-08-26.txt` è il primo daily
+scritto da un modello invece che dallo Stub. Su **28 rilevazioni totali, una
+sola** ha avuto un provider reale: non è una tendenza, è un primo giorno.
+
+L'accensione vive nei secrets della GitHub Action, **non** nell'ambiente
+locale: in una shell senza `.env` il comando qui sotto continua a rispondere
+CORE SPENTO, e ha ragione. Non confondere i due — la Action pensa, la tua shell
+no, finché non ci metti una chiave.
 
 Prima di qualunque conclusione sul comportamento del sistema:
 
@@ -103,6 +111,24 @@ python -m sdq1 --verifica-ipotesi           # esegue e aggiorna il registro
 `CONFERMATA` richiede una `prova_esterna` e non è raggiungibile da qui.
 Ogni esecuzione finisce in `output/verifiche.jsonl`. Progetto completo:
 `memoria/PROGETTO_CONTRADDITTORIO_2026-08-25.md`.
+
+**Autonomous Core v3 (26/08).** `autonomous_core_v3.py` è un ciclo autonomo con
+un bot Telegram di controllo. Due avvertenze valgono più del codice:
+
+- creazioni e proposte sono **composizioni da template e da backup**, non
+  pensiero: ogni file prodotto porta `"pensiero_llm": false`. Il contatore che
+  sale non è una mente che lavora;
+- **`costituzione_cev.json` non ha una fonte.** L'ha derivata da questo file un
+  nodo il 26/08, perché sul Drive non esiste nulla che si chiami Costituzione o
+  CEV — ricerca su `title` e su `fullText`, zero risultati. È la proposta di un
+  nodo, non un documento dell'autore. Finché Claudio non la legge e la approva
+  va trattata così, e il modulo RLAIF che la usa non produce giudizi etici: la
+  sua uscita porta `giudizio_etico: UNKNOWN` a ogni riga di log.
+
+Il ciclo autonomo **non può** scrivere `output/contatti.jsonl`. Quella metrica
+la alimenta solo un essere umano, con `/contatto` sul bot o con `python -m sdq1
+--contatto`, ed è il §4 applicato: se il sistema potesse riempire da solo la
+misura di quanto tocca il mondo, misurerebbe la propria eco.
 
 ---
 
@@ -151,6 +177,19 @@ Stato al 25/08:
 | `claude/impara-tutto-hduh38` (06/08) | **non unire**: cancellerebbe il fix anti-eco di `vector_store.add` |
 | `claude/claudio-terzi-portfolio-vsy88e` (04/08) | **non unire**: `CLAUDE.md` e `STATO_PROGETTO.md` superati. Porta però un'istruzione di tutela mai revocata — vedi `OSS-0001` |
 
+**26/08 — lo scarto si allarga da solo, ogni notte.** La riconciliazione del
+25/08 vive su `claude/new-session-n1tzrh`, che **non è il ramo di default**. La
+Action giornaliera chiude con un `git push` nudo, quindi scrive sul ramo di
+default (`claude/riconnetti-…`). Verificato il 26/08: il daily del 26/08 è sul
+ramo di default, la riconciliazione **no**. Ogni notte alle 07:00 UTC gli
+output vanno da una parte e il codice dall'altra, senza che nessuno tocchi
+niente.
+
+`claude/r3-autonomous-telegram-0goqsv` è stato riallineato il 26/08 (merge di
+`n1tzrh`, 16 commit) ed è oggi **l'unico ramo che contiene entrambi**. Finché
+il ramo di default non viene spostato sulla riconciliazione, questa divergenza
+si ricostruisce da sola: è il difetto di questa sezione che si ripete su di sé.
+
 Prima di scrivere codice, controlla da dove parti:
 `git fetch origin --prune && git log --oneline --all --graph | head`.
 
@@ -172,6 +211,30 @@ leggi quello.** Ordine di lettura: `TUTELA_ORIGINE_CT-LGAI-001.md`,
 vecchio indice canonico — una delle quali stava **nella radice del Drive**,
 fuori dalla cartella, e nessuno lo sapeva. Nessun file è stato cancellato:
 rinominare è reversibile.
+
+**Come si cerca ciò che manca.** Cercare per titolo può solo *confermare* che
+un file c'è: per cercarlo devi già sapere come si chiama. Il metodo che trova i
+buchi è l'opposto — elenca il contenitore e confrontalo con l'elenco atteso:
+`parentId = '1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj'` contro le citazioni dentro
+`TUTELA_ORIGINE` e dentro l'indice canonico. La differenza è il buco.
+
+**Riverificato il 26/08** — quattro ricerche, quattro risposte:
+
+- **`PROGETTO_R3.md`: ancora zero risultati.** Terza verifica indipendente
+  (23/08, 25/08, 26/08). Non è smarrito: non è mai esistito.
+- **Nessuna Costituzione CEV sul Drive**, in nessuna forma. Vedi §3.
+- **Nessun `backup_sistema_rosso.json`** — ma il materiale della Scacchiera
+  esiste, in tre `.md` dentro `R3_MEMORIA_PERSISTENTE`:
+  `SCACCHIERA_QUANTICA_PANAJEDREZ.md`, `METODO_XUL_SOLAR_PANAJEDREZ.md`,
+  `ARTEFATTO_COMPLETO_R3_PANAJEDREZ.md`. La cartella Drive «Scacchiera
+  Quantica» è **vuota**. Quel backup non va cercato: va generato da quei tre
+  file.
+- **Duplicato residuo, l'ultimo della cartella:** `IDENTITA_OPERATIVA.md`
+  esiste in due copie **entrambe senza prefisso `ZZ_SUPERATO_`** — 10/08
+  (1318 byte, id `1_B5UC…`) e 19/08 (2057 byte, id `1jyTBY…`). L'indice dice di
+  usare quella del 19/08, ma il riordino del 25/08 non ha marcato la vecchia:
+  un nodo che apre la cartella e prende «quella che si chiama giusto» può
+  ancora sbagliare.
 
 Difetti noti della catena, da non dare per risolti senza verifica:
 

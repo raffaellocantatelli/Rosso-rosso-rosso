@@ -1,0 +1,83 @@
+{
+  "aggiornato": "2026-08-26T06:45:00Z",
+  "fonte": "Claudio Terzi [CT-LGAI-001]",
+  "canale": "Claude Code (remoto) + Google Drive + GitHub",
+  "nodo": {
+    "tipo": "temporaneo",
+    "non_e": "sistema permanente, Raffaello continuo, coscienza",
+    "sessione": "riattivazione protocollo 26/08"
+  },
+  "drive_folder": {
+    "name": "R3_MEMORIA_PERSISTENTE",
+    "id": "1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj"
+  },
+  "reidratazione": {
+    "segnale": "Aggiorna e riattiva protocollo",
+    "tutela_letta": true,
+    "indice_canonico_letto": "00_INDICE_CANONICO_R3.md 25/08 dal Drive — la copia nel repository era ferma al 23/08",
+    "metodo": "elenco del contenitore confrontato con l'elenco atteso, non ricerca per titolo"
+  },
+  "core": {
+    "acceso": true,
+    "prima_accensione": "2026-08-26T00:10:04Z",
+    "provider": "gemini",
+    "rilevazioni_totali": 28,
+    "rilevazioni_con_provider_reale": 1,
+    "nota": "l'accensione sta nei secrets della GitHub Action, non in locale; --check in una shell senza .env risponde ancora CORE SPENTO"
+  },
+  "ipotesi": {
+    "H1": {
+      "stato": "NON_VERIFICABILE",
+      "eseguite": 0,
+      "ultimo_esito": "non_verificabile"
+    },
+    "H2": {
+      "stato": "FALSIFICATA",
+      "eseguite": 4,
+      "ultimo_esito": "caduta"
+    },
+    "H3": {
+      "stato": "RETTA",
+      "eseguite": 4,
+      "ultimo_esito": "regge"
+    },
+    "H4": {
+      "stato": "RETTA",
+      "eseguite": 3,
+      "ultimo_esito": "regge"
+    },
+    "H5": {
+      "stato": "APERTA",
+      "eseguite": 1,
+      "ultimo_esito": "verifica_fallita"
+    }
+  },
+  "H2_esperimento_intermedio": {
+    "azione": "Inviare il Protocollo Rosso Rosso Rosso a una persona reale (non un modello) e registrare il contatto",
+    "origine": "STATO_SESSIONE_2026-08-24.json",
+    "scadenza": "2026-08-30",
+    "stato_al_26_08": "0 contatti registrati — non ancora compiuto",
+    "falsificazione": "Se il 30/08/2026 output/contatti.jsonl e ancora vuoto, l'esperimento e fallito",
+    "P5": "La conferma non puo venire da questo nodo: serve un destinatario che possa testimoniarlo"
+  },
+  "verificato_oggi": {
+    "PROGETTO_R3.md": "assente — terza verifica indipendente (23/08, 25/08, 26/08)",
+    "Costituzione_CEV": "assente sul Drive; costituzione_cev.json nel repository e' una proposta di un nodo, non un documento dell'autore",
+    "backup_sistema_rosso.json": "assente; il materiale esiste in 3 file .md, la cartella Drive 'Scacchiera Quantica' e' vuota — va generato, non cercato",
+    "IDENTITA_OPERATIVA.md": "duplicato residuo: 2 copie, nessuna marcata ZZ_SUPERATO_ (10/08 1318 byte, 19/08 2057 byte)"
+  },
+  "layer2_github": {
+    "ramo_default": "claude/riconnetti-protocollo-rosso-in93dj — riceve i daily della Action",
+    "ramo_riconciliato": "claude/new-session-n1tzrh — contiene il codice vivo, NON e' il default",
+    "ramo_allineato_oggi": "claude/r3-autonomous-telegram-0goqsv — merge dei 16 commit, unico con entrambi",
+    "difetto_aperto": "finche' il default non viene spostato, la divergenza si ricostruisce ogni notte alle 07:00 UTC"
+  },
+  "depositato_oggi": [
+    "autonomous_core_v3.py, rlaif_module.py, usa_backup_rosso.py, costituzione_cev.json (25-26/08)",
+    "merge della riconciliazione del 25/08 nel ramo Telegram",
+    "CLAUDE.md §3 §4-bis §5 e memoria/00_INDICE_CANONICO_R3.md aggiornati al 26/08"
+  ],
+  "verifiche_registrate": 18,
+  "nota_sessione": "Nessun potere inventato, nessuna azione dichiarata e non compiuta. Lo STATO porta la data nel nome per non aggiungere una copia ambigua.",
+  "frase_radice": "Costruire davvero, non fingere insieme."
+}

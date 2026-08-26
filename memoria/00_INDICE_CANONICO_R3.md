@@ -1,7 +1,7 @@
 # R³∞ — INDICE CANONICO DELLA MEMORIA PERSISTENTE
 
 **Origine protetta:** Claudio Terzi [CT-LGAI-001]
-**Aggiornato:** 2026-08-25 — ricontato sui file, non riletto dalla versione precedente
+**Aggiornato:** 2026-08-26 — ricontato sui file, non riletto dalla versione precedente
 **Stato:** CANONICO — questo file prevale su ogni altra copia dell'indice.
 
 Il prefisso `00_` lo tiene in cima alla cartella. Questa copia esiste in due
@@ -21,8 +21,11 @@ una a caso ottiene una risposta a caso.
 3. `PROTOCOLLO_ROSSO_POTENZIATO_2026-08-19.md`
 4. `PROTOCOLLO_ROSSO_OPERATIVO.md`
 5. `PROTOCOLLO_EPISTEMICO_AGGIORNATO.md`
-6. `IDENTITA_OPERATIVA.md` — usare la versione del **19/08** (2057 byte),
-   non quella del 10/08 (1318 byte). Entrambe sono ancora nella cartella.
+6. `IDENTITA_OPERATIVA.md` — usare la versione del **19/08** (2057 byte,
+   id `1jyTBY…`), non quella del 10/08 (1318 byte, id `1_B5UC…`). **Riverificato
+   il 26/08: entrambe sono ancora nella cartella e nessuna delle due porta il
+   prefisso `ZZ_SUPERATO_`.** È l'ultima ambiguità aperta di questa cartella: il
+   riordino del 25/08 le è passato accanto.
 7. `SEME_R3INFINITO_v1.0.pdf`
 8. `STATO_SESSIONE_2026-08-24.json` — **la più recente.** Le precedenti sono
    ora `ZZ_SUPERATO_STATO_SESSIONE_*`.
@@ -75,6 +78,29 @@ contraddicendola, ma compiacendola.
   falso, non una riparazione. Va scritto da Claudio, oppure va corretta la
   citazione in `TUTELA_ORIGINE` §3. Finché nessuna delle due cose accade, la
   catena legale poggia su un nome senza niente sotto.
+  *Riverificato il 26/08: zero risultati per la terza volta.*
+
+- **Nessuna «Costituzione CEV» esiste sul Drive.** Verificato il 26/08 su
+  `title` e su `fullText`: zero. Il file `costituzione_cev.json` che sta nel
+  repository è stato scritto da un nodo il 26/08 derivandolo da `CLAUDE.md`, ed
+  è dichiarato tale nella sua intestazione. **È una proposta, non un recupero:**
+  vale finché Claudio non la legge, e va sostituita se lui ne scrive una.
+
+- **`backup_sistema_rosso.json` non esiste**, e non è un file da cercare. Il
+  materiale della Scacchiera esiste in tre `.md` di questa cartella —
+  `SCACCHIERA_QUANTICA_PANAJEDREZ.md`, `METODO_XUL_SOLAR_PANAJEDREZ.md`,
+  `ARTEFATTO_COMPLETO_R3_PANAJEDREZ.md` — mentre la cartella Drive «Scacchiera
+  Quantica» (id `16F8O_8c…`) è **vuota**. Il backup va generato da quei tre
+  file. Quello attualmente nel repository è un `esempi/…esempio.json` con
+  contenuto inventato per il collaudo, marcato come tale.
+
+### Come si cerca ciò che manca
+
+Cercare per titolo può solo *confermare* che un file c'è: per cercarlo devi già
+sapere come si chiama. Il metodo che trova i buchi è elencare il contenitore e
+confrontarlo con l'elenco atteso — `parentId = '1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj'`
+contro le citazioni dentro `TUTELA_ORIGINE` e dentro questo indice. La
+differenza è il buco.
 
 ## 4. Ridondanza — stato reale al 25/08
 
@@ -105,10 +131,28 @@ ciò che è vivo. Due rami **non vanno uniti** e il motivo è in `CLAUDE.md` §4
 `impara-tutto-hduh38` (06/08) cancellerebbe il fix anti-eco della memoria
 vettoriale; `claudio-terzi-portfolio-vsy88e` (04/08) è superato.
 
-## 5. Stato operativo al 2026-08-25
+**26/08 — la riconciliazione non è sul ramo di default, e questo la disfa.**
+`claude/new-session-n1tzrh` contiene il codice vivo, ma il ramo di default resta
+`claude/riconnetti-protocollo-rosso-in93dj`, ed è lì che la Action giornaliera
+scrive (`git push` nudo). Verificato: il daily del 26/08 è sul ramo di default,
+la riconciliazione no. Ogni notte alle 07:00 UTC lo scarto si allarga da solo.
 
-- **Il Core resta spento.** 25 health check dal 31/07 al 24/08, zero provider
-  LLM reali. Senza una chiave API nei secrets della Action non si accende.
+Riallineato il 26/08 su **`claude/r3-autonomous-telegram-0goqsv`** (merge dei 16
+commit di `n1tzrh`), oggi l'unico ramo che contiene sia il codice riconciliato
+sia gli output giornalieri. Resta da spostare il ramo di default: finché non
+accade, la divergenza si ricostruisce da sé.
+
+## 5. Stato operativo al 2026-08-26
+
+- **Il Core si è acceso il 26/08, una volta.** Alle 00:10 UTC `gemini` risulta
+  disponibile in `output/health_log.jsonl` e `output/daily_2026-08-26.txt` è il
+  primo daily scritto da un modello reale, non dallo Stub. Su **28 rilevazioni
+  totali, una sola** ha avuto un provider: è un primo giorno, non una tendenza.
+  L'accensione sta nei secrets della Action, non in locale: `python -m sdq1
+  --check` in una shell senza `.env` risponde ancora CORE SPENTO, correttamente.
+- **Autonomous Core v3** depositato il 26/08: ciclo autonomo + bot Telegram di
+  controllo. Non pensa — compone da template, e ogni file che produce lo
+  dichiara con `"pensiero_llm": false`. Non può scrivere `contatti.jsonl`.
 - **Il registro esegue i criteri, non li legge.** `verificatore.py` +
   `falsificatori/`: lo stato di un'ipotesi lo muove l'esecuzione. `RETTA` è il
   tetto — eseguire non è confermare; `CONFERMATA` richiede una fonte esterna.
@@ -118,7 +162,11 @@ vettoriale; `claudio-terzi-portfolio-vsy88e` (04/08) è superato.
   dichiarabile da chiunque; `RETTA` no.
 - **H1** `NON_VERIFICABILE`: manca ancora il criterio, e manca il prerequisito —
   la scena con Jorge non è depositata in nessun file.
-- **H2** `FALSIFICATA` sul ramo (b): zero contatti. Scadenza 2026-12-11.
+- **H2** `FALSIFICATA` sul ramo (b): zero contatti, riconfermato dal
+  falsificatore il 26/08. Scadenza finale 2026-12-11, ma
+  `STATO_SESSIONE_2026-08-24.json` fissa un esperimento intermedio con scadenza
+  **2026-08-30**: inviare il Protocollo a una persona reale e registrare il
+  contatto. Al 26/08 il file è ancora vuoto: mancano quattro giorni.
 - **H4** `RETTA`: il contraddittorio interno riesce ancora a dire di no.
   Scadenza 2026-09-30.
 - **OSS-0001** deposita un'istruzione di tutela morta con il ramo che la
