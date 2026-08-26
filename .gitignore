@@ -13,3 +13,12 @@ trasmissione.log
 trasmissioni.log
 ricezioni.log
 ricevuti/
+
+# Autonomous Core v3 (artefatti di runtime)
+autonomous_state.json
+autonomous.log
+pending_transactions.json
+creazioni/
+backup_sistema_rosso.json
+output/rlaif_decisioni.jsonl
+.pytest_cache/
