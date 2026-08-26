@@ -2,8 +2,8 @@
   "algoritmo": "sha256",
   "file": {
     ".github/workflows/daily.yml": {
-      "byte": 2030,
-      "sha256": "251297be1b641d6f938725cb43b9ca80490b90919e59cbe00a48bc88db2fa45b"
+      "byte": 3009,
+      "sha256": "f69fb444a178a96405cad639ef395ed28c0206a7159b5ec600e25e0bdf9e9009"
     },
     "CLAUDE.md": {
       "byte": 9980,
@@ -44,6 +44,10 @@
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
       "sha256": "6cc0eaaaf73d66edcc68d19cb49228cab4c04ba1cf2b67cabf0dc24c277c65c2"
+    },
+    "memoria/CONTRADDITTORIO_2026-08-26.md": {
+      "byte": 4647,
+      "sha256": "281075a567d80a6409abcf0b632dbdd3142829e27b201ab517cc46d4d73284fd"
     },
     "memoria/PROGETTO_CONTRADDITTORIO_2026-08-25.md": {
       "byte": 11964,
@@ -174,24 +178,24 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/llm/providers/anthropic_provider.py": {
-      "byte": 1058,
-      "sha256": "7479b566c8fe9181d305ceb933f5db0899eb95d176a1e5e0461ad14c8f16e7d6"
+      "byte": 1094,
+      "sha256": "e1d2bbc39e77c997da571956d620329b429c077832790702582c1210c456b374"
     },
     "sdq1/llm/providers/base.py": {
-      "byte": 181,
-      "sha256": "0602f6fe268bc8635bd456201d17d06259db7e219307dafb970c865bf1607a10"
+      "byte": 780,
+      "sha256": "197a6ebd8d576c67ec743b3b727b4c79b72f500fe9eda0529aac77b2309490eb"
     },
     "sdq1/llm/providers/deepseek_provider.py": {
-      "byte": 742,
-      "sha256": "584cce14e7e3d04a9c36aca9679be529c3f65e4b32ff71ab037d77f42ac49d19"
+      "byte": 778,
+      "sha256": "b139ed9a5d0a672a9e378ac52af88c5105cce932a3b1fda280dee2fc0405c2e9"
     },
     "sdq1/llm/providers/gemini_provider.py": {
-      "byte": 978,
-      "sha256": "4ae75bdf699f2a9de229d17115f5aec6edbce8b5c9ff4f060f24915fafa91d0d"
+      "byte": 1014,
+      "sha256": "52110ad6f8458005bd74b515442fb1eb4ea4d3928902519df1a162d3b849c2fc"
     },
     "sdq1/llm/providers/ollama_provider.py": {
-      "byte": 844,
-      "sha256": "0bb6b85dba568f37a864f8f4b2acd627750ca80d3d34ed16864e0b86dcbd0cbd"
+      "byte": 880,
+      "sha256": "f4db9542c5c9e2791df5cb821e0dfd54bfbda15d5dc2c599b333ac4d11eab4d0"
     },
     "sdq1/llm/providers/stub_provider.py": {
       "byte": 791,
@@ -266,6 +270,6 @@
       "sha256": "1125d552cb2ae57a4524e1d2fad50b7a0893b92f7433d0995ec448a25e21f91f"
     }
   },
-  "generato": "2026-08-26T00:16:11.409714+00:00",
+  "generato": "2026-08-26T00:23:32.270302+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

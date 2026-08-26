@@ -1,6 +1,6 @@
 import os
 import requests
-from .base import Provider
+from .base import Provider, timeout_richiesta
 
 API_URL = "https://api.deepseek.com/chat/completions"
 
@@ -19,7 +19,7 @@ class DeepSeekProvider(Provider):
             API_URL,
             headers={"Authorization": f"Bearer {key}"},
             json={"model": "deepseek-chat", "messages": [{"role": "user", "content": prompt}]},
-            timeout=30,
+            timeout=timeout_richiesta(),
         )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]

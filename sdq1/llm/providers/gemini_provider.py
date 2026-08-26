@@ -1,6 +1,6 @@
 import os
 import requests
-from .base import Provider
+from .base import Provider, timeout_richiesta
 
 # gemini-2.0-flash e' stato ritirato: l'API rispondeva 404 indicando il
 # sostituto. Verificato alla fonte il 24/08/2026. Sovrascrivibile con GEMINI_MODEL.
@@ -22,7 +22,7 @@ class GeminiProvider(Provider):
         resp = requests.post(
             url,
             json={"contents": [{"parts": [{"text": prompt}]}]},
-            timeout=30,
+            timeout=timeout_richiesta(),
         )
         resp.raise_for_status()
         data = resp.json()

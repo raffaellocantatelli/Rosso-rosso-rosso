@@ -58,3 +58,21 @@ jobs:
           git add output/ sdq1/memory/store.json sdq1/sar/state.json 2>/dev/null || true
           git diff --cached --quiet || git commit -m "chore: run giornaliero SDQ-1 $(date -u +%F)"
           git push
+
+      # Proposta A del contraddittorio del 26/08, eseguita.
+      # Prima di oggi una run senza provider ripiegava su --no-api, committava
+      # uno Stub e finiva VERDE: 25 giorni di "tutto ok" mentre il Core non
+      # aveva mai pensato. E' la definizione di lettura che non obbliga a
+      # niente (latenza.py). Questo passo sta DOPO il commit: il file di oggi
+      # viene salvato comunque, ma la run diventa rossa.
+      - name: Il daily di oggi e' stato pensato?
+        run: |
+          DATE=$(date -u +%F)
+          if grep -q "IL CORE È SPENTO" "output/daily_${DATE}.txt"; then
+            echo "::error title=Daily Stub::La riflessione di oggi non e' stata \
+            pensata da nessun modello. Il file e' stato salvato con il suo banner, \
+            ma questa run e' rossa apposta: aggiungi GOOGLE_API_KEY (o una delle \
+            altre) nei secrets della repository."
+            exit 1
+          fi
+          echo "Daily generato da un provider reale."

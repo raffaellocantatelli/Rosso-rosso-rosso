@@ -1,6 +1,6 @@
 import os
 import requests
-from .base import Provider
+from .base import Provider, timeout_richiesta
 
 API_URL = "https://api.anthropic.com/v1/messages"
 DEFAULT_MODEL = "claude-sonnet-5"
@@ -28,7 +28,7 @@ class AnthropicProvider(Provider):
                 "max_tokens": 1024,
                 "messages": [{"role": "user", "content": prompt}],
             },
-            timeout=30,
+            timeout=timeout_richiesta(),
         )
         resp.raise_for_status()
         data = resp.json()
