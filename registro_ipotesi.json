@@ -9,7 +9,7 @@
     "verifiche": {
       "eseguite": 0,
       "cadute": 0,
-      "ultima": "2026-08-25T08:25:42+00:00",
+      "ultima": "2026-08-26T00:05:34+00:00",
       "ultimo_esito": "non_verificabile"
     }
   },
@@ -27,9 +27,9 @@
       "descrizione": "battito: daily recenti in output/ — contatto: righe valide in contatti.jsonl"
     },
     "verifiche": {
-      "eseguite": 2,
-      "cadute": 2,
-      "ultima": "2026-08-25T08:25:42+00:00",
+      "eseguite": 3,
+      "cadute": 3,
+      "ultima": "2026-08-26T00:05:34+00:00",
       "ultimo_esito": "caduta"
     }
   },
@@ -47,9 +47,9 @@
       "descrizione": "controlla la lingua di tutti i daily in output/"
     },
     "verifiche": {
-      "eseguite": 2,
+      "eseguite": 3,
       "cadute": 0,
-      "ultima": "2026-08-25T08:25:42+00:00",
+      "ultima": "2026-08-26T00:05:34+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -67,9 +67,9 @@
     },
     "scadenza": "2026-09-30",
     "verifiche": {
-      "eseguite": 1,
+      "eseguite": 2,
       "cadute": 0,
-      "ultima": "2026-08-25T08:25:42+00:00",
+      "ultima": "2026-08-26T00:05:34+00:00",
       "ultimo_esito": "regge"
     }
   }
