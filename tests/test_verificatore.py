@@ -339,3 +339,38 @@ class TestSegretiOscurati(unittest.TestCase):
         self.assertNotIn("?key={key}", testo,
                          "la chiave e' tornata nella query string")
         self.assertIn("x-goog-api-key", testo)
+
+
+class TestArchivio(unittest.TestCase):
+    """L'archivio dà le fonti, mai la voce del sistema."""
+
+    def setUp(self):
+        import archivio
+        self.archivio = archivio
+        self.indice = archivio.costruisci_indice()
+
+    def test_le_fonti_ci_sono(self):
+        file_indicizzati = {f["file"] for f in self.indice}
+        self.assertIn("testi/PROTOCOLLO_ROSSO_v2_REVISIONE.md", file_indicizzati)
+        self.assertIn("CLAUDE.md", file_indicizzati)
+
+    def test_nessun_output_del_sistema_entra_in_contesto(self):
+        """Il difetto §4.2 non deve poter rientrare travestito da erudizione."""
+        import re
+        file_indicizzati = {f["file"] for f in self.indice}
+        for nome in file_indicizzati:
+            self.assertIsNone(
+                re.search(r"CONTRADDITTORIO_|daily_|store\.json|verifiche\.jsonl", nome),
+                f"{nome} è un output del sistema e non può essere una fonte",
+            )
+
+    def test_ogni_frammento_porta_la_sua_provenienza(self):
+        for frammento in self.indice:
+            self.assertTrue(frammento["file"])
+            self.assertGreaterEqual(frammento["riga"], 1)
+
+    def test_il_contesto_espone_file_e_riga(self):
+        contesto = self.archivio.come_contesto("conservare trasmettere archivio",
+                                               quanti=2, indice=self.indice)
+        self.assertIn("FONTE:", contesto)
+        self.assertRegex(contesto, r"FONTE: [^\s:]+:\d+")

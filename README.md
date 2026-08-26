@@ -196,6 +196,26 @@ curl -X POST http://localhost:8001/documents \
 
 ---
 
+## Il Contraddittorio — due passaggi che non possono essere eco
+
+Il SAR eseguito da un modello, con la contro-forza dentro l'architettura invece che nelle buone intenzioni.
+
+```bash
+python contraddittore.py --economia   # analisi + falsificazione, deposita in memoria/
+python archivio.py "una domanda"      # cosa dicono le fonti, con file e riga
+python archivio.py --stato            # cosa è indicizzato
+```
+
+**Passaggio 1 — l'Analista** riceve i fatti eseguiti, le ambizioni dichiarate (tenute su uno strato separato) e i frammenti delle fonti con la loro provenienza. **Passaggio 2 — il Contraddittore** riceve solo i fatti grezzi e le affermazioni del primo, mai il suo ragionamento, con un'unica istruzione: falsificare.
+
+Con un solo provider i due passaggi girano sulla stessa catena causale, e il rapporto lo scrive in testa: **CONTRADDITTORIO DEBOLE** — lo stesso modello che parla due volte non è una conferma (P5).
+
+`archivio.py` indicizza **solo le fonti**: `testi/`, i documenti di `memoria/` scritti dall'autore, `CLAUDE.md`, `README.md`. Non entrano mai gli output del sistema (daily, contraddittori, memoria vettoriale) né i documenti scritti da un nodo IA: darli in pasto al modello come «memoria» è il difetto §4.2 travestito da erudizione. Ogni frammento porta `file:riga`, perché un `RECUPERATO` la cui fonte non si può aprire è un'inferenza travestita.
+
+Materiale privato (es. una copia locale del Drive) si indicizza con `R3_ARCHIVIO_EXTRA=/percorso`: l'indice si costruisce a ogni esecuzione e non viene mai depositato, quindi non finisce nella repository pubblica.
+
+---
+
 ## protocollo-rosso-bot — Il Protocollo in conversazione
 
 Bot Telegram ([`protocollo-rosso-bot/`](protocollo-rosso-bot/)) che fa attraversare il *Protocollo Rosso Rosso Rosso* v2.0 un comando alla volta: la tesi grande dichiarata come `IPOTESI`, i due strati, P5 e P6, il Santuario del Capitolo 4, i tre veli.

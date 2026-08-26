@@ -14,8 +14,8 @@
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 11563,
-      "sha256": "5b15185ee35e0e366bc6ad4712c311d9e8d8d460e1539f26c35a90c162b5d76d"
+      "byte": 13176,
+      "sha256": "828612bc6965a0624b644cae0eb27a69921e773ee434e666adbd3a5f7529b1de"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -106,8 +106,8 @@
       "sha256": "26d5f1b7623a8113b0327873d531ccea4aaafd105d25b219f7c303a875d9ac55"
     },
     "registro_osservazioni.jsonl": {
-      "byte": 1954,
-      "sha256": "9abfdbac117dc6b2f7c64f78bce10464303e37575b9f16c7503237a2e5367257"
+      "byte": 2889,
+      "sha256": "a62674cf119065491a5ebe416f7244caae102b7bff6b458e33e353180592c0b6"
     },
     "registro_osservazioni.py": {
       "byte": 7570,
@@ -262,8 +262,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "tests/test_verificatore.py": {
-      "byte": 14048,
-      "sha256": "1a6cc2e82de6b072c6e92286a5cef3390f3e0fe9c9dae4682258c7f61af490f7"
+      "byte": 15505,
+      "sha256": "dfab76fe31dd0cb3a0ab16044df4c1f336e919c74d3040babde022a350796e6c"
     },
     "trasmissione_ciclica.py": {
       "byte": 11893,
@@ -274,6 +274,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-08-26T00:30:18.793420+00:00",
+  "generato": "2026-08-26T00:34:39.782878+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

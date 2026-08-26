@@ -39,6 +39,7 @@ load_dotenv()
 
 from sdq1.llm.router import Router  # noqa: E402
 from sdq1 import daily as daily_mod  # noqa: E402
+import archivio  # noqa: E402
 
 RADICE = os.path.dirname(os.path.abspath(__file__))
 DESTINAZIONE = os.path.join(RADICE, "memoria")
@@ -143,6 +144,14 @@ compiacere.
 --- STRATO TECNICO (DATI: letti dai file, oggi) ---
 {dati}
 
+--- ARCHIVIO (frammenti delle fonti del progetto, con la loro provenienza) ---
+Questi passaggi vengono dai documenti scritti dall'autore, non da output
+generati dal sistema. Se citi uno di questi contenuti come RECUPERATO, scrivi
+accanto il file e la riga: un recupero la cui fonte non si puo' aprire e'
+un'inferenza travestita.
+
+{archivio}
+
 Compito. Il sistema descritto dai DATI ha un difetto che si ripete a scale
 diverse. Rispondi a queste tre domande, in questo ordine, massimo 500 parole
 in totale:
@@ -199,8 +208,14 @@ def esegui(profilo="economia"):
 
     dati = json.dumps(dossier(), ensure_ascii=False, indent=2)
 
+    domanda_archivio = (
+        "difetto ricorrente eco conservare trasmettere memoria verifica "
+        "auto-conferma ipotesi falsificazione origine tutela"
+    )
+    contesto = archivio.come_contesto(domanda_archivio, quanti=5)
+
     analisi, provider_a = _genera(router, PROMPT_ANALISTA.format(
-        regole=REGOLE, ambizioni=AMBIZIONI, dati=dati), profilo)
+        regole=REGOLE, ambizioni=AMBIZIONI, dati=dati, archivio=contesto), profilo)
 
     contro, provider_c = _genera(router, PROMPT_CONTRADDITTORE.format(
         regole=REGOLE, dati=dati, affermazioni=analisi), profilo)
