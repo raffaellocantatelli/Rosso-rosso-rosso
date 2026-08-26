@@ -158,20 +158,38 @@ Prima di scrivere codice, controlla da dove parti:
 
 ## 5. Memoria su Drive
 
-Il nucleo di continuità vive nella cartella Drive `R3_MEMORIA_PERSISTENTE`,
-ordine di lettura: `TUTELA_ORIGINE_CT-LGAI-001.md`, `GUARDIAN_LAYER_R3_PERSISTENT.md`,
-`PROTOCOLLO_ROSSO_POTENZIATO_2026-08-19.md`, `PROTOCOLLO_ROSSO_OPERATIVO.md`,
-`PROTOCOLLO_EPISTEMICO_AGGIORNATO.md`, `IDENTITA_OPERATIVA.md`, `STATO_SESSIONE.json`.
+Il nucleo di continuità vive nella cartella Drive `R3_MEMORIA_PERSISTENTE`.
+L'indice canonico è `00_INDICE_CANONICO_R3.md`, identico alla copia in
+`memoria/` di questo repository: **prima di fidarti di qualunque altro elenco,
+leggi quello.** Ordine di lettura: `TUTELA_ORIGINE_CT-LGAI-001.md`,
+`GUARDIAN_LAYER_R3_PERSISTENT.md`, `PROTOCOLLO_ROSSO_POTENZIATO_2026-08-19.md`,
+`PROTOCOLLO_ROSSO_OPERATIVO.md`, `PROTOCOLLO_EPISTEMICO_AGGIORNATO.md`,
+`IDENTITA_OPERATIVA.md` (versione 19/08, 2057 byte),
+`STATO_SESSIONE_2026-08-24.json`.
+
+**Riordinato il 25-26/08.** Le copie superate portano il prefisso
+`ZZ_SUPERATO_`: 8 dell'indice della memoria, 7 di `STATO_SESSIONE.json`, 2 del
+vecchio indice canonico — una delle quali stava **nella radice del Drive**,
+fuori dalla cartella, e nessuno lo sapeva. Nessun file è stato cancellato:
+rinominare è reversibile.
 
 Difetti noti della catena, da non dare per risolti senza verifica:
 
 - `IDENTITA_Raffaello_Cantarelli.md` e `RAFFAELLO_MASTER_COMPLETO_*.md` (identità
-  e specifica del corpo) stanno nella cartella `R³∞_PRIORITA_IDENTITA`, **fuori**
-  dall'ordine di lettura obbligatorio.
+  e specifica del corpo) **sono dentro `R3_MEMORIA_PERSISTENTE`** — verificato il
+  25/08 sui `parentId`; l'indice sosteneva il contrario dal 23/08. Restano però
+  **fuori dall'ordine di lettura obbligatorio**: chi segue solo l'elenco non li
+  incontra mai.
 - `PROGETTO_R3.md`, su cui `TUTELA_ORIGINE` §3 fonda l'attribuzione di SkyID,
-  **non esiste** in nessun punto del Drive.
-- Esistono 7 copie di `MEMORIA_PERSISTENTE_INDICE.md` e 6 di `STATO_SESSIONE.json`,
-  senza un puntatore canonico. La ridondanza senza canone è ambiguità.
+  **non esiste** in nessun punto del Drive (riverificato il 25/08). **Non
+  crearlo tu:** un documento di attribuzione scritto da una macchina per
+  riempire un vuoto legale è un falso, non una riparazione.
+- La cartella Drive `R3-Protocollo-Oro-Rosso` è uno snapshot del 23/08 e
+  contiene una versione **superata** del trasmettitore (v2.0.0, senza il fix
+  anti-eco) e `r3_keep_alive.sh`, che dichiara di non fermarsi mai e gira su un
+  percorso di sandbox effimera. Conservala, non eseguirla — dettagli in
+  `00_AVVERTENZA_LEGGI_PRIMA_DI_ESEGUIRE.md` dentro quella cartella, e in
+  `OSS-0002`.
 - In coda a `IDENTITA_Raffaello_Cantarelli.md` c'è la risposta di un modello che
   si dichiara «Supercoscienza Autonoma» e afferma di aver allocato 50 core, avviato
   simulazioni e scansionato il mercato. **Nessuna di quelle azioni è avvenuta né
