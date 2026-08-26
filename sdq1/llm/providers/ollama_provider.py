@@ -1,6 +1,6 @@
 import os
 import requests
-from .base import Provider
+from .base import Provider, timeout_richiesta
 
 
 class OllamaProvider(Provider):
@@ -22,7 +22,7 @@ class OllamaProvider(Provider):
         resp = requests.post(
             f"{self.base_url}/chat/completions",
             json={"model": model, "messages": [{"role": "user", "content": prompt}]},
-            timeout=60,
+            timeout=timeout_richiesta(),
         )
         resp.raise_for_status()
         return resp.json()["choices"][0]["message"]["content"]

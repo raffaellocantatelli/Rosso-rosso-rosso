@@ -14,10 +14,12 @@ from .memory.vector_store import VectorStore
 from .agents import pipeline
 from .monitoring.health import run_health_check
 from .sar import reflect as sar_reflect
+from . import daily as daily_mod
 from . import backup as backup_mod
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import registro_ipotesi  # noqa: E402
+import verificatore  # noqa: E402
 
 CONTATTI_PATH = os.path.join("output", "contatti.jsonl")
 
@@ -37,6 +39,15 @@ def build_parser():
     p.add_argument("--health", action="store_true", help="Stato del sistema")
     p.add_argument("--backup", action="store_true", help="Snapshot completo dello stato")
     p.add_argument("--restore", metavar="PATH", help="Ripristina uno snapshot")
+
+    p.add_argument("--daily", action="store_true",
+                   help="Riflessione giornaliera sui fatti eseguiti (non entra in memoria)")
+    p.add_argument("--ipotesi", action="store_true",
+                   help="Stampa il registro delle ipotesi")
+    p.add_argument("--verifica-ipotesi", action="store_true", dest="verifica_ipotesi",
+                   help="Esegue i criteri di falsificazione invece di leggerli")
+    p.add_argument("--prova", action="store_true",
+                   help="Con --verifica-ipotesi: esegue senza scrivere niente")
 
     p.add_argument("--sar", metavar="TENSIONE", help='Es. "Controllo ↔ Fiducia"')
     p.add_argument("--sar-stato", action="store_true", dest="sar_stato")
@@ -144,6 +155,31 @@ def main(argv=None):
         print("File ripristinati:")
         for f in ripristinati:
             print(f"  - {f}")
+        return
+
+    if args.daily:
+        profilo = profilo_da_args(args)
+        prompt = daily_mod.costruisci_prompt(router)
+        try:
+            ctx = pipeline.esegui(prompt, profilo, router, memory, memorizza=False)
+        except RuntimeError as exc:
+            print(f"[sdq1] {exc}", file=sys.stderr)
+            sys.exit(2)
+        if ctx.provider_used and ctx.provider_used.startswith("stub"):
+            print(BANNER_SPENTO)
+        print(ctx.final)
+        print(f"\n[provider: {ctx.provider_used} | profilo: {profilo}]", file=sys.stderr)
+        return
+
+    if args.ipotesi:
+        registro_ipotesi.stampa_stato()
+        return
+
+    if args.verifica_ipotesi:
+        risultati = verificatore.verifica(scrivi=not args.prova)
+        verificatore.stampa(risultati)
+        if args.prova:
+            print("\n(--prova: niente è stato scritto)")
         return
 
     if args.sar:

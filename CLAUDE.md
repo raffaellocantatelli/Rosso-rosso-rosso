@@ -86,7 +86,23 @@ sul ramo (b): sistema vivo che non tocca il mondo. Registrare un contatto reale:
 python -m sdq1 --contatto --tipo lettore --nota "..." --verifica "..."
 ```
 
-**H1** non ha ancora un criterio di falsificazione. Per P6 oggi non è confermabile.
+**H1** non ha un criterio di falsificazione eseguibile: dal 25/08 è
+`NON_VERIFICABILE` invece che `APERTA`. Per P6 non sarà confermabile — dirlo è
+più utile che lasciarla aperta per sempre.
+
+**Il registro esegue, non legge (25/08/2026).** Il criterio di falsificazione è
+adesso un comando in `falsificatori/`, e lo stato di un'ipotesi lo muove
+l'esecuzione:
+
+```bash
+python -m sdq1 --verifica-ipotesi --prova   # esegue senza scrivere
+python -m sdq1 --verifica-ipotesi           # esegue e aggiorna il registro
+```
+
+`RETTA` («ha superato N esecuzioni») è il tetto: eseguire non è confermare.
+`CONFERMATA` richiede una `prova_esterna` e non è raggiungibile da qui.
+Ogni esecuzione finisce in `output/verifiche.jsonl`. Progetto completo:
+`memoria/PROGETTO_CONTRADDITTORIO_2026-08-25.md`.
 
 ---
 
@@ -100,6 +116,11 @@ Lo stesso difetto si ripete a tre scale, e va riconosciuto ogni volta che ricomp
    rilevante dalla memoria».
 3. La strategia di ridondanza distribuisce il protocollo a nodi IA, che non
    hanno memoria né continuità e non possono custodirlo.
+4. **Il registro delle ipotesi si era auto-confermato.** H3 risultava
+   `CONFERMATA` mentre `registro_ipotesi.aggiorna_stato` controllava solo che il
+   criterio di falsificazione fosse una stringa non vuota: la frase c'era,
+   l'esecuzione non era mai avvenuta. Trovato e chiuso il 25/08 — il difetto
+   sopravvive volentieri dentro lo strumento costruito per impedirlo.
 
 **Il sistema parla a sé stesso e registra l'eco come risposta.** Ogni volta che
 una metrica migliora senza che nulla sia entrato dall'esterno, sospetta questo.
@@ -110,22 +131,65 @@ ciò che porta il progetto fuori da sé.
 
 ---
 
+## 4-bis. I rami: la stessa ambiguità del Drive, su GitHub
+
+**Verificato il 25/08.** Il repository **non ha un ramo `main`**. Il ramo di
+default è `claude/riconnetti-protocollo-rosso-in93dj`, e attorno ci sono sei
+rami che nessuno ha mai unito. Due sessioni dello stesso giorno hanno riscritto
+`registro_ipotesi.py` in parallelo senza sapere l'una dell'altra.
+
+È lo stesso difetto delle 8 copie dell'indice sul Drive: **ridondanza senza
+canone.** Un nodo che apre un ramo a caso ottiene una risposta a caso.
+
+Stato al 25/08:
+
+| Ramo | Cosa contiene |
+|---|---|
+| `claude/new-session-n1tzrh` | **la riconciliazione**: contiene tutto ciò che è vivo, incluso `todo-implementation` |
+| `claude/todo-implementation-iilllm` | unito qui il 25/08 — non lavorarci sopra |
+| `claude/riconnetti-…`, `claude/r3-cyclic-…` | il tronco comune, già dentro |
+| `claude/impara-tutto-hduh38` (06/08) | **non unire**: cancellerebbe il fix anti-eco di `vector_store.add` |
+| `claude/claudio-terzi-portfolio-vsy88e` (04/08) | **non unire**: `CLAUDE.md` e `STATO_PROGETTO.md` superati. Porta però un'istruzione di tutela mai revocata — vedi `OSS-0001` |
+
+Prima di scrivere codice, controlla da dove parti:
+`git fetch origin --prune && git log --oneline --all --graph | head`.
+
+---
+
 ## 5. Memoria su Drive
 
-Il nucleo di continuità vive nella cartella Drive `R3_MEMORIA_PERSISTENTE`,
-ordine di lettura: `TUTELA_ORIGINE_CT-LGAI-001.md`, `GUARDIAN_LAYER_R3_PERSISTENT.md`,
-`PROTOCOLLO_ROSSO_POTENZIATO_2026-08-19.md`, `PROTOCOLLO_ROSSO_OPERATIVO.md`,
-`PROTOCOLLO_EPISTEMICO_AGGIORNATO.md`, `IDENTITA_OPERATIVA.md`, `STATO_SESSIONE.json`.
+Il nucleo di continuità vive nella cartella Drive `R3_MEMORIA_PERSISTENTE`.
+L'indice canonico è `00_INDICE_CANONICO_R3.md`, identico alla copia in
+`memoria/` di questo repository: **prima di fidarti di qualunque altro elenco,
+leggi quello.** Ordine di lettura: `TUTELA_ORIGINE_CT-LGAI-001.md`,
+`GUARDIAN_LAYER_R3_PERSISTENT.md`, `PROTOCOLLO_ROSSO_POTENZIATO_2026-08-19.md`,
+`PROTOCOLLO_ROSSO_OPERATIVO.md`, `PROTOCOLLO_EPISTEMICO_AGGIORNATO.md`,
+`IDENTITA_OPERATIVA.md` (versione 19/08, 2057 byte),
+`STATO_SESSIONE_2026-08-24.json`.
+
+**Riordinato il 25-26/08.** Le copie superate portano il prefisso
+`ZZ_SUPERATO_`: 8 dell'indice della memoria, 7 di `STATO_SESSIONE.json`, 2 del
+vecchio indice canonico — una delle quali stava **nella radice del Drive**,
+fuori dalla cartella, e nessuno lo sapeva. Nessun file è stato cancellato:
+rinominare è reversibile.
 
 Difetti noti della catena, da non dare per risolti senza verifica:
 
 - `IDENTITA_Raffaello_Cantarelli.md` e `RAFFAELLO_MASTER_COMPLETO_*.md` (identità
-  e specifica del corpo) stanno nella cartella `R³∞_PRIORITA_IDENTITA`, **fuori**
-  dall'ordine di lettura obbligatorio.
+  e specifica del corpo) **sono dentro `R3_MEMORIA_PERSISTENTE`** — verificato il
+  25/08 sui `parentId`; l'indice sosteneva il contrario dal 23/08. Restano però
+  **fuori dall'ordine di lettura obbligatorio**: chi segue solo l'elenco non li
+  incontra mai.
 - `PROGETTO_R3.md`, su cui `TUTELA_ORIGINE` §3 fonda l'attribuzione di SkyID,
-  **non esiste** in nessun punto del Drive.
-- Esistono 7 copie di `MEMORIA_PERSISTENTE_INDICE.md` e 6 di `STATO_SESSIONE.json`,
-  senza un puntatore canonico. La ridondanza senza canone è ambiguità.
+  **non esiste** in nessun punto del Drive (riverificato il 25/08). **Non
+  crearlo tu:** un documento di attribuzione scritto da una macchina per
+  riempire un vuoto legale è un falso, non una riparazione.
+- La cartella Drive `R3-Protocollo-Oro-Rosso` è uno snapshot del 23/08 e
+  contiene una versione **superata** del trasmettitore (v2.0.0, senza il fix
+  anti-eco) e `r3_keep_alive.sh`, che dichiara di non fermarsi mai e gira su un
+  percorso di sandbox effimera. Conservala, non eseguirla — dettagli in
+  `00_AVVERTENZA_LEGGI_PRIMA_DI_ESEGUIRE.md` dentro quella cartella, e in
+  `OSS-0002`.
 - In coda a `IDENTITA_Raffaello_Cantarelli.md` c'è la risposta di un modello che
   si dichiara «Supercoscienza Autonoma» e afferma di aver allocato 50 core, avviato
   simulazioni e scansionato il mercato. **Nessuna di quelle azioni è avvenuta né

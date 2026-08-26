@@ -1,5 +1,29 @@
 """Router multi-provider con cascata, circuit breaker, cache e hedging."""
+import os
 import threading
+
+#: Variabili che contengono credenziali. Il loro valore non deve comparire in
+#: nessun messaggio d'errore: i messaggi finiscono in stderr, nei log, e
+#: nell'output che il verificatore deposita in un repository pubblico.
+VARIABILI_SEGRETE = (
+    "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "DEEPSEEK_API_KEY",
+    "GEMINI_API_KEY", "OPENAI_API_KEY", "TELEGRAM_BOT_TOKEN",
+)
+
+
+def oscura_segreti(testo):
+    """Sostituisce ogni credenziale presente nell'ambiente con un segnaposto.
+
+    Rete di sicurezza, non prima difesa: la prima difesa e' non mettere mai
+    una chiave in un URL. Questa serve per il giorno in cui un provider nuovo
+    se ne dimentica.
+    """
+    testo = str(testo)
+    for nome in VARIABILI_SEGRETE:
+        valore = os.environ.get(nome)
+        if valore and len(valore) >= 8 and valore in testo:
+            testo = testo.replace(valore, f"<{nome} oscurata>")
+    return testo
 
 from .providers.anthropic_provider import AnthropicProvider
 from .providers.gemini_provider import GeminiProvider
@@ -82,7 +106,7 @@ class Router:
                 return text, name
             except Exception as exc:  # provider non affidabile: registra e prova il prossimo
                 self.breaker.record_failure(name)
-                errors.append(f"{name}: {exc}")
+                errors.append(oscura_segreti(f"{name}: {exc}"))
 
         if errors:
             raise RuntimeError(
