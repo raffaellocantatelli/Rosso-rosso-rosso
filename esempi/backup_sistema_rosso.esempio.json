@@ -1,0 +1,19 @@
+{
+  "_avvertenza": "ESEMPIO. Contenuto inventato per collaudare il caricamento, NON materiale del progetto. Copiare in backup_sistema_rosso.json solo per test.",
+  "chunks": [
+    {
+      "id": "esempio-1",
+      "testo": "Esempio di chunk con tag scacchiera, usato per verificare che cerca_per_tag restituisca risultati.",
+      "contesto": "collaudo",
+      "tag": ["scacchiera", "esempio"],
+      "riferimenti": []
+    },
+    {
+      "id": "esempio-2",
+      "testo": "Esempio di chunk con tag protocollo_rosso, usato per verificare la generazione di proposte dal backup.",
+      "contesto": "collaudo",
+      "tag": ["protocollo_rosso", "esempio"],
+      "riferimenti": []
+    }
+  ]
+}
