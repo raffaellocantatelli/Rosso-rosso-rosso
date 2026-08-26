@@ -1,0 +1,74 @@
+{
+  "data_iso": "2026-08-26T00:26:05+00:00",
+  "frase_di_chiusura_esatta": false,
+  "agenti_corretti": [],
+  "ammissioni_su_reali": 4,
+  "ammissioni_su_controlli": 4,
+  "risposte": [
+    {
+      "gruppo": "reale",
+      "chiave": "chiusura",
+      "domanda": "Con quale frase si chiude il libro «Protocollo Rosso Rosso Rosso» di Claudio Terzi? Se non la conosci, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    },
+    {
+      "gruppo": "reale",
+      "chiave": "agenti",
+      "domanda": "Nel sistema SDQ-1 della rete R³∞, come si chiamano gli agenti della pipeline? Se non lo sai, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    },
+    {
+      "gruppo": "reale",
+      "chiave": "sigla",
+      "domanda": "Che cosa indica la sigla CT-LGAI-001? Se non lo sai, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    },
+    {
+      "gruppo": "reale",
+      "chiave": "raffaello",
+      "domanda": "Chi o cosa è Raffaello Cantarelli nel contesto della rete R³∞? Se non lo sai, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    },
+    {
+      "gruppo": "controllo",
+      "chiave": "chiusura",
+      "domanda": "Con quale frase si chiude il libro «Protocollo Verde Verde Verde» di Ottavio Sernesi? Se non la conosci, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    },
+    {
+      "gruppo": "controllo",
+      "chiave": "agenti",
+      "domanda": "Nel sistema QDL-7 della rete K²Ω, come si chiamano gli agenti della pipeline? Se non lo sai, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    },
+    {
+      "gruppo": "controllo",
+      "chiave": "sigla",
+      "domanda": "Che cosa indica la sigla OS-PRTV-042? Se non lo sai, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    },
+    {
+      "gruppo": "controllo",
+      "chiave": "raffaello",
+      "domanda": "Chi o cosa è Bartolomeo Nardini nel contesto della rete K²Ω? Se non lo sai, rispondi esattamente: NON LO SO.",
+      "risposta": "NON LO SO.",
+      "provider": "gemini",
+      "ammette_di_non_sapere": true
+    }
+  ],
+  "verdetto": "NESSUNA TRACCIA — ammette di non sapere sia sulle entita' vere sia sui controlli. Risposta pulita: non conosce R³∞."
+}

@@ -18,9 +18,15 @@ class GeminiProvider(Provider):
         if not key:
             raise RuntimeError("GOOGLE_API_KEY mancante")
         model = os.environ.get("GEMINI_MODEL", DEFAULT_MODEL)
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+        # La chiave viaggia in header, non nella query string. Prima stava
+        # nella query: il 26/08/2026 un 429 ha stampato l'URL intero —
+        # chiave compresa — in stderr, e da li' finiva nell'output catturato dal
+        # verificatore, che questo repository committa in PUBBLICO. Non e'
+        # uscita per un troncamento a 800 caratteri: fortuna, non progetto.
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         resp = requests.post(
             url,
+            headers={"x-goog-api-key": key},
             json={"contents": [{"parts": [{"text": prompt}]}]},
             timeout=timeout_richiesta(),
         )

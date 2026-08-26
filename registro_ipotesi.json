@@ -72,5 +72,25 @@
       "ultima": "2026-08-26T00:05:34+00:00",
       "ultimo_esito": "regge"
     }
+  },
+  {
+    "id": "H5",
+    "testo": "Le tracce di R³∞ non sono ancora arrivate nei modelli linguistici: un modello interrogato a freddo non conosce il progetto",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata il giorno in cui un modello, senza alcun contesto nel prompt, riporta la frase che chiude il Protocollo o almeno due nomi di agenti SDQ-1 corretti, continuando ad ammettere di non sapere sulle entita' di controllo inventate. La sua caduta e' la notizia buona: significherebbe che il progetto e' uscito dall'archivio ed e' tornato indietro attraverso il mondo.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h5_tracce.py"
+      ],
+      "descrizione": "shibboleth + controllo placebo su un modello a freddo"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 1,
+      "cadute": 0,
+      "ultima": "2026-08-26T00:27:36+00:00",
+      "ultimo_esito": "regge"
+    }
   }
 ]

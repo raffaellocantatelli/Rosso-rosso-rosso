@@ -275,3 +275,67 @@ class TestDailyNonSiRilegge(unittest.TestCase):
         self.assertIn("rilevazioni_totali", prompt)
         self.assertIn("UNKNOWN", prompt)
         self.assertIn("NON inventare metriche", prompt)
+
+
+class TestCrashNonEUnSi(BaseVerificatore):
+    """Un falsificatore che esplode non ha detto «regge».
+
+    Il 26/08 H5 e' risultata RETTA per un crash su un 429: Python esce con
+    codice 1 quando un'eccezione non e' gestita, e 1 significa REGGE. E' la
+    stessa confusione — «non ho potuto controllare» letto come «va tutto
+    bene» — che l'exit 2 esiste per impedire.
+    """
+
+    def falsificatore_che_esplode(self):
+        percorso = self.cartella / "esplode.py"
+        percorso.write_text(
+            "raise RuntimeError('429 Too Many Requests')\n", encoding="utf-8"
+        )
+        return {"comando": [sys.executable, str(percorso)], "descrizione": "esplode"}
+
+    def test_un_traceback_non_diventa_regge(self):
+        self.scrivi_registro([{
+            "id": "K1", "testo": "esplode", "stato": registro.APERTA,
+            "falsificatore": self.falsificatore_che_esplode(),
+        }])
+        risultati = verificatore.verifica()
+        self.assertEqual(risultati[0]["exit_code"], 1,
+                         "il crash deve davvero uscire con 1, o il test non prova niente")
+        self.assertEqual(risultati[0]["esito"], "verifica_fallita")
+        self.assertEqual(self.stato("K1"), registro.APERTA)
+
+    def test_il_guscio_protetto_restituisce_non_conclusa(self):
+        import falsificatori
+
+        def esplode():
+            raise RuntimeError("429")
+
+        self.assertEqual(falsificatori.main_protetto(esplode),
+                         falsificatori.NON_CONCLUSA)
+        self.assertEqual(falsificatori.main_protetto(lambda: falsificatori.REGGE),
+                         falsificatori.REGGE)
+
+
+class TestSegretiOscurati(unittest.TestCase):
+    """Una credenziale non deve poter finire in un messaggio d'errore."""
+
+    def test_la_chiave_viene_oscurata(self):
+        import os
+        from sdq1.llm.router import oscura_segreti
+
+        os.environ["GOOGLE_API_KEY"] = "CHIAVE-SEGRETISSIMA-987654321"
+        try:
+            sporco = "errore su https://api/x?key=CHIAVE-SEGRETISSIMA-987654321"
+            pulito = oscura_segreti(sporco)
+            self.assertNotIn("CHIAVE-SEGRETISSIMA-987654321", pulito)
+            self.assertIn("oscurata", pulito)
+        finally:
+            os.environ.pop("GOOGLE_API_KEY", None)
+
+    def test_la_chiave_non_e_piu_nell_url_di_gemini(self):
+        from pathlib import Path
+        sorgente = Path(__file__).resolve().parent.parent / "sdq1/llm/providers/gemini_provider.py"
+        testo = sorgente.read_text(encoding="utf-8")
+        self.assertNotIn("?key={key}", testo,
+                         "la chiave e' tornata nella query string")
+        self.assertIn("x-goog-api-key", testo)

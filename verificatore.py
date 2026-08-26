@@ -92,8 +92,20 @@ def esegui_falsificatore(falsificatore: dict) -> dict:
         return {"codice": NON_CONCLUSA, "output": f"errore di esecuzione: {errore}"}
 
 
-def _stato_dopo(ipotesi: dict, codice: int) -> tuple[str, str]:
+#: Un falsificatore che esplode esce con codice 1, che in questo contratto
+#: significa REGGE. E' successo il 26/08 con H5: crash su un 429, registrata
+#: RETTA. Un traceback nell'output vale piu' dell'exit code.
+SEGNI_DI_CRASH = ("Traceback (most recent call last)",)
+
+
+def _e_esploso(uscita: str) -> bool:
+    return any(segno in (uscita or "") for segno in SEGNI_DI_CRASH)
+
+
+def _stato_dopo(ipotesi: dict, codice: int, uscita: str = "") -> tuple[str, str]:
     """Dallo exit code allo stato nuovo. Nessuna via porta a CONFERMATA."""
+    if _e_esploso(uscita):
+        return ipotesi["stato"], "verifica_fallita"
     if codice == CADUTA:
         return registro.FALSIFICATA, "caduta"
     if codice == REGGE:
@@ -128,7 +140,7 @@ def verifica(ids: list[str] | None = None, scrivi: bool = True) -> list[dict]:
             risposta = esegui_falsificatore(falsificatore)
             codice = risposta["codice"]
             uscita = risposta["output"]
-            dopo, esito = _stato_dopo(h, codice)
+            dopo, esito = _stato_dopo(h, codice, uscita)
 
         if prima == registro.CONFERMATA and not h.get("prova_esterna"):
             # Era confermata senza che nessuna fonte esterna lo attestasse:
