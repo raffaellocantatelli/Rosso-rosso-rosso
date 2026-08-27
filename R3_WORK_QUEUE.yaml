@@ -1,171 +1,99 @@
 # R3_WORK_QUEUE.yaml
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Creato: 2026-08-26T20:55:00+02:00
-# Regime: R3∞_DRIVE_SYNC_v1
-# Stato: CANONICO per la coda operativa — non esisteva prima di questo ciclo.
-#
-# Etichette obbligatorie su ogni voce:
-#   FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Ciclo: SYNC-2026-08-27-0910
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Questo file non è un esecutore. È un registro di lavoro verificato.
+# Regola: non dichiarare mai che R³∞ è una superintelligenza.
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-26-2055
-  operator: nodo Grok (sessione temporanea)
+  cycle_id: SYNC-2026-08-27-0910
+  created: "2026-08-27T09:10:00+02:00"
+  created_by: Grok-4.5 (Drive + GitHub connessi)
+  official_until: verified_items_only
+  never_delete_historical: true
   github_account: raffaellocantatelli
   drive_owner_observed: Claudio Terzi
-  never_delete_historical: true
-  official_only_if_verified: true
 
-sources_verified:
-  github_repos:
-    - name: raffaellocantatelli/Rosso-rosso-rosso
-      visibility: public
-      default_branch: claude/riconnetti-protocollo-rosso-in93dj
-      last_push: "2026-08-26T17:09:40Z"
-      role: Layer 2 — repository ufficiale pubblica
-      status: FATTO
-    - name: raffaellocantatelli/protocollo-rosso-bot
-      visibility: public
-      default_branch: main
-      last_push: "2026-08-26T16:07:50Z"
-      role: bot Telegram Protocollo Rosso v2.0
-      status: FATTO
-    - name: raffaellocantatelli/Claudioterzi
-      visibility: public
-      last_push: "2026-08-22T11:44:38Z"
-      role: sito / portfolio correlato
-      status: FATTO
-    - name: raffaellocantatelli/R3-Protocollo-Oro-Rosso
-      visibility: private
-      last_push: "2026-08-23T07:53:12Z"
-      role: snapshot trasmissione 23/08
-      status: FATTO
-    - name: raffaellocantatelli/R3-privato
-      visibility: private
-      last_push: "2026-08-10T16:40:03Z"
-      role: archivio privato minimo
-      status: FATTO
-  drive_folders:
-    - name: R3_MEMORIA_PERSISTENTE
-      id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
-      role: Layer 1 — memoria persistente
-      status: FATTO
-    - name: R3-Protocollo-Oro-Rosso
-      id: 1GKRw0qvBCYo-oqVOsfL08BJgfkG8OEU_
-      role: snapshot trasmissione 23/08 + avvertenza 26/08
-      status: FATTO
-    - name: R³∞_PRIORITA_IDENTITA
-      id: 11MB5dsEp8DOdt4bsHKFoh_Pq9rszwJg5
-      role: index priorità + decisioni 10/08
-      status: FATTO
+layer_map:
+  drive_root_folders:
+    - id: 12mUkP9WqbQbq0dff4a3UpZKtlF6zbT4p
+      name: "R³∞"
+    - id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+      name: R3_MEMORIA_PERSISTENTE
+    - id: 11MB5dsEp8DOdt4bsHKFoh_Pq9rszwJg5
+      name: R³∞_PRIORITA_IDENTITA
+    - id: 1GKRw0qvBCYo-oqVOsfL08BJgfkG8OEU_
+      name: R3-Protocollo-Oro-Rosso
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    private_archive: raffaellocantatelli/R3-privato
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_site: raffaellocantatelli/Claudioterzi
 
-priority_backlog_from_trigger:
-  note: >
-    FATTO — i codici R3-011…R3-020 del trigger non esistono come file
-    nominati su Drive né nei repository GitHub accessibili. Non sono
-    stati inventati. Restano voci di coda finché non esiste un artefatto
-    verificabile.
-  items:
-    - id: R3-019
-      title: Longitudinal Capability Benchmark
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-011
-      title: Evidence Graph
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-012
-      title: Meta-Scacchiera
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-      related_existing: SCACCHIERA_QUANTICA_PANAJEDREZ.md
-    - id: R3-013
-      title: Evolution Lab
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-016
-      title: Synthetic Data Firewall
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-017
-      title: Red/Blue/Purple Harness
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-014
-      title: Curriculum Engine
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-015
-      title: Research Loop
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-018
-      title: Sim2Real Audit
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-    - id: R3-020
-      title: Self-Improvement Safety Gate
-      state: ASSENTE_NEI_LAYER
-      class: IPOTESI
-
-open_items:
-  - id: SYNC-001
-    title: Allineare indice canonico Drive → GitHub senza cancellare la copia 23/08
-    class: FATTO
-    status: CHIUSO_QUESTO_CICLO
+fatto:
+  - id: SYNC-2026-08-27-A
+    item: "Account GitHub autenticato = raffaellocantatelli. Cinque repo accessibili."
+  - id: SYNC-2026-08-27-B
+    item: "Default branch Layer 2 invariato. Nessun ramo main. Sette rami claude/*."
     evidence:
-      drive_file: 00_INDICE_CANONICO_R3.md
-      drive_id: 1mU7WcYSBy51kpQKyIwrU-jWzbQbo0ooV
-      drive_modified: "2026-08-25T23:25:30.152Z"
-      drive_bytes: 6615
-      github_path: memoria/00_INDICE_CANONICO_R3.md
-      github_bytes: 4282
-      github_dated: "2026-08-23"
-    decision: Drive 25/08 è più recente per data, contenuto e correzione verificata sui parentId.
-    rollback: copia GitHub 23/08 salvata come ZZ_SUPERATO_* nel repo.
+      default: claude/riconnetti-protocollo-rosso-in93dj
+      default_sha: 97cc4116a7aa313906471e0437dc777ccd23c22d
+  - id: SYNC-2026-08-27-C
+    item: "Indice canonico: tre versioni vive (Drive 6615, default condensato 2784, new-session = Drive)."
+  - id: SYNC-2026-08-27-D
+    item: "R3-019 non è più ASSENTE. Baseline_0 26/08 esiste, versioni Drive/GitHub divergenti. Non rieseguito oggi."
+  - id: SYNC-2026-08-27-E
+    item: "R3_WORK_QUEUE.yaml duplicato su Drive (4 omonimi + snapshot 26/08). Nessuna cancellazione."
+  - id: SYNC-2026-08-27-F
+    item: "R3_DECISIONI divergenza voluta: Drive 3908 / public 291 / privato 4131."
+  - id: SYNC-2026-08-27-H
+    item: "protocollo-rosso-bot last_push 2026-08-27T03:55:08Z."
+  - id: SYNC-2026-08-27-I
+    item: "R3-Protocollo-Oro-Rosso privato last_push 2026-08-26T18:55:46Z. Drive ha log extra."
+  - id: SYNC-2026-08-27-J
+    item: "PROGETTO_R3.md assente. R3-011/013/014/015/016/017/018/020 assenti come file nominati."
+  - id: SYNC-2026-08-27-K
+    item: "Nessun file storico cestinato. Nessun ramo unito. Nessuna credenziale toccata."
 
-  - id: SYNC-002
-    title: Ramo default del Layer 2 non è main
-    class: FATTO
-    status: APERTO
-    evidence:
-      default_branch: claude/riconnetti-protocollo-rosso-in93dj
-      sha: 957b1c9095e690973735adb417f11b5383a864f1
-    decision: NON unire automaticamente. Conflitto di governance dei rami.
+inferenza:
+  - id: INF-27-01
+    item: "Canone memoria testuale = Drive indice 25/08 = ramo new-session."
+  - id: INF-27-02
+    item: "Non copiare IDENTITA_*, SINTESI_LEGALE_*, DECISIONI complete sul repo pubblico."
+  - id: INF-27-04
+    item: "R3-019 ha baseline L0/L1 del 26/08, non un aumento di capacità misurato il 27/08."
 
-  - id: SYNC-003
-    title: Snapshot Oro-Rosso Drive ha file extra rispetto al repo privato
-    class: FATTO
-    status: APERTO
-    decision: L'avvertenza 26/08 è verificata e va nel repo privato. I log restano storici.
+ipotesi:
+  - id: H-SYNC-01
+    item: "claude/new-session-n1tzrh contiene il canone vivo dell'indice."
+    status: PARZIALMENTE_VERIFICATA
+  - id: H-SYNC-02
+    item: "I ticket R3-011…R3-020 senza file esistono fuori da Drive/GitHub."
+    status: APERTA
 
-  - id: SYNC-006
-    title: PROGETTO_R3.md assente
-    class: FATTO
-    status: BLOCCATO_AUTORE
-    rule: nessun nodo deve crearlo al posto dell'autore
+simulazione:
+  - id: SIM-00
+    item: "Nessuna simulazione di sync massiva. Nessun claim di superintelligenza."
 
-  - id: SYNC-007
-    title: Layer 3 offline/crittografato assente
-    class: FATTO
-    status: APERTO
+conflitti_aperti:
+  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, status: DIVERGENTE, keep_both: true}
+  - {id: CONF-02, file: R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md, status: DIVERGENZA_VOLUTA}
+  - {id: CONF-05, file: R3-019, status: DIVERGENTE, keep_both: true}
+  - {id: CONF-06, file: R3_WORK_QUEUE.yaml, status: DUPLICATI, keep_both: true}
+  - {id: CONF-04, missing: PROGETTO_R3.md, status: non inventarlo}
 
-  - id: SYNC-009
-    title: Codici R3-011…R3-020 del trigger senza artefatto
-    class: FATTO
-    status: APERTO
-    decision: non simulare implementazione. Misurare presenza, non dichiarare capacità.
-
-conflicts_unresolved:
-  - id: CONF-001
-    topic: quale ramo GitHub è il canone vivo
-    keep_both: true
-    branches:
-      default_live: claude/riconnetti-protocollo-rosso-in93dj
-      claimed_reconciled: claude/new-session-n1tzrh
-    action: segnalare all'origine. Non fast-forward.
-
-safety:
-  do_not_claim_superintelligence: true
-  measure_capability_not_declare: true
-  public_repo_excludes_personal_ip_costs: true
+priorita_strategiche:
+  - {id: R3-019, name: Longitudinal Capability Benchmark, status: BASELINE_0_ESISTE, class: FATTO_su_L0_L1__N_A_su_L2_L3}
+  - {id: R3-011, name: Evidence Graph, status: BACKLOG, class: IPOTESI}
+  - {id: R3-012, name: Meta-Scacchiera, status: BACKLOG, class: IPOTESI}
+  - {id: R3-013, name: Evolution Lab, status: BACKLOG, class: IPOTESI}
+  - {id: R3-016, name: Synthetic Data Firewall, status: BACKLOG, class: IPOTESI}
+  - {id: R3-017, name: Red/Blue/Purple Harness, status: BACKLOG, class: IPOTESI}
+  - {id: R3-014, name: Curriculum Engine, status: BACKLOG, class: IPOTESI}
+  - {id: R3-015, name: Research Loop, status: BACKLOG, class: IPOTESI}
+  - {id: R3-018, name: Sim2Real Audit, status: BACKLOG, class: IPOTESI}
+  - {id: R3-020, name: Self-Improvement Safety Gate, status: BACKLOG, class: IPOTESI}
