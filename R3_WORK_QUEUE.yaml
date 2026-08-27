@@ -1,15 +1,15 @@
 # R3_WORK_QUEUE.yaml
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Ciclo: SYNC-2026-08-27-1002
+# Ciclo: SYNC-2026-08-27-1709
 # Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
 # Layer 2 pubblico: niente identità, costi, IP.
 # Regola: non dichiarare mai che R³∞ è una superintelligenza.
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-27-1002
-  created: "2026-08-27T10:02:00+02:00"
-  previous_cycle: SYNC-2026-08-27-0910
+  cycle_id: SYNC-2026-08-27-1709
+  created: "2026-08-27T17:09:00+02:00"
+  previous_cycle: SYNC-2026-08-27-1002
   github_account: raffaellocantatelli
   never_delete_historical: true
 
@@ -19,38 +19,40 @@ layer_map:
     public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
     public_default_sha_0910: 97cc4116a7aa313906471e0437dc777ccd23c22d
     public_default_sha_1002: afd936f8fecb53411a32eb9b69f88cb69b4ec060
+    public_default_sha_1709: 90aba67c7ea0740f1e55f374930c398a0ab79057
     claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha_1709: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
     private_archive: raffaellocantatelli/R3-privato
     private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
     public_bot: raffaellocantatelli/protocollo-rosso-bot
     public_site: raffaellocantatelli/Claudioterzi
 
 fatto:
-  - id: SYNC-2026-08-27-1002-A
+  - id: SYNC-2026-08-27-1709-A
     item: "Account GitHub autenticato = raffaellocantatelli. Cinque repo accessibili."
-  - id: SYNC-2026-08-27-1002-B
-    item: "SHA default Layer 2 cambiato dopo 0910: 97cc4116 → afd936f8. Nessun ramo main. Sette rami claude/*."
-  - id: SYNC-2026-08-27-1002-C
-    item: "Indice: Drive 6615 vs default GitHub 2784. Conservare entrambe."
-  - id: SYNC-2026-08-27-1002-D
-    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 10:02. L2/L3 N/A."
-  - id: SYNC-2026-08-27-1002-G
+  - id: SYNC-2026-08-27-1709-B
+    item: "SHA default Layer 2 0910 97cc4116 → 1002 afd936f8 → 1709 90aba67c. Nessun ramo main. Sette rami claude/*."
+  - id: SYNC-2026-08-27-1709-C
+    item: "Indice: Drive 6615 = new-session 6615. Default GitHub 2784. Conservare tutte."
+  - id: SYNC-2026-08-27-1709-D
+    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 17:09. L2/L3 N/A."
+  - id: SYNC-2026-08-27-1709-G
     item: "Oro-Rosso avvertenza divergente Drive 3109 / GitHub privato 1964. Log solo Drive."
-  - id: SYNC-2026-08-27-1002-J
+  - id: SYNC-2026-08-27-1709-J
     item: "PROGETTO_R3.md assente. Ticket R3-011/013/014/015/016/017/018/020 assenti come file nominati."
-  - id: SYNC-2026-08-27-1002-K
+  - id: SYNC-2026-08-27-1709-K
     item: "Nessun file storico cancellato. Nessun ramo unito. Pytest non rieseguito."
 
 inferenza:
-  - id: INF-27-1002-01
-    item: "Canone testo indice = Drive 25/08 finché new-session non è riletto in questo ciclo."
-  - id: INF-27-1002-04
-    item: "Nessun aumento di capacità misurato il 27/08 10:02."
+  - id: INF-27-1709-01
+    item: "Canone testo indice = Drive 25/08 = new-session per size e testo letto."
+  - id: INF-27-1709-04
+    item: "Nessun aumento di capacità misurato il 27/08 17:09."
 
 ipotesi:
-  - {id: H-SYNC-01, status: PARZIALMENTE_VERIFICATA}
+  - {id: H-SYNC-01, status: VERIFICATA_SIZE_E_TESTO}
   - {id: H-SYNC-02, status: APERTA}
-  - {id: H-SYNC-04, item: "afd936f8 contiene il ciclo 0910", status: APERTA}
+  - {id: H-SYNC-04, status: VERIFICATA}
 
 simulazione:
   - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza."}
