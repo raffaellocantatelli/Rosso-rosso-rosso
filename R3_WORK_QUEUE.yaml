@@ -1,41 +1,44 @@
 # R3_WORK_QUEUE.yaml
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Ciclo: SYNC-2026-08-28-1213
+# Ciclo: SYNC-2026-08-28-1307
 # Layer 2 pubblico: niente identità, costi, IP.
 # Regola: non dichiarare mai che R³∞ è una superintelligenza.
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-28-1213
-  created: "2026-08-28T12:13:00+02:00"
-  previous_cycle: SYNC-2026-08-28-1210
+  cycle_id: SYNC-2026-08-28-1307
+  created: "2026-08-28T13:07:00+02:00"
+  previous_cycle: SYNC-2026-08-28-1213
   github_account: raffaellocantatelli
   never_delete_historical: true
 
 fatto:
-  - id: SYNC-2026-08-28-1213-A
-    item: "Trigger 12:12Z dichiara R3-016/017 EXECUTED PASSED e R3-014 IN_PROGRESS. Il testo esiste. La misura no."
-  - id: SYNC-2026-08-28-1213-B
-    item: "exact_name Drive dei tre file-ticket = 0. Metriche nominate = 0 file. search_code GitHub = 0 item."
-  - id: SYNC-2026-08-28-1213-C
-    item: "Coda 1210 (commit 8234404c) lascia 014/016/017 in BACKLOG."
-  - id: SYNC-2026-08-28-1213-D
-    item: "R3-019: punteggio non misurato = N/A, non 0 e non 1.0."
-  - id: SYNC-2026-08-28-1213-E
-    item: "Nessun file storico cancellato. Nessun ramo unito. Pytest non rieseguito."
+  - id: SYNC-2026-08-28-1307-A
+    item: "Default Layer 2 fermo a 77763d32 (SYNC-1213). Nessun commit 12:16→13:07."
+  - id: SYNC-2026-08-28-1307-B
+    item: "Drive memoria: nessun file nuovo dopo gli artefatti 1213."
+  - id: SYNC-2026-08-28-1307-C
+    item: "Telegram 921fcf57, bot 7866bca3, Oro-Rosso 410784b2: invariati."
+  - id: SYNC-2026-08-28-1307-D
+    item: "Ticket nominati 011-018/020 assenti. search_code 014/016/017 = 0."
+  - id: SYNC-2026-08-28-1307-E
+    item: "R3-019 non rieseguito. L2/L3 N/A. Nessun file storico cancellato."
 
 inferenza:
-  - id: INF-28-1213-01
-    item: "Stato ufficiale invariato: BACKLOG. PASSED senza artefatto è narrazione."
+  - id: INF-28-1307-01
+    item: "Stasi sui canali collegati. Nessun aumento di capacità misurato alle 13:07."
 
 ipotesi:
   - {id: H-SYNC-02, status: APERTA}
   - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
 
 simulazione:
-  - {id: SIM-CLAIM-1213, item: "I numeri 0.01 e 1.0 del trigger non sono accettati come misura."}
+  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza."}
 
 conflitti_aperti:
+  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, keep_both: true}
+  - {id: CONF-05, file: R3-019, keep_both: true}
+  - {id: CONF-08, file: default_vs_telegram, keep_both: true}
   - {id: CONF-09, item: "claim EXECUTED vs misura BACKLOG", official: BACKLOG, keep_both: true}
 
 priorita_strategiche:
