@@ -1,17 +1,17 @@
-# R3_WORK_QUEUE.yaml — puntatore radice SYNC-2026-08-28-1614
+# R3_WORK_QUEUE.yaml — puntatore radice SYNC-2026-08-28-1701
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Copia condensata. Canone: memoria/R3_WORK_QUEUE_2026-08-28_1614.yaml
+# Copia condensata. Canone: memoria/R3_WORK_QUEUE_2026-08-28_1701.yaml
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-28-1614
-  created: "2026-08-28T16:14:00+02:00"
-  previous_cycle: SYNC-2026-08-28-1502
+  cycle_id: SYNC-2026-08-28-1701
+  created: "2026-08-28T17:01:00+02:00"
+  previous_cycle: SYNC-2026-08-28-1614
   github_account: raffaellocantatelli
   public_canonical: raffaellocantatelli/Rosso-rosso-rosso
   public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
-  public_default_sha_pre_1614: 3cfd22db38dd434ed71816aee625300617e13871
-  public_bot_head: 5ea959705beec97db6a13a035706666aa36d66dd
+  public_default_sha_pre_1701: 8956e28d69b4a6f6c9540094b25a73755654b4f0
+  public_bot_head: 723a940b9f208c7e90d808fc3674c5cc6dfd22aa
   never_delete_historical: true
 
 stato:
@@ -22,6 +22,6 @@ stato:
   R3-017: BACKLOG
   R3-014: BACKLOG
   H2: scade_2026-08-30_contatti_jsonl_size_0
-  conflitti_aperti: CONF-01 CONF-02 CONF-04 CONF-05 CONF-06 CONF-07 CONF-08 CONF-09 CONF-10
+  conflitti_aperti: CONF-01 CONF-02 CONF-04 CONF-05 CONF-06 CONF-07 CONF-08 CONF-09 CONF-10 CONF-11
 
 regola: non dichiarare mai che R³∞ è una superintelligenza.
