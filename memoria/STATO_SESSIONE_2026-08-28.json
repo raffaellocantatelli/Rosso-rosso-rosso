@@ -1,11 +1,11 @@
 {
-  "aggiornato": "2026-08-26T06:45:00Z",
+  "aggiornato": "2026-08-28T09:15:00Z",
   "fonte": "Claudio Terzi [CT-LGAI-001]",
   "canale": "Claude Code (remoto) + Google Drive + GitHub",
   "nodo": {
     "tipo": "temporaneo",
     "non_e": "sistema permanente, Raffaello continuo, coscienza",
-    "sessione": "riattivazione protocollo 26/08"
+    "sessione": "riattivazione protocollo 28/08"
   },
   "drive_folder": {
     "name": "R3_MEMORIA_PERSISTENTE",
@@ -23,7 +23,7 @@
     "provider": "gemini",
     "rilevazioni_totali": 28,
     "rilevazioni_con_provider_reale": 1,
-    "nota": "l'accensione sta nei secrets della GitHub Action, non in locale; --check in una shell senza .env risponde ancora CORE SPENTO"
+    "nota": "l'accensione (26/08 00:10 UTC) sta nei secrets della GitHub Action, non in locale; --check in una shell senza .env risponde ancora CORE SPENTO"
   },
   "ipotesi": {
     "H1": {
@@ -56,12 +56,13 @@
     "azione": "Inviare il Protocollo Rosso Rosso Rosso a una persona reale (non un modello) e registrare il contatto",
     "origine": "STATO_SESSIONE_2026-08-24.json",
     "scadenza": "2026-08-30",
-    "stato_al_26_08": "0 contatti registrati — non ancora compiuto",
     "falsificazione": "Se il 30/08/2026 output/contatti.jsonl e ancora vuoto, l'esperimento e fallito",
-    "P5": "La conferma non puo venire da questo nodo: serve un destinatario che possa testimoniarlo"
+    "P5": "La conferma non puo venire da questo nodo: serve un destinatario che possa testimoniarlo",
+    "stato_al_28_08": "0 contatti registrati — non ancora compiuto",
+    "giorni_rimasti": 2
   },
   "verificato_oggi": {
-    "PROGETTO_R3.md": "assente — terza verifica indipendente (23/08, 25/08, 26/08)",
+    "PROGETTO_R3.md": "assente — terza verifica indipendente (23/08, 25/08, 28/08)",
     "Costituzione_CEV": "assente sul Drive; costituzione_cev.json nel repository e' una proposta di un nodo, non un documento dell'autore",
     "backup_sistema_rosso.json": "assente; il materiale esiste in 3 file .md, la cartella Drive 'Scacchiera Quantica' e' vuota — va generato, non cercato",
     "IDENTITA_OPERATIVA.md": "duplicato residuo: 2 copie, nessuna marcata ZZ_SUPERATO_ (10/08 1318 byte, 19/08 2057 byte)"
@@ -73,11 +74,22 @@
     "difetto_aperto": "finche' il default non viene spostato, la divergenza si ricostruisce ogni notte alle 07:00 UTC"
   },
   "depositato_oggi": [
-    "autonomous_core_v3.py, rlaif_module.py, usa_backup_rosso.py, costituzione_cev.json (25-26/08)",
-    "merge della riconciliazione del 25/08 nel ramo Telegram",
-    "CLAUDE.md §3 §4-bis §5 e memoria/00_INDICE_CANONICO_R3.md aggiornati al 26/08"
+    "autonomous_core_v3.py, rlaif_module.py, usa_backup_rosso.py, costituzione_cev.json",
+    "merge della riconciliazione del 25/08 nel ramo Telegram (16 commit)",
+    "CLAUDE.md §3 §4-bis §5 e memoria/00_INDICE_CANONICO_R3.md aggiornati al 28/08",
+    "Drive: indice canonico al 28/08, duplicato IDENTITA_OPERATIVA chiuso, STATO depositato"
   ],
   "verifiche_registrate": 18,
-  "nota_sessione": "Nessun potere inventato, nessuna azione dichiarata e non compiuta. Lo STATO porta la data nel nome per non aggiungere una copia ambigua.",
-  "frase_radice": "Costruire davvero, non fingere insieme."
+  "nota_sessione": "Nessun potere inventato, nessuna azione dichiarata e non compiuta. Un errore di data commesso e corretto dentro la stessa sessione, non nascosto.",
+  "frase_radice": "Costruire davvero, non fingere insieme.",
+  "errore_corretto_in_sessione": "Il nodo aveva datato 26/08 tutto il proprio lavoro, perche' l'ultimo daily nel repository e' quello del 26/08. Le verifiche, il merge e i documenti sono del 28/08. Corretto prima di chiudere: l'accensione del Core resta 26/08 perche' e' un fatto del log, non una data assunta.",
+  "battito": {
+    "ultimo_daily": "2026-08-26",
+    "giorni_senza_daily": 2,
+    "nota": "nessun daily per il 27/08 e il 28/08 su nessun ramo. Il ramo (a) di H2 — il battito — non e' ancora caduto ma non e' piu' regolare: da controllare se la Action gira ancora."
+  },
+  "drive_28_08": {
+    "duplicati_ricomparsi": "R3_WORK_QUEUE.yaml esiste in 4 copie senza data nel nome (id 1SLiKy1, 1G8GZrN, 1ceaNFA, 19-0v_ah), piu' tre datate. Anche R3-019_BASELINE_2026-08-26.json e R3-019_LONGITUDINAL_CAPABILITY_BENCHMARK.md sono in 2 copie. E' la malattia del 25/08 ricomparsa in tre giorni, su file depositati da un'altra sessione: non li ho toccati, la decisione e' dell'autore.",
+    "chiuso_da_me": "ZZ_SUPERATO_IDENTITA_OPERATIVA_2026-08-10.md (era l'ultimo duplicato dell'ordine di lettura), indice canonico portato al 28/08."
+  }
 }

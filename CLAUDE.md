@@ -56,7 +56,7 @@ separati non sminuisce il secondo: lo protegge.
 
 ---
 
-## 3. Stato del sistema (aggiornato 2026-08-26)
+## 3. Stato del sistema (aggiornato 2026-08-28)
 
 **Il Core si è acceso — una volta.** Dal 31/07 al 25/08 SDQ-1 ha girato senza
 mai un provider LLM reale, e la memoria vettoriale rileggeva quegli Stub come
@@ -88,7 +88,16 @@ entrambi entro 6 mesi». Scadenza 2026-12-11. Falsificata se:
 (b) `output/contatti.jsonl` ha zero voci valide — **si verifica adesso.**
 
 Il file dei contatti è vuoto. Se la scadenza fosse oggi, H2 sarebbe falsificata
-sul ramo (b): sistema vivo che non tocca il mondo. Registrare un contatto reale:
+sul ramo (b): sistema vivo che non tocca il mondo.
+
+**Attenzione al ramo (a), dal 28/08.** L'ultimo daily è quello del **26/08**: per
+il 27 e il 28 non c'è output su nessun ramo. Il battito non è ancora caduto, ma
+non è più regolare — controlla se la Action gira ancora prima di dare (a) per
+scontato. `STATO_SESSIONE_2026-08-24.json` fissa inoltre un esperimento
+intermedio con scadenza **2026-08-30**: inviare il Protocollo a una persona
+reale. Al 28/08 mancano due giorni e il file è vuoto.
+
+Registrare un contatto reale:
 
 ```bash
 python -m sdq1 --contatto --tipo lettore --nota "..." --verifica "..."
@@ -112,14 +121,14 @@ python -m sdq1 --verifica-ipotesi           # esegue e aggiorna il registro
 Ogni esecuzione finisce in `output/verifiche.jsonl`. Progetto completo:
 `memoria/PROGETTO_CONTRADDITTORIO_2026-08-25.md`.
 
-**Autonomous Core v3 (26/08).** `autonomous_core_v3.py` è un ciclo autonomo con
+**Autonomous Core v3 (28/08).** `autonomous_core_v3.py` è un ciclo autonomo con
 un bot Telegram di controllo. Due avvertenze valgono più del codice:
 
 - creazioni e proposte sono **composizioni da template e da backup**, non
   pensiero: ogni file prodotto porta `"pensiero_llm": false`. Il contatore che
   sale non è una mente che lavora;
 - **`costituzione_cev.json` non ha una fonte.** L'ha derivata da questo file un
-  nodo il 26/08, perché sul Drive non esiste nulla che si chiami Costituzione o
+  nodo il 28/08, perché sul Drive non esiste nulla che si chiami Costituzione o
   CEV — ricerca su `title` e su `fullText`, zero risultati. È la proposta di un
   nodo, non un documento dell'autore. Finché Claudio non la legge e la approva
   va trattata così, e il modulo RLAIF che la usa non produce giudizi etici: la
@@ -177,15 +186,15 @@ Stato al 25/08:
 | `claude/impara-tutto-hduh38` (06/08) | **non unire**: cancellerebbe il fix anti-eco di `vector_store.add` |
 | `claude/claudio-terzi-portfolio-vsy88e` (04/08) | **non unire**: `CLAUDE.md` e `STATO_PROGETTO.md` superati. Porta però un'istruzione di tutela mai revocata — vedi `OSS-0001` |
 
-**26/08 — lo scarto si allarga da solo, ogni notte.** La riconciliazione del
+**28/08 — lo scarto si allarga da solo, ogni notte.** La riconciliazione del
 25/08 vive su `claude/new-session-n1tzrh`, che **non è il ramo di default**. La
 Action giornaliera chiude con un `git push` nudo, quindi scrive sul ramo di
-default (`claude/riconnetti-…`). Verificato il 26/08: il daily del 26/08 è sul
+default (`claude/riconnetti-…`). Verificato il 28/08: l'ultimo daily (26/08) è sul
 ramo di default, la riconciliazione **no**. Ogni notte alle 07:00 UTC gli
 output vanno da una parte e il codice dall'altra, senza che nessuno tocchi
 niente.
 
-`claude/r3-autonomous-telegram-0goqsv` è stato riallineato il 26/08 (merge di
+`claude/r3-autonomous-telegram-0goqsv` è stato riallineato il 28/08 (merge di
 `n1tzrh`, 16 commit) ed è oggi **l'unico ramo che contiene entrambi**. Finché
 il ramo di default non viene spostato sulla riconciliazione, questa divergenza
 si ricostruisce da sola: è il difetto di questa sezione che si ripete su di sé.
@@ -206,7 +215,7 @@ leggi quello.** Ordine di lettura: `TUTELA_ORIGINE_CT-LGAI-001.md`,
 `IDENTITA_OPERATIVA.md` (versione 19/08, 2057 byte),
 `STATO_SESSIONE_2026-08-24.json`.
 
-**Riordinato il 25-26/08.** Le copie superate portano il prefisso
+**Riordinato il 25/08 e il 28/08.** Le copie superate portano il prefisso
 `ZZ_SUPERATO_`: 8 dell'indice della memoria, 7 di `STATO_SESSIONE.json`, 2 del
 vecchio indice canonico — una delle quali stava **nella radice del Drive**,
 fuori dalla cartella, e nessuno lo sapeva. Nessun file è stato cancellato:
@@ -218,10 +227,10 @@ buchi è l'opposto — elenca il contenitore e confrontalo con l'elenco atteso:
 `parentId = '1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj'` contro le citazioni dentro
 `TUTELA_ORIGINE` e dentro l'indice canonico. La differenza è il buco.
 
-**Riverificato il 26/08** — quattro ricerche, quattro risposte:
+**Riverificato il 28/08** — quattro ricerche, quattro risposte:
 
 - **`PROGETTO_R3.md`: ancora zero risultati.** Terza verifica indipendente
-  (23/08, 25/08, 26/08). Non è smarrito: non è mai esistito.
+  (23/08, 25/08, 28/08). Non è smarrito: non è mai esistito.
 - **Nessuna Costituzione CEV sul Drive**, in nessuna forma. Vedi §3.
 - **Nessun `backup_sistema_rosso.json`** — ma il materiale della Scacchiera
   esiste, in tre `.md` dentro `R3_MEMORIA_PERSISTENTE`:
@@ -247,6 +256,15 @@ Difetti noti della catena, da non dare per risolti senza verifica:
   **non esiste** in nessun punto del Drive (riverificato il 25/08). **Non
   crearlo tu:** un documento di attribuzione scritto da una macchina per
   riempire un vuoto legale è un falso, non una riparazione.
+- **La malattia dei duplicati è ricomparsa in tre giorni (verificato 28/08).**
+  `R3_WORK_QUEUE.yaml` esiste in **quattro copie senza data nel nome** (id
+  `1SLiKy1…`, `1G8GZrN…`, `1ceaNFA…`, `19-0v_ah…`), più tre datate;
+  `R3-019_BASELINE_2026-08-26.json` e
+  `R3-019_LONGITUDINAL_CAPABILITY_BENCHMARK.md` sono in due copie ciascuno. Sono
+  file depositati da un'altra sessione fra il 26 e il 28/08: **non li ho
+  toccati**, la decisione è dell'autore. Ma è lo stesso difetto curato il 25/08,
+  che si è ricostruito da solo appena qualcuno ha ripreso a depositare senza
+  datare i nomi.
 - La cartella Drive `R3-Protocollo-Oro-Rosso` è uno snapshot del 23/08 e
   contiene una versione **superata** del trasmettitore (v2.0.0, senza il fix
   anti-eco) e `r3_keep_alive.sh`, che dichiara di non fermarsi mai e gira su un
