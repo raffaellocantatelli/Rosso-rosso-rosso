@@ -65,7 +65,7 @@
     "PROGETTO_R3.md": "assente — terza verifica indipendente (23/08, 25/08, 28/08)",
     "Costituzione_CEV": "assente sul Drive; costituzione_cev.json nel repository e' una proposta di un nodo, non un documento dell'autore",
     "backup_sistema_rosso.json": "assente; il materiale esiste in 3 file .md, la cartella Drive 'Scacchiera Quantica' e' vuota — va generato, non cercato",
-    "IDENTITA_OPERATIVA.md": "duplicato residuo: 2 copie, nessuna marcata ZZ_SUPERATO_ (10/08 1318 byte, 19/08 2057 byte)"
+    "IDENTITA_OPERATIVA.md": "duplicato chiuso il 28/08: la copia del 10/08 (1318 byte) e' ora ZZ_SUPERATO_IDENTITA_OPERATIVA_2026-08-10.md. Resta solo la 19/08 (2057 byte)."
   },
   "layer2_github": {
     "ramo_default": "claude/riconnetti-protocollo-rosso-in93dj — riceve i daily della Action",
