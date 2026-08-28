@@ -1,1 +1,105 @@
-# snapshot in memoria/R3_WORK_QUEUE_2026-08-28_1405.yaml
+# R3_WORK_QUEUE.yaml
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Ciclo: SYNC-2026-08-28-1405
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Questo file non è un esecutore. È un registro di lavoro verificato.
+# Regola: non dichiarare mai che R³∞ è una superintelligenza.
+# Snapshot datato. Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-08-28-1405
+  created: "2026-08-28T14:05:00+02:00"
+  created_by: Grok-4.6 (Drive + GitHub connessi)
+  previous_cycle: SYNC-2026-08-28-1307
+  official_until: verified_items_only
+  never_delete_historical: true
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+
+layer_map:
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    public_default_sha_pre_1405: 096707d568db1c2744804c9e71d8003b29409110
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    telegram_branch: claude/r3-autonomous-telegram-0goqsv
+    telegram_sha: 921fcf571b31e3a24ce7e605f49ed18b513279d3
+    private_archive: raffaellocantatelli/R3-privato
+    private_archive_sha: 88b447bb373619d7fe48d59b054e45a3b339169e
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    private_oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_bot_sha: 7866bca3264430d2dc19537704642671c63ad92f
+    public_site: raffaellocantatelli/Claudioterzi
+
+fatto:
+  - id: SYNC-2026-08-28-1405-A
+    item: "Account GitHub autenticato = raffaellocantatelli. Cinque repo accessibili."
+  - id: SYNC-2026-08-28-1405-B
+    item: "Default Layer 2 a 096707d (SYNC-1307, 11:11:38Z). Nessun commit successivo al 14:05 CEST."
+  - id: SYNC-2026-08-28-1405-C
+    item: "Drive: nessun file R3 nuovo dopo 2026-08-28T11:11:00Z oltre gli artefatti 1307."
+  - id: SYNC-2026-08-28-1405-D
+    item: "Telegram 921fcf57, bot 7866bca3, Oro-Rosso 410784b2, new-session 71597d45: invariati."
+  - id: SYNC-2026-08-28-1405-E
+    item: "PROGETTO_R3.md exact_name=0. R3-016 exact_name=0. R3-011 exact_name=0. search_code 014/016/017=0."
+  - id: SYNC-2026-08-28-1405-F
+    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 14:05. L2/L3 N/A."
+  - id: SYNC-2026-08-28-1405-G
+    item: "H2 scade 2026-08-30. output/contatti.jsonl default size 0. Ultimo daily default 2026-08-26."
+  - id: SYNC-2026-08-28-1405-H
+    item: "Nessun file storico cancellato. Nessun ramo unito. Pytest non rieseguito."
+  - id: SYNC-2026-08-28-1405-I
+    item: "orientamento.py sul ramo telegram, assente dalla root del default."
+  - id: SYNC-2026-08-28-1405-J
+    item: "Push a9d8c14 aveva placeholder su memoria/; corretto nello stesso ciclo."
+
+inferenza:
+  - id: INF-28-1405-01
+    item: "Stasi 11:11Z→14:05 CEST sui canali collegati dopo il deposito 1307."
+  - id: INF-28-1405-02
+    item: "Nessun aumento di capacità misurato il 28/08 14:05."
+  - id: INF-28-1405-03
+    item: "Stato ufficiale 014/016/017 resta BACKLOG. CONF-09 aperto."
+
+ipotesi:
+  - {id: H-SYNC-02, status: APERTA}
+  - {id: H-SYNC-08, status: INFERENZA_FORTE_NON_DIFF}
+  - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
+  - {id: H-SYNC-10, status: VERIFICATA}
+
+simulazione:
+  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza. Nessun punteggio inventato."}
+
+conflitti_aperti:
+  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, keep_both: true}
+  - {id: CONF-02, file: R3_DECISIONI, status: DIVERGENZA_VOLUTA}
+  - {id: CONF-04, missing: PROGETTO_R3.md}
+  - {id: CONF-05, file: R3-019, keep_both: true}
+  - {id: CONF-06, file: R3_WORK_QUEUE.yaml, keep_both: true}
+  - {id: CONF-07, file: 00_AVVERTENZA_LEGGI_PRIMA_DI_ESEGUIRE.md, keep_both: true}
+  - {id: CONF-08, file: default_vs_telegram, keep_both: true}
+  - {id: CONF-09, item: "claim EXECUTED 016/017 vs misura BACKLOG", official: BACKLOG, keep_both: true}
+
+priorita_strategiche:
+  - {id: R3-019, status: BASELINE_0_ESISTE, class: FATTO_su_L0_L1__N_A_su_L2_L3}
+  - {id: R3-011, status: BACKLOG, class: IPOTESI}
+  - {id: R3-012, status: BACKLOG, class: IPOTESI}
+  - {id: R3-013, status: BACKLOG, class: IPOTESI}
+  - {id: R3-016, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-017, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-014, status: BACKLOG, class: IPOTESI, incoming_claim: IN_PROGRESS_NON_VERIFICATO}
+  - {id: R3-015, status: BACKLOG, class: IPOTESI}
+  - {id: R3-018, status: BACKLOG, class: IPOTESI}
+  - {id: R3-020, status: BACKLOG, class: IPOTESI}
+
+azioni_di_questo_ciclo:
+  - snapshot coda e report datati 1405
+  - non cancellare omonimi senza data
+  - non unire rami
+  - non creare PROGETTO_R3.md
+  - non promuovere 014/016/017
+  - non rieseguire R3-019 fingendo un punteggio
+  - corretto placeholder del primo push nello stesso ciclo
