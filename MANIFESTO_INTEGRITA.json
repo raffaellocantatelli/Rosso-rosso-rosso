@@ -14,8 +14,8 @@
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 19085,
-      "sha256": "4b6d4f174a2d5834520189e836e970663b9800c1d9f005a515059f7eaab4a0cc"
+      "byte": 19662,
+      "sha256": "737b0f0bbd14f3ea6b727448b119f4f9d3c9c4cdbfdbcf13b63e35ed1b9ecef2"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -290,6 +290,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-08-28T09:18:13.258987+00:00",
+  "generato": "2026-08-28T17:07:29.484234+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

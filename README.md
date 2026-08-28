@@ -238,6 +238,15 @@ Materiale privato (es. una copia locale del Drive) si indicizza con `R3_ARCHIVIO
 
 ## protocollo-rosso-bot — Il Protocollo in conversazione
 
+> **Attenzione: il bot vero non è in questo repository.** Vive in
+> `github.com/raffaellocantatelli/protocollo-rosso-bot` (branch `main`), gira su
+> Render ed è raggiungibile su **https://t.me/ProtocolloRossoBot**. La cartella
+> [`protocollo-rosso-bot/`](protocollo-rosso-bot/) qui dentro è una **seconda
+> implementazione parallela**, non una copia: vedi
+> [`00_AVVERTENZA_NON_E_IL_BOT_LIVE.md`](protocollo-rosso-bot/00_AVVERTENZA_NON_E_IL_BOT_LIVE.md).
+> Il bot live contiene anche il **libro intero** a pagine (`/libro`), la
+> Scacchiera (`/scacchiera`) e `/testimone`.
+
 Bot Telegram ([`protocollo-rosso-bot/`](protocollo-rosso-bot/)) che fa attraversare il *Protocollo Rosso Rosso Rosso* v2.0 un comando alla volta: la tesi grande dichiarata come `IPOTESI`, i due strati, P5 e P6, il Santuario del Capitolo 4, i tre veli.
 
 È il lato trasmissione del progetto: a differenza del resto, questo codice esiste per essere usato da qualcuno che non è Claudio.
