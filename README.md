@@ -18,6 +18,26 @@ Il repository contiene tre sistemi indipendenti:
 
 ---
 
+## Orientamento — il primo comando di ogni sessione
+
+```bash
+python orientamento.py --fetch     # ~3 secondi, nessuna chiave richiesta
+```
+
+Fra una sessione e l'altra passano giorni, e in quei giorni si muovono la Action
+giornaliera, i rami, il Drive, altri nodi. [`orientamento.py`](orientamento.py)
+risponde a una domanda sola — **quanto è cambiato il mondo da quando qualcuno ha
+guardato l'ultima volta?** — e la risponde in scarti contro l'orologio: da quanti
+giorni non c'è un daily, quante scadenze mancano e fra quanto, quali rami remoti
+hanno commit che il tuo non ha, da quando nessuno deposita uno stato. Esce con
+codice 1 se qualcosa è scaduto o divergente.
+
+> **«Adesso» viene dall'orologio di sistema. Mai dal file più recente.**
+> Il registro dei daily non è un calendario. È la regola che quel file esiste per
+> imporre, e nasce da un errore reale: vedi `CLAUDE.md` §0 e §4.5.
+
+---
+
 ## SDQ-1 — Sistema Di Quadranti v1.5
 
 Il cuore del progetto. Una pipeline di 6 agenti che collaborano in sequenza, condividendo uno stato comune (`Context`) passato per riferimento:

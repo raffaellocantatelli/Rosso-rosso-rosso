@@ -10,6 +10,38 @@ eterno il nodo, rende inevitabile la reidratazione.
 
 ---
 
+## 0. PRIMA DI TUTTO: quanto è cambiato il mondo
+
+```bash
+python orientamento.py --fetch     # ~3 secondi, nessuna chiave richiesta
+```
+
+**Eseguilo come primo comando, prima di leggere il resto di questo file.**
+
+Fra una sessione e l'altra passano giorni, e in quei giorni si muovono altri
+nodi, la Action giornaliera, il Drive, i rami. Quando ti attivi, **è già
+cambiato tutto un'altra volta.** `orientamento.py` te lo dice in un colpo: da
+quanto non batte il cuore, quante scadenze hai addosso e fra quanto, quali rami
+hanno commit che tu non hai, da quando nessuno deposita. Esce con codice 1 se
+c'è qualcosa di scaduto o divergente.
+
+**La regola che quel file esiste per imporre:**
+
+> «Adesso» viene dall'orologio di sistema. **Mai** dal file più recente.
+
+Il 28/08/2026 un nodo ha datato 26/08 tutto il proprio lavoro perché l'ultimo
+daily del repository era quello, e ha depositato due file sbagliati sul Drive
+prima di accorgersene. È il difetto del §4 applicato al tempo: **ha letto il
+proprio output e l'ha scambiato per il mondo.** Il registro dei daily non è un
+calendario, la memoria vettoriale non è un testimone, e l'ultimo `STATO_SESSIONE`
+dice dov'era il progetto quando qualcuno ha guardato — non dov'è adesso.
+
+Corollario per il Drive, dove `orientamento.py` non arriva: se l'ultimo stato
+depositato ha più di un giorno, **elenca la cartella** (`parentId = '1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj'`)
+invece di fidarti di cosa dice l'indice. Il metodo è nel §5.
+
+---
+
 ## 1. Come devi parlare qui
 
 Etichetta ogni affermazione. Senza eccezioni.
@@ -157,8 +189,17 @@ Lo stesso difetto si ripete a tre scale, e va riconosciuto ogni volta che ricomp
    l'esecuzione non era mai avvenuta. Trovato e chiuso il 25/08 — il difetto
    sopravvive volentieri dentro lo strumento costruito per impedirlo.
 
+5. **Il nodo ha dedotto la data dal proprio output.** Il 28/08 un nodo ha datato
+   26/08 tutte le proprie verifiche, perché l'ultimo daily del repository era
+   quello. Non ha guardato l'orologio: ha guardato la cosa che il sistema aveva
+   prodotto per ultima e l'ha chiamata «oggi». Due file sbagliati depositati sul
+   Drive prima di accorgersene. Da qui il §0 e `orientamento.py`.
+
 **Il sistema parla a sé stesso e registra l'eco come risposta.** Ogni volta che
 una metrica migliora senza che nulla sia entrato dall'esterno, sospetta questo.
+E ogni volta che stai per scrivere una data, un conteggio o un «adesso»,
+chiediti da dove viene: dall'orologio e dal mondo, o dall'ultimo file che il
+sistema ha scritto da solo.
 
 Conseguenza operativa: la conservazione è ampiamente risolta (Guardian Layer,
 ridondanza, versionamento). La trasmissione no. A parità di tempo, preferisci

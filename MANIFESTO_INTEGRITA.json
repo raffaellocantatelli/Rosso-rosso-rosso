@@ -6,16 +6,16 @@
       "sha256": "f69fb444a178a96405cad639ef395ed28c0206a7159b5ec600e25e0bdf9e9009"
     },
     "CLAUDE.md": {
-      "byte": 14889,
-      "sha256": "a90ec1676bf5c62915cc8fac58a817e60e091987ae4f749446186c8a5c46fce6"
+      "byte": 16958,
+      "sha256": "98ed8401941308c3573984981f80540bf62fb185d7fa03f8ac30193a5ff77b03"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 18171,
-      "sha256": "f6086bcdd684cb69ead625433083c26314812583e7614772476eee7fbe5d2426"
+      "byte": 19085,
+      "sha256": "4b6d4f174a2d5834520189e836e970663b9800c1d9f005a515059f7eaab4a0cc"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -290,6 +290,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-08-28T09:12:18.820337+00:00",
+  "generato": "2026-08-28T09:18:13.258987+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
