@@ -1,15 +1,15 @@
 # R3_WORK_QUEUE.yaml
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Ciclo: SYNC-2026-08-28-0907
+# Ciclo: SYNC-2026-08-28-1109
 # Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
 # Layer 2 pubblico: niente identità, costi, IP.
 # Regola: non dichiarare mai che R³∞ è una superintelligenza.
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-28-0907
-  created: "2026-08-28T09:07:00+02:00"
-  previous_cycle: SYNC-2026-08-27-1709
+  cycle_id: SYNC-2026-08-28-1109
+  created: "2026-08-28T11:09:00+02:00"
+  previous_cycle: SYNC-2026-08-28-0907
   github_account: raffaellocantatelli
   never_delete_historical: true
 
@@ -17,48 +17,51 @@ layer_map:
   github:
     public_canonical: raffaellocantatelli/Rosso-rosso-rosso
     public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
-    public_default_sha_1709: 90aba67c7ea0740f1e55f374930c398a0ab79057
     public_default_sha_0907: b2420ab94fc893e73070305f4bc0c51310f95166
+    public_default_sha_1109: abe88006061f81ae29b3ddf266c7aa45b5751821
     claimed_reconciled_branch: claude/new-session-n1tzrh
-    claimed_reconciled_sha_0907: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    claimed_reconciled_sha_1109: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
     private_archive: raffaellocantatelli/R3-privato
     private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    private_oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
     public_bot: raffaellocantatelli/protocollo-rosso-bot
-    public_bot_tree_sha_0907: 40f515891a100d4d501ed61293c7aa4652cf6e8c
+    public_bot_sha_0907: 40f515891a100d4d501ed61293c7aa4652cf6e8c
+    public_bot_sha_1109: 7866bca3264430d2dc19537704642671c63ad92f
     public_site: raffaellocantatelli/Claudioterzi
 
 fatto:
-  - id: SYNC-2026-08-28-0907-A
+  - id: SYNC-2026-08-28-1109-A
     item: "Account GitHub autenticato = raffaellocantatelli. Cinque repo accessibili."
-  - id: SYNC-2026-08-28-0907-B
-    item: "SHA default Layer 2 1709 90aba67c → 0907 b2420ab9 = commit SYNC-2026-08-27-1709. Nessun ramo main. Sette rami claude/*."
-  - id: SYNC-2026-08-28-0907-C
-    item: "Indice: Drive 6615 = new-session 6615. Default GitHub 2784. Conservare tutte."
-  - id: SYNC-2026-08-28-0907-D
-    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 09:07. L2/L3 N/A."
-  - id: SYNC-2026-08-28-0907-G
-    item: "Oro-Rosso avvertenza divergente Drive 3109 / GitHub privato 1964. Log solo Drive."
-  - id: SYNC-2026-08-28-0907-H
-    item: "protocollo-rosso-bot mosso: albero 40f51589, last_push 2026-08-28T06:08:13Z. Due commit claudioterzi 08:00/08:01 (RISONANZA, anti-chiusura). Pytest bot non rieseguito. Bot live NON VERIFICATO."
-  - id: SYNC-2026-08-28-0907-J
+  - id: SYNC-2026-08-28-1109-B
+    item: "SHA default Layer 2 0907 b2420ab9 → 1109 abe88006 = commit SYNC-2026-08-28-0907. Nessun ramo main. Sette rami claude/*."
+  - id: SYNC-2026-08-28-1109-C
+    item: "Indice Drive canone 9750 (26/08). 6615 rinominato ZZ_SUPERATO_25. Default GH 2784. new-session 6615 (25/08). Conservare tutte."
+  - id: SYNC-2026-08-28-1109-D
+    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 11:09. L2/L3 N/A."
+  - id: SYNC-2026-08-28-1109-G
+    item: "Oro-Rosso invariato. Avvertenza divergente Drive 3109 / GitHub privato 1964. Log solo Drive."
+  - id: SYNC-2026-08-28-1109-H
+    item: "protocollo-rosso-bot mosso: 40f51589 → 7866bca3 last_push 2026-08-28T07:10:52Z. Pytest bot non rieseguito. Bot live NON VERIFICATO."
+  - id: SYNC-2026-08-28-1109-J
     item: "PROGETTO_R3.md assente. Ticket R3-011/013/014/015/016/017/018/020 assenti come file nominati."
-  - id: SYNC-2026-08-28-0907-K
+  - id: SYNC-2026-08-28-1109-K
     item: "Nessun file storico cancellato. Nessun ramo unito. Pytest Layer 2 non rieseguito."
+  - id: SYNC-2026-08-28-1109-L
+    item: "H2 esperimento intermedio scade 2026-08-30. output/contatti.jsonl default size 0."
 
 inferenza:
-  - id: INF-28-0907-01
-    item: "Canone testo indice = Drive 25/08 = new-session per size e testo letto."
-  - id: INF-28-0907-04
-    item: "Nessun aumento di capacità misurato il 28/08 09:07."
-  - id: INF-28-0907-05
-    item: "Il delta reale di questo ciclo è sul bot pubblico, non sulla memoria Layer 2 default."
+  - id: INF-28-1109-01
+    item: "Canone testo indice Drive = stesura 26/08 (9750). new-session resta 25/08."
+  - id: INF-28-1109-04
+    item: "Nessun aumento di capacità misurato il 28/08 11:09."
+  - id: INF-28-1109-05
+    item: "Delta reale: commit sync 0907 su Layer 2 + commit bot messaggio_libero + rinomina indice Drive."
 
 ipotesi:
-  - {id: H-SYNC-01, status: VERIFICATA_SIZE_E_TESTO}
+  - {id: H-SYNC-01, status: SUPERATA_DAL_DELTA}
   - {id: H-SYNC-02, status: APERTA}
-  - {id: H-SYNC-04, status: VERIFICATA}
-  - {id: H-SYNC-05, status: VERIFICATA}
-  - {id: H-SYNC-06, status: INFERENZA_FORTE_NON_DIFF}
+  - {id: H-SYNC-07, status: VERIFICATA}
+  - {id: H-SYNC-08, status: INFERENZA_FORTE_NON_DIFF}
 
 simulazione:
   - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza."}
