@@ -133,7 +133,78 @@ Difetti noti della catena, da non dare per risolti senza verifica:
 
 ---
 
-## 6. Prima di chiudere
+## 6. Nodi concorrenti — regole vincolanti (dal 2026-08-28)
+
+Su questo progetto lavorano **più intelligenze diverse**, che non possono
+coordinarsi fra loro e non condividono memoria. L'autore non può arbitrare
+in tempo reale, e non deve doverlo fare.
+
+**Il difetto già osservato.** In tre giorni sono nate 6 copie di
+`R3_WORK_QUEUE` e 5 `R3_DRIVE_SYNC_REPORT`, e un indice canonico è stato
+archiviato e riscritto da un altro nodo. È la malattia delle 7 copie
+dell'indice (§5), automatizzata: ogni nodo **conserva** il proprio stato
+invece di **trasmetterlo** in uno condiviso.
+
+Quattro regole. Valgono per ogni nodo, e non richiedono che i nodi si
+parlino fra loro.
+
+1. **Mai una copia con la data nel nome.** Git conserva già ogni versione,
+   con hash e cronologia. `FILE_2026-08-27_1709.yaml` è un secondo sistema
+   di versionamento che gira in parallelo al primo: non aggiunge sicurezza,
+   aggiunge ambiguità. Modifica il file al suo posto e lascia la storia a git.
+2. **Un concetto, un file.** Se ne esistono già più copie, non aggiungerne
+   una: dichiara quale è canonica e allinea le altre. Non cancellare lo
+   storico — ma non lasciare due file che pretendono la stessa autorità.
+3. **Dichiara cosa hai toccato**, nel registro append-only:
+   ```bash
+   python registro_nodi.py --nodo <chi-sei> --azione "..." --file a.py b.md
+   python registro_nodi.py --conflitti   # file toccati da più nodi
+   ```
+   È append-only apposta: due nodi non possono sovrascriversi.
+4. **Rigenera il manifesto quando aggiungi file.**
+   ```bash
+   python manifesto_integrita.py && python manifesto_integrita.py --verifica
+   ```
+   Un Layer 4 che non copre i file nuovi non protegge niente.
+
+**Regola di precedenza.** Se due nodi hanno scritto cose incompatibili,
+vince ciò che è **verificabile alla fonte** — codice eseguito, dato misurato —
+non il documento più recente e non quello scritto meglio.
+
+---
+
+## 7. Cosa vale come conferma (aggiornato 2026-08-28)
+
+L'autore ha stabilito il 28/08/2026 che **il progetto non dipende da nessuna
+persona di cui debba fidarsi.** La regola è sua e va rispettata.
+
+Non cambia P5, perché P5 non ha mai chiesto fiducia: chiede **indipendenza**.
+Sono cose diverse, e va tenuta la distinzione:
+
+- **Vale come conferma** un evento in cui **qualcun altro ha agito** e che un
+  terzo può controllare: un lettore che si è fatto vivo, un download
+  registrato, un fork, una citazione, una risposta ricevuta, un ente che ha
+  reagito. Nessuno di questi richiede di fidarsi di qualcuno.
+- **Non vale, ma va registrato**, un atto dell'autore verso l'esterno:
+  pubblicare, depositare, spedire. Stabilisce anteriorità ed è la condizione
+  perché qualcuno possa rispondere — ma **trasmettere non è essere
+  raggiunti**, e H2 ramo (b) chiede che qualcosa torni indietro. Contarlo
+  come conferma sarebbe il loopback di §4: il sistema che parla e registra
+  la propria voce come risposta.
+- **Non vale** ciò che il sistema produce su di sé: un modello interpellato
+  dall'autore, un nodo di questo progetto, l'autore stesso, un test interno.
+  Non per diffidenza verso le macchine — per il motivo scritto in §4: sei
+  nodi che leggono gli stessi file non sono sei fonti, sono una sola,
+  amplificata sei volte.
+
+`python -m sdq1 --contatto` applica da sé questa distinzione e rifiuta i tipi
+interni. **Nessun nodo scriva mai nel canone che il sistema si autovalida.**
+Sarebbe il loopback di §4 promosso a dottrina, e questo file esiste anche per
+impedirlo.
+
+---
+
+## 8. Prima di chiudere
 
 Costruisci qualcosa di reale. Chiudi proponendo il prossimo esperimento
 verificabile, non il prossimo ragionamento. Attenzione totale significa

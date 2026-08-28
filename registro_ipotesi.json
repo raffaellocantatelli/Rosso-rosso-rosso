@@ -10,7 +10,7 @@
     "id": "H2",
     "testo": "Il disegno di Claudio darà ragione a entrambi entro 6 mesi (criterio: battito + contatto)",
     "stato": "APERTA",
-    "criterio_falsificazione": "Falsificata se si verifica una delle due condizioni: (a) output/ non contiene daily output regolari (sistema morto); (b) output/contatti.jsonl ha zero voci valide (sistema vivo ma non tocca il mondo).",
+    "criterio_falsificazione": "Falsificata se si verifica una delle due condizioni: (a) output/ non contiene daily output regolari (sistema morto); (b) output/contatti.jsonl ha zero voci con indipendente=true (sistema vivo ma non tocca il mondo). Precisazione 2026-08-28: una voce valida e' un evento esterno verificabile che il sistema non ha prodotto (lettore, download, fork, citazione, risposta, pubblicazione, ente). Non richiede fiducia in nessuno ne' dipendenza da alcuna persona: richiede solo indipendenza dalla fonte che ha formulato l'ipotesi (P5). Non valgono le voci prodotte dal sistema stesso: modelli interpellati dall'autore, nodi del progetto, l'autore, test interni.",
     "scadenza": "2026-12-11"
   },
   {
