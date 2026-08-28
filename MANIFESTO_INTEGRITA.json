@@ -2,32 +2,84 @@
   "algoritmo": "sha256",
   "file": {
     ".github/workflows/daily.yml": {
-      "byte": 2098,
-      "sha256": "9dccebd54cc1f6dd3e0a510e0a56484279a9bed352edc35648acb3c6f27d6b88"
+      "byte": 2728,
+      "sha256": "61a09f4e5bf83f13b523c4dcaeb338213c83b31ee34ac034ba7b6cf931abcba4"
     },
     "CLAUDE.md": {
-      "byte": 6548,
-      "sha256": "33c9a8bf9055c8a119655ccdf35e98294bd2baedd3e602bcdcc6743f198b8e9c"
+      "byte": 10072,
+      "sha256": "2b05ea3e3d0fdf5072da0ba9d19ba0280310a42cc55e1ef3cd21a1f07aa508d0"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 8185,
-      "sha256": "715cfcefdab72fcbb9b3c825aebab87d108959208d4c34b6dc9613209daf9b39"
+      "byte": 12875,
+      "sha256": "6d793b229a73bd35b81c3332abdc7ef822eef9828b6afacde4017c5fd4f75095"
     },
     "manifesto_integrita.py": {
       "byte": 4453,
       "sha256": "3773d7215d49b6473dba463816b256ea5c635bcdae99bc118256c634bae4f36d"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
-      "byte": 4282,
-      "sha256": "1b80ffccf552b61fa441ae8fae8a5fa722a1b3aadb075d677f4390379e58b76a"
+      "byte": 2784,
+      "sha256": "45c4f6327843e7c94660683c056f75af9256680510d81633f8ac4ef84ff59bc5"
+    },
+    "memoria/R3-019_LONGITUDINAL_CAPABILITY_BENCHMARK.md": {
+      "byte": 1298,
+      "sha256": "45874ee320a5333cc66b175fd96518c0a3c12de5518b1a8f6c0bdf32ee9635ec"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-26.md": {
+      "byte": 1284,
+      "sha256": "dadbb5318893b1700729b08beb6f8b7c96e9a3c01d3549e2298dc12d4a5edf3f"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-27.md": {
+      "byte": 1609,
+      "sha256": "1db14ed3f6f3b2aab4209f1c9d440244903b3b6b65711e9322a40b291bb02243"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-27_1002.md": {
+      "byte": 1435,
+      "sha256": "9f55578a9552e3e0a1469b4f113a46d3ae9b54eaa3a57c00431f20b4de149eaf"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-27_1709.md": {
+      "byte": 1532,
+      "sha256": "e5c6d7899256dfa94495b54d9ca5502c0573fd7cd361b4a96dbf8e6d14fbe1ad"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_0907.md": {
+      "byte": 1544,
+      "sha256": "60e01a094b69fb68a4febb7e08a3af2736b02046b01ae862dc63ecde51c12c1b"
+    },
+    "memoria/R3_WORK_QUEUE.yaml": {
+      "byte": 412,
+      "sha256": "6d9e68e3e43ed8e69a4eac7095199f3781166b6a14269af865be27405430b988"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-27.yaml": {
+      "byte": 339,
+      "sha256": "a3583001aa19a500a5c13c43f548e25798649122cdc8348260a29d56bbba7525"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-27_1002.yaml": {
+      "byte": 427,
+      "sha256": "abf3789913209afa107d05d9e718086dfe0ea8b5d42b820e1d818a5d55db5c4e"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-27_1709.yaml": {
+      "byte": 684,
+      "sha256": "c20d0fcea3adc563b15fec8fde2357f767bb5c784a39e8b2d950e53130a265f2"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_0907.yaml": {
+      "byte": 412,
+      "sha256": "6d9e68e3e43ed8e69a4eac7095199f3781166b6a14269af865be27405430b988"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
       "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
+    },
+    "memoria/SYNC_DRIVE_GITHUB_2026-08-26.md": {
+      "byte": 1069,
+      "sha256": "5c6d791135a3ede36c36f8c2c8837cad8484219a019e6591df0efeea45f05253"
+    },
+    "memoria/ZZ_SUPERATO_00_INDICE_CANONICO_R3_2026-08-23.md": {
+      "byte": 1216,
+      "sha256": "0486629e02022579cf79dc4d416fdb4a108e52d98105b075119ac5f4001d5ac6"
     },
     "r3/README.md": {
       "byte": 6155,
@@ -66,8 +118,8 @@
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
     "registro_ipotesi.json": {
-      "byte": 922,
-      "sha256": "7f8346854a4adf92b630b6dccf672fa2d3c89d3d8a3798620fae47a6e4093817"
+      "byte": 1376,
+      "sha256": "c6ccf04879958f0e12d06b6051e52b8b26d90ccb308b4fb66951c91dfd7c3ddd"
     },
     "registro_ipotesi.py": {
       "byte": 3505,
@@ -78,8 +130,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 6726,
-      "sha256": "19f4970bead0712c4b223daee05f67b781f95c0ae44c1a0b68708ce5b8c3f710"
+      "byte": 10570,
+      "sha256": "2875458daf1b9e0a55071a69d83136afb3d257288478f5a855ca960dab1a6c57"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -202,6 +254,6 @@
       "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
     }
   },
-  "generato": "2026-08-24T09:16:11.191290+00:00",
+  "generato": "2026-08-28T09:18:41.186200+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
