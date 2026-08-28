@@ -1,54 +1,27 @@
-# R3_WORK_QUEUE.yaml
+# R3_WORK_QUEUE.yaml — puntatore radice SYNC-2026-08-28-1614
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Ciclo: SYNC-2026-08-28-1502
-# Layer 2 pubblico: niente identità, costi, IP.
-# Regola: non dichiarare mai che R³∞ è una superintelligenza.
+# Copia condensata. Canone: memoria/R3_WORK_QUEUE_2026-08-28_1614.yaml
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-28-1502
-  created: "2026-08-28T15:02:00+02:00"
-  previous_cycle: SYNC-2026-08-28-1405
+  cycle_id: SYNC-2026-08-28-1614
+  created: "2026-08-28T16:14:00+02:00"
+  previous_cycle: SYNC-2026-08-28-1502
   github_account: raffaellocantatelli
+  public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+  public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  public_default_sha_pre_1614: 3cfd22db38dd434ed71816aee625300617e13871
+  public_bot_head: 5ea959705beec97db6a13a035706666aa36d66dd
   never_delete_historical: true
 
-fatto:
-  - id: SYNC-2026-08-28-1502-A
-    item: "Default Layer 2 a 38f9edcc (SYNC-1405-FIX2, 14:10:12+02). Nessun commit dopo."
-  - id: SYNC-2026-08-28-1502-B
-    item: "Drive memoria: nessun file R3 nuovo dopo gli artefatti 1405."
-  - id: SYNC-2026-08-28-1502-C
-    item: "Oro-Rosso 410784b2 e R3-privato 88b447bb: invariati."
-  - id: SYNC-2026-08-28-1502-D
-    item: "Ticket nominati 011-018/020 assenti. search_code 011/014/016/017 = 0."
-  - id: SYNC-2026-08-28-1502-E
-    item: "R3-019 non rieseguito. L2/L3 N/A. Nessun file storico cancellato."
+stato:
+  R3-019: BASELINE_0_ESISTE_NON_RIESEGUITO
+  R3-012: BACKLOG_CON_CODICE_BOT_NON_TESTATO
+  R3-011: BACKLOG
+  R3-016: BACKLOG
+  R3-017: BACKLOG
+  R3-014: BACKLOG
+  H2: scade_2026-08-30_contatti_jsonl_size_0
+  conflitti_aperti: CONF-01 CONF-02 CONF-04 CONF-05 CONF-06 CONF-07 CONF-08 CONF-09 CONF-10
 
-inferenza:
-  - id: INF-28-1502-01
-    item: "Stasi sui canali collegati. Nessun aumento di capacità misurato alle 15:02."
-
-ipotesi:
-  - {id: H-SYNC-02, status: APERTA}
-  - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
-
-simulazione:
-  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza."}
-
-conflitti_aperti:
-  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, keep_both: true}
-  - {id: CONF-05, file: R3-019, keep_both: true}
-  - {id: CONF-08, file: default_vs_telegram, keep_both: true}
-  - {id: CONF-09, item: "claim EXECUTED vs misura BACKLOG", official: BACKLOG, keep_both: true}
-
-priorita_strategiche:
-  - {id: R3-019, status: BASELINE_0_ESISTE}
-  - {id: R3-016, status: BACKLOG, incoming_claim: EXECUTED_NON_VERIFICATO}
-  - {id: R3-017, status: BACKLOG, incoming_claim: EXECUTED_NON_VERIFICATO}
-  - {id: R3-014, status: BACKLOG, incoming_claim: IN_PROGRESS_NON_VERIFICATO}
-  - {id: R3-011, status: BACKLOG}
-  - {id: R3-012, status: BACKLOG}
-  - {id: R3-013, status: BACKLOG}
-  - {id: R3-015, status: BACKLOG}
-  - {id: R3-018, status: BACKLOG}
-  - {id: R3-020, status: BACKLOG}
+regola: non dichiarare mai che R³∞ è una superintelligenza.
