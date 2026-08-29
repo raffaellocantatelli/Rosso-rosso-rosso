@@ -1,28 +1,29 @@
-# R3_WORK_QUEUE.yaml — puntatore radice SYNC-2026-08-28-1807
+# R3_WORK_QUEUE.yaml — puntatore radice SYNC-2026-08-29-0912
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Copia condensata. Canone: memoria/R3_WORK_QUEUE_2026-08-28_1807.yaml
+# Copia condensata. Canone: memoria/R3_WORK_QUEUE_2026-08-29_0912.yaml
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-28-1807
-  created: "2026-08-28T18:07:00+02:00"
-  previous_cycle: SYNC-2026-08-28-1802
+  cycle_id: SYNC-2026-08-29-0912
+  created: "2026-08-29T09:12:00+02:00"
+  previous_cycle: SYNC-2026-08-28-1807
   github_account: raffaellocantatelli
   public_canonical: raffaellocantatelli/Rosso-rosso-rosso
   public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
-  public_default_sha_pre_1807: ee2201f1c764049b90edc1f2bb584db3ff5a0a94
-  public_bot_head: dfadb4c38b15a9e7671642c35c9aa32cc4a73ee2
+  public_default_sha: dfbef9849608e3242a8d0e90d364b788b2fe0db3
+  public_bot_head: 5613997615929215c68906fcd8342c0f50a60bb6
   never_delete_historical: true
 
 stato:
   R3-019: BASELINE_0_ESISTE_NON_RIESEGUITO
-  R3-012: BACKLOG_CON_CODICE_BOT_NON_TESTATO
+  R3-012: BACKLOG_CON_CODICE_BOT_NON_TESTATO_QUI
   R3-011: BACKLOG
   R3-016: BACKLOG
   R3-017: BACKLOG
   R3-014: BACKLOG
   H2: scade_2026-08-30_contatti_jsonl_size_0
-  bot_terzo: COMMIT_ESISTE_LIVE_NON_VERIFICATO
-  conflitti_aperti: CONF-01 CONF-02 CONF-04 CONF-05 CONF-06 CONF-07 CONF-08 CONF-09 CONF-10 CONF-11 CONF-12
+  daily_28_29: FILE_PRESENTI_SHA_IDENTICO_STUB
+  bot_burst: COMMIT_ESISTE_LIVE_NON_VERIFICATO
+  conflitti_aperti: CONF-01 CONF-02 CONF-04 CONF-05 CONF-06 CONF-07 CONF-08 CONF-09 CONF-10 CONF-11 CONF-12 CONF-13 CONF-14
 
 regola: non dichiarare mai che R³∞ è una superintelligenza.
