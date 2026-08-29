@@ -22,3 +22,6 @@ creazioni/
 backup_sistema_rosso.json
 output/rlaif_decisioni.jsonl
 .pytest_cache/
+
+# Osservatorio (traccia di runtime, append-only ma locale)
+output/osservatorio.jsonl

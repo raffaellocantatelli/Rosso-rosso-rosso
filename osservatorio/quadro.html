@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Osservatorio R3</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --fondo:#0B0E13; --pannello:#141922; --pannello2:#1B212C; --bordo:#28303C;
+  --testo:#E6EAF0; --testo2:#94A0B0; --testo3:#6B7686;
+  --accento:#F0669F;
+  --live:#3FC9A4; --vecchio:#E4A93F; --errore:#F0665E; --spento:#6B7686;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --sans:"IBM Plex Sans",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--fondo);color:var(--testo);font-family:var(--sans);font-size:14px;overflow:hidden}
+
+.griglia{display:grid;grid-template-rows:auto 1fr;height:100vh}
+
+/* ---------- barra ---------- */
+.barra{display:flex;align-items:center;gap:20px;padding:10px 18px;background:var(--pannello);
+       border-bottom:1px solid var(--bordo);flex-wrap:wrap}
+.marchio{font-family:var(--mono);font-weight:600;letter-spacing:.18em;font-size:13px;color:var(--accento)}
+.marchio small{display:block;letter-spacing:.08em;font-size:9.5px;color:var(--testo3);font-weight:400;margin-top:2px}
+.orologio{font-family:var(--mono);font-size:12px;color:var(--testo2);font-variant-numeric:tabular-nums}
+.orologio b{color:var(--testo);font-weight:500}
+.somma{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.q{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;padding:3px 8px;border-radius:2px;
+   border:1px solid var(--bordo);color:var(--testo2);white-space:nowrap}
+.q b{font-variant-numeric:tabular-nums}
+.q.live{color:var(--live);border-color:#1E4A40}
+.q.vecchio{color:var(--vecchio);border-color:#4A3A18}
+.q.errore{color:var(--errore);border-color:#4A2320}
+.q.spento{color:var(--spento)}
+button{font-family:var(--mono);font-size:11px;background:var(--pannello2);color:var(--testo);
+       border:1px solid var(--bordo);padding:5px 10px;border-radius:2px;cursor:pointer}
+button:hover{border-color:var(--accento);color:var(--accento)}
+:focus-visible{outline:2px solid var(--accento);outline-offset:1px}
+
+/* ---------- corpo ---------- */
+.corpo{display:grid;grid-template-columns:1fr 390px;min-height:0}
+@media (max-width:900px){.corpo{grid-template-columns:1fr;grid-template-rows:45vh 1fr}}
+#mappa{width:100%;height:100%;background:#0B0E13}
+.leaflet-container{background:#0B0E13}
+.senzaMappa{height:100%;display:flex;flex-direction:column;justify-content:center;gap:10px;
+            padding:0 12%;color:var(--testo3)}
+.senzaMappa b{font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--vecchio)}
+.senzaMappa span{font-size:13px;line-height:1.6;max-width:52ch}
+.leaflet-control-attribution{background:rgba(11,14,19,.8)!important;color:#6B7686!important;font-size:9px!important}
+.leaflet-control-attribution a{color:#94A0B0!important}
+
+.rail{background:var(--pannello);border-left:1px solid var(--bordo);overflow-y:auto;padding:12px}
+.rail h2{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+         color:var(--testo3);margin:14px 0 8px;font-weight:500}
+.rail h2:first-child{margin-top:0}
+
+.carta{background:var(--pannello2);border:1px solid var(--bordo);border-left:3px solid var(--spento);
+       border-radius:2px;padding:10px 12px;margin-bottom:8px}
+.carta.s-LIVE{border-left-color:var(--live)}
+.carta.s-VECCHIO{border-left-color:var(--vecchio)}
+.carta.s-ERRORE{border-left-color:var(--errore)}
+.carta.s-SENZA_CHIAVE,.carta.s-NON_IMPLEMENTATA,.carta.s-MAI_LETTA{opacity:.62}
+.riga1{display:flex;align-items:baseline;gap:8px}
+.nome{font-weight:500;font-size:13.5px;flex:1;min-width:0}
+.chip{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:2px 5px;border-radius:2px;
+      border:1px solid currentColor;white-space:nowrap}
+.c-LIVE{color:var(--live)} .c-VECCHIO{color:var(--vecchio)} .c-ERRORE{color:var(--errore)}
+.c-SENZA_CHIAVE,.c-NON_IMPLEMENTATA,.c-MAI_LETTA{color:var(--spento)}
+.riga2{display:flex;align-items:flex-end;gap:10px;margin-top:6px}
+.cifra{font-family:var(--mono);font-size:26px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums}
+.cifra.vuota{color:var(--testo3);font-size:22px}
+.tetto{font-family:var(--mono);font-size:9.5px;color:var(--vecchio);border:1px solid var(--vecchio);
+       padding:1px 4px;border-radius:2px;letter-spacing:.06em;margin-bottom:3px}
+.eta{font-family:var(--mono);font-size:10.5px;color:var(--testo2);margin-left:auto;margin-bottom:2px;
+     font-variant-numeric:tabular-nums;text-align:right;line-height:1.4}
+.eta span{display:block;color:var(--testo3);font-size:9px}
+.sbarra{height:2px;background:var(--bordo);margin-top:8px;border-radius:1px;overflow:hidden}
+.sbarra i{display:block;height:100%;background:var(--live);transition:width .4s linear}
+.sbarra i.tardi{background:var(--vecchio)}
+.meta{font-family:var(--mono);font-size:9.5px;color:var(--testo3);margin-top:7px;line-height:1.6}
+.nota{font-size:11.5px;color:var(--testo2);margin-top:6px;line-height:1.5;border-top:1px solid var(--bordo);padding-top:6px}
+.err{font-family:var(--mono);font-size:10px;color:var(--errore);margin-top:6px;word-break:break-word;line-height:1.5}
+
+/* ---------- cassetto resoconto ---------- */
+.cassetto{position:fixed;inset:0;background:rgba(6,8,11,.86);display:none;padding:32px;z-index:1000}
+.cassetto[aperto]{display:flex;align-items:center;justify-content:center}
+.foglio{background:var(--pannello);border:1px solid var(--bordo);border-radius:3px;max-width:920px;
+        width:100%;max-height:100%;display:flex;flex-direction:column}
+.foglio header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bordo)}
+.foglio header b{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--accento)}
+.foglio pre{margin:0;padding:16px;overflow:auto;font-family:var(--mono);font-size:12px;line-height:1.65;color:var(--testo2)}
+</style>
+</head>
+<body>
+<div class="griglia">
+
+  <div class="barra">
+    <div class="marchio">OSSERVATORIO R3<small>origine protetta CT-LGAI-001</small></div>
+    <div class="orologio">schermo <b id="oraSchermo">—</b> · ogni 2 s</div>
+    <div class="orologio">in ascolto da <b id="uptime">—</b></div>
+    <div class="somma" id="somma"></div>
+    <button id="btnResoconto">RESOCONTO ⏎</button>
+  </div>
+
+  <div class="corpo">
+    <div id="mappa"></div>
+    <div class="rail">
+      <h2>Fonti — stato e provenienza</h2>
+      <div id="carte"></div>
+      <h2>Perche' questo quadro e' fatto cosi'</h2>
+      <div class="carta" style="border-left-color:var(--accento);opacity:1">
+        <div class="nota" style="border:0;padding:0;margin:0">
+          Nessun riquadro qui mostra <b>0</b> per una fonte che non risponde: mostra un
+          trattino e il motivo. Un conteggio arrivato al tetto della query e' marcato
+          <b>≥</b>, perche' il valore vero e' piu' alto e non lo conosciamo. Ogni cifra
+          porta accanto la sua eta' e la cadenza reale della sorgente a monte.
+          Lo schermo si aggiorna ogni 2 secondi; i dati no, e la differenza e' scritta.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cassetto" id="cassetto">
+  <div class="foglio">
+    <header><b>RESOCONTO</b><span style="color:var(--testo3);font-size:11px">generato da codice, non da un modello</span>
+      <button style="margin-left:auto" id="btnChiudi">chiudi ✕</button></header>
+    <pre id="testoResoconto">…</pre>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+var COLORI = {usgs:"#F0669F", emsc:"#7FD4F0", gdacs:"#E4A93F", firms:"#F0665E", opensky:"#3FC9A4"};
+
+/* La mappa e' un di piu': se Leaflet o le tile non arrivano (rete chiusa,
+   CDN bloccata, macchina offline) il quadro deve continuare a funzionare e
+   dirlo, invece di restare bianco fingendo che vada tutto bene. */
+var mappa = null, strato = null;
+if (typeof L !== "undefined") {
+  try {
+    mappa = L.map("mappa", {worldCopyJump:true, zoomControl:true}).setView([25, 10], 2);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 10, attribution: "© OpenStreetMap — tile caricate dal tuo browser",
+      className: "tiles"
+    }).addTo(mappa);
+    document.head.insertAdjacentHTML("beforeend",
+      "<style>.tiles{filter:grayscale(1) invert(1) brightness(.62) contrast(1.25) hue-rotate(180deg)}</style>");
+    strato = L.layerGroup().addTo(mappa);
+  } catch (e) { mappa = null; }
+}
+if (!mappa) {
+  document.getElementById("mappa").innerHTML =
+    '<div class="senzaMappa"><b>MAPPA NON DISPONIBILE</b>' +
+    '<span>Leaflet non ha risposto: la libreria arriva da cdnjs.cloudflare.com e ' +
+    'le tile da tile.openstreetmap.org. Senza rete verso quei due host il quadro ' +
+    'resta pienamente funzionante — i conteggi a destra sono letti dal server ' +
+    'locale, non dalla mappa — ma le posizioni non si possono disegnare.</span></div>';
+}
+
+function fmtEta(s){
+  if (s === null || s === undefined) return "—";
+  if (s < 60) return s + " s";
+  if (s < 3600) return Math.floor(s/60) + " min";
+  return Math.floor(s/3600) + " h";
+}
+function fmtDurata(s){
+  s = Math.floor(s);
+  var h = Math.floor(s/3600), m = Math.floor((s%3600)/60);
+  return (h ? h + "h " : "") + m + "m";
+}
+function esc(t){ var d = document.createElement("div"); d.textContent = t == null ? "" : t; return d.innerHTML; }
+
+function disegnaCarte(fonti){
+  var html = fonti.map(function(f){
+    var vuota = (f.conteggio === null || f.conteggio === undefined);
+    var cifra = vuota ? "—" : (f.troncato ? "≥" : "") + f.conteggio.toLocaleString("it-IT");
+    var quota = f.eta_s === null ? 0 : Math.min(1, f.eta_s / Math.max(1, f.cadenza_monte_s));
+    return '<div class="carta s-' + f.stato + '">' +
+      '<div class="riga1"><span class="nome">' + esc(f.nome) + '</span>' +
+        '<span class="chip c-' + f.stato + '">' + f.stato.replace("_", " ") + '</span></div>' +
+      '<div class="riga2">' +
+        '<span class="cifra' + (vuota ? " vuota" : "") + '">' + cifra + '</span>' +
+        (f.troncato ? '<span class="tetto">TETTO DELLA QUERY</span>' : '') +
+        (f.eta_s === null || f.eta_s === undefined
+           ? '<span class="eta">mai letta<span>nessuna lettura riuscita</span></span>'
+           : '<span class="eta">' + fmtEta(f.eta_s) + ' fa<span>ultima lettura</span></span>') +
+      '</div>' +
+      (vuota ? '' : '<div class="sbarra"><i class="' + (quota > .9 ? "tardi" : "") +
+                     '" style="width:' + Math.round(quota * 100) + '%"></i></div>') +
+      '<div class="meta">a monte ogni ' + fmtEta(f.cadenza_monte_s) +
+        ' · copertura: ' + esc(f.copertura) +
+        (f.chiave_env ? ' · chiave: ' + esc(f.chiave_env) : '') + '</div>' +
+      (f.nota ? '<div class="nota">' + esc(f.nota) + '</div>' : '') +
+      (f.errore ? '<div class="err">' + esc(f.errore) + '</div>' : '') +
+    '</div>';
+  }).join("");
+  document.getElementById("carte").innerHTML = html;
+}
+
+function disegnaSomma(r, tot){
+  var ordine = [["LIVE","live"],["VECCHIO","vecchio"],["ERRORE","errore"],
+                ["SENZA_CHIAVE","spento"],["NON_IMPLEMENTATA","spento"],["MAI_LETTA","spento"]];
+  document.getElementById("somma").innerHTML = ordine.filter(function(o){return r[o[0]];})
+    .map(function(o){
+      return '<span class="q ' + o[1] + '"><b>' + r[o[0]] + '</b> ' + o[0].replace("_"," ").toLowerCase() + '</span>';
+    }).join("") + '<span class="q"><b>' + tot + '</b> fonti dichiarate</span>';
+}
+
+function disegnaPunti(punti){
+  if (!strato) return;
+  strato.clearLayers();
+  punti.forEach(function(p){
+    L.circleMarker([p.lat, p.lon], {
+      radius: Math.max(2.5, Math.min(9, (p.peso || 1) * 1.7)),
+      color: COLORI[p.fonte] || "#94A0B0", weight: 1,
+      fillColor: COLORI[p.fonte] || "#94A0B0", fillOpacity: .35
+    }).bindTooltip(p.etichetta + "  [" + p.fonte + "]", {direction:"top"}).addTo(strato);
+  });
+}
+
+function aggiorna(){
+  fetch("/stato.json", {cache:"no-store"}).then(function(r){return r.json();}).then(function(s){
+    document.getElementById("oraSchermo").textContent =
+      new Date(s.adesso * 1000).toLocaleTimeString("it-IT");
+    document.getElementById("uptime").textContent = fmtDurata(s.adesso - s.avviato);
+    disegnaSomma(s.riepilogo, s.totale_fonti);
+    disegnaCarte(s.fonti);
+    disegnaPunti(s.punti);
+  }).catch(function(e){
+    document.getElementById("oraSchermo").textContent = "server non raggiungibile";
+  });
+}
+
+var cassetto = document.getElementById("cassetto");
+function apriResoconto(){
+  fetch("/resoconto.txt", {cache:"no-store"}).then(function(r){return r.text();}).then(function(t){
+    document.getElementById("testoResoconto").textContent = t;
+    cassetto.setAttribute("aperto", "");
+  });
+}
+document.getElementById("btnResoconto").addEventListener("click", apriResoconto);
+document.getElementById("btnChiudi").addEventListener("click", function(){ cassetto.removeAttribute("aperto"); });
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape") cassetto.removeAttribute("aperto");
+  if (e.key === "Enter" && !cassetto.hasAttribute("aperto")) apriResoconto();
+});
+
+aggiorna();
+setInterval(aggiorna, 2000);
+</script>
+</body>
+</html>
