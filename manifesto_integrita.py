@@ -37,8 +37,8 @@ SORVEGLIATI = [
 ]
 
 # Tutto il codice del sistema e i documenti depositati, ricorsivamente.
-ALBERI = ["sdq1", "r3", "testi", "memoria"]
-ESTENSIONI = (".py", ".yml", ".yaml", ".md")
+ALBERI = ["sdq1", "r3", "testi", "memoria", "osservatorio"]
+ESTENSIONI = (".py", ".yml", ".yaml", ".md", ".html")
 
 
 def file_da_sorvegliare():

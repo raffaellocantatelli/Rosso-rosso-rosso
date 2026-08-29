@@ -86,6 +86,63 @@ export FIRMS_MAP_KEY=...     # firms.modaps.eosdis.nasa.gov/api/area
 python -m osservatorio
 ```
 
+## Il fotogramma
+
+```bash
+python -m osservatorio --fotogramma --lat 45.4642 --lon 9.19
+```
+
+Uno scatto: legge tutte le fonti, prende due ancore temporali pubbliche, calcola
+dove siamo davvero, e riduce tutto a una chiave `sha256`.
+
+**Cosa ottieni, con esattezza: una prova di anteriorita' che non chiede di
+fidarsi di nessuno.** La chiave contiene due valori che nessuno puo' calcolare
+in anticipo:
+
+- **NIST Randomness Beacon** — 512 bit firmati e concatenati, ogni 60 s;
+- **drand / League of Entropy** — un round ogni 30 s, verificabile con la
+  chiave pubblica del gruppo.
+
+Una chiave che li contiene **non poteva esistere prima di quel secondo**. E
+chiunque, anche fra dieci anni, puo' riprendere quel round e quel pulse e
+verificare che coincidano — senza fidarsi di te, di me o di questo programma.
+E' il tipo di fatto che il §7 chiede: controllabile da un terzo, non poggiato
+su nessuna persona.
+
+**Cosa la chiave non fa**, ed e' scritto anche nell'output di ogni scatto:
+
+- non e' ricostruibile all'indietro — i feed effimeri non archiviano il
+  passato, quindi un terzo verifica le *ancore*, non i conteggi. Dimostra
+  «non prima di», non «esattamente questo mondo»;
+- non e' una posizione: e' un indice nel tempo.
+
+Se un'ancora e' vecchia lo scatto lo dice invece di tacerlo. Al primo collaudo
+il beacon NIST risultava fermo da circa 30 ore, e il fotogramma lo ha marcato
+`ATTENZIONE: non fresca` da solo.
+
+Gli scatti si concatenano in `output/fotogrammi.jsonl`: ogni fotogramma cita
+l'hash del precedente, come fa il beacon del NIST. Il file **non e' versionato**:
+depositare uno scatto e' un atto verso l'esterno, e la decisione di pubblicarlo
+resta dell'autore. Quando vuoi che un fotogramma valga come deposito pubblico,
+lo committi tu, deliberatamente — e la data del commit diventa una seconda
+marca temporale indipendente.
+
+## Dove siamo — `posizione.py`
+
+Solo matematica della libreria standard, nessuna effemeride esterna. Tre livelli,
+tenuti distinti perche' hanno statuti diversi:
+
+1. **Terra rispetto al Sole** — calcolato qui, ~0,01 gradi e 1e-4 UA.
+2. **Sole nella Galassia** — *non* calcolato: costante misurata da altri
+   (R0 = 8,122 +/- 0,031 kpc, GRAVITY 2018), riportata come tale.
+3. **Moto rispetto al fondo cosmico** — 369,82 +/- 0,11 km/s verso
+   (l, b) = (264,021; 48,253), Planck 2018. E' il punto piu' vicino a un
+   sistema di riferimento assoluto che la fisica conosca, e il programma
+   calcola dove sta quell'apice nel cielo sopra di te, adesso.
+
+La trasformazione galattico -> equatoriale e' verificata su tre coordinate note
+(polo nord galattico, centro galattico, apice CMB): scarto massimo 0,005 gradi.
+
 ## Traccia
 
 Ogni lettura, riuscita o fallita, finisce in `output/osservatorio.jsonl`,

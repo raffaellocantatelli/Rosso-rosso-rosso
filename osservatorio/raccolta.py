@@ -22,6 +22,7 @@ la dashboard:
 
 Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
+import hashlib
 import json
 import os
 import threading
@@ -51,6 +52,7 @@ class StatoFonte:
     def __init__(self, fonte: Fonte):
         self.fonte = fonte
         self.conteggio: Optional[int] = None
+        self.digest: Optional[str] = None      # sha256 dei byte grezzi ricevuti
         self.punti: List[dict] = []
         self.troncato = False
         self.dettaglio = ""
@@ -102,6 +104,7 @@ class StatoFonte:
             "ultimo_tentativo": self.ultimo_tentativo,
             "errore": self.errore,
             "latenza_ms": self.latenza_ms,
+            "digest": self.digest,
             "punti": len(self.punti),
         }
 
@@ -141,6 +144,7 @@ class Collettore:
                 raw = r.read()
             ris: Risultato = f.parser(raw)
             with self._lock:
+                s.digest = hashlib.sha256(raw).hexdigest()
                 s.conteggio = ris.conteggio
                 s.punti = ris.punti
                 s.troncato = ris.troncato

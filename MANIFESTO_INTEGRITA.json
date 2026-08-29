@@ -18,8 +18,8 @@
       "sha256": "6d793b229a73bd35b81c3332abdc7ef822eef9828b6afacde4017c5fd4f75095"
     },
     "manifesto_integrita.py": {
-      "byte": 4453,
-      "sha256": "3773d7215d49b6473dba463816b256ea5c635bcdae99bc118256c634bae4f36d"
+      "byte": 4478,
+      "sha256": "d1144d84e8a8d5afc9ddcb8936e3d96ce890666a4f5fe40dba824a5ccec94b7e"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 2784,
@@ -160,6 +160,42 @@
     "memoria/ZZ_SUPERATO_00_INDICE_CANONICO_R3_2026-08-23.md": {
       "byte": 1216,
       "sha256": "0486629e02022579cf79dc4d416fdb4a108e52d98105b075119ac5f4001d5ac6"
+    },
+    "osservatorio/README.md": {
+      "byte": 6777,
+      "sha256": "afbe0d30f7404893ee889ebb779974460ab6a013c0a17b15d86f7fae3a1c110d"
+    },
+    "osservatorio/__init__.py": {
+      "byte": 187,
+      "sha256": "76eaf1e82b2ceebd9807819692c692c164bcac4654d1518bd6980c067ac765f0"
+    },
+    "osservatorio/__main__.py": {
+      "byte": 1728,
+      "sha256": "2d4908405086351aea089bff6d4b869d0dbd2ea3c798d5f0eacdc4b5f29e5e81"
+    },
+    "osservatorio/fonti.py": {
+      "byte": 10862,
+      "sha256": "9b06d061d1df30679db69e96b04d54cb8d6765fecffa73dc65264d8bdc3f2f01"
+    },
+    "osservatorio/fotogramma.py": {
+      "byte": 10657,
+      "sha256": "296713a1a2d662d84a3e0ee00aa5f4c5da6c4492ab7eed954546db47fd2dacc1"
+    },
+    "osservatorio/posizione.py": {
+      "byte": 7916,
+      "sha256": "a111f84787c36eccaa4c18bd93d8fba593d11fe9c60f91aeb38061c32edff760"
+    },
+    "osservatorio/quadro.html": {
+      "byte": 13433,
+      "sha256": "b8019e91ee38365d2d453ee3fbff38b66e50fd1405f58edc9198a264de806310"
+    },
+    "osservatorio/raccolta.py": {
+      "byte": 8704,
+      "sha256": "9fba3d7fd1d27d78df5a0b4d5db7ae121b93faef2b6260a20eff87434990285b"
+    },
+    "osservatorio/server.py": {
+      "byte": 5141,
+      "sha256": "4c9d20f761473d804105c137da02dd98426c4e074909e9e6077203880a444edc"
     },
     "r3/README.md": {
       "byte": 6155,
@@ -334,6 +370,6 @@
       "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
     }
   },
-  "generato": "2026-08-29T05:42:38.444553+00:00",
+  "generato": "2026-08-29T05:55:23.455641+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

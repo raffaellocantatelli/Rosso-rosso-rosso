@@ -25,3 +25,4 @@ output/rlaif_decisioni.jsonl
 
 # Osservatorio (traccia di runtime, append-only ma locale)
 output/osservatorio.jsonl
+output/fotogrammi.jsonl
