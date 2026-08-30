@@ -1,30 +1,26 @@
-# R3_WORK_QUEUE.yaml — puntatore radice SYNC-2026-08-29-1707
+# R3_WORK_QUEUE.yaml — puntatore ROOT ciclo 0909
 # Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Copia condensata. Canone: memoria/R3_WORK_QUEUE_2026-08-29_1707.yaml
+# Snapshot corto. La coda completa è R3_WORK_QUEUE_2026-08-30_0909.yaml
+# Gli omonimi precedenti NON sono cancellati.
 
 meta:
   protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-29-1707
-  created: "2026-08-29T17:07:00+02:00"
-  previous_cycle: SYNC-2026-08-29-1303
+  cycle_id: SYNC-2026-08-30-0909
+  created: "2026-08-30T09:09:00+02:00"
+  previous_cycle: SYNC-2026-08-29-1707
   github_account: raffaellocantatelli
-  public_canonical: raffaellocantatelli/Rosso-rosso-rosso
-  public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
-  public_default_sha: d975654fc0767d1baafc98f5827c33c8a0458129
-  public_bot_head: da47586006ef057d0afed9342c85ffa399c83bbd
-  never_delete_historical: true
+  default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  default_sha: e1396c779ddae8ce363f20deb79f83b5eab89b42
+  bot_head: da47586006ef057d0afed9342c85ffa399c83bbd
 
-stato:
-  R3-019: BASELINE_0_ESISTE_NON_RIESEGUITO
-  R3-012: BACKLOG_CON_CODICE_BOT_NON_TESTATO_QUI
-  R3-011: BACKLOG
-  R3-016: BACKLOG
-  R3-017: BACKLOG
-  R3-014: BACKLOG
-  H2: scade_2026-08-30_contatti_jsonl_size_0
-  daily_28_29: FILE_PRESENTI_SHA_IDENTICO_STUB
-  bot_head: da475860_KEEPALIVE_ACTION_SUCCESS_X2_TELEGRAM_LIVE_NON_VERIFICATO
-  default_sha_vs_1303: 2fd34ef8_POI_d975654f
-  conflitti_aperti: CONF-01 CONF-02 CONF-04 CONF-05 CONF-06 CONF-07 CONF-08 CONF-09 CONF-10 CONF-11 CONF-12 CONF-13 CONF-14 CONF-15 CONF-16 CONF-17 CONF-18 CONF-19 CONF-20 CONF-21
+fatto_breve:
+  - HEAD default = e1396c77 (daily stub 30/08 SHA 410c80f8)
+  - bot fermo da475860
+  - Drive fermo dopo 29/08 15:10:47Z fino a questo deposito
+  - H2 scade oggi; contatti.jsonl size 0
+  - R3-019 non rieseguito; 011/014/016/017 BACKLOG
+  - nessuna cancellazione, nessun merge
 
-regola: non dichiarare mai che R³∞ è una superintelligenza.
+canone:
+  report_drive: R3_DRIVE_SYNC_REPORT_2026-08-30_0909.md
+  coda_piena: R3_WORK_QUEUE_2026-08-30_0909.yaml
