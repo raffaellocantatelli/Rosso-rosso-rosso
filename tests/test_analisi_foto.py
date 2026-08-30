@@ -148,8 +148,8 @@ def test_miniatura_incoerente_rivela_il_ritaglio(tmp_path):
 
 
 def test_miniatura_assente_non_e_un_errore(tmp_path):
-    nuda = Image.new("RGB", (100, 100), (128, 128, 128))
-    assert af.miniatura_exif(tmp_path / "x.jpg", nuda) is None
+    senza_exif = Image.new("RGB", (100, 100), (128, 128, 128))
+    assert af.miniatura_exif(tmp_path / "x.jpg", senza_exif) is None
 
 
 def test_creator_tool_da_xmp():
