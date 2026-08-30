@@ -1,0 +1,30 @@
+# Layer 2 pubblico — coda condensata SYNC-2026-08-28-1109
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-08-28-1109
+  previous_cycle: SYNC-2026-08-28-0907
+  never_delete_historical: true
+layer_map:
+  public_default_sha_1109: abe88006061f81ae29b3ddf266c7aa45b5751821
+  new_session_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+  bot_sha_1109: 7866bca3264430d2dc19537704642671c63ad92f
+  oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
+fatto:
+  - "Default Layer 2 = commit SYNC-0907 abe88006"
+  - "Indice Drive 9750 (26/08); ZZ_SUPERATO 6615; GH default 2784; new-session 6615"
+  - "Bot 7866bca3 messaggio_libero→polling; live NON VERIFICATO"
+  - "PROGETTO_R3.md assente; R3-019 non rieseguito"
+  - "Nessuna cancellazione, nessun merge"
+inferenza:
+  - "Nessun aumento di capacità misurato il 28/08 11:09"
+ipotesi:
+  - {id: H-SYNC-01, status: SUPERATA_DAL_DELTA}
+  - {id: H-SYNC-07, status: VERIFICATA}
+  - {id: H-SYNC-08, status: INFERENZA_FORTE_NON_DIFF}
+simulazione:
+  - "Nessuna. Nessun claim di superintelligenza."
+conflitti_aperti: [CONF-01, CONF-02, CONF-04, CONF-05, CONF-06, CONF-07]
+priorita_strategiche:
+  - {id: R3-019, status: BASELINE_0_ESISTE}
+  - {id: R3-011, status: BACKLOG}
+  - {id: R3-012, status: BACKLOG}

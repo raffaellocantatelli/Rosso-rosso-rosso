@@ -38,6 +38,20 @@ jobs:
           Aggiungi ANTHROPIC_API_KEY, GOOGLE_API_KEY o DEEPSEEK_API_KEY nei \
           secrets della repository (Settings > Secrets and variables > Actions)."
 
+      - name: Integrità Layer 4 (nodi concorrenti)
+        id: integrita
+        continue-on-error: true
+        run: python manifesto_integrita.py --verifica
+
+      - name: Avviso — manifesto disallineato
+        if: steps.integrita.outcome == 'failure'
+        run: |
+          echo "::warning title=Layer 4 disallineato::Il manifesto SHA-256 non \
+          copre piu' lo stato del repository. Un nodo ha aggiunto o modificato \
+          file senza rigenerarlo: il livello che deve accorgersi delle \
+          alterazioni non sta guardando quei file. Rigenera con \
+          'python manifesto_integrita.py' e committa."
+
       - name: Esegui SDQ-1 con cascata a fallback
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

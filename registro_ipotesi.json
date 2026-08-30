@@ -9,7 +9,7 @@
     "verifiche": {
       "eseguite": 0,
       "cadute": 0,
-      "ultima": "2026-08-26T17:05:15+00:00",
+      "ultima": "2026-08-30T16:49:17+00:00",
       "ultimo_esito": "non_verificabile"
     }
   },
@@ -17,7 +17,7 @@
     "id": "H2",
     "testo": "Il disegno di Claudio darà ragione a entrambi entro 6 mesi (criterio: battito + contatto)",
     "stato": "FALSIFICATA",
-    "criterio_falsificazione": "Falsificata se si verifica una delle due condizioni: (a) output/ non contiene daily output regolari (sistema morto); (b) output/contatti.jsonl ha zero voci valide (sistema vivo ma non tocca il mondo).",
+    "criterio_falsificazione": "Falsificata se si verifica una delle due condizioni: (a) output/ non contiene daily output regolari (sistema morto); (b) output/contatti.jsonl ha zero voci con indipendente=true (sistema vivo ma non tocca il mondo). Precisazione 2026-08-28: una voce valida e' un evento esterno verificabile che il sistema non ha prodotto (lettore, download, fork, citazione, risposta, pubblicazione, ente). Non richiede fiducia in nessuno ne' dipendenza da alcuna persona: richiede solo indipendenza dalla fonte che ha formulato l'ipotesi (P5). Non valgono le voci prodotte dal sistema stesso: modelli interpellati dall'autore, nodi del progetto, l'autore, test interni.",
     "scadenza": "2026-12-11",
     "falsificatore": {
       "comando": [
@@ -27,9 +27,9 @@
       "descrizione": "battito: daily recenti in output/ — contatto: righe valide in contatti.jsonl"
     },
     "verifiche": {
-      "eseguite": 4,
-      "cadute": 4,
-      "ultima": "2026-08-26T17:05:15+00:00",
+      "eseguite": 5,
+      "cadute": 5,
+      "ultima": "2026-08-30T16:49:17+00:00",
       "ultimo_esito": "caduta"
     }
   },
@@ -47,9 +47,9 @@
       "descrizione": "controlla la lingua di tutti i daily in output/"
     },
     "verifiche": {
-      "eseguite": 4,
+      "eseguite": 5,
       "cadute": 0,
-      "ultima": "2026-08-26T17:05:15+00:00",
+      "ultima": "2026-08-30T16:49:17+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -67,9 +67,9 @@
     },
     "scadenza": "2026-09-30",
     "verifiche": {
-      "eseguite": 3,
+      "eseguite": 4,
       "cadute": 0,
-      "ultima": "2026-08-26T17:05:15+00:00",
+      "ultima": "2026-08-30T16:49:17+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -89,7 +89,7 @@
     "verifiche": {
       "eseguite": 1,
       "cadute": 0,
-      "ultima": "2026-08-26T17:05:15+00:00",
+      "ultima": "2026-08-30T16:49:17+00:00",
       "ultimo_esito": "verifica_fallita"
     }
   }

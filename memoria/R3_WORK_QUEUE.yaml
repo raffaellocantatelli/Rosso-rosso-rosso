@@ -1,0 +1,26 @@
+# R3_WORK_QUEUE.yaml — puntatore ROOT ciclo 0909
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Snapshot corto. La coda completa è R3_WORK_QUEUE_2026-08-30_0909.yaml
+# Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-08-30-0909
+  created: "2026-08-30T09:09:00+02:00"
+  previous_cycle: SYNC-2026-08-29-1707
+  github_account: raffaellocantatelli
+  default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  default_sha: e1396c779ddae8ce363f20deb79f83b5eab89b42
+  bot_head: da47586006ef057d0afed9342c85ffa399c83bbd
+
+fatto_breve:
+  - HEAD default = e1396c77 (daily stub 30/08 SHA 410c80f8)
+  - bot fermo da475860
+  - Drive fermo dopo 29/08 15:10:47Z fino a questo deposito
+  - H2 scade oggi; contatti.jsonl size 0
+  - R3-019 non rieseguito; 011/014/016/017 BACKLOG
+  - nessuna cancellazione, nessun merge
+
+canone:
+  report_drive: R3_DRIVE_SYNC_REPORT_2026-08-30_0909.md
+  coda_piena: R3_WORK_QUEUE_2026-08-30_0909.yaml

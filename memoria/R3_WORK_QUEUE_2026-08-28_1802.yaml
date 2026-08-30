@@ -1,0 +1,119 @@
+# R3_WORK_QUEUE.yaml
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Ciclo: SYNC-2026-08-28-1802
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Questo file non è un esecutore. È un registro di lavoro verificato.
+# Regola: non dichiarare mai che R³∞ è una superintelligenza.
+# Snapshot datato. Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-08-28-1802
+  created: "2026-08-28T18:02:00+02:00"
+  created_by: Grok-4.6 (Drive + GitHub connessi)
+  previous_cycle: SYNC-2026-08-28-1701
+  official_until: verified_items_only
+  never_delete_historical: true
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+
+layer_map:
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    public_default_sha_pre_1802: 54627939a7c1b87484d1592cc5bde0ef48d5ab87
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    telegram_branch: claude/r3-autonomous-telegram-0goqsv
+    telegram_sha: 921fcf571b31e3a24ce7e605f49ed18b513279d3
+    private_archive: raffaellocantatelli/R3-privato
+    private_archive_sha: 88b447bb373619d7fe48d59b054e45a3b339169e
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    private_oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_bot_head: 2124955a717e5ea0e44f9cf2427b891a37bcbe20
+    public_site: raffaellocantatelli/Claudioterzi
+
+fatto:
+  - id: SYNC-2026-08-28-1802-A
+    item: "Account GitHub autenticato = raffaellocantatelli. Cinque repo accessibili."
+  - id: SYNC-2026-08-28-1802-B
+    item: "Default Layer 2 a 54627939 (SYNC-1701, 17:04:51+02). Nessun commit successivo al 18:02 CEST."
+  - id: SYNC-2026-08-28-1802-C
+    item: "Bot HEAD 2124955 (17:49:47+02). Due commit docs dopo HEAD 1701 723a940: BotFather + /aiuto."
+  - id: SYNC-2026-08-28-1802-D
+    item: "Drive: nessun file R3 nuovo dopo 2026-08-28T15:03:57Z oltre gli artefatti 1701."
+  - id: SYNC-2026-08-28-1802-E
+    item: "Oro-Rosso 410784b2 e R3-privato 88b447bb: invariati."
+  - id: SYNC-2026-08-28-1802-F
+    item: "PROGETTO_R3.md exact_name=0. R3-016 exact_name=0. R3-011 exact_name=0. search_code 011/014/016=0."
+  - id: SYNC-2026-08-28-1802-G
+    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 18:02. L2/L3 N/A."
+  - id: SYNC-2026-08-28-1802-H
+    item: "H2 scade 2026-08-30. output/contatti.jsonl default size 0. Ultimo daily default 2026-08-26."
+  - id: SYNC-2026-08-28-1802-I
+    item: "Nessun file storico cancellato. Nessun ramo unito. Pytest non rieseguito."
+  - id: SYNC-2026-08-28-1802-J
+    item: "Omonimi Drive R3_WORK_QUEUE.yaml senza data: 5 copie conservate."
+  - id: SYNC-2026-08-28-1802-K
+    item: "Rami non-default rilette: SHA identici al 1701. Default avanzato solo per il push 1701."
+  - id: SYNC-2026-08-28-1802-L
+    item: "Albero bot: texts.py 10552 (era 10438), BOTFATHER_COMMANDS.txt 639, libro/scacchiera invariati in size."
+
+inferenza:
+  - id: INF-28-1802-01
+    item: "Stasi default 17:04+02→18:02 CEST. Movimento solo sul repo bot (docs)."
+  - id: INF-28-1802-02
+    item: "Nessun aumento di capacità R3-019 misurato il 28/08 18:02."
+  - id: INF-28-1802-03
+    item: "Stato ufficiale 014/016/017 resta BACKLOG. CONF-09 aperto."
+  - id: INF-28-1802-04
+    item: "Codice /scacchiera e /libro sul bot è avanzamento di implementazione, non chiusura di R3-012."
+
+ipotesi:
+  - {id: H-SYNC-02, status: APERTA}
+  - {id: H-SYNC-08, status: FATTO_COMMIT_ESISTE_LIVE_NON_VERIFICATO}
+  - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
+  - {id: H-SYNC-10, status: EREDITATA}
+  - {id: H-SYNC-11, status: CHIUSA_COME_INTERMEDIO}
+  - {id: H-SCACCHIERA-01, status: APERTA}
+  - {id: H-LIBRO-01, status: APERTA}
+  - {id: H-DOCS-BOT-01, status: APERTA}
+
+simulazione:
+  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza. Nessun punteggio inventato."}
+
+conflitti_aperti:
+  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, keep_both: true}
+  - {id: CONF-02, file: R3_DECISIONI, status: DIVERGENZA_VOLUTA}
+  - {id: CONF-04, missing: PROGETTO_R3.md}
+  - {id: CONF-05, file: R3-019, keep_both: true}
+  - {id: CONF-06, file: R3_WORK_QUEUE.yaml, keep_both: true}
+  - {id: CONF-07, file: 00_AVVERTENZA_LEGGI_PRIMA_DI_ESEGUIRE.md, keep_both: true}
+  - {id: CONF-08, file: default_vs_telegram, keep_both: true}
+  - {id: CONF-09, item: "claim EXECUTED 016/017 vs misura BACKLOG", official: BACKLOG, keep_both: true}
+  - {id: CONF-10, item: "bot scacchiera vs Drive solo PANAJEDREZ 20/08", keep_both: true}
+  - {id: CONF-11, item: "bot /libro HEAD 2124955 vs Drive senza mirror 28/08", keep_both: true}
+
+priorita_strategiche:
+  - {id: R3-019, status: BASELINE_0_ESISTE, class: FATTO_su_L0_L1__N_A_su_L2_L3}
+  - {id: R3-011, status: BACKLOG, class: IPOTESI}
+  - {id: R3-012, status: BACKLOG_CON_CODICE_BOT_NON_TESTATO, class: INFERENZA}
+  - {id: R3-013, status: BACKLOG, class: IPOTESI}
+  - {id: R3-016, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-017, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-014, status: BACKLOG, class: IPOTESI, incoming_claim: IN_PROGRESS_NON_VERIFICATO}
+  - {id: R3-015, status: BACKLOG, class: IPOTESI}
+  - {id: R3-018, status: BACKLOG, class: IPOTESI}
+  - {id: R3-020, status: BACKLOG, class: IPOTESI}
+
+azioni_di_questo_ciclo:
+  - snapshot coda e report datati 1802
+  - non cancellare omonimi senza data
+  - non unire rami
+  - non creare PROGETTO_R3.md
+  - non promuovere 014/016/017
+  - non promuovere R3-012 a FATTO
+  - non rieseguire R3-019 fingendo un punteggio
+  - non copiare indice Drive 10696 sul default pubblico
+  - non copiare il codice bot scacchiera/libro su Drive in assenza di test

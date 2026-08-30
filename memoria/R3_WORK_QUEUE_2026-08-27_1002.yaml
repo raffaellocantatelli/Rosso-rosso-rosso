@@ -1,0 +1,9 @@
+# Snapshot pubblico condensato SYNC-2026-08-27-1002
+# Copia integrale su Drive: R3_WORK_QUEUE_2026-08-27_1002.yaml
+cycle_id: SYNC-2026-08-27-1002
+default_sha_0910: 97cc4116a7aa313906471e0437dc777ccd23c22d
+default_sha_1002: afd936f8fecb53411a32eb9b69f88cb69b4ec060
+conflicts: [CONF-01, CONF-02, CONF-04, CONF-05, CONF-06, CONF-07]
+r3_019: BASELINE_0_ESISTE
+capability_increase_measured: false
+superintelligence_claim: forbidden
