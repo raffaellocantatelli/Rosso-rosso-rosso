@@ -445,6 +445,7 @@ def indicizza(cartella: Path, uscita: Path) -> dict:
                         "sha256": sha256(percorso),
                         "dhash": dhash(img),
                         "pixel": list(img.size),
+                        "id_immagine": metadati(percorso).get("id_immagine"),
                     })
             except Exception as errore:
                 schede.append({"file": str(percorso), "errore": str(errore)})
@@ -461,13 +462,23 @@ def indicizza(cartella: Path, uscita: Path) -> dict:
                 if d <= 6:
                     simili.append({"a": a["file"], "b": b["file"], "distanza": d})
 
+    # Stesso ImageUniqueID = stesso scatto d'origine, anche se una copia e'
+    # stata riscalata al punto che le impronte percettive non si riconoscono.
+    per_id: dict[str, list[str]] = {}
+    for scheda in validi:
+        identificativo = scheda.get("id_immagine")
+        if identificativo:
+            per_id.setdefault(identificativo, []).append(scheda["file"])
+    stesso_scatto = [{"id_immagine": k, "file": v} for k, v in sorted(per_id.items()) if len(v) > 1]
+
     uscita.parent.mkdir(parents=True, exist_ok=True)
     with open(uscita, "w", encoding="utf-8") as f:
         for scheda in schede:
             f.write(json.dumps(scheda, ensure_ascii=False) + "\n")
 
     return {"immagini": len(schede), "leggibili": len(validi),
-            "file_identici": identici, "quasi_doppioni": simili, "indice": str(uscita)}
+            "file_identici": identici, "quasi_doppioni": simili,
+            "stesso_id_immagine": stesso_scatto, "indice": str(uscita)}
 
 
 def stampa_leggibile(scheda: dict) -> None:

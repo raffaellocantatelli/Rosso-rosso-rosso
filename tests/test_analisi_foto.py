@@ -94,6 +94,7 @@ def test_indice_trova_doppioni_e_quasi_doppioni(tmp_path):
 
     esito = af.indicizza(cartella, tmp_path / "indice.jsonl")
     assert esito["immagini"] == 4 and esito["leggibili"] == 4
+    assert esito["stesso_id_immagine"] == []  # nessun file di test porta un ImageUniqueID
     assert len(esito["file_identici"]) == 1
     assert any("ricompressa" in c["a"] or "ricompressa" in c["b"] for c in esito["quasi_doppioni"])
 
