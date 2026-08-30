@@ -211,3 +211,25 @@ def test_formato_none_su_piano_bianco():
     tela.paste((40, 45, 60), (150, 150, 550, 550))
     esito = af.formato_stampa(tela)
     assert esito is None or esito["formato"] == "bordi_uniformi"
+
+
+def test_riquadro_limita_la_misura_del_formato(tmp_path):
+    """Con un oggetto chiaro estraneo accanto alla stampa, il riquadro salva la misura."""
+    scena = Image.new("RGB", (1400, 800), (25, 25, 30))
+    stampa = _stampa_finta((700, 800), (440, 535), (22, 20, 417, 415))
+    scena.paste(stampa, (700, 0))
+    scena.paste((252, 252, 250), (60, 100, 620, 700))   # oggetto bianco che confonde
+    percorso = tmp_path / "scena.jpg"
+    scena.save(percorso, quality=95)
+
+    senza = af.analizza(percorso)["formato_stampa"]
+    con = af.analizza(percorso, riquadro=(700, 0, 1400, 800))["formato_stampa"]
+    assert con is not None and con["formato"] == "integrale_quadrata"
+    assert senza is None or senza["formato"] != "integrale_quadrata"
+
+
+def test_cli_riquadro_malformato(tmp_path):
+    percorso = _immagine(tmp_path, "x.jpg")
+    assert af.main([str(percorso), "--riquadro", "10,20,30"]) == 2
+    assert af.main([str(percorso), "--riquadro", "300,10,100,90"]) == 2
+    assert af.main([str(percorso), "--riquadro", "a,b,c,d"]) == 2

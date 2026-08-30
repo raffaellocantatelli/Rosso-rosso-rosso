@@ -542,9 +542,13 @@ def ricerca_inversa(percorso: Path, url_pubblico: str | None = None, timeout: in
 # --------------------------------------------------------------------------
 
 def analizza(percorso: Path, ritaglia_in: Path | None = None, cerca: bool = False,
-             url_pubblico: str | None = None) -> dict:
+             url_pubblico: str | None = None, riquadro: tuple[int, int, int, int] | None = None) -> dict:
     with Image.open(percorso) as originale:
         img = ImageOps.exif_transpose(originale)
+        # Con la stampa tenuta in mano su uno sfondo affollato, la maschera
+        # della carta cattura anche altri oggetti chiari. Il riquadro limita
+        # la misura del formato alla zona in cui la stampa si trova davvero.
+        area_formato = img.crop(riquadro) if riquadro else img
         scheda = {
             "file": str(percorso),
             "byte": percorso.stat().st_size,
@@ -554,7 +558,8 @@ def analizza(percorso: Path, ritaglia_in: Path | None = None, cerca: bool = Fals
             "metadati": metadati(percorso),
             "misure": misure(img),
             "miniatura_exif": miniatura_exif(percorso, originale),
-            "formato_stampa": formato_stampa(img),
+            "formato_stampa": formato_stampa(area_formato),
+            "riquadro_formato": list(riquadro) if riquadro else None,
         }
         stampa = rileva_stampa(img)
         scheda["stampa_rilevata"] = stampa
@@ -703,6 +708,8 @@ def main(argv=None) -> int:
                    help="salva in DIR la stampa ritagliata e raddrizzata")
     p.add_argument("--ricerca-inversa", action="store_true",
                    help="cerca online: esegue solo con TINEYE_API_KEY o SAUCENAO_API_KEY")
+    p.add_argument("--riquadro", metavar="x0,y0,x1,y1",
+                   help="limita la misura del formato a questa zona dell'immagine")
     p.add_argument("--url-pubblico", metavar="URL",
                    help="URL gia' pubblico dell'immagine, per i link ai motori")
     p.add_argument("--indice", type=Path, metavar="FILE.jsonl",
@@ -718,7 +725,18 @@ def main(argv=None) -> int:
         print(json.dumps(esito, ensure_ascii=False, indent=2))
         return 0
 
-    scheda = analizza(a.percorso, a.ritaglia, a.ricerca_inversa, a.url_pubblico)
+    riquadro = None
+    if a.riquadro:
+        try:
+            valori = tuple(int(v) for v in a.riquadro.split(","))
+        except ValueError:
+            valori = ()
+        if len(valori) != 4 or valori[2] <= valori[0] or valori[3] <= valori[1]:
+            sys.stderr.write("--riquadro vuole x0,y0,x1,y1 con x1>x0 e y1>y0\n")
+            return 2
+        riquadro = valori
+
+    scheda = analizza(a.percorso, a.ritaglia, a.ricerca_inversa, a.url_pubblico, riquadro)
     if a.json:
         print(json.dumps(scheda, ensure_ascii=False, indent=2, default=str))
     else:
