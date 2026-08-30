@@ -76,18 +76,46 @@ def sezione(titolo: str) -> None:
     print("─" * len(titolo))
 
 
+def _daily_su_tutti_i_rami() -> tuple[str, str] | None:
+    """(data, dove) del daily piu' recente su QUALSIASI ramo remoto.
+
+    Il 30/08 questa funzione non esisteva e il battito veniva letto solo dal
+    worktree: un ramo indietro di due giorni faceva dichiarare «4 giorni senza
+    daily» mentre la Action aveva prodotto un daily ogni giorno. Lo strumento
+    scritto contro il §4 leggeva il proprio ramo e lo chiamava «il progetto».
+
+    Il battito e' del progetto, non del ramo su cui sei.
+    """
+    migliore: tuple[str, str] | None = None
+
+    locali = sorted(glob.glob(os.path.join("output", "daily_*.txt")))
+    if locali:
+        d = re.search(r"(\d{4}-\d{2}-\d{2})", os.path.basename(locali[-1]))
+        if d:
+            migliore = (d.group(1), "questo ramo")
+
+    rami = git("for-each-ref", "--format=%(refname:short)", "refs/remotes/origin")
+    for ramo in [r for r in rami.splitlines() if r and not r.endswith("/HEAD")]:
+        elenco = git("ls-tree", "--name-only", f"{ramo}:output")
+        date = sorted(re.findall(r"daily_(\d{4}-\d{2}-\d{2})\.txt", elenco))
+        if date and (migliore is None or date[-1] > migliore[0]):
+            migliore = (date[-1], ramo)
+    return migliore
+
+
 def battito() -> None:
     sezione("BATTITO — il sistema produce ancora?")
 
-    daily = sorted(glob.glob(os.path.join("output", "daily_*.txt")))
-    if not daily:
-        print(f"  {ROSSO}nessun daily{FINE}")
-        allarmi.append("nessun daily in output/")
+    trovato = _daily_su_tutti_i_rami()
+    if trovato is None:
+        print(f"  {ROSSO}nessun daily su nessun ramo{FINE}")
+        allarmi.append("nessun daily in output/, su nessun ramo")
         return
-    ultimo = os.path.basename(daily[-1])
-    data = re.search(r"(\d{4}-\d{2}-\d{2})", ultimo).group(1)
+    data, dove = trovato
     g = giorni_fa(data)
-    print(f"  ultimo daily     {ultimo}  {etichetta(g, 2, 3)}")
+    print(f"  ultimo daily     {data}  {etichetta(g, 2, 3)}  {GRIGIO}({dove}){FINE}")
+    if dove != "questo ramo":
+        print(f"  {GIALLO}Il tuo ramo non ce l'ha: sei indietro rispetto al progetto.{FINE}")
     if g >= 3:
         allarmi.append(f"battito: {g} giorni senza daily — la Action gira ancora?")
 
@@ -109,6 +137,12 @@ def contatti() -> None:
     sezione("CONTATTO — il sistema tocca il mondo?")
     p = os.path.join("output", "contatti.jsonl")
     n = sum(1 for r in open(p, encoding="utf-8") if r.strip()) if os.path.exists(p) else 0
+    # Anche qui: un contatto depositato su un altro ramo e' comunque un
+    # contatto. Non deve sfuggire perche' sei sul ramo sbagliato.
+    rami = git("for-each-ref", "--format=%(refname:short)", "refs/remotes/origin")
+    for ramo in [r for r in rami.splitlines() if r and not r.endswith("/HEAD")]:
+        contenuto = git("show", f"{ramo}:output/contatti.jsonl")
+        n = max(n, sum(1 for r in contenuto.splitlines() if r.strip()))
     if n:
         print(f"  {VERDE}{n} contatti registrati{FINE}")
     else:
