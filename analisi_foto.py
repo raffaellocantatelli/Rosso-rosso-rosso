@@ -312,6 +312,142 @@ def rileva_stampa(img: Image.Image, soglia: int = 90, copertura: float = 0.5) ->
 
 
 # --------------------------------------------------------------------------
+# formato della stampa istantanea
+# --------------------------------------------------------------------------
+
+# I millimetri qui sotto vengono dalla mia memoria, non da una fonte letta in
+# questa sessione: sono IPOTESI, e vanno controllati una volta su una scheda
+# tecnica Polaroid prima di fidarsene. Il CODICE invece non si fonda su di
+# essi: classifica sulla GEOMETRIA DEI BORDI, che e' misurata sui pixel e non
+# richiede di conoscere le dimensioni in millimetri.
+FORMATI = {
+    "integrale_quadrata": {
+        "descrizione": "Polaroid integrale a immagine quadrata (famiglia SX-70 / 600 / i-Type)",
+        "mm_da_verificare": "stampa 88x107, immagine 79x79",
+        "epoca": "SX-70 dal 1972, 600 dal 1981, i-Type dal 2017. "
+                 "La geometria e' identica fra le tre: da sola NON distingue il decennio.",
+    },
+    "integrale_rettangolare": {
+        "descrizione": "Polaroid integrale a immagine rettangolare (famiglia Spectra / Image)",
+        "mm_da_verificare": "stampa 101x108, immagine 91x73",
+        "epoca": "dal 1986.",
+    },
+    "bordi_uniformi": {
+        "descrizione": "quattro bordi simili: pellicola a strappo (Type 100/660) "
+                       "oppure una normale stampa da laboratorio con bordo",
+        "mm_da_verificare": "Type 100: immagine circa 73x95",
+        "epoca": "Type 100 dal 1963, fuori produzione dal 2016. "
+                 "Una stampa da laboratorio con bordo non e' databile dalla forma.",
+    },
+}
+
+
+def _maschera_carta(img: Image.Image, lato: int = 700):
+    """Maschera booleana della carta: chiara e poco satura."""
+    piccola = img.convert("RGB")
+    piccola.thumbnail((lato, lato), Image.Resampling.LANCZOS)
+    w, h = piccola.size
+    hsv = piccola.convert("HSV")
+    sat = hsv.getchannel("S").tobytes()
+    val = hsv.getchannel("V").tobytes()
+    soglia_v = max(140, int(0.72 * max(val)))
+    carta = [val[i] >= soglia_v and sat[i] <= 70 for i in range(w * h)]
+    return carta, w, h
+
+
+def formato_stampa(img: Image.Image) -> dict | None:
+    """Classifica una stampa istantanea dalla geometria dei suoi bordi.
+
+    Serve una fotografia della stampa INTERA, dritta, su un piano che non sia
+    bianco. Il metodo:
+      1. isola la carta (chiara e desaturata) e ne prende il rettangolo esterno;
+      2. dentro quel rettangolo cerca la finestra dell'immagine, cioe' le righe
+         e colonne che non sono tutte carta;
+      3. misura i quattro bordi come frazione del lato della stampa.
+
+    La discriminante non richiede millimetri: una Polaroid integrale ha UN
+    bordo largo (la linguetta con la sacca di reagente) e tre stretti; una
+    pellicola a strappo, e una normale stampa con bordo, hanno quattro bordi
+    simili. Le proporzioni della finestra separano poi la famiglia quadrata
+    da quella rettangolare.
+
+    Restituisce None se non trova una cornice di carta su tutti e quattro i
+    lati: senza quella non c'e' niente da misurare, e tirare a indovinare
+    sarebbe peggio che tacere.
+    """
+    carta, w, h = _maschera_carta(img)
+
+    righe_carta = [sum(carta[r * w:(r + 1) * w]) / w for r in range(h)]
+    col_carta = [sum(carta[r * w + c] for r in range(h)) / h for c in range(w)]
+    if max(righe_carta) < 0.5 or max(col_carta) < 0.5:
+        return None
+
+    # rettangolo esterno della stampa: dove c'e' carta in quantita'
+    def estremi(proiezione, limite):
+        indici = [i for i, v in enumerate(proiezione) if v >= limite]
+        return (indici[0], indici[-1]) if indici else None
+
+    vert = estremi(righe_carta, 0.15)
+    oriz = estremi(col_carta, 0.15)
+    if not vert or not oriz:
+        return None
+    y0, y1 = vert
+    x0, x1 = oriz
+    larghezza, altezza = x1 - x0 + 1, y1 - y0 + 1
+    if larghezza < 40 or altezza < 40:
+        return None
+
+    # Le proiezioni di prima erano rapportate all'intera inquadratura: dentro
+    # il rettangolo della stampa vanno rifatte sul lato della stampa, altrimenti
+    # una stampa che occupa meta' fotografia non raggiunge mai la soglia.
+    righe_interne = [sum(carta[r * w + c] for c in range(x0, x1 + 1)) / larghezza
+                     for r in range(y0, y1 + 1)]
+    col_interne = [sum(carta[r * w + c] for r in range(y0, y1 + 1)) / altezza
+                   for c in range(x0, x1 + 1)]
+
+    # finestra dell'immagine: righe/colonne interne che NON sono tutte carta
+    def finestra(proiezione, origine, limite=0.75):
+        interne = [i for i, v in enumerate(proiezione) if v < limite]
+        return (origine + interne[0], origine + interne[-1]) if interne else None
+
+    fin_v = finestra(righe_interne, y0)
+    fin_o = finestra(col_interne, x0)
+    if not fin_v or not fin_o:
+        return None
+
+    bordi = {
+        "alto": (fin_v[0] - y0) / altezza,
+        "basso": (y1 - fin_v[1]) / altezza,
+        "sinistro": (fin_o[0] - x0) / larghezza,
+        "destro": (x1 - fin_o[1]) / larghezza,
+    }
+    if min(bordi.values()) <= 0.005:
+        # la cornice non si chiude su tutti i lati: la stampa e' tagliata fuori
+        # inquadratura, oppure il piano d'appoggio e' chiaro quanto la carta.
+        return None
+
+    largo = max(bordi, key=bordi.get)
+    stretti = sorted(v for k, v in bordi.items() if k != largo)
+    asimmetria = bordi[largo] / max(stretti[-1], 1e-6)
+    lati_finestra = (fin_o[1] - fin_o[0] + 1, fin_v[1] - fin_v[0] + 1)
+    proporzioni = max(lati_finestra) / min(lati_finestra)
+
+    if asimmetria >= 2.5:
+        chiave = "integrale_quadrata" if proporzioni <= 1.12 else "integrale_rettangolare"
+    else:
+        chiave = "bordi_uniformi"
+
+    return {
+        "bordi_frazione_del_lato": {k: round(v, 4) for k, v in bordi.items()},
+        "bordo_largo": largo,
+        "asimmetria": round(asimmetria, 2),
+        "proporzioni_finestra": round(proporzioni, 3),
+        "formato": chiave,
+        **FORMATI[chiave],
+    }
+
+
+# --------------------------------------------------------------------------
 # ricerca inversa
 # --------------------------------------------------------------------------
 
@@ -418,6 +554,7 @@ def analizza(percorso: Path, ritaglia_in: Path | None = None, cerca: bool = Fals
             "metadati": metadati(percorso),
             "misure": misure(img),
             "miniatura_exif": miniatura_exif(percorso, originale),
+            "formato_stampa": formato_stampa(img),
         }
         stampa = rileva_stampa(img)
         scheda["stampa_rilevata"] = stampa
@@ -521,6 +658,21 @@ def stampa_leggibile(scheda: dict) -> None:
         print(f"  proporzioni {mini['proporzioni']} contro {mini['proporzioni_immagine']} dell'immagine.")
         print("  La miniatura non combacia: il file e' stato ritagliato o modificato")
         print("  dopo lo scatto, e la miniatura conserva la versione precedente.")
+
+    fmt = scheda.get("formato_stampa")
+    print("\nFORMATO DELLA STAMPA (dalla geometria dei bordi)")
+    if not fmt:
+        print("  UNKNOWN: non trovo una cornice di carta chiusa su tutti e quattro i lati.")
+        print("  Serve la stampa INTERA nell'inquadratura, dritta, su un piano scuro.")
+    else:
+        b = fmt["bordi_frazione_del_lato"]
+        print(f"  bordi (frazione del lato): alto {b['alto']:.3f}  basso {b['basso']:.3f}  "
+              f"sinistro {b['sinistro']:.3f}  destro {b['destro']:.3f}")
+        print(f"  bordo piu' largo: {fmt['bordo_largo']}, asimmetria {fmt['asimmetria']}x, "
+              f"finestra {fmt['proporzioni_finestra']}")
+        print(f"  INFERITO  {fmt['descrizione']}")
+        print(f"  epoca: {fmt['epoca']}")
+        print(f"  IPOTESI da verificare su scheda tecnica: {fmt['mm_da_verificare']}")
 
     stampa = scheda.get("stampa_rilevata")
     print("\nAREA STAMPATA (INFERITO: regione scura dominante, da verificare a occhio)")

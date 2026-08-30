@@ -157,3 +157,57 @@ def test_creator_tool_da_xmp():
     assert af._creator_tool(xmp) == "Picasa"
     assert af._creator_tool(b"") is None
     assert af._creator_tool(b"<x:xmpmeta/>") is None
+
+
+# --- formato della stampa istantanea dalla geometria dei bordi --------------
+
+def _stampa_finta(piano, stampa_wh, finestra_box, colore_immagine=(40, 45, 60)):
+    """Costruisce una stampa su un piano scuro: carta bianca con una finestra."""
+    tela = Image.new("RGB", piano, (25, 25, 30))
+    carta = Image.new("RGB", stampa_wh, (248, 246, 240))
+    carta.paste(colore_immagine, finestra_box)
+    tela.paste(carta, ((piano[0] - stampa_wh[0]) // 2, (piano[1] - stampa_wh[1]) // 2))
+    return tela
+
+
+def test_formato_integrale_quadrata():
+    """Proporzioni SX-70/600: stampa 88x107, finestra 79x79 in alto."""
+    tela = _stampa_finta((700, 800), (440, 535), (22, 20, 417, 415))
+    esito = af.formato_stampa(tela)
+    assert esito is not None
+    assert esito["formato"] == "integrale_quadrata"
+    assert esito["bordo_largo"] == "basso"
+    assert esito["asimmetria"] >= 2.5
+
+
+def test_formato_integrale_rettangolare():
+    """Proporzioni Spectra: stampa 101x108, finestra 91x73 in alto."""
+    tela = _stampa_finta((700, 800), (505, 540), (25, 20, 480, 385))
+    esito = af.formato_stampa(tela)
+    assert esito is not None
+    assert esito["formato"] == "integrale_rettangolare"
+    assert esito["bordo_largo"] == "basso"
+
+
+def test_formato_bordi_uniformi_non_e_integrale():
+    """Quattro bordi simili: pellicola a strappo o stampa da laboratorio."""
+    tela = _stampa_finta((700, 800), (440, 535), (20, 24, 420, 511))
+    esito = af.formato_stampa(tela)
+    assert esito is not None
+    assert esito["formato"] == "bordi_uniformi"
+    assert esito["asimmetria"] < 2.5
+
+
+def test_formato_none_se_la_stampa_e_tagliata():
+    """Stampa che esce dall'inquadratura: nessuna cornice chiusa, nessuna ipotesi."""
+    tela = _stampa_finta((700, 800), (440, 535), (22, 20, 417, 415))
+    tagliata = tela.crop((200, 100, 700, 700))
+    assert af.formato_stampa(tagliata) is None
+
+
+def test_formato_none_su_piano_bianco():
+    """Piano chiaro quanto la carta: il metodo non puo' isolare la stampa."""
+    tela = Image.new("RGB", (700, 800), (250, 250, 250))
+    tela.paste((40, 45, 60), (150, 150, 550, 550))
+    esito = af.formato_stampa(tela)
+    assert esito is None or esito["formato"] == "bordi_uniformi"
