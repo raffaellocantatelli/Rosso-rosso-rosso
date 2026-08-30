@@ -110,3 +110,49 @@ def test_cli_json_su_file_reale(tmp_path, capsys):
 
 def test_cli_file_inesistente(tmp_path):
     assert af.main([str(tmp_path / "nessuno.jpg")]) == 2
+
+
+# --- miniatura EXIF: la versione precedente del file, quando c'e' -----------
+
+def _blob_exif_con_miniatura(mini: Image.Image) -> bytes:
+    """Blob EXIF sintetico: intestazione, riempimento, poi la miniatura JPEG."""
+    import io
+    buf = io.BytesIO()
+    mini.save(buf, "JPEG", quality=70)
+    return b"Exif\x00\x00" + b"\x00" * 120 + buf.getvalue()
+
+
+def test_miniatura_coerente_quando_mostra_la_stessa_scena(tmp_path):
+    grande = Image.new("RGB", (400, 300), (30, 30, 30))
+    grande.paste((220, 210, 200), (120, 80, 300, 240))
+    grande.info["exif"] = _blob_exif_con_miniatura(grande.resize((160, 120)))
+
+    esito = af.miniatura_exif(tmp_path / "finto.jpg", grande)
+    assert esito is not None and esito["presente"]
+    assert esito["coerente"] is True
+    assert esito["distanza_dall_immagine"] <= 16
+
+
+def test_miniatura_incoerente_rivela_il_ritaglio(tmp_path):
+    """La miniatura conserva l'inquadratura larga, l'immagine e' stata ritagliata."""
+    originale = Image.new("RGB", (400, 300), (240, 240, 240))
+    originale.paste((10, 10, 10), (0, 0, 200, 300))
+    ritagliata = Image.new("RGB", (300, 300), (240, 240, 240))
+    ritagliata.paste((10, 10, 10), (0, 0, 40, 60))
+    ritagliata.info["exif"] = _blob_exif_con_miniatura(originale.resize((160, 120)))
+
+    esito = af.miniatura_exif(tmp_path / "finto.jpg", ritagliata)
+    assert esito is not None
+    assert esito["coerente"] is False
+
+
+def test_miniatura_assente_non_e_un_errore(tmp_path):
+    nuda = Image.new("RGB", (100, 100), (128, 128, 128))
+    assert af.miniatura_exif(tmp_path / "x.jpg", nuda) is None
+
+
+def test_creator_tool_da_xmp():
+    xmp = b'<x:xmpmeta><rdf:Description xmp:CreatorTool="Picasa"/></x:xmpmeta>'
+    assert af._creator_tool(xmp) == "Picasa"
+    assert af._creator_tool(b"") is None
+    assert af._creator_tool(b"<x:xmpmeta/>") is None

@@ -110,6 +110,19 @@ def _pulisci(v):
     return v
 
 
+def _creator_tool(xmp) -> str | None:
+    """Legge xmp:CreatorTool, il programma che ha scritto il file per ultimo."""
+    if not xmp:
+        return None
+    testo = xmp.decode("utf-8", "replace") if isinstance(xmp, bytes) else xmp
+    marcatore = 'xmp:CreatorTool="'
+    i = testo.find(marcatore)
+    if i < 0:
+        return None
+    fine = testo.find('"', i + len(marcatore))
+    return testo[i + len(marcatore):fine] if fine > 0 else None
+
+
 def _gradi(valore, riferimento) -> float | None:
     try:
         g, m, s = (float(x) for x in valore)
@@ -125,6 +138,7 @@ def metadati(percorso: Path) -> dict:
         exif = img.getexif()
         larghezza, altezza = img.size
         formato = img.format
+        xmp = img.info.get("xmp") or b""
 
     campi: dict = {}
     for tag, valore in exif.items():
@@ -151,10 +165,62 @@ def metadati(percorso: Path) -> dict:
         "software": campi.get("Software"),
         "data_scatto": campi.get("DateTimeOriginal") or campi.get("DateTime"),
         "gps": gps or None,
+        # Identificativo scritto dalla fotocamera o dal programma di gestione:
+        # sopravvive al riesporto e lega fra loro copie diverse dello stesso
+        # scatto anche quando le impronte percettive non bastano piu'.
+        "id_immagine": campi.get("ImageUniqueID"),
+        "programma_xmp": _creator_tool(xmp),
     }
     out["mancanti"] = [k for k in ("fotocamera", "data_scatto", "gps") if not out[k]]
     out["exif_completo"] = {k: v for k, v in sorted(campi.items()) if v is not None}
     return out
+
+
+def miniatura_exif(percorso: Path, immagine: Image.Image) -> dict | None:
+    """Estrae la miniatura nascosta nell'EXIF e la confronta con l'immagine vera.
+
+    Quasi ogni fotocamera scrive nell'EXIF una miniatura dello scatto. Molti
+    programmi che ritagliano o ritoccano l'immagine NON la riscrivono: resta
+    li' la versione precedente. Se miniatura e immagine non combaciano, il
+    file e' stato modificato dopo lo scatto, e la miniatura mostra il prima.
+
+    Un riscontro positivo (miniatura diversa) e' una prova. Un riscontro
+    negativo non lo e': significa solo che chi ha modificato il file ha
+    riscritto anche la miniatura, o che non c'e' stata modifica.
+    """
+    blob = immagine.info.get("exif")
+    if not blob:
+        return None
+    inizio = blob.find(b"\xff\xd8\xff", 100)
+    if inizio < 0:
+        return None
+    fine = blob.find(b"\xff\xd9", inizio)
+    if fine < 0:
+        return None
+
+    import io
+    try:
+        with Image.open(io.BytesIO(blob[inizio:fine + 2])) as mini:
+            mini.load()
+            lati_m = mini.size
+            impronta = dhash(mini)
+    except Exception:
+        return None
+
+    lati_i = immagine.size
+    scarto = distanza(impronta, dhash(immagine))
+    return {
+        "presente": True,
+        "pixel": list(lati_m),
+        "byte": fine + 2 - inizio,
+        "proporzioni": round(max(lati_m) / min(lati_m), 3),
+        "proporzioni_immagine": round(max(lati_i) / min(lati_i), 3),
+        "dhash": impronta,
+        "distanza_dall_immagine": scarto,
+        # soglia larga: la miniatura e' minuscola e molto compressa, quindi
+        # anche una miniatura fedele non da' mai distanza zero.
+        "coerente": scarto <= 16 and abs(max(lati_m) / min(lati_m) - max(lati_i) / min(lati_i)) < 0.05,
+    }
 
 
 # --------------------------------------------------------------------------
@@ -351,6 +417,7 @@ def analizza(percorso: Path, ritaglia_in: Path | None = None, cerca: bool = Fals
             "ahash": ahash(img),
             "metadati": metadati(percorso),
             "misure": misure(img),
+            "miniatura_exif": miniatura_exif(percorso, originale),
         }
         stampa = rileva_stampa(img)
         scheda["stampa_rilevata"] = stampa
@@ -412,7 +479,8 @@ def stampa_leggibile(scheda: dict) -> None:
 
     print("\nMETADATI (RECUPERATO = letto nel file)")
     for etichetta, chiave in (("fotocamera", "fotocamera"), ("data scatto", "data_scatto"),
-                              ("software", "software")):
+                              ("software", "software"), ("programma xmp", "programma_xmp"),
+                              ("id immagine", "id_immagine")):
         valore = m.get(chiave)
         print(f"  {etichetta:12} {'RECUPERATO ' + str(valore) if valore else 'UNKNOWN (assente nel file)'}")
     if m.get("gps"):
@@ -428,6 +496,20 @@ def stampa_leggibile(scheda: dict) -> None:
     print(f"  distribuzione toni          ombre {mis['ombre_pct']}%  medi {mis['medi_pct']}%  alte {mis['alte_pct']}%")
     d = mis["dominante"]
     print(f"  dominante R/G/B             {d['rosso']} / {d['verde']} / {d['blu']}")
+
+    mini = scheda.get("miniatura_exif")
+    print("\nMINIATURA NASCOSTA NELL'EXIF")
+    if not mini:
+        print("  assente: nessuna miniatura incorporata da confrontare")
+    elif mini["coerente"]:
+        print(f"  RECUPERATO  {mini['pixel'][0]}x{mini['pixel'][1]}, distanza {mini['distanza_dall_immagine']}/64 dall'immagine")
+        print("  coerente: nessuna traccia di ritaglio o sostituzione successiva allo scatto.")
+        print("  Attenzione: coerente NON prova che il file non sia stato modificato.")
+    else:
+        print(f"  ATTENZIONE  {mini['pixel'][0]}x{mini['pixel'][1]}, distanza {mini['distanza_dall_immagine']}/64,")
+        print(f"  proporzioni {mini['proporzioni']} contro {mini['proporzioni_immagine']} dell'immagine.")
+        print("  La miniatura non combacia: il file e' stato ritagliato o modificato")
+        print("  dopo lo scatto, e la miniatura conserva la versione precedente.")
 
     stampa = scheda.get("stampa_rilevata")
     print("\nAREA STAMPATA (INFERITO: regione scura dominante, da verificare a occhio)")
