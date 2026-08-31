@@ -150,8 +150,8 @@
       "sha256": "d687a30be52fa48b3a5301ab111369bd5193cea9fcbbf69e096e9a0bc260bbb4"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
-      "byte": 9861,
-      "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
+      "byte": 11681,
+      "sha256": "2e635a35dc6ca09cc06e484d586d9cd76281d49d4729fc91916b82f49507acea"
     },
     "memoria/SYNC_DRIVE_GITHUB_2026-08-26.md": {
       "byte": 1069,
@@ -370,6 +370,6 @@
       "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
     }
   },
-  "generato": "2026-08-29T05:55:23.455641+00:00",
+  "generato": "2026-08-31T11:12:18.659083+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

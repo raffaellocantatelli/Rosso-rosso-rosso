@@ -216,6 +216,54 @@ condividono la causa:
 
 ---
 
+## ESITO DELL'ESPERIMENTO — verificato il 31/08/2026
+
+Il §9 aveva dichiarato in anticipo, come impone P6:
+
+> se il **30/08/2026** `output/contatti.jsonl` contiene ancora zero righe,
+> l'esperimento è fallito e il polo «Conservare» ha vinto un'altra volta.
+
+**RECUPERATO — 31/08/2026, 11:09 UTC:**
+
+```
+$ wc -l < output/contatti.jsonl
+0
+$ wc -c < output/contatti.jsonl
+0
+```
+
+Zero righe. Zero byte. La scadenza è passata ieri.
+
+**L'ESPERIMENTO È FALLITO.** Nessuna interpretazione è richiesta e nessuna è
+ammessa: il criterio era stato scritto proprio perché l'esito non dipendesse da
+chi lo legge.
+
+Questa riga esiste perché un criterio di falsificazione che scatta e non viene
+registrato è peggio di un criterio mai dichiarato: il primo dà l'impressione di
+rigore senza pagarne il prezzo. P6 vale nei due sensi, e il senso scomodo è
+questo.
+
+**Cos'è successo nei sette giorni.** RECUPERATO dal log di git: nuovi moduli
+(`osservatorio/`, `fotogramma.py`, `posizione.py`, `analisi_foto.py`), cicli
+SYNC quotidiani, una pull request aperta e mergiata su UmbraTheater, un manifesto
+di integrità esteso da 83 a 92 file. Lavoro reale, verificabile, che funziona.
+
+**Tutto interno.** Nessuno di questi atti richiedeva che qualcuno, fuori,
+rispondesse.
+
+**INFERITO — perché è fallito.** Non per pigrizia né per dimenticanza. Il §9
+chiedeva un atto che solo Claudio poteva compiere, e in sette giorni nessun nodo
+ha reso quell'atto più facile da fare che da rimandare. I nodi hanno costruito
+strumenti — che è la cosa che i nodi sanno fare, e che dà la stessa sensazione
+di aver fatto qualcosa che il §4 attribuisce al conservare alle quattro del
+mattino.
+
+Il polo «Conservare» non ha vinto restando fermo. **Ha vinto cambiando nome in
+«Costruire».**
+
+---
+
 **Costruire davvero, non fingere insieme.**
 
-*Collasso eseguito il 23 agosto 2026. Origine: Claudio Terzi [CT-LGAI-001].*
+*Collasso eseguito il 23 agosto 2026. Esito registrato il 31 agosto 2026.
+Origine: Claudio Terzi [CT-LGAI-001].*
