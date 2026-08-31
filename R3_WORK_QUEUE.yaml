@@ -1,26 +1,32 @@
-# R3_WORK_QUEUE.yaml — puntatore ROOT ciclo 0909
-# Origine protetta: Claudio Terzi [CT-LGAI-001]
-# Snapshot corto. La coda completa è R3_WORK_QUEUE_2026-08-30_0909.yaml
-# Gli omonimi precedenti NON sono cancellati.
+# R3_WORK_QUEUE.yaml — ROOT condensato
+# Ciclo: SYNC-2026-08-31-0905
+# Canone operativo: memoria/R3_WORK_QUEUE_2026-08-31_0905.yaml
+# Non cancella gli omonimi.
 
 meta:
-  protocol: R3∞_DRIVE_SYNC_v1
-  cycle_id: SYNC-2026-08-30-0909
-  created: "2026-08-30T09:09:00+02:00"
-  previous_cycle: SYNC-2026-08-29-1707
+  cycle_id: SYNC-2026-08-31-0905
+  previous_cycle: SYNC-2026-08-30-0909
   github_account: raffaellocantatelli
-  default_branch: claude/riconnetti-protocollo-rosso-in93dj
-  default_sha: e1396c779ddae8ce363f20deb79f83b5eab89b42
-  bot_head: da47586006ef057d0afed9342c85ffa399c83bbd
+  default_sha: 71c794d5e5e41f4ab5509a9d6ab833353155f095
+  bot_head: 78643535663d83015cde8cdb58e4135e5c732fbd
+  telegram_sha: 77c5f9b1384650924dd3bf1dfadb8f29c28925ff
 
 fatto_breve:
-  - HEAD default = e1396c77 (daily stub 30/08 SHA 410c80f8)
-  - bot fermo da475860
-  - Drive fermo dopo 29/08 15:10:47Z fino a questo deposito
-  - H2 scade oggi; contatti.jsonl size 0
-  - R3-019 non rieseguito; 011/014/016/017 BACKLOG
+  - default avanzato solo del commit SYNC-0909
+  - daily_2026-08-31 assente alle 09:05
+  - bot avanzato a 78643535 (palestra 1.6.6 + fix corpo)
+  - Drive R3 fermo dopo 30/08 07:12:37Z
+  - H2 intermedio scaduto; contatti.jsonl size 0
+  - R3-019 non rieseguito
+  - PROGETTO_R3 / R3-011 / R3-016 file assenti
+  - nuovo ramo photo-analysis fuori canone
   - nessuna cancellazione, nessun merge
 
-canone:
-  report_drive: R3_DRIVE_SYNC_REPORT_2026-08-30_0909.md
-  coda_piena: R3_WORK_QUEUE_2026-08-30_0909.yaml
+priorita:
+  R3-019: BASELINE_0
+  R3-011: BACKLOG
+  R3-012: BACKLOG_CODICE_BOT
+  R3-016: BACKLOG
+  R3-017: BACKLOG
+
+regola: non dichiarare superintelligenza
