@@ -1,25 +1,25 @@
 # R3_WORK_QUEUE.yaml — ROOT condensato
-# Ciclo: SYNC-2026-09-01-1708
-# Canone operativo: memoria/R3_WORK_QUEUE_2026-09-01_1708.yaml
+# Ciclo: SYNC-2026-09-01-1801
+# Canone operativo: memoria/R3_WORK_QUEUE_2026-09-01_1801.yaml
 # Non cancella gli omonimi.
 
 meta:
-  cycle_id: SYNC-2026-09-01-1708
-  previous_cycle: SYNC-2026-09-01-1627
+  cycle_id: SYNC-2026-09-01-1801
+  previous_cycle: SYNC-2026-09-01-1708
   github_account: raffaellocantatelli
-  default_sha: f46e2dac2d1c9734c557a826c92fda627857b7ab
+  default_sha: 6c9a8e197265642f017b668ff2c254d388a5c8e5
   bot_head: 78643535663d83015cde8cdb58e4135e5c732fbd
   telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: d717c81c5b31c0aef28238f92a20be49fad05831
   photo_merge: 884cd51f53fa8aebdba3c7385271e520c9e631a8
 
 fatto_breve:
-  - default avanzato a f46e2dac (solo commit SYNC 1627 dopo 7ed29570)
+  - default avanzato a 6c9a8e19 (solo commit SYNC 1708 dopo f46e2dac)
   - telegram fermo a add51ca6 (non unito)
   - daily_2026-09-01 presente SHA stub 410c80f8 CORE SPENTO
   - health_log 13411 ultima riga 12:12:38Z solo stub
   - bot fermo a 78643535
-  - Drive R3 fermo dopo deposito 1627
+  - Drive R3 fermo dopo deposito 1708
   - H2 intermedio scaduto; contatti.jsonl size 0
   - R3-019 non rieseguito
   - PROGETTO_R3 assente su Drive
