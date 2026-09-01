@@ -1,0 +1,404 @@
+From f86da7ea6a1691a8852ff0339539169880783c8f Mon Sep 17 00:00:00 2001
+From: Claudio Terzi <ilclaudioterzi@gmail.com>
+Date: Tue, 1 Sep 2026 18:02:20 +0000
+Subject: [PATCH] slo: flag truncated sources, the mirror case of the
+ silent-zero canary
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The SLO module's docstring says its job is catching "silent zero" — a
+source that stops flowing and reports 0 rows, which reads as "nothing
+happened" rather than "nothing arrived". This adds the mirror case.
+
+fetch_firms_fires caps the global VIIRS CSV at the top 5000 hotspots by
+FRP, which is a sensible rendering budget — the map cannot usefully draw
+every thermal anomaly on the planet. But len(all_rows) is then discarded,
+so downstream len(latest_data["firms_fires"]) returns 5000 and is
+indistinguishable from a real measurement. /api/health reports it as a
+count. On a normal day the global 24h feed carries several times that,
+so the dashboard shows a ceiling where an operator reads a total.
+
+Same shape as `empty`, opposite direction: a number that means something
+other than what it appears to mean.
+
+Changes, all additive and backward compatible:
+
+- _store: source_totals dict plus _mark_total(source, total) and
+  get_source_totals_snapshot(), mirroring source_timestamps/_mark_fresh.
+  A fetcher that caps records the upstream count before truncating.
+- earth_observation: fetch_firms_fires records len(all_rows); the country
+  enrichment path updates the figure after its own 6000 merge cap. Both
+  caps are now named constants instead of inline literals, and the log
+  line reports stored-of-upstream with a [TRUNCATED] marker.
+- slo.compute_status: optional total_rows parameter; when it exceeds
+  row_count the entry gains total_rows and truncated=True. Sources that
+  never cap get no new keys at all, so a caller cannot mistake absence
+  for truncated=False. compute_all_statuses takes an optional third
+  argument; existing two-argument callers are unaffected.
+- routers/health: passes the totals snapshot through.
+
+row_count is left exactly as it was. It is still the number of rows
+stored; the addition only lets a consumer learn that it is a floor.
+
+Tests in backend/tests/test_slo_truncation.py cover both directions, the
+no-total case, the unconfigured-source case, and the backward-compatible
+two-argument call.
+---
+ backend/routers/health.py                     |  8 +-
+ backend/services/fetchers/_store.py           | 23 ++++++
+ .../services/fetchers/earth_observation.py    | 36 +++++++--
+ backend/services/slo.py                       | 49 +++++++++---
+ backend/tests/test_slo_truncation.py          | 75 +++++++++++++++++++
+ 5 files changed, 175 insertions(+), 16 deletions(-)
+ create mode 100644 backend/tests/test_slo_truncation.py
+
+diff --git a/backend/routers/health.py b/backend/routers/health.py
+index ac5076a..f06a2a3 100644
+--- a/backend/routers/health.py
++++ b/backend/routers/health.py
+@@ -78,13 +78,17 @@ def _get_start_time() -> float:
+ @router.get("/api/health", response_model=HealthResponse)
+ @limiter.limit("30/minute")
+ async def health_check(request: Request):
+-    from services.fetchers._store import get_source_timestamps_snapshot
++    from services.fetchers._store import (
++        get_source_timestamps_snapshot,
++        get_source_totals_snapshot,
++    )
+     from services.slo import compute_all_statuses, summarise_statuses
+ 
+     d = _health_data_snapshot()
+     last = d.get("last_updated")
+     timestamps = get_source_timestamps_snapshot()
+-    slo_statuses = compute_all_statuses(d, timestamps)
++    totals = get_source_totals_snapshot()
++    slo_statuses = compute_all_statuses(d, timestamps, totals)
+     slo_summary = summarise_statuses(slo_statuses)
+     # Top-level status reflects worst SLO result — "degraded" if any
+     # yellow, "error" if any red, "ok" otherwise. This is the single
+diff --git a/backend/services/fetchers/_store.py b/backend/services/fetchers/_store.py
+index 20a9c43..2659260 100644
+--- a/backend/services/fetchers/_store.py
++++ b/backend/services/fetchers/_store.py
+@@ -143,6 +143,14 @@ latest_data: DashboardData = {
+ # Per-source freshness timestamps
+ source_timestamps = {}
+ 
++# Per-source pre-cap row counts.
++#
++# Several fetchers cap what they store (payload size, render budget). Once
++# capped, ``len(latest_data[source])`` reports the cap, not the measurement,
++# and downstream consumers cannot tell the two apart. A fetcher that caps
++# records the upstream total here so the SLO layer can flag it as truncated.
++source_totals: dict[str, int] = {}
++
+ # Per-source health/freshness metadata (last ok/error)
+ source_freshness: dict[str, dict] = {}
+ 
+@@ -443,6 +451,21 @@ def get_latest_data_refs_snapshot() -> DashboardData:
+         return {key: value for key, value in latest_data.items()}
+ 
+ 
++def _mark_total(source: str, total: int) -> None:
++    """Record the upstream row count a fetcher saw *before* applying its cap.
++
++    Call this in any fetcher that truncates, passing the full count. Without
++    it a capped list is indistinguishable from a complete one.
++    """
++    with _data_lock:
++        source_totals[source] = int(total)
++
++
++def get_source_totals_snapshot() -> dict[str, int]:
++    with _data_lock:
++        return dict(source_totals)
++
++
+ def get_source_timestamps_snapshot() -> dict[str, str]:
+     """Return a stable copy of per-source freshness timestamps."""
+     with _data_lock:
+diff --git a/backend/services/fetchers/earth_observation.py b/backend/services/fetchers/earth_observation.py
+index f99686a..50f3da2 100644
+--- a/backend/services/fetchers/earth_observation.py
++++ b/backend/services/fetchers/earth_observation.py
+@@ -65,14 +65,22 @@ def fetch_earthquakes():
+ # ---------------------------------------------------------------------------
+ # NASA FIRMS Fires
+ # ---------------------------------------------------------------------------
++# Global CSV is capped by fire radiative power: the map cannot usefully render
++# every hotspot on the planet. The cap is a rendering budget, not a measurement
++# — ``_mark_total`` keeps the real figure so the two are never confused.
++_FIRMS_GLOBAL_CAP = 5000
++_FIRMS_MERGED_CAP = 6000
++
++
+ @with_retry(max_retries=1, base_delay=2)
+ def fetch_firms_fires():
+     """Fetch global fire/thermal anomalies from NASA FIRMS (NOAA-20 VIIRS, 24h, no key needed)."""
+-    from services.fetchers._store import is_any_active
++    from services.fetchers._store import _mark_total, is_any_active
+ 
+     if not is_any_active("firms"):
+         return
+     fires = []
++    all_rows = []
+     try:
+         url = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_Global_24h.csv"
+         response = fetch_with_curl(url, timeout=30)
+@@ -101,8 +109,17 @@ def fetch_firms_fires():
+                     )
+                 except (ValueError, TypeError):
+                     continue
+-            fires = heapq.nlargest(5000, all_rows, key=lambda x: x["frp"])
+-        logger.info(f"FIRMS fires: {len(fires)} hotspots (from {response.status_code})")
++            fires = heapq.nlargest(_FIRMS_GLOBAL_CAP, all_rows, key=lambda x: x["frp"])
++            # Record what upstream actually had. Without this the cap and a
++            # real measurement look identical downstream.
++            _mark_total("firms_fires", len(all_rows))
++        logger.info(
++            "FIRMS fires: %d hotspots stored of %d upstream%s (from %s)",
++            len(fires),
++            len(all_rows),
++            " [TRUNCATED]" if len(all_rows) > len(fires) else "",
++            response.status_code,
++        )
+     except (ConnectionError, TimeoutError, OSError, ValueError, KeyError, TypeError) as e:
+         logger.error(f"Error fetching FIRMS fires: {e}")
+     with _data_lock:
+@@ -182,13 +199,22 @@ def fetch_firms_country_fires():
+             logger.debug(f"FIRMS country {country} failed: {e}")
+ 
+     if new_fires:
++        from services.fetchers._store import _mark_total, get_source_totals_snapshot
++
+         with _data_lock:
+             current = latest_data.get("firms_fires", [])
+             merged = current + new_fires
+             # Keep top 6000 by FRP (slightly more than global-only cap of 5000)
+-            if len(merged) > 6000:
+-                merged = heapq.nlargest(6000, merged, key=lambda x: x["frp"])
++            full_total = len(merged)
++            if len(merged) > _FIRMS_MERGED_CAP:
++                merged = heapq.nlargest(_FIRMS_MERGED_CAP, merged, key=lambda x: x["frp"])
+             latest_data["firms_fires"] = merged
++        # The global fetch already recorded its upstream total; country
++        # enrichment adds rows on top, so the true figure grows too.
++        _mark_total(
++            "firms_fires",
++            get_source_totals_snapshot().get("firms_fires", full_total) + len(new_fires),
++        )
+         logger.info(f"FIRMS country enrichment: +{len(new_fires)} fires from {len(_FIRMS_COUNTRIES)} countries")
+         _mark_fresh("firms_fires")
+     else:
+diff --git a/backend/services/slo.py b/backend/services/slo.py
+index ee6db9a..720089c 100644
+--- a/backend/services/slo.py
++++ b/backend/services/slo.py
+@@ -5,6 +5,18 @@ endpoint uses to compute red/yellow/green status and that fetchers use
+ as canary thresholds — the early-warning signal that an upstream source
+ structure has silently broken.
+ 
++Two failure modes are tracked, and they are mirror images:
++
++* **silent zero** — a source stops flowing and reports 0 rows, which reads
++  as "nothing happened" rather than "nothing arrived" (``empty``);
++* **silent ceiling** — a source is capped for payload or render budget and
++  reports the cap, which reads as a measurement rather than a lower bound
++  (``truncated``).
++
++Both make a number on the dashboard mean something it does not mean. A
++fetcher that caps calls ``_mark_total(source, upstream_count)`` so the real
++figure survives, and ``compute_status`` flags the row as truncated.
++
+ A human operator cannot reliably monitor 30+ layers for "is this still
+ flowing?". This registry is the automated check that does it for them.
+ 
+@@ -151,11 +163,17 @@ def compute_status(
+     source: str,
+     row_count: int,
+     last_fresh_iso: Optional[str],
++    total_rows: Optional[int] = None,
+ ) -> Dict[str, Any]:
+     """Compute the red/yellow/green status for one source.
+ 
++    `total_rows` is the upstream count recorded by a capping fetcher via
++    ``_mark_total``. When it exceeds `row_count` the row is marked
++    ``truncated``: `row_count` is then a floor, not a measurement.
++
+     Returns a dict with keys: source, status, age_s, row_count, slo,
+-    stale, empty, description.
++    stale, empty, description — plus total_rows and truncated when the
++    source records a pre-cap total.
+ 
+     Status codes:
+         green         — within SLO on both age and volume
+@@ -163,19 +181,26 @@ def compute_status(
+         red           — both SLOs violated OR never fetched
+         unconfigured  — no SLO registered for this source
+     """
++    def _with_cap(entry: Dict[str, Any]) -> Dict[str, Any]:
++        """Attach truncation facts, when the fetcher recorded a pre-cap total."""
++        if total_rows is not None:
++            entry["total_rows"] = total_rows
++            entry["truncated"] = total_rows > row_count
++        return entry
++
+     slo = SLO_REGISTRY.get(source)
+     if slo is None:
+-        return {
++        return _with_cap({
+             "source": source,
+             "status": "unconfigured",
+             "row_count": row_count,
+-        }
++        })
+ 
+     last_fresh = _parse_iso(last_fresh_iso)
+     now = datetime.utcnow()
+ 
+     if last_fresh is None:
+-        return {
++        return _with_cap({
+             "source": source,
+             "status": "red",
+             "age_s": None,
+@@ -185,7 +210,7 @@ def compute_status(
+             "empty": (slo.min_rows is not None and row_count < slo.min_rows),
+             "never_fetched": True,
+             "description": slo.description,
+-        }
++        })
+ 
+     age_s = max(0.0, (now - last_fresh).total_seconds())
+     stale = age_s > slo.max_age_s
+@@ -198,7 +223,7 @@ def compute_status(
+     else:
+         status = "green"
+ 
+-    return {
++    return _with_cap({
+         "source": source,
+         "status": status,
+         "age_s": round(age_s),
+@@ -207,19 +232,23 @@ def compute_status(
+         "stale": stale,
+         "empty": empty,
+         "description": slo.description,
+-    }
++    })
+ 
+ 
+ def compute_all_statuses(
+     latest_data: Dict[str, Any],
+     source_timestamps: Dict[str, str],
++    source_totals: Optional[Dict[str, int]] = None,
+ ) -> Dict[str, Dict[str, Any]]:
+     """Compute status for every source in the SLO registry.
+ 
+     `latest_data` is the shared dashboard store (or any dict-like with
+     the same keys). `source_timestamps` is the per-source fresh-mark
+-    dict from services.fetchers._store.
++    dict from services.fetchers._store. `source_totals` is the optional
++    pre-cap row count dict from the same module; sources absent from it
++    are simply not checked for truncation.
+     """
++    totals = source_totals or {}
+     out: Dict[str, Dict[str, Any]] = {}
+     for source in SLO_REGISTRY:
+         value = latest_data.get(source)
+@@ -227,7 +256,9 @@ def compute_all_statuses(
+             count = len(value)
+         else:
+             count = 0
+-        out[source] = compute_status(source, count, source_timestamps.get(source))
++        out[source] = compute_status(
++            source, count, source_timestamps.get(source), totals.get(source)
++        )
+     return out
+ 
+ 
+diff --git a/backend/tests/test_slo_truncation.py b/backend/tests/test_slo_truncation.py
+new file mode 100644
+index 0000000..243dfc8
+--- /dev/null
++++ b/backend/tests/test_slo_truncation.py
+@@ -0,0 +1,75 @@
++"""SLO truncation flag — the mirror case of the silent-zero canary.
++
++A capped fetcher stores the cap. Downstream, ``len(latest_data[source])``
++returns that cap and is indistinguishable from a real measurement: the
++dashboard shows a number that reads as "this many exist" when it means
++"at least this many exist". These tests pin the behaviour that keeps the
++two apart.
++"""
++
++import pytest
++
++from services import slo
++
++
++class TestComputeStatusTruncation:
++    def test_truncated_when_upstream_exceeds_stored(self):
++        entry = slo.compute_status(
++            "firms_fires", row_count=5000, last_fresh_iso=None, total_rows=41234
++        )
++        assert entry["total_rows"] == 41234
++        assert entry["truncated"] is True
++        # the stored count is still reported verbatim: it is a floor, not a lie
++        assert entry["row_count"] == 5000
++
++    def test_not_truncated_when_all_rows_stored(self):
++        entry = slo.compute_status(
++            "firms_fires", row_count=812, last_fresh_iso=None, total_rows=812
++        )
++        assert entry["truncated"] is False
++        assert entry["total_rows"] == 812
++
++    def test_absent_when_fetcher_records_no_total(self):
++        """A source that never caps must not sprout a misleading truncated=False."""
++        entry = slo.compute_status("firms_fires", row_count=812, last_fresh_iso=None)
++        assert "truncated" not in entry
++        assert "total_rows" not in entry
++
++    def test_unconfigured_source_still_reports_truncation(self):
++        entry = slo.compute_status(
++            "not_in_registry", row_count=100, last_fresh_iso=None, total_rows=999
++        )
++        assert entry["status"] == "unconfigured"
++        assert entry["truncated"] is True
++
++
++class TestComputeAllStatuses:
++    def test_totals_are_threaded_through(self):
++        source = next(iter(slo.SLO_REGISTRY))
++        statuses = slo.compute_all_statuses(
++            {source: [{}] * 10}, {}, {source: 7000}
++        )
++        assert statuses[source]["truncated"] is True
++        assert statuses[source]["total_rows"] == 7000
++
++    def test_totals_argument_is_optional(self):
++        """Existing callers pass two arguments; that must keep working."""
++        source = next(iter(slo.SLO_REGISTRY))
++        statuses = slo.compute_all_statuses({source: [{}] * 10}, {})
++        assert "truncated" not in statuses[source]
++
++
++class TestStoreMarkTotal:
++    def test_mark_total_round_trips(self):
++        from services.fetchers import _store
++
++        _store._mark_total("firms_fires", 41234)
++        assert _store.get_source_totals_snapshot()["firms_fires"] == 41234
++
++    def test_snapshot_is_a_copy(self):
++        from services.fetchers import _store
++
++        _store._mark_total("firms_fires", 10)
++        snap = _store.get_source_totals_snapshot()
++        snap["firms_fires"] = 999
++        assert _store.get_source_totals_snapshot()["firms_fires"] == 10
+-- 
+2.43.0
+
