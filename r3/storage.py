@@ -1,4 +1,7 @@
-"""Storage content-addressed: l'ID di un documento è lo SHA-256 del contenuto."""
+"""Storage content-addressed: l'ID di un documento è lo SHA-256 del contenuto.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import hashlib
 import os
 

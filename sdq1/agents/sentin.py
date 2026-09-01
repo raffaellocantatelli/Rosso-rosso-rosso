@@ -3,6 +3,8 @@
 Rileva pattern comuni di manipolazione/prompt-injection e, quando li trova,
 ipotizza il "bisogno nascosto" dietro il tentativo (Causal SENTIN) invece
 di limitarsi a bloccare.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 import re
 

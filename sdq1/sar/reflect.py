@@ -1,5 +1,7 @@
 """SAR — Scacchiera Auto-Riflessiva: auto-riflessione strutturata a 10 livelli
 applicata a una tensione dichiarata come "Polo A ↔ Polo B".
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 import json
 import os

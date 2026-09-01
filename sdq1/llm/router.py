@@ -1,4 +1,7 @@
-"""Router multi-provider con cascata, circuit breaker, cache e hedging."""
+"""Router multi-provider con cascata, circuit breaker, cache e hedging.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import threading
 
 from .providers.anthropic_provider import AnthropicProvider

@@ -1,4 +1,7 @@
-"""Metadati documenti + audit log append-only, su SQLite."""
+"""Metadati documenti + audit log append-only, su SQLite.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import os
 import sqlite3
 import time

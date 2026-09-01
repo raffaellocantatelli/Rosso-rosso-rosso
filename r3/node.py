@@ -3,6 +3,8 @@
 Ogni nodo espone la stessa app: upload/download di documenti content-addressed,
 endpoint di sync per il confronto degli hash tra pari, e due task in background
 (sync periodico e verifica di integrità) se sono configurati dei peer.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 import asyncio
 import time

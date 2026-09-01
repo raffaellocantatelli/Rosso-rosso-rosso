@@ -5,6 +5,8 @@ Uso:
     R3_PEERS=http://localhost:8002,http://localhost:8003 \\
     R3_API_TOKEN=changeme \\
     python r3/sync.py [--loop]
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 import argparse
 import hashlib

@@ -1,4 +1,7 @@
-"""Firma Ed25519 persistente per nodo (autenticità dei documenti)."""
+"""Firma Ed25519 persistente per nodo (autenticità dei documenti).
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import os
 
 from nacl.encoding import HexEncoder

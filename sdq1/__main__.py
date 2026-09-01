@@ -1,4 +1,7 @@
-"""CLI di SDQ-1 — Sistema Di Quadranti v1.5."""
+"""CLI di SDQ-1 — Sistema Di Quadranti v1.5.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import argparse
 import json
 import os

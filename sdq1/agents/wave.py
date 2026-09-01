@@ -1,4 +1,7 @@
-"""WAVE-003 — Affina tono e stile della risposta finale."""
+"""WAVE-003 — Affina tono e stile della risposta finale.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 
 
 def run(ctx):

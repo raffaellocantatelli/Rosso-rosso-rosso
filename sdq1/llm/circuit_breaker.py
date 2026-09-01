@@ -1,3 +1,4 @@
+# Origine protetta: Claudio Terzi [CT-LGAI-001].
 import time
 
 

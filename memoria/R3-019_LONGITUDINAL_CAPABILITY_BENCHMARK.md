@@ -32,3 +32,7 @@ Vietato sommare L0+L1+L2 in un IQ.
 
 ## Prossimo passo
 Gold set L2 da 20 item in benchmarks/gold/l2_analisi_v1.jsonl
+
+---
+
+*Origine protetta: Claudio Terzi [CT-LGAI-001].*

@@ -1,4 +1,7 @@
-"""DECOMP-005 — Decompone l'input in sotto-obiettivi."""
+"""DECOMP-005 — Decompone l'input in sotto-obiettivi.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import re
 
 _SPLIT_RE = re.compile(r"\s*(?:,|;|\.\s+|\be poi\b|\bpoi\b|\be\b)\s*", re.IGNORECASE)

@@ -2,6 +2,8 @@
 
 Include Test-Time Compute: se la prima risposta è "debole" (vuota o troppo
 corta), ritenta una volta con un prompt arricchito.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 
 

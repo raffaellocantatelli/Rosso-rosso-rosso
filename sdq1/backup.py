@@ -1,4 +1,7 @@
-"""Backup universale: snapshot completo dello stato del sistema, e ripristino."""
+"""Backup universale: snapshot completo dello stato del sistema, e ripristino.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import json
 import os
 import shutil

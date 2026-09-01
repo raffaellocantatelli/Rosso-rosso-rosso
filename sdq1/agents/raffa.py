@@ -1,4 +1,7 @@
-"""RAFFA-001 — Analisi semantica: legge l'intento dell'input."""
+"""RAFFA-001 — Analisi semantica: legge l'intento dell'input.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 import re
 
 STOPWORDS = {

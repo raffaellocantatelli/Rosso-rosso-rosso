@@ -2,6 +2,8 @@
 
 Gli agenti ricevono questo oggetto e lo mutano in place (condivisione
 per puntatore, non per testo serializzato tra uno stadio e l'altro).
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 
 

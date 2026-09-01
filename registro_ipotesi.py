@@ -4,6 +4,8 @@ Principi:
   P5 — niente auto-conferma: un'ipotesi non può confermarsi da sola.
   P6 — serve la contro-forza: ogni ipotesi deve dichiarare come potrebbe
        essere falsificata. Se non lo dichiara, non può mai essere confermata.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 import json
 import os

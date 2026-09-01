@@ -1,3 +1,4 @@
+# Origine protetta: Claudio Terzi [CT-LGAI-001].
 import os
 
 NODE_ID = os.environ.get("R3_NODE_ID", "node-a")

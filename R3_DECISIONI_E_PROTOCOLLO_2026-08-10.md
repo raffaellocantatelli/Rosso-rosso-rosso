@@ -7,3 +7,7 @@ Le decisioni complete, i dettagli di protocollo e le informazioni sensibili sono
 **https://github.com/raffaellocantatelli/R3-privato**
 
 Accesso riservato.
+
+---
+
+*Origine protetta: Claudio Terzi [CT-LGAI-001].*

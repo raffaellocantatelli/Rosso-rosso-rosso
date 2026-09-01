@@ -4,6 +4,8 @@ Nessuna dipendenza esterna: l'embedding è un semplice conteggio di token
 (bag-of-words) e la similarità è coseno calcolato a mano. Sufficiente per
 far condividere agli agenti "puntatori" a memoria pregressa invece di
 ripetere testo.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 import json
 import math

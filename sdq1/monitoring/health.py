@@ -1,5 +1,7 @@
 """Watchdog leggero: verifica lo stato dei provider e della memoria,
 scrive un record in output/health_log.jsonl a ogni invocazione.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
 """
 import json
 import os

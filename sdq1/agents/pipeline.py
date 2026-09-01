@@ -1,4 +1,7 @@
-"""Orchestratore SDQ-1: fa scorrere il Context attraverso i 6 agenti."""
+"""Orchestratore SDQ-1: fa scorrere il Context attraverso i 6 agenti.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+"""
 from ..context import Context
 from . import raffa, decomp, memo, sentin, gen, wave
 
