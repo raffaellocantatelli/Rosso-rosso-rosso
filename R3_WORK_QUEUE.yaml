@@ -1,27 +1,29 @@
 # R3_WORK_QUEUE.yaml — ROOT condensato
-# Ciclo: SYNC-2026-08-31-1612
-# Canone operativo: memoria/R3_WORK_QUEUE_2026-08-31_1612.yaml
+# Ciclo: SYNC-2026-09-01-0900
+# Canone operativo: memoria/R3_WORK_QUEUE_2026-09-01_0900.yaml
 # Non cancella gli omonimi.
 
 meta:
-  cycle_id: SYNC-2026-08-31-1612
-  previous_cycle: SYNC-2026-08-31-0905
+  cycle_id: SYNC-2026-09-01-0900
+  previous_cycle: SYNC-2026-08-31-1612
   github_account: raffaellocantatelli
-  default_sha: f9ee3d5e0726349b882eeb4f6ae476008ccc0119
+  default_sha: 884cd51f53fa8aebdba3c7385271e520c9e631a8
   bot_head: 78643535663d83015cde8cdb58e4135e5c732fbd
   telegram_sha: 77c5f9b1384650924dd3bf1dfadb8f29c28925ff
   instagram_sha: d717c81c5b31c0aef28238f92a20be49fad05831
+  photo_merge: 884cd51f53fa8aebdba3c7385271e520c9e631a8
 
 fatto_breve:
-  - default avanzato solo del commit SYNC-0905 (f9ee3d5)
-  - daily_2026-08-31 assente alle 16:12
+  - default avanzato a 884cd51f (commit 1612 + daily stub 31 + Merge PR #5)
+  - daily_2026-08-31 presente come stub SHA 410c80f8
+  - daily_2026-09-01 assente alle 09:00
   - bot fermo a 78643535
-  - Drive R3 fermo dopo 31/08 07:08:29Z
+  - Drive R3 fermo dopo 31/08 14:15:43Z
   - H2 intermedio scaduto; contatti.jsonl size 0
   - R3-019 non rieseguito
-  - PROGETTO_R3 / R3-011 / R3-016 file assenti
-  - ramo instagram avanzato a d717c81c (osservatorio) fuori canone
-  - nessuna cancellazione, nessun merge
+  - PROGETTO_R3 assente su Drive
+  - ramo instagram fermo a d717c81c fuori canone
+  - nessuna cancellazione, nessun merge da questo nodo
 
 priorita:
   R3-019: BASELINE_0
