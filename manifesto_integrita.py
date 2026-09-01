@@ -32,6 +32,7 @@ SORVEGLIATI = [
     "registro_ipotesi.json",
     "trasmissione_ciclica.py",
     "manifesto_integrita.py",
+    "verifica_nodo.py",
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md",
     ".github/workflows/daily.yml",
 ]

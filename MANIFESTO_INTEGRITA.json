@@ -18,8 +18,8 @@
       "sha256": "6d793b229a73bd35b81c3332abdc7ef822eef9828b6afacde4017c5fd4f75095"
     },
     "manifesto_integrita.py": {
-      "byte": 4478,
-      "sha256": "d1144d84e8a8d5afc9ddcb8936e3d96ce890666a4f5fe40dba824a5ccec94b7e"
+      "byte": 4502,
+      "sha256": "5abe1c6dc20cd192c52c201c3114749647512a89644b30a8e5f99c89ecd2e41d"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 2784,
@@ -368,8 +368,12 @@
     "trasmissione_ciclica.py": {
       "byte": 9914,
       "sha256": "6b5e318b4db754bd432fe349efd73f11274478de71d9e6ab303236adb6df189e"
+    },
+    "verifica_nodo.py": {
+      "byte": 11844,
+      "sha256": "6ef8a58b9e2dd7fa579cd37f353af64844b682a1455ec0d3b47fd614f4ada6fe"
     }
   },
-  "generato": "2026-09-01T18:03:30.814192+00:00",
+  "generato": "2026-09-01T18:09:06.180899+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
