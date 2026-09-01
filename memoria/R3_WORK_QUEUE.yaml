@@ -1,29 +1,30 @@
 # R3_WORK_QUEUE.yaml — ROOT condensato
-# Ciclo: SYNC-2026-09-01-1319
-# Canone operativo: memoria/R3_WORK_QUEUE_2026-09-01_1319.yaml
+# Ciclo: SYNC-2026-09-01-1406
+# Canone operativo: memoria/R3_WORK_QUEUE_2026-09-01_1406.yaml
 # Non cancella gli omonimi.
 
 meta:
-  cycle_id: SYNC-2026-09-01-1319
-  previous_cycle: SYNC-2026-09-01-1209
+  cycle_id: SYNC-2026-09-01-1406
+  previous_cycle: SYNC-2026-09-01-1319
   github_account: raffaellocantatelli
-  default_sha: 441fb86ab61af826e27163fa83058285a083ac72
+  default_sha: 5794cda18eb535fcb90410d1f2e19ad412427169
   bot_head: 78643535663d83015cde8cdb58e4135e5c732fbd
   telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: d717c81c5b31c0aef28238f92a20be49fad05831
   photo_merge: 884cd51f53fa8aebdba3c7385271e520c9e631a8
 
 fatto_breve:
-  - default avanzato a 441fb86a (commit 1209 su 75afe09d)
-  - telegram avanzato a add51ca6 (revert vercel; non unito)
-  - daily_2026-09-01 assente alle 13:19
+  - default avanzato a 5794cda1 (commit 1319 su 441fb86a)
+  - telegram fermo a add51ca6 (revert vercel; non unito)
+  - daily_2026-09-01 assente alle 14:06
   - stub 28-31 SHA 410c80f8 presenti
   - bot fermo a 78643535
-  - Drive R3 fermo dopo 01/09 10:12:35Z
+  - Drive R3 fermo dopo 01/09 11:22:55Z
   - H2 intermedio scaduto; contatti.jsonl size 0
   - R3-019 non rieseguito
   - PROGETTO_R3 assente su Drive
   - ramo instagram fermo a d717c81c fuori canone
+  - root GH era rimasto etichettato 1209; memoria era 1319
   - nessuna cancellazione, nessun merge da questo nodo
 
 priorita:
