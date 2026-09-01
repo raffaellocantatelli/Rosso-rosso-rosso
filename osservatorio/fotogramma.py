@@ -46,6 +46,7 @@ Origine protetta: Claudio Terzi [CT-LGAI-001].
 import hashlib
 import json
 import os
+import subprocess
 import time
 import urllib.request
 from typing import Optional
@@ -120,8 +121,35 @@ def _precedente() -> Optional[dict]:
         return None
 
 
+def _opera() -> dict:
+    """Lo stato dell'opera in questo istante: commit, manifesto, autore.
+
+    Non e' un deposito legale e non lo sostituisce. E' una prova di
+    ANTERIORITA': lega l'impronta dei file a un round di drand che nessuno
+    puo' calcolare in anticipo, quindi nessuno — l'autore compreso — puo'
+    retrodatarla. E' il tipo di prova che vale contro chi arriva dopo.
+    """
+    fuori = {"autore": "Claudio Terzi", "identificativo": "CT-LGAI-001",
+             "diritti": "Tutti i diritti riservati salvo licenza esplicita"}
+    try:
+        fuori["commit"] = subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True,
+            timeout=20, cwd=os.getcwd()).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        fuori["commit"] = None
+    try:
+        with open("MANIFESTO_INTEGRITA.json", "rb") as f:
+            grezzo = f.read()
+        fuori["manifesto_sha256"] = hashlib.sha256(grezzo).hexdigest()
+        fuori["file_sorvegliati"] = len(json.loads(grezzo).get("file", {}))
+    except (OSError, ValueError):
+        fuori["manifesto_sha256"] = None
+        fuori["file_sorvegliati"] = None
+    return fuori
+
+
 def scatta(collettore: Collettore = None, lat: float = None, lon: float = None,
-           rileggi: bool = True) -> dict:
+           rileggi: bool = True, deposito: bool = False) -> dict:
     """Uno scatto. Legge le fonti, prende le ancore, calcola dove siamo, e
     riduce tutto a una chiave che non poteva esistere un secondo prima."""
     c = collettore or Collettore()
@@ -150,11 +178,13 @@ def scatta(collettore: Collettore = None, lat: float = None, lon: float = None,
         "posizione": dove,
         "precedente": (prec or {}).get("chiave"),
     }
+    if deposito:
+        corpo["opera"] = _opera()
     # la chiave e' sullo stato del mondo + ancore + anello precedente,
     # non sulla posizione: l'astronomia e' deterministica dal tempo e
     # includerla non aggiungerebbe nulla di imprevedibile.
     materia = {"t": corpo["t_unix"], "fonti": fonti, "ancore": a,
-               "precedente": corpo["precedente"]}
+               "precedente": corpo["precedente"], "opera": corpo.get("opera")}
     corpo["chiave"] = hashlib.sha256(
         json.dumps(materia, sort_keys=True, separators=(",", ":"),
                    ensure_ascii=False).encode("utf-8")).hexdigest()
@@ -245,6 +275,18 @@ def stampa(f: dict) -> str:
         r.append("  dal fotogramma precedente (%.1f s): %.0f km percorsi rispetto al CMB"
                  % (dp["secondi"], dp["km"]))
     r.append("")
+    if f.get("opera"):
+        o = f["opera"]
+        r.append("ANTERIORITA'  cosa viene datato da questo scatto")
+        r.append("  autore   %s [%s]" % (o["autore"], o["identificativo"]))
+        r.append("  diritti  %s" % o["diritti"])
+        r.append("  commit   %s" % (o["commit"] or "(non in un repository git)"))
+        r.append("  manifesto %s  (%s file)"
+                 % ((o["manifesto_sha256"] or "assente")[:32], o["file_sorvegliati"]))
+        r.append("  ^ questa chiave contiene l'impronta dell'opera E un round drand")
+        r.append("    che nessuno puo' calcolare in anticipo: non e' retrodatabile,")
+        r.append("    nemmeno dall'autore. Non e' un deposito legale.")
+        r.append("")
     r.append("COSA DIMOSTRA   %s" % f["portata"]["dimostra"])
     r.append("COSA NON DIMOSTRA")
     r.append("   %s" % f["portata"]["non_dimostra"])

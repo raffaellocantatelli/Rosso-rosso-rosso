@@ -1,0 +1,52 @@
+Copyright (c) 2026 Claudio Terzi.
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+
+TUTTI I DIRITTI RISERVATI.
+
+Questo repository è pubblico per essere letto, esaminato e verificato.
+Pubblico non significa libero: nessuna licenza d'uso viene concessa qui.
+
+Non è concesso, senza permesso scritto preventivo dell'autore:
+
+  - riprodurre, ridistribuire o pubblicare il contenuto, in tutto o in parte;
+  - crearne opere derivate;
+  - usarlo a fini commerciali;
+  - usarlo per addestrare modelli di apprendimento automatico.
+
+È invece esplicitamente permesso, e incoraggiato:
+
+  - leggere, studiare, citare con attribuzione;
+  - eseguire il codice localmente per verificarne le affermazioni — il
+    repository contiene strumenti fatti apposta (verifica_nodo.py);
+  - segnalare difetti, aprire issue, proporre correzioni.
+
+Le facoltà che i Termini di Servizio di GitHub concedono di diritto a ogni
+utente su un repository pubblico (visualizzazione e fork sulla piattaforma)
+restano quelle: non sono estese né ristrette da questo file.
+
+Per chiedere un permesso d'uso: aprire una issue su questo repository, o
+contattare l'autore. Le richieste ricevono risposta.
+
+---
+
+ANTERIORITÀ
+
+Le date di questo lavoro non poggiano sulla parola dell'autore.
+
+  output/fotogrammi.jsonl
+
+contiene una catena di impronte, in cui ogni anello cita quello precedente e
+un round della rete pubblica drand. drand pubblica un valore ogni 30 secondi,
+firmato dalla chiave del gruppo e conservato permanentemente; nessuno può
+calcolarlo in anticipo. Un'impronta che lo contiene non può essere stata
+prodotta prima di quel secondo — nemmeno dall'autore.
+
+Chiunque può rifare la verifica, senza fidarsi di nessuno:
+
+  python verifica_nodo.py --rete
+
+Il controllo `catena_fotogrammi_ancorata` riscarica da api.drand.sh i round
+citati e li confronta.
+
+Questa è una prova di anteriorità, non un deposito legale, e non lo
+sostituisce.

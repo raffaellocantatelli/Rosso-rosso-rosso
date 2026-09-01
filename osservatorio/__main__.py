@@ -27,10 +27,13 @@ def main(argv=None) -> int:
     ap.add_argument("--lat", type=float, help="latitudine dell'osservatore, in gradi")
     ap.add_argument("--lon", type=float, help="longitudine dell'osservatore, in gradi")
     ap.add_argument("--json", action="store_true", help="stampa il fotogramma grezzo")
+    ap.add_argument("--deposito", action="store_true",
+                    help="lega allo scatto l'impronta dell'opera (commit + manifesto): "
+                         "prova di anteriorita' non retrodatabile")
     a = ap.parse_args(argv)
 
     if a.fotogramma:
-        f = scatta(lat=a.lat, lon=a.lon)
+        f = scatta(lat=a.lat, lon=a.lon, deposito=a.deposito)
         print(json.dumps(f, ensure_ascii=False, indent=1) if a.json else stampa(f))
         return 0
 

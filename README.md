@@ -308,4 +308,19 @@ Chiusura pulita con `Ctrl+C` o `SIGTERM`: i thread si fermano entro un secondo e
 
 ## Licenza
 
-_Da definire._
+**Tutti i diritti riservati.** Vedi [`LICENSE`](LICENSE).
+
+Il repository è pubblico per essere **letto e verificato**, non per essere
+riusato: senza una licenza esplicita, il diritto d'autore riserva ogni facoltà
+all'autore. Leggere, studiare, citare con attribuzione ed eseguire il codice
+per controllarne le affermazioni è permesso e incoraggiato. Riprodurre,
+derivare, usare a fini commerciali o per addestrare modelli richiede un
+permesso scritto: apri una issue e chiedi.
+
+**Anteriorità.** Le date non poggiano sulla parola dell'autore. La catena in
+`output/fotogrammi.jsonl` lega ogni impronta a un round della rete pubblica
+drand, che nessuno può calcolare in anticipo. Verificabile da chiunque:
+
+```bash
+python verifica_nodo.py --rete
+```

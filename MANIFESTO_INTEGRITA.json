@@ -14,8 +14,8 @@
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 12875,
-      "sha256": "6d793b229a73bd35b81c3332abdc7ef822eef9828b6afacde4017c5fd4f75095"
+      "byte": 13612,
+      "sha256": "07953e4183677660fea6ff3c6b39de750ae1f34bd2925b7efecc5eddb7ec4e49"
     },
     "manifesto_integrita.py": {
       "byte": 4502,
@@ -170,16 +170,16 @@
       "sha256": "76eaf1e82b2ceebd9807819692c692c164bcac4654d1518bd6980c067ac765f0"
     },
     "osservatorio/__main__.py": {
-      "byte": 1728,
-      "sha256": "2d4908405086351aea089bff6d4b869d0dbd2ea3c798d5f0eacdc4b5f29e5e81"
+      "byte": 1961,
+      "sha256": "9cbdcf3bf8a69acf4e8f990cd29c9f7cb369b1dc0c637e3005256d751e020d8a"
     },
     "osservatorio/fonti.py": {
       "byte": 10862,
       "sha256": "9b06d061d1df30679db69e96b04d54cb8d6765fecffa73dc65264d8bdc3f2f01"
     },
     "osservatorio/fotogramma.py": {
-      "byte": 10657,
-      "sha256": "296713a1a2d662d84a3e0ee00aa5f4c5da6c4492ab7eed954546db47fd2dacc1"
+      "byte": 12693,
+      "sha256": "07927535e07f1c1e7278486bcde07cc2aa2a99d7934602618d20cc3cf877720c"
     },
     "osservatorio/posizione.py": {
       "byte": 7916,
@@ -374,6 +374,6 @@
       "sha256": "6ef8a58b9e2dd7fa579cd37f353af64844b682a1455ec0d3b47fd614f4ada6fe"
     }
   },
-  "generato": "2026-09-01T18:09:06.180899+00:00",
+  "generato": "2026-09-01T18:17:14.145487+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
