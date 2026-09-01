@@ -1,0 +1,70 @@
+name: Richiesta di permesso d'uso
+description: Chiedi il permesso di usare, riprodurre o derivare quest'opera.
+title: "[uso] "
+labels: ["richiesta-uso"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Quest'opera è protetta e i diritti sono riservati (vedi [`LICENSE`](../blob/main/LICENSE)).
+        Il permesso però esiste, e questa è la porta.
+
+        **Non serve chiedere** per: leggere, studiare, citare con attribuzione,
+        eseguire il codice localmente per verificarne le affermazioni.
+
+        **Serve chiedere** per: riprodurre o ridistribuire, creare opere derivate,
+        usare a fini commerciali, usare per addestrare modelli.
+
+        Le richieste ricevono risposta. Una richiesta chiara riceve risposta più in fretta.
+  - type: input
+    id: chi
+    attributes:
+      label: Chi sei
+      description: Persona, gruppo o organizzazione. Un link va benissimo.
+      placeholder: nome, e dove trovarti
+    validations:
+      required: true
+  - type: dropdown
+    id: cosa
+    attributes:
+      label: Cosa vuoi fare
+      options:
+        - Riprodurre o ridistribuire una parte
+        - Creare un'opera derivata
+        - Uso commerciale
+        - Addestrare un modello di apprendimento automatico
+        - Altro (spiega sotto)
+    validations:
+      required: true
+  - type: textarea
+    id: quale
+    attributes:
+      label: Quale parte, esattamente
+      description: File, moduli o testi. Più sei preciso, più è facile dire di sì.
+      placeholder: "es. osservatorio/posizione.py, oppure la sezione X di testi/..."
+    validations:
+      required: true
+  - type: textarea
+    id: perche
+    attributes:
+      label: Per farne cosa
+      description: A cosa serve, e chi lo vedrà.
+    validations:
+      required: true
+  - type: input
+    id: attribuzione
+    attributes:
+      label: Come attribuiresti
+      description: >
+        L'attribuzione richiesta è "Claudio Terzi [CT-LGAI-001]", con un link a
+        questo repository. Scrivi dove comparirebbe.
+      placeholder: "es. nel README del mio progetto, e nei crediti della pagina"
+    validations:
+      required: true
+  - type: checkboxes
+    id: letto
+    attributes:
+      label: Prima di inviare
+      options:
+        - label: Ho letto `LICENSE` e so che senza permesso scritto l'uso non è concesso.
+          required: true

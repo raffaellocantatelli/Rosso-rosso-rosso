@@ -14,8 +14,8 @@
       "sha256": "efbaceae7c9f10cd83d8f22f0a539d3aacdb4e94075d3c19db5bdb426298ae76"
     },
     "README.md": {
-      "byte": 13612,
-      "sha256": "07953e4183677660fea6ff3c6b39de750ae1f34bd2925b7efecc5eddb7ec4e49"
+      "byte": 14471,
+      "sha256": "a317d93467de056f26137b8a9a459351c3624ad9349c68ffd412f0f78f67b91e"
     },
     "manifesto_integrita.py": {
       "byte": 4502,
@@ -374,6 +374,6 @@
       "sha256": "6ef8a58b9e2dd7fa579cd37f353af64844b682a1455ec0d3b47fd614f4ada6fe"
     }
   },
-  "generato": "2026-09-01T18:21:21.733773+00:00",
+  "generato": "2026-09-01T18:25:01.227621+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

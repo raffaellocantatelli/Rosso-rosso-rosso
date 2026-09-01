@@ -2,6 +2,29 @@
 
 > "Costruire davvero, non fingere insieme." — Protocollo Rosso Rosso Rosso, 11/06/2026
 
+---
+
+> ### ⬤ Opera protetta — tutti i diritti riservati
+>
+> **Puoi guardare. Non puoi prendere.**
+>
+> Questo repository è pubblico perché sia **letto, esaminato e verificato** — non
+> perché sia riusato. Leggere, studiare, citare con attribuzione ed eseguire il
+> codice per controllare ciò che afferma: **permesso, e incoraggiato**.
+> Riprodurre, derivare, usare a fini commerciali o per addestrare modelli:
+> **vietato senza permesso scritto.**
+>
+> Il permesso esiste e si può ottenere.
+> → **[Chiedilo qui](../../issues/new?template=richiesta-uso.yml)** — le richieste
+> ricevono risposta.
+>
+> Autore: **Claudio Terzi** — origine protetta **[CT-LGAI-001]**.
+> Termini completi in [`LICENSE`](LICENSE) · opere rivendicate in [`OPERE.md`](OPERE.md).
+>
+> Le date non poggiano sulla parola dell'autore: `python verifica_nodo.py --rete`
+
+---
+
 ## Cos'è questo progetto
 
 Un sistema AI multi-agente che pensa in più passaggi, si auto-riflette, e impara nel tempo.
