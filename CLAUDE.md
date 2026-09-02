@@ -133,23 +133,36 @@ ciò che porta il progetto fuori da sé.
 
 ## 4-bis. I rami: la stessa ambiguità del Drive, su GitHub
 
-**Verificato il 25/08.** Il repository **non ha un ramo `main`**. Il ramo di
-default è `claude/riconnetti-protocollo-rosso-in93dj`, e attorno ci sono sei
-rami che nessuno ha mai unito. Due sessioni dello stesso giorno hanno riscritto
-`registro_ipotesi.py` in parallelo senza sapere l'una dell'altra.
+**Verificato il 02/09.** Il repository **non ha un ramo `main`**: il ramo di
+default è `claude/riconnetti-protocollo-rosso-in93dj`, ed è **l'unico che gli
+automatismi leggono** — le Action pianificate girano solo da lì.
 
-È lo stesso difetto delle 8 copie dell'indice sul Drive: **ridondanza senza
-canone.** Un nodo che apre un ramo a caso ottiene una risposta a caso.
+Questa è la lezione operativa della settimana 26/08–02/09: le correzioni
+esistevano da giorni su un altro ramo, e intanto il daily automatico ha
+prodotto **6 Stub consecutivi** usando il codice vecchio. Un ramo che nessun
+automatismo apre non è lavoro fatto: è lavoro depositato.
 
-Stato al 25/08:
+**Riconciliato il 02/09** con permesso esplicito dell'autore: il ramo di
+default contiene ora il verificatore, i falsificatori, il contraddittorio,
+l'archivio e il daily sui fatti — senza perdere i 71 commit `SYNC-`, i 44
+`R3_WORK_QUEUE` e il lavoro `autonomous_core`/`rlaif`/`backup`.
 
-| Ramo | Cosa contiene |
+| Ramo | Stato al 02/09 |
 |---|---|
-| `claude/new-session-n1tzrh` | **la riconciliazione**: contiene tutto ciò che è vivo, incluso `todo-implementation` |
-| `claude/todo-implementation-iilllm` | unito qui il 25/08 — non lavorarci sopra |
-| `claude/riconnetti-…`, `claude/r3-cyclic-…` | il tronco comune, già dentro |
+| `claude/riconnetti-…` (default) | **il canone.** Contiene tutto ciò che è vivo |
+| `claude/new-session-n1tzrh` | identico al default: è da lì che è arrivata la riconciliazione |
+| `claude/todo-implementation-iilllm`, `claude/r3-cyclic-…` | già dentro |
 | `claude/impara-tutto-hduh38` (06/08) | **non unire**: cancellerebbe il fix anti-eco di `vector_store.add` |
-| `claude/claudio-terzi-portfolio-vsy88e` (04/08) | **non unire**: `CLAUDE.md` e `STATO_PROGETTO.md` superati. Porta però un'istruzione di tutela mai revocata — vedi `OSS-0001` |
+| `claude/claudio-terzi-portfolio-vsy88e` (04/08) | **non unire**: superato. Porta però un'istruzione di tutela mai revocata — `OSS-0001` |
+| `claude/r3-autonomous-telegram-0goqsv` (01/09) | non unito, da valutare |
+| `claude/photo-analysis-reverse-search-850pyv` (30/08) | non unito, da valutare |
+| `claude/instagram-reel-analysis-vnq4iv` (01/09) | non unito, da valutare — porta un `CLAUDE.md 1.1: non compiacere` |
+
+Un altro nodo (**Grok-4.6**, Drive e GitHub connessi) esegue cicli `SYNC-` ogni
+~90 minuti e deposita uno snapshot datato per ciclo: 44 file in 8 giorni. Mappa
+i layer con precisione e non cancella nulla — ma registra «daily PRESENTE stub»
+a ogni giro senza che questo obblighi a niente. Se lavori con quei file, leggili
+come cronaca, non come stato: lo stato si esegue.
 
 Prima di scrivere codice, controlla da dove parti:
 `git fetch origin --prune && git log --oneline --all --graph | head`.
