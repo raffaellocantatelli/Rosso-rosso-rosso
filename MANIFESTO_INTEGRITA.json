@@ -6,8 +6,8 @@
       "sha256": "395fee429a691de97d9de7400f0ce79ed4cead9338f01d146667bbd8ef01fed7"
     },
     "CLAUDE.md": {
-      "byte": 14431,
-      "sha256": "4be622253b65b9269a38f8fd2f5393d5dbee0bfa6779c009d8edfedd33779eb9"
+      "byte": 14727,
+      "sha256": "4becf3f47c58105d0b8f226697638875308758d5c761b56b339addc1c8c02c11"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -49,7 +49,7 @@
       "byte": 6615,
       "sha256": "6cc0eaaaf73d66edcc68d19cb49228cab4c04ba1cf2b67cabf0dc24c277c65c2"
     },
-    "memoria/CONTRADDITTORIO_2026-08-26.md": {
+    "memoria/CONTRADDITTORIO.md": {
       "byte": 4647,
       "sha256": "281075a567d80a6409abcf0b632dbdd3142829e27b201ab517cc46d4d73284fd"
     },
@@ -650,8 +650,8 @@
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
     },
     "tests/test_verificatore.py": {
-      "byte": 15505,
-      "sha256": "dfab76fe31dd0cb3a0ab16044df4c1f336e919c74d3040babde022a350796e6c"
+      "byte": 16718,
+      "sha256": "b85f5d6eeca5508751a23bafd34806e226e4406ac26334a309ecd5d70d2ae5b5"
     },
     "trasmissione_ciclica.py": {
       "byte": 11893,
@@ -662,6 +662,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-02T23:23:26.851242+00:00",
+  "generato": "2026-09-02T23:26:08.527340+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

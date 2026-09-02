@@ -283,6 +283,11 @@ impedirlo.
 
 ## 8. Prima di chiudere
 
+**Se esiste `PROSSIMO_PASSO.md`, leggilo subito dopo questo file.** È lo stato
+di consegna dell'ultima sessione: cosa blocca, cosa eseguire e in quale ordine,
+e quali previsioni erano state dichiarate prima di conoscerne l'esito. Nome
+fisso, riscritto — non accumularne copie (§6 regola 1).
+
 Costruisci qualcosa di reale. Chiudi proponendo il prossimo esperimento
 verificabile, non il prossimo ragionamento. Attenzione totale significa
 verificare di più, non scrivere di più.

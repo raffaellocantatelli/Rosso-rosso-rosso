@@ -80,6 +80,23 @@ costruito e testato offline il 26/08, poi la quota Gemini si è esaurita.
   8, comprese quelle di controllo su entità inventate. Quel risultato vale per
   quel modello quel giorno: va rifatto, non ricordato.
 
+## 3-bis. Fatto stanotte per stare dentro le regole di §6
+
+CLAUDE.md è cresciuto mentre non guardavo: un altro nodo ha aggiunto §6
+(«Nodi concorrenti — regole vincolanti») e §7 («Cosa vale come conferma»).
+Due cose sono state messe in regola subito:
+
+- **Regola 1, nomi senza data.** `CONTRADDITTORIO_2026-08-26.md` e
+  `tracce_2026-08-26.json` sono diventati `CONTRADDITTORIO.md` e
+  `tracce.json`; il codice che li scrive non data più il nome.
+- **Regola 3, dichiarare cosa si è toccato.** Annotato in `registro_nodi.py`.
+
+E una falla trovata proprio grazie a quel merge: in `memoria/` erano comparsi
+**46 `R3_DRIVE_SYNC_REPORT`** di un altro modello, e `archivio.py` li aveva
+presi per fonti — 46 su 55. Il Contraddittore avrebbe letto la cronaca di
+un'altra macchina come se fosse l'archivio dell'autore. Ora le fonti sono 8,
+e un test fallisce se una cronaca rientra.
+
 ## 4. Aperto, e non lo decide un nodo
 
 - **`PROGETTO_R3.md` non esiste** e `TUTELA_ORIGINE` §3 vi fonda l'attribuzione

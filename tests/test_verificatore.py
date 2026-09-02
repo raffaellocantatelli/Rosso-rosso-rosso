@@ -374,3 +374,32 @@ class TestArchivio(unittest.TestCase):
                                                quanti=2, indice=self.indice)
         self.assertIn("FONTE:", contesto)
         self.assertRegex(contesto, r"FONTE: [^\s:]+:\d+")
+
+
+class TestArchivioNonMangiaLeCronache(unittest.TestCase):
+    """Le cronache degli altri nodi non sono fonti.
+
+    Il 02/09, unendo il ramo di default, in memoria/ sono comparsi 46
+    R3_DRIVE_SYNC_REPORT prodotti da un altro modello a cadenza oraria, e
+    l'archivio li aveva presi per fonti: 46 su 55. Il Contraddittore avrebbe
+    letto la cronaca di un altro modello come se fosse l'archivio dell'autore.
+    """
+
+    def test_nessuna_cronaca_di_nodo_fra_le_fonti(self):
+        import re
+        import archivio
+        vietati = re.compile(
+            r"R3_DRIVE_SYNC_REPORT|R3_WORK_QUEUE|SYNC_DRIVE_GITHUB"
+            r"|CONTRADDITTORIO|daily_|^SESSIONE_|ZZ_SUPERATO"
+        )
+        for frammento in archivio.costruisci_indice():
+            self.assertIsNone(
+                vietati.search(frammento["file"]),
+                f"{frammento['file']} è una cronaca, non una fonte",
+            )
+
+    def test_le_fonti_vere_ci_sono_ancora(self):
+        import archivio
+        file_indicizzati = {f["file"] for f in archivio.costruisci_indice()}
+        self.assertIn("testi/PROTOCOLLO_ROSSO_v2_REVISIONE.md", file_indicizzati)
+        self.assertIn("testi/IL_DESTINATARIO.md", file_indicizzati)
