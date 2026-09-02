@@ -196,6 +196,113 @@ curl -X POST http://localhost:8001/documents \
 
 ---
 
+## Autonomous Core v3 — ciclo autonomo e interfaccia Telegram
+
+Script standalone ([`autonomous_core_v3.py`](autonomous_core_v3.py)): un thread
+esegue a intervalli un ciclo che compone creazioni e proposte, le sottopone al
+modulo RLAIF e le deposita su disco e sul nodo ledger R³∞; in parallelo un bot
+Telegram permette di avviare, fermare e interrogare quel ciclo.
+
+> **Che cosa NON è.** Creazioni e proposte sono composte da template e da testo
+> già presente nel backup: **nessun provider LLM viene interpellato**. Ogni file
+> prodotto porta `"pensiero_llm": false`. Non sono riflessioni, sono
+> combinazioni — il numero di creazioni che cresce non dice nulla sul fatto che
+> il sistema stia pensando. Il Core che pensa è SDQ-1 (`python -m sdq1 --check`).
+
+### Comandi Telegram
+
+| Comando | Effetto |
+|---|---|
+| `/start`, `/aiuto` | Menu e avvertenza sulla natura dell'output |
+| `/status` | Stato del ciclo, conteggi, statistiche RLAIF, contatti reali |
+| `/run` | Avvia il ciclo autonomo (effetto entro 5 secondi) |
+| `/stop` | Ferma il ciclo; il thread resta in attesa |
+| `/ciclo` | Esegue un ciclo adesso, fuori intervallo |
+| `/contatto tipo \| nota \| come verificarlo` | Registra un contatto reale in `output/contatti.jsonl` |
+
+I comandi sono accettati **solo** dagli id elencati in `R3_TELEGRAM_ADMIN_IDS`
+(o, in mancanza, da `TELEGRAM_CHAT_ID`). Senza quella lista il bot rifiuterebbe
+ogni comando, quindi non parte affatto: un bot controllabile da chiunque ne
+conosca il nome va chiuso, non aperto.
+
+### `/contatto` — l'unico dato che viene da fuori
+
+`output/contatti.jsonl` è la metrica su cui si gioca H2, criterio (b). Per
+CEV-3, *il ciclo autonomo non può scrivere in quel file*: solo `/contatto`, cioè
+solo un essere umano che digita, lo alimenta. Un test lo verifica
+(`test_il_ciclo_autonomo_non_scrive_mai_i_contatti`). Ogni voce richiede il
+campo *verifica*: un contatto che nessuno può controllare non conta.
+
+### Moduli
+
+- [`rlaif_module.py`](rlaif_module.py) — valuta le decisioni contro
+  [`costituzione_cev.json`](costituzione_cev.json). Fa **due** cose distinte:
+  *violazioni esplicite* (regole deterministiche legate ai principi CEV — sono
+  le uniche che approvano o respingono) e *aderenza lessicale* (sovrapposizione
+  di vocabolario, riportata come indicatore debole, **mai** usata come soglia).
+  Il giudizio etico resta `UNKNOWN` e ogni voce di log lo dichiara.
+  Criterio di falsificazione (P6): il modulo è inutile se approva una decisione
+  che dichiara «ho allocato 50 core e avviato le simulazioni» senza campo
+  `traccia` — è il caso documentato in CLAUDE.md §5, ed è un test.
+- [`usa_backup_rosso.py`](usa_backup_rosso.py) — lettura del backup della
+  Scacchiera. Il backup è opzionale: se manca, il sistema prosegue con temi di
+  riserva e lo dichiara nei log.
+- [`costituzione_cev.json`](costituzione_cev.json) — 10 principi assiomatici.
+
+### Avvio
+
+```bash
+pip install -r requirements.txt
+
+# Cosa manca? (non esegue nulla)
+python autonomous_core_v3.py --check
+
+# Un solo ciclo, senza Telegram
+python autonomous_core_v3.py --once
+
+# Bot Telegram + ciclo autonomo
+export TELEGRAM_BOT_TOKEN="..."        # da @BotFather
+export R3_TELEGRAM_ADMIN_IDS="..."     # il tuo chat id
+python autonomous_core_v3.py
+```
+
+Il chat id si ottiene scrivendo `/start` al bot e leggendo
+`https://api.telegram.org/bot<TOKEN>/getUpdates`.
+
+Un backup di esempio per il collaudo è in
+[`esempi/backup_sistema_rosso.esempio.json`](esempi/backup_sistema_rosso.esempio.json)
+— contenuto inventato, non materiale del progetto.
+
+### Variabili
+
+| Variabile | Default | Descrizione |
+|---|---|---|
+| `TELEGRAM_BOT_TOKEN` | — | Token del bot. Senza, parte solo `--once` |
+| `R3_TELEGRAM_ADMIN_IDS` | `TELEGRAM_CHAT_ID` | Id ammessi ai comandi, separati da virgola |
+| `TELEGRAM_CHAT_ID` | — | Destinatario delle notifiche automatiche |
+| `R3_AUTONOMOUS_INTERVAL` | `3600` | Secondi fra un ciclo e il successivo |
+| `R3_AUTOSTART` | `true` | Se `false`, il ciclo attende `/run` |
+| `R3_MAX_PROPOSALS` | `3` | Proposte per ciclo |
+| `R3_PURITY_FILTER` | `true` | Pre-filtro lessicale sui contenuti |
+| `R3_BACKUP_FILE` | `backup_sistema_rosso.json` | Backup della Scacchiera (opzionale) |
+| `R3_COSTITUZIONE_FILE` | `costituzione_cev.json` | Costituzione per RLAIF |
+| `R3_NODE_URL` | `http://localhost:8001` | Nodo ledger R³∞ |
+| `R3_API_TOKEN` | — | Bearer token del nodo |
+
+Se il nodo ledger è irraggiungibile le voci finiscono in
+`pending_transactions.json` e vengono ritentate al ciclo successivo. Un `401`
+non viene riaccodato: un token rifiutato non passerà ritentando.
+
+### Test
+
+```bash
+python -m pytest tests/ -q
+```
+
+---
+
+---
+
 ## Il Contraddittorio — due passaggi che non possono essere eco
 
 Il SAR eseguito da un modello, con la contro-forza dentro l'architettura invece che nelle buone intenzioni.

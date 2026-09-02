@@ -1,0 +1,9 @@
+# Puntatore pubblico. Canone operativo = snapshot Drive R3_WORK_QUEUE_2026-08-28_0907.yaml
+cycle_id: SYNC-2026-08-28-0907
+previous_cycle: SYNC-2026-08-27-1709
+never_delete_historical: true
+public_default_sha: b2420ab94fc893e73070305f4bc0c51310f95166
+bot_tree_sha: 40f515891a100d4d501ed61293c7aa4652cf6e8c
+indice: Drive_6615_eq_new-session_6615_default_2784
+r3_019: BASELINE_0_non_rieseguito
+simulazione: nessuna

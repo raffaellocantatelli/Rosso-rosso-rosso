@@ -1,0 +1,125 @@
+# R3_WORK_QUEUE.yaml
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Ciclo: SYNC-2026-08-28-1807
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Questo file non è un esecutore. È un registro di lavoro verificato.
+# Regola: non dichiarare mai che R³∞ è una superintelligenza.
+# Snapshot datato. Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-08-28-1807
+  created: "2026-08-28T18:07:00+02:00"
+  created_by: Grok-4.6 (Drive + GitHub connessi)
+  previous_cycle: SYNC-2026-08-28-1802
+  official_until: verified_items_only
+  never_delete_historical: true
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+
+layer_map:
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    public_default_sha_pre_1807: ee2201f1c764049b90edc1f2bb584db3ff5a0a94
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    telegram_branch: claude/r3-autonomous-telegram-0goqsv
+    telegram_sha: 921fcf571b31e3a24ce7e605f49ed18b513279d3
+    private_archive: raffaellocantatelli/R3-privato
+    private_archive_sha: 88b447bb373619d7fe48d59b054e45a3b339169e
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    private_oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_bot_head: dfadb4c38b15a9e7671642c35c9aa32cc4a73ee2
+    public_site: raffaellocantatelli/Claudioterzi
+
+fatto:
+  - id: SYNC-2026-08-28-1807-A
+    item: "Account GitHub autenticato = raffaellocantatelli. Cinque repo accessibili."
+  - id: SYNC-2026-08-28-1807-B
+    item: "Default Layer 2 a ee2201f1 (SYNC-1802, 16:05:41Z). Nessun commit successivo al 18:07 CEST pre-push."
+  - id: SYNC-2026-08-28-1807-C
+    item: "Bot HEAD dfadb4c3 (16:07:20Z). Quattro commit dopo HEAD 1802 2124955: terzo.py + states + main."
+  - id: SYNC-2026-08-28-1807-D
+    item: "Drive: nessun file R3 nuovo dopo 2026-08-28T16:04:54Z oltre gli artefatti 1802."
+  - id: SYNC-2026-08-28-1807-E
+    item: "Oro-Rosso 410784b2 e R3-privato 88b447bb: invariati."
+  - id: SYNC-2026-08-28-1807-F
+    item: "PROGETTO_R3.md exact_name=0. R3-016 exact_name=0. R3-011 exact_name=0."
+  - id: SYNC-2026-08-28-1807-G
+    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 18:07. L2/L3 N/A."
+  - id: SYNC-2026-08-28-1807-H
+    item: "H2 scade 2026-08-30. output/contatti.jsonl default size 0. Ultimo daily default 2026-08-26."
+  - id: SYNC-2026-08-28-1807-I
+    item: "Nessun file storico cancellato. Nessun ramo unito. Pytest non rieseguito."
+  - id: SYNC-2026-08-28-1807-J
+    item: "Omonimi Drive R3_WORK_QUEUE.yaml senza data: 5 copie conservate."
+  - id: SYNC-2026-08-28-1807-K
+    item: "Rami non-default rilette: SHA identici al 1802. Default avanzato solo per il push 1802."
+  - id: SYNC-2026-08-28-1807-L
+    item: "Albero bot 33 oggetti: terzo.py 4785 nuovo; main.py 4876; states.py 697; BOTFATHER 639 senza /testimone /fuori."
+
+inferenza:
+  - id: INF-28-1807-01
+    item: "Stasi default 16:05Z→18:07 CEST. Movimento sul repo bot: codice /testimone /fuori."
+  - id: INF-28-1807-02
+    item: "Nessun aumento di capacità R3-019 misurato il 28/08 18:07."
+  - id: INF-28-1807-03
+    item: "Stato ufficiale 014/016/017 resta BACKLOG. CONF-09 aperto."
+  - id: INF-28-1807-04
+    item: "Codice terzo sul bot è avanzamento di implementazione, non chiusura di un ticket strategico."
+  - id: INF-28-1807-05
+    item: "BotFather e texts.py non allineati al burst /testimone /fuori."
+
+ipotesi:
+  - {id: H-SYNC-02, status: APERTA}
+  - {id: H-SYNC-08, status: FATTO_COMMIT_ESISTE_LIVE_NON_VERIFICATO}
+  - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
+  - {id: H-SYNC-10, status: EREDITATA}
+  - {id: H-SYNC-11, status: CHIUSA_COME_INTERMEDIO}
+  - {id: H-SCACCHIERA-01, status: APERTA}
+  - {id: H-LIBRO-01, status: APERTA}
+  - {id: H-DOCS-BOT-01, status: APERTA}
+  - {id: H-TERZO-01, status: APERTA}
+  - {id: H-TERZO-02, status: APERTA}
+
+simulazione:
+  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza. Nessun punteggio inventato."}
+
+conflitti_aperti:
+  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, keep_both: true}
+  - {id: CONF-02, file: R3_DECISIONI, status: DIVERGENZA_VOLUTA}
+  - {id: CONF-04, missing: PROGETTO_R3.md}
+  - {id: CONF-05, file: R3-019, keep_both: true}
+  - {id: CONF-06, file: R3_WORK_QUEUE.yaml, keep_both: true}
+  - {id: CONF-07, file: 00_AVVERTENZA_LEGGI_PRIMA_DI_ESEGUIRE.md, keep_both: true}
+  - {id: CONF-08, file: default_vs_telegram, keep_both: true}
+  - {id: CONF-09, item: "claim EXECUTED 016/017 vs misura BACKLOG", official: BACKLOG, keep_both: true}
+  - {id: CONF-10, item: "bot scacchiera vs Drive solo PANAJEDREZ 20/08", keep_both: true}
+  - {id: CONF-11, item: "bot /libro vs Drive senza mirror 28/08", keep_both: true}
+  - {id: CONF-12, item: "bot /testimone /fuori vs BotFather e Drive 09:40Z", keep_both: true}
+
+priorita_strategiche:
+  - {id: R3-019, status: BASELINE_0_ESISTE, class: FATTO_su_L0_L1__N_A_su_L2_L3}
+  - {id: R3-011, status: BACKLOG, class: IPOTESI}
+  - {id: R3-012, status: BACKLOG_CON_CODICE_BOT_NON_TESTATO, class: INFERENZA}
+  - {id: R3-013, status: BACKLOG, class: IPOTESI}
+  - {id: R3-016, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-017, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-014, status: BACKLOG, class: IPOTESI, incoming_claim: IN_PROGRESS_NON_VERIFICATO}
+  - {id: R3-015, status: BACKLOG, class: IPOTESI}
+  - {id: R3-018, status: BACKLOG, class: IPOTESI}
+  - {id: R3-020, status: BACKLOG, class: IPOTESI}
+
+azioni_di_questo_ciclo:
+  - snapshot coda e report datati 1807
+  - non cancellare omonimi senza data
+  - non unire rami
+  - non creare PROGETTO_R3.md
+  - non promuovere 014/016/017
+  - non promuovere R3-012 a FATTO
+  - non promuovere /testimone /fuori a FATTO live
+  - non rieseguire R3-019 fingendo un punteggio
+  - non copiare indice Drive 10696 sul default pubblico
+  - non copiare il codice bot su Drive in assenza di test

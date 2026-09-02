@@ -1,0 +1,23 @@
+# R3_WORK_QUEUE.yaml — condensato ROOT
+# Ciclo: SYNC-2026-09-02-1839
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-02_1839.yaml
+# Non cancellare gli snapshot datati.
+
+meta:
+  cycle_id: SYNC-2026-09-02-1839
+  previous_cycle: SYNC-2026-09-02-1731
+  github_default_sha: 1a70c6113591446a662f6044a43e141bb7eec0b5
+  telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  bot_last_push: "2026-08-31T03:07:50Z"
+
+stato:
+  daily_2026-09-02: PRESENTE_STUB_410c80f8
+  health_log_last: "13817 / be33a7ce"
+  r3_019: BASELINE_0_NO_NEW_RUN
+  contatti_jsonl: SIZE_0
+  progetto_r3_md: ASSENTE
+  sdq1_run_33: SUCCESS_2026-09-02T11:49:53Z_ULTIMO
+
+regola: non dichiarare superintelligenza
+never_delete_historical: true

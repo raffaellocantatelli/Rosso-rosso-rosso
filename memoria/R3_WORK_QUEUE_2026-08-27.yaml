@@ -1,0 +1,9 @@
+cycle_id: SYNC-2026-08-27-0910
+protocol: R3∞_DRIVE_SYNC_v1
+canonical_queue: R3_WORK_QUEUE.yaml
+drive_report: memoria/R3_DRIVE_SYNC_REPORT_2026-08-27.md
+drive_uploads:
+  - 1SLiKy1ieWT8GqetgOSHm1iQtKI3O_K20
+  - 1Eq4w9VtS_8U7-pspIm-54oPX-09OIMNA
+  - 1jD3fZ2id5kiGZhI3u7OCz4tMBoAIlmjw
+note: snapshot datato; non sostituisce lo storico 26/08

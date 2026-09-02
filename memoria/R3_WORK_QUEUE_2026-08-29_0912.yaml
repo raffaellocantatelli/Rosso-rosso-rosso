@@ -1,0 +1,137 @@
+# R3_WORK_QUEUE.yaml
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Ciclo: SYNC-2026-08-29-0912
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Questo file non è un esecutore. È un registro di lavoro verificato.
+# Regola: non dichiarare mai che R³∞ è una superintelligenza.
+# Snapshot datato. Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-08-29-0912
+  created: "2026-08-29T09:12:00+02:00"
+  created_by: Grok-4.6 (Drive + GitHub connessi)
+  previous_cycle: SYNC-2026-08-28-1807
+  official_until: verified_items_only
+  never_delete_historical: true
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+
+layer_map:
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    public_default_sha: dfbef9849608e3242a8d0e90d364b788b2fe0db3
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    telegram_branch: claude/r3-autonomous-telegram-0goqsv
+    telegram_sha: 3b492922b3f1f2871bf961ac3850f87e58cbfcfc
+    new_branch_observed: claude/instagram-reel-analysis-vnq4iv
+    new_branch_sha: 8f5d95c8dd6249475d10a28dc425d5197cef890f
+    private_archive: raffaellocantatelli/R3-privato
+    private_archive_sha: 88b447bb373619d7fe48d59b054e45a3b339169e
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    private_oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_bot_head: 5613997615929215c68906fcd8342c0f50a60bb6
+    public_site: raffaellocantatelli/Claudioterzi
+    adjacent_not_official: raffaellocantatelli/UmbraTheater
+
+fatto:
+  - id: SYNC-2026-08-29-0912-A
+    item: "Account GitHub autenticato = raffaellocantatelli. Sei repo accessibili (cinque R3 + UmbraTheater adiacente)."
+  - id: SYNC-2026-08-29-0912-B
+    item: "Default Layer 2 a dfbef984 (daily stub SDQ-1 29/08 07:01:44Z)."
+  - id: SYNC-2026-08-29-0912-C
+    item: "Bot HEAD 56139976 (04:51:24Z). Burst /corpo /metodo /palestra /scheda /rrr + test_ponte_testimone.py."
+  - id: SYNC-2026-08-29-0912-D
+    item: "Drive: nessun file R3 nuovo dopo 2026-08-28T16:10:21Z oltre gli artefatti 1807."
+  - id: SYNC-2026-08-29-0912-E
+    item: "Oro-Rosso 410784b2 e R3-privato 88b447bb: invariati."
+  - id: SYNC-2026-08-29-0912-F
+    item: "PROGETTO_R3.md exact_name=0. R3-016 exact_name=0. R3-011 exact_name=0."
+  - id: SYNC-2026-08-29-0912-G
+    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 09:12. L2/L3 N/A."
+  - id: SYNC-2026-08-29-0912-H
+    item: "H2 scade 2026-08-30. output/contatti.jsonl default e telegram size 0."
+  - id: SYNC-2026-08-29-0912-I
+    item: "daily_2026-08-28 e 29 sul default: 986 byte, SHA 410c80f8 identico a 24/25/26. Contenuto 29 = stub CORE SPENTO. daily_2026-08-27 assente sul default."
+  - id: SYNC-2026-08-29-0912-J
+    item: "Telegram 0goqsv avanzato a 3b492922 (docs cartella bot != bot live). daily telegram ultimo 26/08 size 1476."
+  - id: SYNC-2026-08-29-0912-K
+    item: "Nuovo ramo claude/instagram-reel-analysis-vnq4iv 8f5d95c8. Non unito."
+  - id: SYNC-2026-08-29-0912-L
+    item: "BOTFATHER 639 invariato: manca elenco /testimone /fuori /palestra /scheda /corpo /metodo /rrr /esito /sdq."
+  - id: SYNC-2026-08-29-0912-M
+    item: "Nessun file storico cancellato. Nessun ramo unito. Pytest non eseguito."
+
+inferenza:
+  - id: INF-29-0912-01
+    item: "Drive fermo. Movimento su GitHub pubblico: Action daily stub + burst superficie bot."
+  - id: INF-29-0912-02
+    item: "Nessun aumento di capacità R3-019 misurato il 29/08 09:12."
+  - id: INF-29-0912-03
+    item: "Stato ufficiale 014/016/017 resta BACKLOG. CONF-09 aperto."
+  - id: INF-29-0912-04
+    item: "I daily 28/29 esistono come file, non come misura di pensiero. SHA identico allo stub."
+  - id: INF-29-0912-05
+    item: "BotFather non allineato al burst di comandi."
+
+ipotesi:
+  - {id: H-SYNC-02, status: APERTA}
+  - {id: H-SYNC-08, status: FATTO_COMMIT_ESISTE_LIVE_NON_VERIFICATO}
+  - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
+  - {id: H-SYNC-10, status: EREDITATA}
+  - {id: H-SCACCHIERA-01, status: APERTA}
+  - {id: H-LIBRO-01, status: APERTA}
+  - {id: H-DOCS-BOT-01, status: APERTA}
+  - {id: H-TERZO-01, status: APERTA}
+  - {id: H-TERZO-02, status: EREDITATA}
+  - {id: H-BOT-CORPO-01, status: APERTA}
+  - {id: H-BOT-METODO-01, status: APERTA}
+  - {id: H-DAILY-STUB-01, status: APERTA_CON_EVIDENZA_SHA}
+  - {id: H-UMBRA-01, status: APERTA}
+
+simulazione:
+  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza. Nessun punteggio inventato."}
+
+conflitti_aperti:
+  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, keep_both: true}
+  - {id: CONF-02, file: R3_DECISIONI, status: DIVERGENZA_VOLUTA}
+  - {id: CONF-04, missing: PROGETTO_R3.md}
+  - {id: CONF-05, file: R3-019, keep_both: true}
+  - {id: CONF-06, file: R3_WORK_QUEUE.yaml, keep_both: true}
+  - {id: CONF-07, file: 00_AVVERTENZA_LEGGI_PRIMA_DI_ESEGUIRE.md, keep_both: true}
+  - {id: CONF-08, file: default_vs_telegram, keep_both: true}
+  - {id: CONF-09, item: "claim EXECUTED 016/017 vs misura BACKLOG", official: BACKLOG, keep_both: true}
+  - {id: CONF-10, item: "bot scacchiera vs Drive solo PANAJEDREZ 20/08", keep_both: true}
+  - {id: CONF-11, item: "bot /libro vs Drive senza mirror", keep_both: true}
+  - {id: CONF-12, item: "bot comandi nuovi vs BotFather e Drive 09:40Z", keep_both: true}
+  - {id: CONF-13, item: "daily 28/29 SHA-identici allo stub 24-26", keep_both: true}
+  - {id: CONF-14, item: "output/ default stub vs telegram daily26 1476 + verifiche.jsonl", keep_both: true}
+
+priorita_strategiche:
+  - {id: R3-019, status: BASELINE_0_ESISTE, class: FATTO_su_L0_L1__N_A_su_L2_L3}
+  - {id: R3-011, status: BACKLOG, class: IPOTESI}
+  - {id: R3-012, status: BACKLOG_CON_CODICE_BOT_NON_TESTATO_QUI, class: INFERENZA}
+  - {id: R3-013, status: BACKLOG, class: IPOTESI}
+  - {id: R3-016, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-017, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-014, status: BACKLOG, class: IPOTESI, incoming_claim: IN_PROGRESS_NON_VERIFICATO}
+  - {id: R3-015, status: BACKLOG, class: IPOTESI}
+  - {id: R3-018, status: BACKLOG, class: IPOTESI}
+  - {id: R3-020, status: BACKLOG, class: IPOTESI}
+
+azioni_di_questo_ciclo:
+  - snapshot coda e report datati 0912
+  - non cancellare omonimi senza data
+  - non unire rami
+  - non creare PROGETTO_R3.md
+  - non promuovere 014/016/017
+  - non promuovere R3-012 a FATTO
+  - non promuovere comandi bot a FATTO live
+  - non contare i daily stub come accensione del Core
+  - non rieseguire R3-019 fingendo un punteggio
+  - non copiare indice Drive 10696 sul default pubblico
+  - non copiare il codice bot su Drive in assenza di verifica live
+  - non assorbire UmbraTheater nel canone R³∞

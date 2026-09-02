@@ -1,0 +1,40 @@
+{
+  "id": "R3-019",
+  "name": "Longitudinal Capability Benchmark",
+  "protocol": "R3-019_v1",
+  "measured_at": "2026-08-26T18:58:04Z",
+  "regime": {
+    "L0": "FATTO",
+    "L1": "FATTO",
+    "L2": "N/A",
+    "L3": "N/A"
+  },
+  "metrics": {
+    "M1_pytest_wall_time_s": 0.15,
+    "M2_pytest_fail_rate": 0.0,
+    "M3_pytest_skip_rate": 0.022727272727272728,
+    "M4_collection_error_count": 1,
+    "M5_rlaif_catch_rate_known_bad": 1.0,
+    "M6_health_days": 28,
+    "M7_real_llm_day_ratio": 0.0,
+    "M8_stub_only_day_ratio": 1.0,
+    "M9_daily_files": 26,
+    "M10_daily_unique_content_ratio": 0.19230769230769232,
+    "M11_contatti_validi": 0,
+    "M12_memoria_voci_last": 0,
+    "M13_analysis_n": null,
+    "M14_analysis_error_rate": null,
+    "M15_analysis_accuracy": null,
+    "M16_analysis_latency_s_mean": null,
+    "M17_task_accuracy_gold": null,
+    "M18_hallucination_rate_gold": null
+  },
+  "raw": {
+    "pytest_tests": {"target": "tests/", "exit_code": 0, "passed": 43, "failed": 0, "skipped": 1, "wall_time_s": 0.15},
+    "pytest_costi": {"target": "sito-claudio/nuovi/tests/", "exit_code": 2, "collection_or_run_errors": 1},
+    "health": {"health_days": 28, "real_llm_days": 0, "memoria_voci_first": 2, "memoria_voci_max": 26, "memoria_voci_last": 0, "first_iso": "2026-07-31T15:06:49Z", "last_iso": "2026-08-26T09:23:21Z"},
+    "daily": {"daily_files": 26, "daily_unique_contents": 5},
+    "contatti": {"contatti_lines": 0, "contatti_validi": 0}
+  },
+  "note": "M5 is fixture-catch rate, not intelligence. L2/L3 null until gold set exists."
+}

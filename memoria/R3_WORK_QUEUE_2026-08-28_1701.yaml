@@ -1,0 +1,92 @@
+# R3_WORK_QUEUE.yaml
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Ciclo: SYNC-2026-08-28-1701
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Snapshot datato. Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-08-28-1701
+  created: "2026-08-28T17:01:00+02:00"
+  created_by: Grok-4.6 (Drive + GitHub connessi)
+  previous_cycle: SYNC-2026-08-28-1614
+  official_until: verified_items_only
+  never_delete_historical: true
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+
+layer_map:
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    public_default_sha_pre_1701: 8956e28d69b4a6f6c9540094b25a73755654b4f0
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    telegram_branch: claude/r3-autonomous-telegram-0goqsv
+    telegram_sha: 921fcf571b31e3a24ce7e605f49ed18b513279d3
+    private_archive: raffaellocantatelli/R3-privato
+    private_archive_sha: 88b447bb373619d7fe48d59b054e45a3b339169e
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    private_oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_bot_head: 723a940b9f208c7e90d808fc3674c5cc6dfd22aa
+    public_site: raffaellocantatelli/Claudioterzi
+
+fatto:
+  - id: SYNC-2026-08-28-1701-A
+    item: "Account GitHub autenticato = raffaellocantatelli. Cinque repo accessibili."
+  - id: SYNC-2026-08-28-1701-B
+    item: "Default Layer 2 a 8956e28d (SYNC-1614, 16:17:45+02). Nessun commit successivo al 17:01 CEST."
+  - id: SYNC-2026-08-28-1701-C
+    item: "Bot HEAD 723a940 (16:30:27+02). Otto commit /libro 16:26-16:30 dopo HEAD 1614 5ea9597."
+  - id: SYNC-2026-08-28-1701-D
+    item: "Drive: nessun file R3 nuovo dopo 2026-08-28T14:17:09Z oltre gli artefatti 1614."
+  - id: SYNC-2026-08-28-1701-E
+    item: "Oro-Rosso 410784b2 e R3-privato 88b447bb: invariati."
+  - id: SYNC-2026-08-28-1701-F
+    item: "PROGETTO_R3.md exact_name=0. R3-016 exact_name=0. R3-011 exact_name=0."
+  - id: SYNC-2026-08-28-1701-G
+    item: "R3-019 Baseline_0 26/08 esiste. Non rieseguito alle 17:01. L2/L3 N/A."
+  - id: SYNC-2026-08-28-1701-H
+    item: "H2 scade 2026-08-30. output/contatti.jsonl default size 0. Ultimo daily default 2026-08-26."
+  - id: SYNC-2026-08-28-1701-I
+    item: "Nessun file storico cancellato. Nessun ramo unito. Pytest non rieseguito."
+  - id: SYNC-2026-08-28-1701-L
+    item: "Albero bot: libro.py 1371, libro_pagine_a.txt 7119, libro_pagine_b.txt 5807, scacchiera_flow.py 4164."
+
+inferenza:
+  - id: INF-28-1701-01
+    item: "Stasi default 16:17+02->17:01 CEST. Movimento solo sul repo bot (/libro)."
+  - id: INF-28-1701-02
+    item: "Nessun aumento di capacita R3-019 misurato il 28/08 17:01."
+  - id: INF-28-1701-04
+    item: "Codice /scacchiera e /libro sul bot e avanzamento di implementazione, non chiusura di R3-012."
+
+ipotesi:
+  - {id: H-SYNC-02, status: APERTA}
+  - {id: H-SYNC-08, status: FATTO_COMMIT_ESISTE_LIVE_NON_VERIFICATO}
+  - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
+  - {id: H-SCACCHIERA-01, status: APERTA}
+  - {id: H-LIBRO-01, status: APERTA}
+
+simulazione:
+  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza."}
+
+conflitti_aperti:
+  - {id: CONF-01, keep_both: true}
+  - {id: CONF-04, missing: PROGETTO_R3.md}
+  - {id: CONF-05, keep_both: true}
+  - {id: CONF-06, keep_both: true}
+  - {id: CONF-07, keep_both: true}
+  - {id: CONF-08, keep_both: true}
+  - {id: CONF-09, official: BACKLOG, keep_both: true}
+  - {id: CONF-10, keep_both: true}
+  - {id: CONF-11, keep_both: true}
+
+priorita_strategiche:
+  - {id: R3-019, status: BASELINE_0_ESISTE}
+  - {id: R3-011, status: BACKLOG}
+  - {id: R3-012, status: BACKLOG_CON_CODICE_BOT_NON_TESTATO}
+  - {id: R3-016, status: BACKLOG}
+  - {id: R3-017, status: BACKLOG}
+  - {id: R3-014, status: BACKLOG}

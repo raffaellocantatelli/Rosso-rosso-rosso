@@ -48,11 +48,31 @@ def test_avrebbe_suonato_al_terzo_giorno(tmp_path):
 
 
 def test_sui_dati_veri_completi_trova_i_23_giorni(tmp_path):
+    """La prima serie immobile: 25 rilevazioni, 23 giorni senza provider reale.
+
+    Il 02/09/2026 questo test è fallito con `2 != 1`, e non era un difetto:
+    latenza.py aveva trovato una SECONDA serie immobile, dal 26/08 al 02/09.
+    Il Core si era acceso una volta sola, a mano, il 26/08; poi le run
+    automatiche sono tornate a zero provider per altri sette giorni.
+
+    L'assunzione «ce n'è una sola» era una fotografia del mondo al 25/08, non
+    una proprietà dello strumento. Il test controlla adesso la prima serie —
+    quella storica — e lascia che le successive esistano: se ne compariranno
+    altre, sarà perché il sistema è tornato fermo, e va visto, non nascosto.
+
+    Anche i conteggi esatti (25 rilevazioni, 23 giorni) sono caduti nello
+    stesso giorno, per una ragione diversa: unendo i due rami, health_log.jsonl
+    è passato da 26 righe su un ramo e 34 sull'altro a 35 unite. **Nessuno dei
+    due rami aveva il registro completo.** I numeri esatti erano la fotografia
+    di una copia; l'ancora vera è la data di inizio della serie.
+    """
     latenza.HEALTH = str(REALE)
     latenza.CONTATTI = str(tmp_path / "niente.jsonl")
     r = latenza.rapporto(soglia=3)
-    assert len(r) == 1
-    assert r[0]["rilevazioni"] == 25 and r[0]["giorni"] == 23
+    assert len(r) >= 1
+    prima = r[0]
+    assert prima["dal"] == "2026-07-31"
+    assert prima["giorni"] >= 23 and prima["rilevazioni"] >= 25
 
 
 def test_una_lettura_che_cambia_spezza_la_serie(tmp_path):

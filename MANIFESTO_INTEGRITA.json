@@ -2,20 +2,20 @@
   "algoritmo": "sha256",
   "file": {
     ".github/workflows/daily.yml": {
-      "byte": 3009,
-      "sha256": "f69fb444a178a96405cad639ef395ed28c0206a7159b5ec600e25e0bdf9e9009"
+      "byte": 3639,
+      "sha256": "4fc03cc804399d0313d734cfcbe26fddc8b497d85ce38ec9660ccc6c2d3d4da4"
     },
     "CLAUDE.md": {
-      "byte": 9980,
-      "sha256": "d731a3be79a10ed939411c4a05dacdfa6817f222e2fb6af0a503c4f7e5e1d6af"
+      "byte": 13504,
+      "sha256": "a9a7b90ef5098c673de0cf54d220fd891e452266ed3549ef9797cb087101579a"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 13176,
-      "sha256": "828612bc6965a0624b644cae0eb27a69921e773ee434e666adbd3a5f7529b1de"
+      "byte": 17871,
+      "sha256": "364087471e46bf70befc962c59859c1ea4d723b64a9b607ba41d4120ae342537"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -57,9 +57,377 @@
       "byte": 11964,
       "sha256": "47ff8abe11c7817de3279ed599cd818ec75468523e93e10a270574a7b80a0340"
     },
+    "memoria/R3-019_LONGITUDINAL_CAPABILITY_BENCHMARK.md": {
+      "byte": 1298,
+      "sha256": "45874ee320a5333cc66b175fd96518c0a3c12de5518b1a8f6c0bdf32ee9635ec"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-26.md": {
+      "byte": 1284,
+      "sha256": "dadbb5318893b1700729b08beb6f8b7c96e9a3c01d3549e2298dc12d4a5edf3f"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-27.md": {
+      "byte": 1609,
+      "sha256": "1db14ed3f6f3b2aab4209f1c9d440244903b3b6b65711e9322a40b291bb02243"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-27_1002.md": {
+      "byte": 1435,
+      "sha256": "9f55578a9552e3e0a1469b4f113a46d3ae9b54eaa3a57c00431f20b4de149eaf"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-27_1709.md": {
+      "byte": 1532,
+      "sha256": "e5c6d7899256dfa94495b54d9ca5502c0573fd7cd361b4a96dbf8e6d14fbe1ad"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_0907.md": {
+      "byte": 1544,
+      "sha256": "60e01a094b69fb68a4febb7e08a3af2736b02046b01ae862dc63ecde51c12c1b"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1109.md": {
+      "byte": 1067,
+      "sha256": "2efbb8829b122dc6e6a1037d27071ffe7b49dc82012759da99941ae4226a23da"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1210.md": {
+      "byte": 1179,
+      "sha256": "90ddd34dd0a2c8d1df8b85e463718345d632a7e5389fbebd6abd3c5d33c8a404"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1213.md": {
+      "byte": 724,
+      "sha256": "ff64b9671d25ed3c478eb3a0a1e857f5ff271dfffe4bca8be8ec1c2e4897bcf8"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1307.md": {
+      "byte": 6630,
+      "sha256": "c8ae15a28785a877b3dec0476d96ca4aa4c301c3ec8ff6c5172e98067bb0abe3"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1405.md": {
+      "byte": 3232,
+      "sha256": "dd68a80ea11032e8a198d234d263c0914f51034cb1b6eb54f1fd1a495387a8a4"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1502.md": {
+      "byte": 1457,
+      "sha256": "c4ca9c3e8b724b426131f64d84c211311d7f8967ae1fe4da2d47653313df4003"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1614.md": {
+      "byte": 1460,
+      "sha256": "c9c18ee18329bb010cdca86b558b20596f206a09c189ccabeef48faf3acba69e"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1701.md": {
+      "byte": 1675,
+      "sha256": "d3137e8ccdf0dc54b6c199499ed15e59f670a488663ef7f8f72094209f59f04a"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1802.md": {
+      "byte": 1567,
+      "sha256": "a34e713825cef4751a9e6afd84d4443a9182ded3113320eb982d696b71940537"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-28_1807.md": {
+      "byte": 1248,
+      "sha256": "64e358aed3b85fd56bb80b4ad714f7b0fc4d0bf2692fa879a87aeaf77dca5504"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-29_0912.md": {
+      "byte": 1619,
+      "sha256": "b6a4aa20bce6dae6813f8a14c0843ece5255876c3e874c14cc255e5c9f1b241c"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-29_1011.md": {
+      "byte": 1474,
+      "sha256": "4ff62205dd9794a8267c5b6c8b1e8398089de899bd857b46f87e8d9caf3de676"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-29_1103.md": {
+      "byte": 1359,
+      "sha256": "d05a27fba9f97c0e3d51ae091e3994231c58526ef3d601c1bbf98f51807ec315"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-29_1213.md": {
+      "byte": 1251,
+      "sha256": "5c614ed5e94beb286f1cc82b67d3283866a83d40bc6c7615bc9d98c297261188"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-29_1303.md": {
+      "byte": 1576,
+      "sha256": "a46f2ddcf3afa1afcff6603662c80d270d007408dd2f3290259a32c85422dc2e"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-29_1707.md": {
+      "byte": 1736,
+      "sha256": "1fb9f1e2041aa7abc2bbe150d27b13ecd6b2297ccc62440e741f8e2e1b6e6aa7"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-30_0909.md": {
+      "byte": 1260,
+      "sha256": "de7d5478ae5540d7f40d5ce7b125c3507246e503b0fade519dfc1d27d3c0d2ce"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-31_0905.md": {
+      "byte": 1082,
+      "sha256": "6f9069774b60e84e92b3075e5fa7655a92cafd473b8e9df23b7c10e6b8fe6ee7"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-08-31_1612.md": {
+      "byte": 745,
+      "sha256": "178a7d228d02389745ce1238f82d818806ebadc270aa547fd476a915ac1fa3d2"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_0900.md": {
+      "byte": 613,
+      "sha256": "e09da240c4dc0418f320e214305959c9e3d518458c2ed77c63a62191fb4eb977"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1003.md": {
+      "byte": 670,
+      "sha256": "c79e0c529dc2287d6901d601be594396174d235eaf7b105f0d6e711152578eff"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1109.md": {
+      "byte": 876,
+      "sha256": "0c56165e7c5e183bba2fe894a4de05b517fd62602a3a42518acda514d3e3548b"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1209.md": {
+      "byte": 592,
+      "sha256": "bdc4408544b2a5582d56d311890d6b5dec69db357865cf42fca56722ce59e242"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1319.md": {
+      "byte": 399,
+      "sha256": "91cfef99d03974b6d109a5837014d655f6fb4425e16efb2742af847f83768c9c"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1406.md": {
+      "byte": 399,
+      "sha256": "6c42c29f528f29222844c1845344a1fc6362c448913550f2c9bbbe000ce08f46"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1507.md": {
+      "byte": 372,
+      "sha256": "0bfcb8f7e293ad90263e38c3ba53f4cd1f87a46d6de14091ba05614b290b93ed"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1627.md": {
+      "byte": 459,
+      "sha256": "1f0977aa1b7ad99dc87c14a8f36fabeeb1855f0e896bf5058196afcf3bbbafad"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1708.md": {
+      "byte": 459,
+      "sha256": "050f7541017c6c72c6d09849f9ba40754543d190910b48eaea6935a5e4d0c2a3"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-01_1801.md": {
+      "byte": 526,
+      "sha256": "407d602ff4c34b976fc889588b91ebdccb295ecd0eca360f0c1204e6d461eb6b"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_0902.md": {
+      "byte": 666,
+      "sha256": "a9834540361e99082a175a8ea56b6955e3d35bf0846ef582b0182041687dd120"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1006.md": {
+      "byte": 708,
+      "sha256": "e8909b507a51b7beb1b53f4a60de95b5fb32bb50b169d5167baf941679e381c0"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1106.md": {
+      "byte": 516,
+      "sha256": "47c0faa669deeb4c930a1cbef9397266bc6e71fdffbbdf2b81cc98f8efcf233a"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1201.md": {
+      "byte": 521,
+      "sha256": "019a850c02830aadf788e37d8e444891fdb59637c7600a5c4564aa9649a96a37"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1318.md": {
+      "byte": 521,
+      "sha256": "30a93554e8c2bff046c2732f4a9a36d1c542eefdea96e58309a598c69e9d23a9"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1405.md": {
+      "byte": 569,
+      "sha256": "c3bd367f8ed4417d45e0ccb3e6ba67578c1957046277a69639d5ad768bec7890"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1512.md": {
+      "byte": 568,
+      "sha256": "1ad4fa78879b2f113282727e8e51e3b49571c6f373078a1c1e9451f035807ed1"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1624.md": {
+      "byte": 496,
+      "sha256": "cb83c92b2785af482649fe2ba5350096492c0258ce60471fe69d72f2eeaddf59"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1731.md": {
+      "byte": 396,
+      "sha256": "4ae4ddcc1f531ebf94ee7f46326e24cb64e1cdbb9560d054a42061e5abb06ceb"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-02_1839.md": {
+      "byte": 270,
+      "sha256": "32773a4dd5fca6e0235399cdf4286e7822b4eb29e9ff322f5eb0e8a29e1cef84"
+    },
+    "memoria/R3_WORK_QUEUE.yaml": {
+      "byte": 760,
+      "sha256": "3b3a7d0981b5d105cc7533ecf671222ea04e5aba1e58c6edd5f828ac2b70f64d"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-27.yaml": {
+      "byte": 339,
+      "sha256": "a3583001aa19a500a5c13c43f548e25798649122cdc8348260a29d56bbba7525"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-27_1002.yaml": {
+      "byte": 427,
+      "sha256": "abf3789913209afa107d05d9e718086dfe0ea8b5d42b820e1d818a5d55db5c4e"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-27_1709.yaml": {
+      "byte": 684,
+      "sha256": "c20d0fcea3adc563b15fec8fde2357f767bb5c784a39e8b2d950e53130a265f2"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_0907.yaml": {
+      "byte": 412,
+      "sha256": "6d9e68e3e43ed8e69a4eac7095199f3781166b6a14269af865be27405430b988"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1109.yaml": {
+      "byte": 1243,
+      "sha256": "db48b8c8e178ac3117c9aee020779947a9b6d444a8e2092e79cb9f5b74aafc56"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1210.yaml": {
+      "byte": 4634,
+      "sha256": "899d9d50c9902c82a44a72ea33a562a445a22b576803603811c38ad6d8a69397"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1213.yaml": {
+      "byte": 203,
+      "sha256": "8d09fcbe09378057a76e76bb7db89ba9e06efd1aac416e637c47483e5ae35ab3"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1307.yaml": {
+      "byte": 4859,
+      "sha256": "ea6132c2604b75d08d52864435dae77baa90b68d30ba86b77898f6ace28f18ec"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1405.yaml": {
+      "byte": 4957,
+      "sha256": "ccef584a5e1a40d0033b997d5ea5622f1ab8345f16ee58dfb6c7634a5669b221"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1502.yaml": {
+      "byte": 4991,
+      "sha256": "27d6080324bbce3ecab368006ccf9e8aecceec353456c438d90796f26558b742"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1614.yaml": {
+      "byte": 938,
+      "sha256": "b0b14f172c8c1be82ba83d7bb0a63fa2272b71462d964ba233480d3cacdd9099"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1701.yaml": {
+      "byte": 3986,
+      "sha256": "685e66921f9b49b556200df58ee2e7286f881a2fbb13358bad238707dde283fc"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1802.yaml": {
+      "byte": 5869,
+      "sha256": "b6c2dba7174fd8ce616aa4f26e1bf23a7dea2d7db74e9e934c5e351df199e3f1"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-28_1807.yaml": {
+      "byte": 6158,
+      "sha256": "d687a30be52fa48b3a5301ab111369bd5193cea9fcbbf69e096e9a0bc260bbb4"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-29_0912.yaml": {
+      "byte": 6923,
+      "sha256": "682a0ca316bbb4a2b5552a60c747a4adc3e6becce5d6528e494722b1d8771644"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-29_1011.yaml": {
+      "byte": 7071,
+      "sha256": "936d5d0c1d480deb7a99555644b02505f6a2b3351a86401ea11a2da86b8cffa3"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-29_1103.yaml": {
+      "byte": 7209,
+      "sha256": "8de060fd89166c0b994fcdaddd103527cb4d321673381dc5fba9babc49978c0e"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-29_1213.yaml": {
+      "byte": 7933,
+      "sha256": "8a52ea4d9f87aaf7677f9d45e60232919d0b3347519f6e37dd9dfdd59b3a4e2b"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-29_1303.yaml": {
+      "byte": 8272,
+      "sha256": "655d40fb733fe713e12383a258284b37f258ed83355590af44de18eafb8ed81e"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-29_1707.yaml": {
+      "byte": 9069,
+      "sha256": "3d99e71027d2f86d4c3a8bf543eb44a4d502d43830d70630af2a9cf10c1f5301"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-30_0909.yaml": {
+      "byte": 8844,
+      "sha256": "7f9f7ba8f378f4544641a86e34c50796d4ce1c9ecc1f9434179e08f8cdd50081"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-31_0905.yaml": {
+      "byte": 8736,
+      "sha256": "5811c1ef8c77b61b73bdfbd880677e7b9e9de251e49ff1914572ceb8038df488"
+    },
+    "memoria/R3_WORK_QUEUE_2026-08-31_1612.yaml": {
+      "byte": 9322,
+      "sha256": "eb21250cb8bf3a3caf260d672e18f88194c0ea726634142642f92fb70e8a4744"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_0900.yaml": {
+      "byte": 9563,
+      "sha256": "165ab9b5e5e459c740bacccfa852556246f862670f3b8b899aecff1095a799f0"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1003.yaml": {
+      "byte": 9695,
+      "sha256": "00c0f10821b4dd85ed193a3a289915e778d248301b5400541dd2cc413b7d7e4f"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1109.yaml": {
+      "byte": 9792,
+      "sha256": "75fdac27eae359e8f3868df0b18a008a0b0130d12455c9fc2092fc6b364ff3a5"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1209.yaml": {
+      "byte": 9851,
+      "sha256": "236ab5a364c7168cd194ccf74b0e7203f7811cd5566ba2dc2e7121353524a437"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1319.yaml": {
+      "byte": 10560,
+      "sha256": "fd6663df7e9d5cc6e5710b01269785894bfaf32b304287768e8b76a978bb3f53"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1406.yaml": {
+      "byte": 10867,
+      "sha256": "1fc5616870425d31d8800472d1051f74a18a6dc760bb53c175940d9abba887a9"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1507.yaml": {
+      "byte": 3575,
+      "sha256": "b5651cc11c45591ef76f8f992cc04602c084ba3c6ba3c3716e3a61e4c62a4f04"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1627.yaml": {
+      "byte": 3627,
+      "sha256": "074baf58a64f703d3e57ef4814e3e6e7c12afd8fa36252cd27df1692b4ab398c"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1708.yaml": {
+      "byte": 3627,
+      "sha256": "19af5f0d32866abb169871630234083617c00672cf1eadc37d344e4cd09742b2"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-01_1801.yaml": {
+      "byte": 3627,
+      "sha256": "2ea4f00b25ce10eea74743fbc497449eb667c6698bd3bfd75ec91114a5caf349"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_0902.yaml": {
+      "byte": 3728,
+      "sha256": "00cf84a5f541a31cd07e71b26b2dbfd7a93066f17bc4d48a05706a5853138eb9"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1006.yaml": {
+      "byte": 3867,
+      "sha256": "6cc588d9ac5fa8e37d57f76f6094e1468847ed70b3b8a6d27e4f1c27562d4a0c"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1106.yaml": {
+      "byte": 3871,
+      "sha256": "7e264af1e39a954acfa1be9bc66e4c77b676de2346cd52f2005afe34486bab59"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1201.yaml": {
+      "byte": 3844,
+      "sha256": "aa9dcfb9e31a40e9ee37250a7ff564a1e7ec7d37e2b9c8b0ba4a778dcf7d7c3a"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1318.yaml": {
+      "byte": 3827,
+      "sha256": "12fb4085a9a5c68b9a5e1b489f904e37bac6c248d875d32653261ad670b02ca8"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1405.yaml": {
+      "byte": 3675,
+      "sha256": "74e18d628a28e9a4748f5dedc2aa500bce524b902a090f96229fe87f0494685f"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1512.yaml": {
+      "byte": 3773,
+      "sha256": "343bd3232ffdab459fb72793b4d1f3f6d81a7c3f5e1482a153cf6f27ab519ab2"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1624.yaml": {
+      "byte": 4091,
+      "sha256": "65c65310b9ea3d0d650af8fc518c066e5f0d065996a7c805c0315345c479d11d"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1731.yaml": {
+      "byte": 3887,
+      "sha256": "0d340fd3bc96ae0e03a158c82e66b5e62e67c9842cd7025cbd2e32f6ec58b64b"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-02_1839.yaml": {
+      "byte": 4006,
+      "sha256": "042f883b375a88eb15d9f792529e42bd85a03affb765ea93f4323de0806492f3"
+    },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
       "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
+    },
+    "memoria/SYNC_DRIVE_GITHUB_2026-08-26.md": {
+      "byte": 1069,
+      "sha256": "5c6d791135a3ede36c36f8c2c8837cad8484219a019e6591df0efeea45f05253"
+    },
+    "memoria/ZZ_SUPERATO_00_INDICE_CANONICO_R3_2026-08-23.md": {
+      "byte": 1216,
+      "sha256": "0486629e02022579cf79dc4d416fdb4a108e52d98105b075119ac5f4001d5ac6"
+    },
+    "memoria/ZZ_SUPERATO_MEMORIA_PERSISTENTE_INDICE_2026-08-19T18-21.md": {
+      "byte": 1144,
+      "sha256": "a13eea39651f3beeb5a88cda52f79dd96151a9740de873ef6807735a8e5684d1"
     },
     "r3/README.md": {
       "byte": 6155,
@@ -118,8 +486,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 8214,
-      "sha256": "0d17074bdcf2ce32dc3646ae031f8d7bad8edc04955878787657bbcf08abea3d"
+      "byte": 12058,
+      "sha256": "4e970a043b852ad7b76c8d9245f66eb3015d48b0c7f2059f788c9d1a22bb46ff"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -234,8 +602,8 @@
       "sha256": "ac6efb653d21dd1461ec077eeaca7ab0ff5eab87ede5c9beb4a307fdcbefb44d"
     },
     "test_latenza.py": {
-      "byte": 4398,
-      "sha256": "615c21c1b4c5dd50568a5a841e9885de742b5ee25a0a1e8e4f753dc2cce83b63"
+      "byte": 5541,
+      "sha256": "90fc0f335a35a7ca7e15d43e31031fc5dd87e8b2154e4ccec609d51da670e06f"
     },
     "test_registro_ipotesi.py": {
       "byte": 7141,
@@ -261,6 +629,26 @@
       "byte": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "tests/conftest.py": {
+      "byte": 1090,
+      "sha256": "3a30973c6695f5a40137de7597e19d3e62efaac6e83db7cdbd55f7767e9be078"
+    },
+    "tests/test_analisi_foto.py": {
+      "byte": 9726,
+      "sha256": "1a8d650a8ff2d47e0842bec2deafba21a61dce8f17f6e415ba9d87a0b09859a4"
+    },
+    "tests/test_autonomous_core.py": {
+      "byte": 10152,
+      "sha256": "0501fa4a8788edbff15cd5b2a0d581b8753107ee42446a9aa0be4d9756038914"
+    },
+    "tests/test_backup.py": {
+      "byte": 2403,
+      "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
+    },
+    "tests/test_rlaif.py": {
+      "byte": 5152,
+      "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
+    },
     "tests/test_verificatore.py": {
       "byte": 15505,
       "sha256": "dfab76fe31dd0cb3a0ab16044df4c1f336e919c74d3040babde022a350796e6c"
@@ -274,6 +662,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-08-26T00:34:39.782878+00:00",
+  "generato": "2026-09-02T23:15:11.931414+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
