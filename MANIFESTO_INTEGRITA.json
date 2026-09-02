@@ -2,8 +2,8 @@
   "algoritmo": "sha256",
   "file": {
     ".github/workflows/daily.yml": {
-      "byte": 3639,
-      "sha256": "4fc03cc804399d0313d734cfcbe26fddc8b497d85ce38ec9660ccc6c2d3d4da4"
+      "byte": 4499,
+      "sha256": "395fee429a691de97d9de7400f0ce79ed4cead9338f01d146667bbd8ef01fed7"
     },
     "CLAUDE.md": {
       "byte": 14431,
@@ -662,6 +662,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-02T23:16:10.254648+00:00",
+  "generato": "2026-09-02T23:18:55.257247+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
