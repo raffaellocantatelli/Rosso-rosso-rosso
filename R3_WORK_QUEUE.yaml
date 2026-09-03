@@ -1,12 +1,12 @@
 # R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-03-0911
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-03_0911.yaml
+# Ciclo: SYNC-2026-09-03-1011
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-03_1011.yaml
 # Non cancellare gli snapshot datati.
 
 meta:
-  cycle_id: SYNC-2026-09-03-0911
-  previous_cycle: SYNC-2026-09-02-1839
-  github_default_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  cycle_id: SYNC-2026-09-03-1011
+  previous_cycle: SYNC-2026-09-03-0911
+  github_default_sha: 635e73ba31fceba22869686b0ac8747c2f9a8faf
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
@@ -15,14 +15,14 @@ meta:
 stato:
   daily_2026-09-02: PRESENTE_STUB_LUNGO_88efb429_CORE_SPENTO
   daily_2026-09-03: ASSENTE
-  health_log_last: "15034 / 5d4ac599 / 2026-09-02T23:19:58Z"
+  health_log_last: "15034 / 5d4ac599"
   r3_019: BASELINE_0_NO_NEW_RUN
   contatti_jsonl: SIZE_0
   progetto_r3_md: ASSENTE
   sdq1_run_33: SUCCESS_ULTIMO_VERDE
   sdq1_run_34_35: FAILURE
-  sdq1_03_09: NON_OSSERVATO_09:11_CEST
-  default_equals_new_session: true
+  sdq1_03_09: NON_OSSERVATO_10:11_CEST
+  default_equals_new_session: false
 
 regola: non dichiarare superintelligenza
 never_delete_historical: true
