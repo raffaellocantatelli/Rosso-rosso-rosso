@@ -1,17 +1,23 @@
-# R3_WORK_QUEUE.yaml — condensato ROOT
+# R3_WORK_QUEUE.yaml — canone pieno
 # Ciclo: SYNC-2026-09-03-1801
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-03_1801.yaml
 # Snapshot 1415, 1300, 1209, 1100, 1018 e 1011 conservati. Non cancellare gli storici.
 
 meta:
   cycle_id: SYNC-2026-09-03-1801
   previous_cycle: SYNC-2026-09-03-1415
+  measured_at: 2026-09-03T18:01:00+02:00
+  github_account: raffaellocantatelli
+  official_repo: raffaellocantatelli/Rosso-rosso-rosso
+  official_branch: claude/riconnetti-protocollo-rosso-in93dj
   github_default_sha_pre_push: 31beef7ef07e7d507cc7d1820212fced83b61348
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  photo_sha: e57cac060215bca52841e5b072424ed6ba76fcef
   umbratheater_branch_sha: d5f133a249540747feff2bd7aca425bf1aa6ba73
   regola_aggiornata: R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md
+  drive_memoria_id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+  drive_protocollo_id: 1GKRw0qvBCYo-oqVOsfL08BJgfkG8OEU_
 
 stato:
   daily_2026-09-02: PRESENTE_STUB_LUNGO_88efb429_CORE_SPENTO
@@ -22,10 +28,28 @@ stato:
   sdq1_run_33: SUCCESS_ULTIMO_VERDE
   sdq1_run_34_35_36: FAILURE
   sdq1_03_09: RUN_36_SCHEDULE_FAILURE_STEP_PENSATO
+  sdq1_total_count: 36
   drive_delta_post_1415: ZERO_FILE
   default_equals_new_session: false
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
+
+conflitti_aperti:
+  - CONF-01
+  - CONF-05
+  - CONF-06
+  - CONF-08
+  - CONF-09
+  - CONF-13
+  - CONF-27
+  - CONF-33
+  - CONF-38
+  - CONF-43
+  - CONF-44
+  - CONF-45
+  - CONF-47
+  - CONF-48
+  - CONF-49
 
 priorita:
   - R3-019 Longitudinal Capability Benchmark
@@ -39,5 +63,13 @@ priorita:
   - R3-018 Sim2Real Audit
   - R3-020 Self-Improvement Safety Gate
 
+azioni_non_eseguite_da_questo_nodo:
+  - merge rami laterali
+  - cancellazione storici
+  - accensione Core
+  - riesecuzione R3-019
+  - modifica secret/credenziali
+
 regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
 never_delete_historical: true
+official_only_if_verified: true
