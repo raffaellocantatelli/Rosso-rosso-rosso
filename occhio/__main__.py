@@ -125,6 +125,11 @@ def main(argv=None) -> int:
     ap.add_argument("--foto", metavar="FILE", help="legge un'immagine gia' scattata")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
     ap.add_argument("--esporta", metavar="FILE.csv", help="esporta il registro in CSV")
+    ap.add_argument("--costo", action="store_true",
+                    help="quanto costa una passata, ricalcolato dai listini dichiarati")
+    ap.add_argument("--minuti", type=float, default=10.0, help="minuti di cammino per --costo")
+    ap.add_argument("--ritmo", type=float, default=2.5, help="secondi fra un fotogramma e l altro")
+    ap.add_argument("--modello", help="un solo modello per --costo (es. haiku-4.5)")
     ap.add_argument("--json", action="store_true", help="uscita in JSON")
     ap.add_argument("--senza-visione", action="store_true",
                     help="usa lo stub: nessun modello guarda, oggetti finti, banner visibile")
@@ -139,6 +144,10 @@ def main(argv=None) -> int:
     carica_env()
     cascata = ("stub",) if a.senza_visione else vis.CASCATA
 
+    if a.costo:
+        from .costo import stampa
+        stampa(a.minuti, a.ritmo, a.modello)
+        return 0
     if a.check:
         return check()
     if a.inventario:

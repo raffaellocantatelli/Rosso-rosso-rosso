@@ -251,3 +251,33 @@ def test_esporta_csv(occhio_in_ascolto):
     chiama(occhio_in_ascolto + "/api/conferma", {"tipo": "dvd", "titolo": "Nostalghia"})
     with urllib.request.urlopen(occhio_in_ascolto + "/api/esporta.csv", timeout=10) as r:
         assert r.status == 200 and b"Nostalghia" in r.read()
+
+
+# --------------------------------------------------------------------------
+# costo — i numeri devono essere ricalcolabili, non ricordati
+# --------------------------------------------------------------------------
+
+def test_costo_cresce_con_i_pixel_non_con_l_informazione():
+    """Raddoppiare il lato quadruplica il costo e non legge un titolo in piu'."""
+    from occhio import costo
+    assert costo.token_immagine(2048) == pytest.approx(costo.token_immagine(1024) * 4, rel=0.01)
+
+
+def test_costo_ordina_i_modelli_come_i_listini():
+    from occhio import costo
+    c = {m: costo.costo_fotogramma(m) for m in costo.PREZZI}
+    assert c["haiku-4.5"] < c["sonnet-5"] < c["opus-5"]
+
+
+def test_lo_sconto_a_lotti_e_meta():
+    from occhio import costo
+    assert costo.costo_fotogramma("haiku-4.5", lotti=True) == pytest.approx(
+        costo.costo_fotogramma("haiku-4.5") / 2)
+
+
+def test_il_ritmo_governa_la_spesa():
+    """Il doppio del ritmo e' la meta' della spesa: e' la leva, non la grafica."""
+    from occhio import costo
+    lento = costo.passata(10, 5.0)["costo_passata"]
+    veloce = costo.passata(10, 2.5)["costo_passata"]
+    assert veloce == pytest.approx(lento * 2, rel=0.02)
