@@ -1,0 +1,646 @@
+<title>UmbraTheater</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+  :root{
+    --ground:#E6EBED; --surface:#F5F8F9; --surface-2:#DCE4E8;
+    --ink:#0D1A21; --ink-soft:#3B4E59; --muted:#63788A;
+    --line:#C0CBD1; --line-soft:#D5DEE2;
+    --accent:#0B6E52; --accent-wash:rgba(11,110,82,.10);
+    --warn:#96540A; --hot:#AE342B; --cool:#1B5E8C;
+    --c-bg:#07090c; --c-panel:#0d1218; --c-line:#1e2a36; --c-text:#d7e2ec;
+    --c-muted:#7f93a6; --c-accent:#7cffc4; --c-warn:#ffb347; --c-hot:#ff5d5d; --c-cool:#6cb6ff;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --cond:"IBM Plex Sans Condensed","Helvetica Neue",Arial,sans-serif;
+    --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#080E12; --surface:#0F1920; --surface-2:#16232B;
+      --ink:#DAE5EC; --ink-soft:#A7BAC5; --muted:#7C8F9C;
+      --line:#22323C; --line-soft:#1A2830;
+      --accent:#7CFFC4; --accent-wash:rgba(124,255,196,.09);
+      --warn:#FFB347; --hot:#FF7A72; --cool:#6CB6FF;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#080E12; --surface:#0F1920; --surface-2:#16232B;
+    --ink:#DAE5EC; --ink-soft:#A7BAC5; --muted:#7C8F9C;
+    --line:#22323C; --line-soft:#1A2830;
+    --accent:#7CFFC4; --accent-wash:rgba(124,255,196,.09);
+    --warn:#FFB347; --hot:#FF7A72; --cool:#6CB6FF;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--ground); color:var(--ink);
+    font-family:var(--serif); font-size:17px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px 80px;}
+  .prosa{max-width:66ch;}
+  p{margin:0 0 1em;}
+  a{color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1px;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px;}
+  code{font-family:var(--mono); font-size:.86em; background:var(--surface-2); padding:1px 5px; border-radius:3px;}
+
+  /* ── intestazione ─────────────────────────────────────────── */
+  .testata{border-bottom:1px solid var(--line); padding:56px 0 34px; margin-bottom:44px;}
+  .occhiello{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); display:flex; flex-wrap:wrap; gap:8px 14px; margin-bottom:26px;
+  }
+  .occhiello .rombo{color:var(--accent);}
+  h1{
+    font-family:var(--cond); font-weight:700; font-size:clamp(46px,9vw,96px);
+    line-height:.92; letter-spacing:-.015em; margin:0 0 22px; text-wrap:balance;
+  }
+  h1 .sotto{display:block; color:var(--ink-soft); font-weight:500; font-size:.36em; letter-spacing:.02em; line-height:1.15; margin-top:.42em;}
+  .lede{font-size:clamp(19px,2.4vw,22px); line-height:1.5; max-width:60ch; margin:0 0 30px; color:var(--ink-soft);}
+  .lede strong{color:var(--ink); font-weight:500;}
+  .rail{
+    display:flex; flex-wrap:wrap; gap:0; border-top:1px solid var(--line-soft);
+    font-family:var(--mono); font-size:12px;
+  }
+  .rail div{
+    padding:12px 20px 12px 0; margin-right:20px; border-right:1px solid var(--line-soft);
+    display:flex; gap:9px; align-items:baseline;
+  }
+  .rail div:last-child{border-right:0;}
+  .rail b{color:var(--ink); font-weight:500; font-variant-numeric:tabular-nums;}
+  .rail span{color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-size:10.5px;}
+
+  /* ── sezioni ──────────────────────────────────────────────── */
+  section{margin:0 0 68px;}
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent); display:flex; align-items:center; gap:14px; margin-bottom:14px;
+  }
+  .eyebrow::after{content:""; flex:1; height:1px; background:var(--line); }
+  h2{font-family:var(--cond); font-weight:600; font-size:clamp(27px,4vw,36px); line-height:1.1; letter-spacing:-.01em; margin:0 0 16px; text-wrap:balance;}
+  h3{font-family:var(--cond); font-weight:600; font-size:20px; letter-spacing:.01em; margin:30px 0 8px;}
+
+  /* ── layer ────────────────────────────────────────────────── */
+  .layer{display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:26px;}
+  .layer article{background:var(--surface); padding:20px 18px 18px; display:flex; flex-direction:column; gap:9px;}
+  .layer h4{font-family:var(--cond); font-size:19px; font-weight:600; margin:0; display:flex; align-items:center; gap:9px;}
+  .layer .pallino{width:9px; height:9px; border-radius:50%; flex:none;}
+  .layer .fonte{font-family:var(--mono); font-size:11.5px; color:var(--muted); letter-spacing:.02em;}
+  .layer .cop{font-size:14.5px; line-height:1.45; color:var(--ink-soft); margin:0; flex:1;}
+  .layer dl{margin:0; display:grid; grid-template-columns:auto 1fr; gap:3px 12px; font-family:var(--mono); font-size:11.5px; border-top:1px solid var(--line-soft); padding-top:10px;}
+  .layer dt{color:var(--muted); letter-spacing:.06em; text-transform:uppercase; font-size:10px; align-self:center;}
+  .layer dd{margin:0; font-variant-numeric:tabular-nums;}
+
+  /* ── consolle ─────────────────────────────────────────────── */
+  .avviso{
+    border-left:2px solid var(--accent); background:var(--accent-wash);
+    padding:12px 16px; margin:26px 0; font-size:15px; line-height:1.5; color:var(--ink-soft); max-width:66ch;
+  }
+  .banco{
+    display:grid; grid-template-columns:minmax(268px,320px) 1fr; gap:1px;
+    background:var(--c-line); border:1px solid var(--c-line); margin-top:24px;
+  }
+  @media (max-width:760px){ .banco{grid-template-columns:1fr;} }
+  .banco > *{background:var(--c-bg);}
+  .consolle{padding:20px 18px; color:var(--c-text); font-family:"IBM Plex Sans Condensed",sans-serif;}
+  .consolle .capo{display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; margin-bottom:16px;}
+  .marchio{display:flex; gap:9px; align-items:center;}
+  .marchio .mk{color:var(--c-accent); font-size:20px; line-height:1;}
+  .marchio strong{font-size:13.5px; letter-spacing:.1em; display:block;}
+  .marchio small{font-size:10px; color:var(--c-muted); letter-spacing:.05em;}
+  .stato{font-family:var(--mono); font-size:10px; color:var(--c-muted); border:1px solid var(--c-line); border-radius:6px; padding:3px 8px; white-space:nowrap;}
+  .consolle h5{font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--c-muted); margin:0 0 8px; font-weight:400;}
+  .righe{display:flex; flex-direction:column; border-top:1px solid var(--c-line);}
+  .riga{
+    all:unset; display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+    padding:9px 6px 9px 0; border-bottom:1px solid var(--c-line); cursor:pointer;
+    font-size:13px; color:var(--c-muted); font-family:inherit;
+  }
+  .riga:hover{background:#ffffff08;}
+  .riga:focus-visible{outline:1px solid var(--c-accent); outline-offset:-1px;}
+  .riga .nome{display:flex; gap:8px; align-items:center;}
+  .riga .pallino{width:7px; height:7px; border-radius:50%;}
+  .riga.attiva .nome{color:var(--c-text);}
+  .num{color:var(--c-text); font-variant-numeric:tabular-nums; font-family:var(--mono); font-size:12.5px;}
+  .vuoto{color:var(--c-muted); opacity:.75; font-style:italic; font-size:12.5px;}
+  .tetto{
+    font-style:normal; font-size:8.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--c-warn); border:1px solid var(--c-warn); border-radius:3px; padding:0 3px; margin-left:6px; vertical-align:1px;
+  }
+  .bugia .num{color:var(--c-hot);}
+  .agg{font-family:var(--mono); font-size:10.5px; color:var(--c-muted); padding-top:9px;}
+  .interruttore{display:flex; gap:10px; align-items:flex-start; margin-top:16px; padding-top:14px; border-top:1px solid var(--c-line); font-size:11.5px; color:var(--c-muted); line-height:1.45; cursor:pointer;}
+  .interruttore input{margin:3px 0 0; accent-color:var(--c-hot); flex:none;}
+  .interruttore code{background:#ffffff12; color:var(--c-text);}
+  .suggerimento{font-family:var(--mono); font-size:10px; color:var(--c-muted); letter-spacing:.05em; margin-top:12px;}
+
+  .busta{padding:18px; display:flex; flex-direction:column; min-width:0;}
+  .busta .capo{display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:baseline; margin-bottom:12px;}
+  .busta .capo h5{font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--c-muted); margin:0; font-weight:400;}
+  .stati{display:flex; flex-wrap:wrap; gap:6px;}
+  .stati button{
+    all:unset; cursor:pointer; font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+    padding:3px 9px; border:1px solid var(--c-line); border-radius:99px; color:var(--c-muted);
+  }
+  .stati button:hover{border-color:var(--c-muted);}
+  .stati button[aria-pressed="true"]{background:var(--c-accent); border-color:var(--c-accent); color:#07090c;}
+  .stati button:focus-visible{outline:1px solid var(--c-accent); outline-offset:2px;}
+  pre.json{
+    margin:0; overflow-x:auto; font-family:var(--mono); font-size:12px; line-height:1.65;
+    color:var(--c-text); tab-size:2; flex:1;
+  }
+  pre.json .k{color:var(--c-cool);} pre.json .s{color:var(--c-accent);}
+  pre.json .n{color:var(--c-warn); font-variant-numeric:tabular-nums;} pre.json .b{color:var(--c-hot);}
+  pre.json .c{color:var(--c-muted); font-style:italic;}
+  .perche{
+    margin:14px 0 0; padding-top:13px; border-top:1px solid var(--c-line);
+    font-family:"IBM Plex Sans Condensed",sans-serif; font-size:13.5px; line-height:1.5; color:var(--c-muted);
+  }
+  .perche b{color:var(--c-text); font-weight:600;}
+
+  .regole{list-style:none; padding:0; margin:30px 0 0; display:grid; gap:1px; background:var(--line); border:1px solid var(--line);}
+  .regole li{background:var(--surface); padding:16px 18px; display:grid; grid-template-columns:132px 1fr; gap:18px; font-size:15px; line-height:1.5; color:var(--ink-soft);}
+  @media (max-width:620px){ .regole li{grid-template-columns:1fr; gap:6px;} }
+  .regole b{font-family:var(--mono); font-size:12px; color:var(--ink); letter-spacing:.02em; font-weight:500;}
+
+  /* ── schema ───────────────────────────────────────────────── */
+  .schema{border:1px solid var(--line); background:var(--surface); padding:22px; margin-top:26px; overflow-x:auto;}
+  .schema svg{display:block; min-width:640px; width:100%; height:auto;}
+  .schema text{font-family:var(--mono);}
+
+  /* ── tabelle ──────────────────────────────────────────────── */
+  .tab{width:100%; border-collapse:collapse; margin-top:24px; font-family:var(--mono); font-size:13px;}
+  .tab caption{text-align:left; font-family:var(--cond); font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); padding-bottom:10px;}
+  .tab th{
+    text-align:left; font-weight:500; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted); border-bottom:1px solid var(--line); padding:0 14px 8px 0;
+  }
+  .tab td{padding:9px 14px 9px 0; border-bottom:1px solid var(--line-soft); vertical-align:baseline;}
+  .tab td.n{text-align:right; font-variant-numeric:tabular-nums; padding-right:26px;}
+  .tab th.n{text-align:right; padding-right:26px;}
+  .tab tr:last-child td{border-bottom:0;}
+  .zero{color:var(--accent); font-weight:500;}
+  .tabbox{overflow-x:auto;}
+
+  pre.sh{
+    font-family:var(--mono); font-size:13px; line-height:1.75; background:var(--surface-2);
+    border-left:2px solid var(--accent); padding:16px 18px; overflow-x:auto; margin:24px 0 0; color:var(--ink);
+  }
+  pre.sh .cm{color:var(--muted);}
+  .righe-comuni{
+    font-family:var(--mono); font-size:12px; line-height:1.85; background:var(--surface);
+    border:1px solid var(--line); padding:16px 18px; overflow-x:auto; margin-top:22px; color:var(--ink-soft);
+  }
+
+  footer{border-top:1px solid var(--line); padding-top:26px; font-size:14px; color:var(--muted); line-height:1.6;}
+  footer .fila{display:flex; flex-wrap:wrap; gap:8px 22px; font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; margin-bottom:16px;}
+  footer p{max-width:64ch;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important;} }
+</style>
+
+<div class="wrap">
+
+  <header class="testata">
+    <div class="occhiello">
+      <span class="rombo">&#9670;</span>
+      <span>raffaellocantatelli / UmbraTheater</span>
+      <span>MIT</span>
+      <span>dossier tecnico</span>
+    </div>
+    <h1>Umbra<br>Theater<span class="sotto">teatro globale dell&rsquo;OSINT</span></h1>
+    <p class="lede">Aggrega feed pubblici su una sola mappa scura &mdash; terremoti, satelliti, voli, navi &mdash; in un comando, senza account e senza tracciamento. <strong>E applica a ogni layer una sola regola: la mappa non dice mai pi&ugrave; di quanto sa.</strong></p>
+    <div class="rail">
+      <div><b>4</b><span>layer pubblici</span></div>
+      <div><b>0</b><span>account richiesti</span></div>
+      <div><b>2</b><span>container</span></div>
+      <div><b>45 s</b><span>cache dei feed</span></div>
+      <div><b>MIT</b><span>licenza del codice</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="eyebrow">01 &mdash; le sorgenti</div>
+    <h2>Quattro feed, e ci&ograve; che ciascuno copre davvero</h2>
+    <div class="prosa">
+      <p>Il backend FastAPI fa da proxy: il browser non parla mai direttamente con le API esterne. Ogni layer porta con s&eacute; la propria <code>coverage</code> &mdash; la frase che dice quale pezzo di mondo la sorgente vede &mdash; perch&eacute; &laquo;terremoti&raquo; su una mappa non significa <em>tutti</em> i terremoti.</p>
+    </div>
+    <div class="layer">
+      <article>
+        <h4><span class="pallino" style="background:#ff5d5d"></span>Terremoti</h4>
+        <div class="fonte">USGS FDSN GeoJSON</div>
+        <p class="cop">Magnitudo &ge; 2.5, ultime 24 h, mondiale.</p>
+        <dl><dt>tetto</dt><dd>250</dd><dt>chiave</dt><dd>nessuna</dd></dl>
+      </article>
+      <article>
+        <h4><span class="pallino" style="background:#7cffc4"></span>Satelliti</h4>
+        <div class="fonte">CelesTrak GP (OMM)</div>
+        <p class="cop">Catalogo degli oggetti attivi, posizioni propagate con SGP4 all&rsquo;istante della richiesta.</p>
+        <dl><dt>tetto</dt><dd>180</dd><dt>chiave</dt><dd>nessuna</dd></dl>
+      </article>
+      <article>
+        <h4><span class="pallino" style="background:#6cb6ff"></span>Voli</h4>
+        <div class="fonte">OpenSky Network</div>
+        <p class="cop">ADS-B collaborativo: la copertura &egrave; disomogenea per regione, non globale.</p>
+        <dl><dt>tetto</dt><dd>400</dd><dt>chiave</dt><dd>opzionale</dd></dl>
+      </article>
+      <article>
+        <h4><span class="pallino" style="background:#ffb347"></span>Navi</h4>
+        <div class="fonte">AISStream.io</div>
+        <p class="cop">AIS terrestre e satellitare, secondo il fornitore. Richiede una chiave personale gratuita.</p>
+        <dl><dt>tetto</dt><dd>&mdash;</dd><dt>chiave</dt><dd>AIS_API_KEY</dd></dl>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">02 &mdash; il contratto</div>
+    <h2>Un layer spento non vale zero</h2>
+    <div class="prosa">
+      <p>&Egrave; la decisione che tiene in piedi il progetto, ed &egrave; scritta una volta sola, nella funzione <code>_envelope</code> che confeziona ogni risposta. Quando lo stato non &egrave; <code>ok</code>, <code>total</code> e <code>returned</code> sono <code>null</code> &mdash; mai <code>0</code>. &laquo;Nessun dato&raquo; e &laquo;nessun evento&raquo; sono cose diverse, e un layer caduto che stampa <code>0</code> &egrave; la bugia pi&ugrave; facile da mettere su una mappa.</p>
+    </div>
+
+    <p class="avviso"><b>Questa pagina &egrave; un dossier, non l&rsquo;applicazione.</b> Il pannello qui sotto non contiene dati in diretta: ricalcola gli inviluppi applicando le regole del backend a valori d&rsquo;esempio. Clicca una riga per farle cambiare stato.</p>
+
+    <div class="banco">
+      <div class="consolle">
+        <div class="capo">
+          <div class="marchio">
+            <span class="mk">&#9670;</span>
+            <div><strong>UMBRA THEATER</strong><small>OSINT geospaziale self-hosted</small></div>
+          </div>
+          <div class="stato" id="stato">live</div>
+        </div>
+        <h5>Layer</h5>
+        <div class="righe" id="righe"></div>
+        <div class="agg" id="agg"></div>
+        <label class="interruttore">
+          <input type="checkbox" id="ingenuo">
+          <span>Riscrivi il pannello con <code>?? 0</code> &mdash; la riga che il progetto ha cancellato.</span>
+        </label>
+        <div class="suggerimento" id="suggerimento">&#8593;&#8595; clicca una riga per cambiarne lo stato</div>
+      </div>
+
+      <div class="busta">
+        <div class="capo">
+          <h5 id="titolo-busta">GET /api/satellites</h5>
+          <div class="stati" id="stati"></div>
+        </div>
+        <pre class="json" id="json"></pre>
+        <p class="perche" id="perche"></p>
+      </div>
+    </div>
+
+    <ul class="regole">
+      <li><b>status</b><span>Cinque valori, non un booleano: <code>ok</code>, <code>errore</code>, <code>senza_chiave</code>, <code>senza_propagatore</code>. Ognuno dice <em>perch&eacute;</em> non c&rsquo;&egrave; un numero.</span></li>
+      <li><b>truncated</b><span>Se &egrave; vero, la query ha toccato il tetto: il valore reale &egrave; <code>total</code>, non <code>returned</code>. La UI scrive <em>&ge; N</em> con l&rsquo;etichetta TETTO. Un conteggio tagliato non &egrave; una misura.</span></li>
+      <li><b>coverage</b><span>Il pezzo di mondo che la sorgente vede davvero, spedito insieme al dato invece che scritto in un README che nessuno apre.</span></li>
+      <li><b>error</b><span>Il motivo in chiaro, che nel pannello diventa il <code>title</code> della riga vuota: il trattino si pu&ograve; interrogare.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">03 &mdash; architettura</div>
+    <h2>Due container, un solo verso</h2>
+    <div class="schema">
+      <svg viewBox="0 0 880 268" role="img" aria-label="Il browser parla solo con nginx sulla porta 3000, che inoltra /api/ al backend FastAPI sulla porta 8000; solo il backend contatta USGS, CelesTrak, OpenSky e AISStream.">
+        <defs>
+          <marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--muted)"></path>
+          </marker>
+        </defs>
+        <rect x="1" y="74" width="140" height="62" rx="3" fill="var(--surface-2)" stroke="var(--line)"></rect>
+        <text x="71" y="99" text-anchor="middle" font-size="13" fill="var(--ink)">browser</text>
+        <text x="71" y="117" text-anchor="middle" font-size="10.5" fill="var(--muted)">nessun account</text>
+
+        <line x1="141" y1="105" x2="217" y2="105" stroke="var(--muted)" stroke-width="1" marker-end="url(#pf)"></line>
+
+        <rect x="220" y="60" width="168" height="90" rx="3" fill="var(--surface)" stroke="var(--accent)"></rect>
+        <text x="304" y="86" text-anchor="middle" font-size="13" fill="var(--ink)">frontend</text>
+        <text x="304" y="104" text-anchor="middle" font-size="10.5" fill="var(--muted)">nginx + statici</text>
+        <text x="304" y="128" text-anchor="middle" font-size="11" fill="var(--accent)">:3000</text>
+
+        <line x1="388" y1="105" x2="464" y2="105" stroke="var(--muted)" stroke-width="1" marker-end="url(#pf)"></line>
+        <text x="426" y="96" text-anchor="middle" font-size="10" fill="var(--muted)">/api/</text>
+
+        <rect x="467" y="60" width="168" height="90" rx="3" fill="var(--surface)" stroke="var(--accent)"></rect>
+        <text x="551" y="86" text-anchor="middle" font-size="13" fill="var(--ink)">backend</text>
+        <text x="551" y="104" text-anchor="middle" font-size="10.5" fill="var(--muted)">FastAPI &middot; cache 45 s</text>
+        <text x="551" y="128" text-anchor="middle" font-size="11" fill="var(--accent)">:8000</text>
+
+        <line x1="635" y1="105" x2="711" y2="30" stroke="var(--muted)" stroke-width="1" marker-end="url(#pf)"></line>
+        <line x1="635" y1="105" x2="711" y2="80" stroke="var(--muted)" stroke-width="1" marker-end="url(#pf)"></line>
+        <line x1="635" y1="105" x2="711" y2="130" stroke="var(--muted)" stroke-width="1" marker-end="url(#pf)"></line>
+        <line x1="635" y1="105" x2="711" y2="180" stroke="var(--muted)" stroke-width="1" marker-end="url(#pf)"></line>
+
+        <rect x="714" y="14" width="150" height="32" rx="3" fill="var(--surface-2)" stroke="var(--line)"></rect>
+        <text x="726" y="34" font-size="11.5" fill="var(--ink)">USGS</text>
+        <circle cx="850" cy="30" r="4" fill="#ff5d5d"></circle>
+        <rect x="714" y="64" width="150" height="32" rx="3" fill="var(--surface-2)" stroke="var(--line)"></rect>
+        <text x="726" y="84" font-size="11.5" fill="var(--ink)">CelesTrak</text>
+        <circle cx="850" cy="80" r="4" fill="#2fae7e"></circle>
+        <rect x="714" y="114" width="150" height="32" rx="3" fill="var(--surface-2)" stroke="var(--line)"></rect>
+        <text x="726" y="134" font-size="11.5" fill="var(--ink)">OpenSky</text>
+        <circle cx="850" cy="130" r="4" fill="#6cb6ff"></circle>
+        <rect x="714" y="164" width="150" height="32" rx="3" fill="var(--surface-2)" stroke="var(--line)"></rect>
+        <text x="726" y="184" font-size="11.5" fill="var(--ink)">AISStream</text>
+        <circle cx="850" cy="180" r="4" fill="#ffb347"></circle>
+
+        <line x1="1" y1="228" x2="864" y2="228" stroke="var(--line)" stroke-dasharray="2 4"></line>
+        <text x="1" y="250" font-size="11" fill="var(--muted)">nessuna freccia va dal browser alle sorgenti: le chiavi restano nel backend, e i ToS li rispetta un client solo.</text>
+      </svg>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">04 &mdash; satelliti</div>
+    <h2>Posizioni vere, o nessuna posizione</h2>
+    <div class="prosa">
+      <p>Le posizioni orbitali sono propagate con <strong>SGP4</strong> dagli elementi OMM di CelesTrak, e convertite da TEME a coordinate geodetiche WGS84 all&rsquo;istante della richiesta. Prima c&rsquo;era una formula decorativa &mdash; <code>lat = inclinazione &times; sin(anomalia media)</code> &mdash; che sulla mappa produceva puntini indistinguibili da posizioni reali.</p>
+      <p>&Egrave; stata cancellata. Se il pacchetto <code>sgp4</code> non &egrave; installato, il layer dichiara <code>senza_propagatore</code> e non disegna niente: <em>meglio un layer che dichiara di non poter calcolare, che una mappa che afferma pi&ugrave; di quanto sa.</em> Lo stato del propagatore si legge da <code>/api/health</code>, prima ancora di aprire la mappa.</p>
+      <p>Ogni satellite porta con s&eacute; il campo <code>epoch</code>, l&rsquo;et&agrave; dei suoi elementi orbitali: &egrave; il modo di dire che la precisione decade, senza dover credere al puntino.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">05 &mdash; posizione clean-room</div>
+    <h2>La misura al posto della dichiarazione</h2>
+    <div class="prosa">
+      <p>UmbraTheater &egrave; ispirato all&rsquo;idea di ShadowBroker &mdash; dashboard OSINT multi-feed self-hosted &mdash; ma non ne condivide il codice. Quella frase, da sola, non varrebbe niente: ShadowBroker &egrave; AGPL-3.0, UmbraTheater &egrave; MIT, e sarebbe bastato un solo file copiato per estendere il copyleft.</p>
+      <p>Perci&ograve; l&rsquo;affermazione &egrave; stata <em>misurata</em>. Righe normalizzate, commenti e righe vuote rimossi, scartate quelle sotto i 25 caratteri; per ogni riga si cerca corrispondenza nell&rsquo;intero insieme dell&rsquo;altro repository, e si misura il pi&ugrave; lungo <strong>blocco contiguo</strong> identico &mdash; il segnale che distingue una copia da una coincidenza di linguaggio.</p>
+    </div>
+    <div class="tabbox">
+      <table class="tab">
+        <caption>1 settembre 2026 &mdash; UmbraTheater bbaa588+PR#1 contro ShadowBroker cd6395f</caption>
+        <thead><tr><th>file</th><th class="n">righe</th><th class="n">in comune</th><th class="n">blocco contiguo</th></tr></thead>
+        <tbody>
+          <tr><td>backend/app/settings.py</td><td class="n">9</td><td class="n">3</td><td class="n">3</td></tr>
+          <tr><td>backend/app/main.py</td><td class="n">14</td><td class="n">2</td><td class="n">2</td></tr>
+          <tr><td>backend/app/feeds.py</td><td class="n">118</td><td class="n">4</td><td class="n">2</td></tr>
+          <tr><td>backend/app/cache.py</td><td class="n">7</td><td class="n">1</td><td class="n">1</td></tr>
+          <tr><td>frontend/public/*</td><td class="n">94</td><td class="n zero">0</td><td class="n zero">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prosa" style="margin-top:22px">
+      <p><strong>Blocchi contigui identici di sei o pi&ugrave; righe: nessuno.</strong> Le dieci righe in comune sono, per intero:</p>
+    </div>
+    <pre class="righe-comuni">from __future__ import annotations
+from datetime import datetime, timezone
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic_settings import BaseSettings, SettingsConfigDict
+class Settings(BaseSettings):
+model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+def __init__(self) -&gt; None:
+return datetime.now(timezone.utc).isoformat()
+except (TypeError, ValueError, KeyError):</pre>
+    <div class="prosa" style="margin-top:22px">
+      <p>Sono import di libreria e idiomi obbligati: non esiste un altro modo di scriverli in Python con quelle dipendenze. Non c&rsquo;&egrave; espressione originale, quindi non c&rsquo;&egrave; nulla di tutelabile che sia stato ripreso. La verifica va rifatta a ogni contributo che tocchi il backend.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">06 &mdash; avvio</div>
+    <h2>Un comando</h2>
+    <pre class="sh">git clone https://github.com/raffaellocantatelli/UmbraTheater.git
+cd UmbraTheater
+cp .env.example .env
+docker compose up -d --build
+<span class="cm"># dashboard  http://localhost:3000
+# API + docs http://localhost:8000/docs</span></pre>
+    <div class="tabbox">
+      <table class="tab">
+        <caption>variabili d&rsquo;ambiente</caption>
+        <thead><tr><th>variabile</th><th>default</th><th>a cosa serve</th></tr></thead>
+        <tbody>
+          <tr><td>FRONTEND_PORT</td><td>3000</td><td>porta della dashboard</td></tr>
+          <tr><td>BACKEND_PORT</td><td>8000</td><td>porta dell&rsquo;API</td></tr>
+          <tr><td>CACHE_TTL_SECONDS</td><td>45</td><td>durata della cache dei feed</td></tr>
+          <tr><td>AIS_API_KEY</td><td>vuoto</td><td>navi AIS &mdash; gratis su aisstream.io</td></tr>
+          <tr><td>OPENSKY_CLIENT_ID / SECRET</td><td>vuoto</td><td>alza i limiti di quota OpenSky</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="prosa" style="margin-top:22px">
+      <p>Senza nessuna chiave, terremoti e satelliti funzionano subito. Voli e navi sono best-effort, e lo dicono da soli nel pannello invece di sembrare vuoti.</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="fila">
+      <span>codice MIT &copy; 2026 raffaellocantatelli</span>
+      <span><a href="https://github.com/raffaellocantatelli/UmbraTheater">github.com/raffaellocantatelli/UmbraTheater</a></span>
+    </div>
+    <p>Dati: USGS (pubblico dominio) &middot; CelesTrak &middot; OpenSky Network &middot; AISStream.io &middot; basemap &copy; OpenStreetMap contributors, &copy; CARTO. Il concetto di dashboard OSINT unificata &egrave; ispirato a ShadowBroker (AGPL-3.0); nessun file di quel repository &egrave; stato copiato.</p>
+    <p>Uso previsto: ricerca personale e didattica. Non &egrave; uno strumento di sorveglianza.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var TAGLI = { eq:250, sat:180, flt:400, shp:null };
+
+  var LAYERS = [
+    {
+      key:"eq", nome:"terremoti", colore:"#ff5d5d", rotta:"/api/earthquakes",
+      fonte:{ name:"USGS",
+              url:"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson",
+              coverage:"magnitudo >= 2.5, ultime 24 h, mondiale" },
+      stati:[
+        { id:"ok", label:"ok", total:118, returned:118, elementi:"118 terremoti",
+          perche:"La sorgente ne ha mandati <b>118</b> e stanno tutti sotto il tetto di 250. <code>truncated</code> &egrave; falso: il numero &egrave; una misura, e si stampa cos&igrave; com&rsquo;&egrave;." },
+        { id:"troncato", label:"al tetto", total:731, returned:250, elementi:"250 terremoti",
+          perche:"La sorgente ne ha mandati <b>731</b>, il tetto ne lascia passare 250. Il valore vero &egrave; <code>total</code>, quindi il pannello scrive <b>&ge; 250</b> con l&rsquo;etichetta TETTO. Un conteggio tagliato non &egrave; una misura." },
+        { id:"errore", label:"errore", stato:"errore",
+          errore:"USGS non disponibile: ConnectTimeout",
+          perche:"Il feed non ha risposto. <code>total</code> e <code>returned</code> restano <b>null</b>: non sappiamo quanti terremoti ci siano stati, e questo &egrave; diverso da dire che non ce ne sono stati." }
+      ]
+    },
+    {
+      key:"sat", nome:"satelliti", colore:"#7cffc4", rotta:"/api/satellites",
+      fonte:{ name:"CelesTrak GP",
+              url:"https://celestrak.org/NORAD/elements/gp.php?GROUP=active&FORMAT=json",
+              coverage:"catalogo oggetti attivi" },
+      extra:{ propagator:"SGP4 (pacchetto sgp4), elementi OMM CelesTrak", discarded:2 },
+      stati:[
+        { id:"troncato", label:"al tetto", total:16469, returned:180, elementi:"180 satelliti",
+          perche:"Il catalogo attivo ne conta <b>16.469</b>: il tetto di 180 non &egrave; una selezione, &egrave; un limite di trasporto. Il pannello scrive <b>&ge; 180</b>, mai 180 secco." },
+        { id:"senza_propagatore", label:"senza propagatore", stato:"senza_propagatore",
+          errore:"il pacchetto 'sgp4' non e' installato: senza propagatore non esistono posizioni da mostrare, e non ne vengono inventate",
+          perche:"Senza SGP4 il layer <b>non disegna niente</b>. La formula decorativa che stava qui prima produceva puntini plausibili e falsi: cancellarla &egrave; costato un layer vuoto e ha salvato la mappa." },
+        { id:"errore", label:"errore", stato:"errore",
+          errore:"CelesTrak non disponibile: ReadTimeout",
+          perche:"Sorgente irraggiungibile. Nessun numero, nessuno zero: il pannello mostra il trattino e il motivo nel <code>title</code>." }
+      ]
+    },
+    {
+      key:"flt", nome:"voli", colore:"#6cb6ff", rotta:"/api/flights",
+      fonte:{ name:"OpenSky Network", url:"https://opensky-network.org/api/states/all",
+              coverage:"ADS-B collaborativo, copertura disomogenea per regione" },
+      stati:[
+        { id:"errore", label:"errore", stato:"errore",
+          errore:"OpenSky non disponibile: HTTPStatusError",
+          perche:"Qui c&rsquo;era <code>&quot;count&quot;: 0</code>. Un feed caduto non ha zero aerei: non ha <b>nessun dato</b>, ed &egrave; un&rsquo;altra cosa. La riga &egrave; stata riscritta per dirlo." },
+        { id:"troncato", label:"al tetto", total:9124, returned:400, elementi:"400 voli",
+          perche:"OpenSky ne ha mandati <b>9.124</b>, il tetto ne inoltra 400. E la <code>coverage</code> ricorda che l&rsquo;ADS-B collaborativo non copre il pianeta in modo uniforme: nemmeno 9.124 sarebbe &laquo;tutti i voli&raquo;." },
+        { id:"ok", label:"ok", total:212, returned:212, elementi:"212 voli",
+          perche:"Sotto il tetto: <code>truncated</code> falso, numero pieno. &Egrave; l&rsquo;unico caso in cui la cifra nel pannello &egrave; anche la cifra vera." }
+      ]
+    },
+    {
+      key:"shp", nome:"navi", colore:"#ffb347", rotta:"/api/ships",
+      fonte:{ name:"AISStream.io", url:"wss://stream.aisstream.io/v0/stream",
+              coverage:"AIS terrestre e satellitare, secondo il fornitore" },
+      stati:[
+        { id:"senza_chiave", label:"senza chiave", stato:"senza_chiave", enabled:false,
+          errore:"AIS live richiede AIS_API_KEY (aisstream.io); il client websocket va collegato a parte",
+          perche:"Nessuna chiave configurata: il layer dichiara <b>perch&eacute;</b> &egrave; spento, invece di restare misteriosamente vuoto. &Egrave; la differenza fra un guasto e una scelta." },
+        { id:"ok", label:"con chiave", total:0, returned:0, enabled:true, elementi:"",
+          perche:"<b>Il punto scoperto.</b> Con la chiave presente lo stato &egrave; <code>ok</code>, ma il client websocket AIS non &egrave; ancora collegato: <code>returned</code> vale <b>0</b>, e il pannello stampa 0. Qui il contratto non si applica ancora da s&eacute; &mdash; lo zero c&rsquo;&egrave;, ed &egrave; l&rsquo;unico della mappa che non significa &laquo;nessun evento&raquo;." }
+      ]
+    }
+  ];
+
+  var scelta = { eq:"ok", sat:"troncato", flt:"errore", shp:"senza_chiave" };
+  var fuoco = "sat";
+  var ingenuo = false;
+
+  var ETICHETTE = { errore:"errore", senza_chiave:"senza chiave", senza_propagatore:"senza propagatore" };
+
+  function layerDi(key){
+    for (var i=0;i<LAYERS.length;i++){ if (LAYERS[i].key === key) return LAYERS[i]; }
+    return null;
+  }
+  function statoDi(L){
+    for (var i=0;i<L.stati.length;i++){ if (L.stati[i].id === scelta[L.key]) return L.stati[i]; }
+    return L.stati[0];
+  }
+
+  /* Ricostruisce l'inviluppo esattamente come _envelope in backend/app/feeds.py:
+     fuori da "ok", total e returned sono null e truncated e' falso. */
+  function busta(L, s){
+    var ok = !s.stato || s.stato === "ok";
+    var total = ok ? s.total : null;
+    var returned = ok ? s.returned : null;
+    var truncated = ok && total !== null && returned !== null && returned < total;
+    var o = {
+      updated: "2026-09-03T09:14:07.482913+00:00",
+      source: L.fonte,
+      status: ok ? "ok" : s.stato,
+      total: total,
+      returned: returned,
+      cap: TAGLI[L.key],
+      truncated: truncated,
+      error: s.errore || null,
+      items: "@ITEMS@"
+    };
+    if (L.key === "shp") o.enabled = !!s.enabled;
+    if (L.extra && ok){ o.propagator = L.extra.propagator; o.discarded = L.extra.discarded; }
+    if (L.key === "sat" && s.stato === "senza_propagatore") o.propagator = null;
+    return { oggetto:o, elementi:s.elementi || "" };
+  }
+
+  function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  function colora(testo){
+    return esc(testo)
+      .replace(/"([^"]*)":/g, '<span class="k">"$1"</span>:')
+      .replace(/: "([^"]*)"/g, ': <span class="s">"$1"</span>')
+      .replace(/: (-?\d+(?:\.\d+)?)/g, ': <span class="n">$1</span>')
+      .replace(/: (true|false|null)/g, ': <span class="b">$1</span>');
+  }
+
+  function rigaHTML(L){
+    var s = statoDi(L);
+    var b = busta(L, s).oggetto;
+    var attiva = (L.key === fuoco) ? " attiva" : "";
+    var nome = '<span class="nome"><span class="pallino" style="background:' + L.colore + '"></span>' + L.nome + "</span>";
+
+    if (ingenuo){
+      var finto = (b.returned === null) ? 0 : b.returned;
+      var bugia = (b.returned === null) ? " bugia" : "";
+      return '<button class="riga' + attiva + bugia + '" data-key="' + L.key + '" type="button">' +
+             nome + '<span class="num">' + finto + "</span></button>";
+    }
+    if (b.status !== "ok"){
+      var titolo = b.error ? ' title="' + esc(b.error).replace(/"/g, "'") + '"' : "";
+      return '<button class="riga' + attiva + '" data-key="' + L.key + '" type="button"' + titolo + ">" +
+             nome + '<span class="vuoto">&mdash; ' + (ETICHETTE[b.status] || b.status) + "</span></button>";
+    }
+    if (b.truncated){
+      return '<button class="riga' + attiva + '" data-key="' + L.key + '" type="button" title="tetto ' + b.cap +
+             ": la sorgente ne ha mandati " + b.total + '">' + nome +
+             '<span class="num">&ge; ' + b.returned + '<i class="tetto">tetto</i></span></button>';
+    }
+    return '<button class="riga' + attiva + '" data-key="' + L.key + '" type="button">' +
+           nome + '<span class="num">' + b.returned + "</span></button>";
+  }
+
+  var elRighe = document.getElementById("righe");
+  var elJson = document.getElementById("json");
+  var elPerche = document.getElementById("perche");
+  var elStati = document.getElementById("stati");
+  var elTitolo = document.getElementById("titolo-busta");
+  var elStato = document.getElementById("stato");
+  var elAgg = document.getElementById("agg");
+  var elSugg = document.getElementById("suggerimento");
+
+  function disegna(){
+    elRighe.innerHTML = LAYERS.map(rigaHTML).join("");
+
+    var L = layerDi(fuoco);
+    var s = statoDi(L);
+    var b = busta(L, s);
+
+    elTitolo.textContent = "GET " + L.rotta;
+    elStati.innerHTML = L.stati.map(function(st){
+      return '<button type="button" data-stato="' + st.id + '" aria-pressed="' +
+             (st.id === scelta[L.key]) + '">' + st.label + "</button>";
+    }).join("");
+
+    var testo = JSON.stringify(b.oggetto, null, 2)
+      .replace('"@ITEMS@"', b.elementi ? "[ … " + b.elementi + " … ]" : "[]");
+    elJson.innerHTML = colora(testo);
+    elPerche.innerHTML = s.perche;
+
+    var spenti = LAYERS.filter(function(x){ var y = statoDi(x); return y.stato && y.stato !== "ok"; }).length;
+    elStato.textContent = ingenuo ? "live" : (spenti ? spenti + " senza dato" : "live");
+    elAgg.textContent = "agg: 09:14:07";
+    elSugg.innerHTML = ingenuo
+      ? "quattro numeri, due dei quali non esistono."
+      : "&#8593;&#8595; clicca una riga per cambiarne lo stato";
+  }
+
+  elRighe.addEventListener("click", function(ev){
+    var b = ev.target.closest(".riga");
+    if (!b) return;
+    var key = b.getAttribute("data-key");
+    if (key === fuoco){
+      var L = layerDi(key);
+      var i = 0;
+      for (var k=0;k<L.stati.length;k++){ if (L.stati[k].id === scelta[key]) i = k; }
+      scelta[key] = L.stati[(i + 1) % L.stati.length].id;
+    } else {
+      fuoco = key;
+    }
+    disegna();
+  });
+
+  elStati.addEventListener("click", function(ev){
+    var b = ev.target.closest("button[data-stato]");
+    if (!b) return;
+    scelta[fuoco] = b.getAttribute("data-stato");
+    disegna();
+  });
+
+  document.getElementById("ingenuo").addEventListener("change", function(ev){
+    ingenuo = ev.target.checked;
+    disegna();
+  });
+
+  disegna();
+})();
+</script>

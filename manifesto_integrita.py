@@ -50,8 +50,12 @@ SORVEGLIATI = [
 ]
 
 # Tutto il codice del sistema e i documenti depositati, ricorsivamente.
-ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests"]
-ESTENSIONI = (".py", ".yml", ".yaml", ".md")
+# `artefatti/` contiene le pagine autoportanti pubblicate all'esterno: sono
+# l'unica cosa che qualcuno legge senza avere il repository sotto mano, quindi
+# una modifica silenziosa la' vale quanto una nel codice. Da qui anche `.html`
+# fra le estensioni: un artefatto e' un file solo, e quel file e' la sorgente.
+ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests", "artefatti"]
+ESTENSIONI = (".py", ".yml", ".yaml", ".md", ".html")
 
 
 def file_da_sorvegliare():
