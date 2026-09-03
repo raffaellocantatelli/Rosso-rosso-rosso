@@ -41,6 +41,10 @@
       "byte": 5733,
       "sha256": "c2aecffe97ba874661f26055cee9e4a06b382ca9c5aaf7ee7f54fa6a93af6771"
     },
+    "falsificatori/h7_gps_stanze.py": {
+      "byte": 6966,
+      "sha256": "75bfe1e8d994a56a52c594252215bccc8378a9965f2ef91ae5559b1b1e4874e1"
+    },
     "latenza.py": {
       "byte": 5373,
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
@@ -534,8 +538,8 @@
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
     "registro_ipotesi.json": {
-      "byte": 4504,
-      "sha256": "f20138bcb2fcd7a08af7825138868df9234510c57e053121095724a865d7ac6c"
+      "byte": 5481,
+      "sha256": "3554c3dcfa0759eea3ba8d1764a37b5980d079e03da2763ce18a25fde4547283"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
@@ -697,6 +701,10 @@
       "byte": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "tests/_jpeg_finto.py": {
+      "byte": 3161,
+      "sha256": "95bcdf24d594e785c73824c0f85b2641c63a5f0b24a0d96e3b1c1c69fb98d99d"
+    },
     "tests/conftest.py": {
       "byte": 1090,
       "sha256": "3a30973c6695f5a40137de7597e19d3e62efaac6e83db7cdbd55f7767e9be078"
@@ -714,8 +722,8 @@
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
     "tests/test_occhio.py": {
-      "byte": 11350,
-      "sha256": "253b67a6b326ea703022694cef5bd215833bde007fdb49562b15e98ab811ea29"
+      "byte": 17082,
+      "sha256": "f17c5fb02317327b32afa8e5d383518a25e384fec4f7b55824a25af0b90bdb5e"
     },
     "tests/test_rlaif.py": {
       "byte": 5152,
@@ -734,6 +742,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-03T19:04:12.518994+00:00",
+  "generato": "2026-09-03T19:12:45.944852+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

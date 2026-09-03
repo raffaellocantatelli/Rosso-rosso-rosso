@@ -281,3 +281,138 @@ def test_il_ritmo_governa_la_spesa():
     lento = costo.passata(10, 5.0)["costo_passata"]
     veloce = costo.passata(10, 2.5)["costo_passata"]
     assert veloce == pytest.approx(lento * 2, rel=0.02)
+
+
+# --------------------------------------------------------------------------
+# dove sta un oggetto — EXIF letto a mano, e il luogo che invece si dichiara
+# --------------------------------------------------------------------------
+
+from occhio import luogo as lg  # noqa: E402
+from tests._jpeg_finto import jpeg_con_exif  # noqa: E402
+
+
+def test_exif_legge_gps_e_errore_dichiarato(tmp_path):
+    """Il telefono dichiara da sé di quanto può sbagliare: quel campo è il
+    perno di H7, e deve arrivare intero fino al falsificatore."""
+    f = tmp_path / "a.jpg"
+    f.write_bytes(jpeg_con_exif(45.4642, 9.1900, 18.5))
+    d = lg.exif(f)
+    assert d["gps"]["lat"] == pytest.approx(45.4642, abs=1e-4)
+    assert d["gps"]["lon"] == pytest.approx(9.1900, abs=1e-4)
+    assert d["errore_gps_m"] == 18.5
+    assert "iPhone" in d["fotocamera"]
+    assert d["scattata"].startswith("2026:09:03")
+
+
+def test_exif_senza_gps_resta_none(tmp_path):
+    """Un campo assente non viene mai riempito con una stima: una data
+    inventata in un inventario è peggio di una data mancante."""
+    f = tmp_path / "b.jpg"
+    f.write_bytes(jpeg_con_exif())
+    d = lg.exif(f)
+    assert d["gps"] is None and d["errore_gps_m"] is None
+    assert d["exif_presente"] is True
+
+
+def test_exif_su_file_non_jpeg_non_esplode(tmp_path):
+    f = tmp_path / "c.txt"
+    f.write_bytes(b"non sono un jpeg")
+    assert lg.exif(f)["exif_presente"] is False
+    assert lg.exif(tmp_path / "non-esisto.jpg")["exif_presente"] is False
+
+
+def test_luogo_dalle_cartelle():
+    l = lg.dal_percorso("/f/salotto/libreria/ripiano-3/IMG.jpg", "/f")
+    assert (l["stanza"], l["mobile"], l["ripiano"]) == ("salotto", "libreria", "ripiano-3")
+    assert lg.etichetta(l) == "salotto › libreria › ripiano-3"
+
+
+def test_luogo_oltre_tre_livelli_non_si_perde():
+    """Meglio conservare quello che qualcuno ha scritto che buttarlo per far
+    tornare uno schema."""
+    l = lg.dal_percorso("/f/a/b/c/d/e/IMG.jpg", "/f")
+    assert l["dettaglio"] == "d/e" and "d/e" in lg.etichetta(l)
+
+
+def test_luogo_assente_si_dichiara():
+    assert lg.etichetta(lg.dal_percorso("/f/IMG.jpg", "/f")) == "(non dichiarato)"
+
+
+def test_distanza_metri():
+    assert lg.distanza_m({"lat": 45.0, "lon": 9.0},
+                         {"lat": 45.000045, "lon": 9.0}) == pytest.approx(5.0, abs=0.3)
+
+
+def test_il_gps_non_decide_mai_una_stanza(tmp_path):
+    """La garanzia sta nella firma: `registra` prende un luogo dichiarato, e
+    non esiste alcuna funzione che deduca una stanza da una coordinata."""
+    import inspect
+    from occhio import cartella
+    assert "gps" not in inspect.signature(inv.Inventario.registra).parameters
+    sorgente = inspect.getsource(cartella)
+    # il gps viene letto e mostrato, mai passato a registra()
+    assert "luogo=posto" in sorgente
+    assert "luogo=dati" not in sorgente and "luogo=gps" not in sorgente
+
+
+# --------------------------------------------------------------------------
+# il modo a fotografie
+# --------------------------------------------------------------------------
+
+def test_una_foto_gia_letta_non_si_ripaga(tmp_path):
+    """Rieseguire la stessa cartella non deve ricomprare le stesse letture:
+    è H6 applicato al portafoglio."""
+    from occhio import cartella
+    cart = tmp_path / "foto" / "salotto"
+    cart.mkdir(parents=True)
+    (cart / "IMG_1.jpg").write_bytes(jpeg_con_exif(45.0, 9.0, 20.0))
+    registro = inv.Inventario(tmp_path / "i.jsonl")
+    registro.registra("dvd", "Heat", fonte="foto",
+                      foto_sha=cartella.sha256(cart / "IMG_1.jpg"))
+    conti, _ = cartella.percorri(tmp_path / "foto", registro,
+                                 cascata=("stub",), verboso=False)
+    assert conti["saltate"] == 1 and conti["foto"] == 0
+
+
+def test_lo_stub_non_scrive_neanche_dalle_foto(tmp_path):
+    from occhio import cartella
+    cart = tmp_path / "foto" / "cucina"
+    cart.mkdir(parents=True)
+    (cart / "IMG_1.jpg").write_bytes(jpeg_con_exif())
+    registro = inv.Inventario(tmp_path / "i.jsonl")
+    conti, _ = cartella.percorri(tmp_path / "foto", registro,
+                                 cascata=("stub",), verboso=False)
+    assert conti["foto"] == 1 and conti["nuovi"] == 0 and len(registro.voci) == 0
+
+
+def test_la_mappa_raggruppa_per_luogo(tmp_path):
+    from occhio import cartella
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    salotto = lg.dal_percorso("/f/salotto/libreria/x.jpg", "/f")
+    cucina = lg.dal_percorso("/f/cucina/x.jpg", "/f")
+    r.registra("dvd", "Heat", luogo=salotto, fonte="foto")
+    r.registra("dvd", "Solaris", luogo=salotto, fonte="foto")
+    r.registra("libro", "La tregua", luogo=cucina, fonte="foto")
+    mappa = r.per_luogo()
+    assert len(mappa) == 2
+    assert len(mappa["salotto › libreria"]) == 2
+    pagina = cartella.mappa_html(r)
+    assert "salotto › libreria" in pagina and "Heat" in pagina
+    assert "dichiarato" in pagina  # la pagina spiega da sé perché non usa il GPS
+
+
+def test_lo_stesso_oggetto_in_due_luoghi_li_conserva_entrambi(tmp_path):
+    """I libri si spostano: due luoghi sono un fatto, non un conflitto."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("libro", "La tregua", luogo=lg.dal_percorso("/f/studio/x.jpg", "/f"))
+    r.registra("libro", "LA TREGUA", luogo=lg.dal_percorso("/f/salotto/x.jpg", "/f"))
+    assert len(r.voci) == 1
+    assert len(r.voci[0]["luoghi"]) == 2
+
+
+def test_il_titolo_html_della_mappa_e_sfuggito(tmp_path):
+    """I titoli arrivano da un modello che legge fotografie: non sono HTML."""
+    from occhio import cartella
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("dvd", "<script>alert(1)</script> Heat", fonte="foto")
+    assert "<script>alert" not in cartella.mappa_html(r)

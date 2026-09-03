@@ -115,6 +115,37 @@ def leggi_foto(percorso: str, cascata, scrivi: bool, soglia: float) -> int:
     return 0
 
 
+def leggi_cartella(percorso, cascata, scrivi, soglia, limite) -> int:
+    """Il modo a fotografie: meno spesa, foto migliori, e niente https."""
+    from .cartella import percorri
+    try:
+        conti, registro = percorri(percorso, cascata=cascata, soglia=soglia,
+                                   scrivi=scrivi, limite=limite)
+    except NotADirectoryError as e:
+        print(f"non è una cartella: {e}", file=sys.stderr)
+        return 1
+    except vis.VisioneNonDisponibile as e:
+        print(f"L'OCCHIO È CHIUSO: {e}", file=sys.stderr)
+        return 2
+    print(f"\n  fotografie lette:  {conti['foto']}"
+          f"   (saltate perché già lette: {conti['saltate']})")
+    print(f"  oggetti letti:     {conti['letti']}")
+    print(f"  nuovi nel registro:{conti['nuovi']:>4}")
+    print(f"  già noti:          {conti['gia_noti']:>4}")
+    print(f"  incerti, scartati: {conti['incerti']:>4}   <- questi li perdi finché "
+          "non li confermi a mano")
+    if conti["errori"]:
+        print(f"  errori:            {conti['errori']:>4}")
+    print(f"\n  inventario: {len(registro.voci)} oggetti in "
+          f"{len(registro.per_luogo())} luoghi")
+    print("  la mappa:   python -m occhio --mappa mappa.html")
+    if conti["letti"]:
+        print(f"\n  Il numero che decide tutto è letti/presenti, e questo NON è "
+              "quello:\n  conta a mano gli oggetti in una di quelle foto e "
+              "confronta.")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(
         prog="python -m occhio",
@@ -123,6 +154,12 @@ def main(argv=None) -> int:
     ap.add_argument("--check", action="store_true", help="dice se un modello puo' guardare")
     ap.add_argument("--serve", action="store_true", help="apre l'interfaccia con la telecamera")
     ap.add_argument("--foto", metavar="FILE", help="legge un'immagine gia' scattata")
+    ap.add_argument("--cartella", metavar="DIR",
+                    help="legge una cartella di fotografie; le sottocartelle "
+                         "dichiarano stanza/mobile/ripiano")
+    ap.add_argument("--mappa", metavar="FILE.html", nargs="?", const="-",
+                    help="dove sta cosa: a schermo, o in una pagina HTML se dai un file")
+    ap.add_argument("--limite", type=int, help="quante fotografie al massimo (per provare)")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
     ap.add_argument("--esporta", metavar="FILE.csv", help="esporta il registro in CSV")
     ap.add_argument("--costo", action="store_true",
@@ -156,6 +193,19 @@ def main(argv=None) -> int:
         Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
         print(f"scritto {a.esporta}")
         return 0
+    if a.mappa:
+        from .cartella import mappa_html, mappa_testo
+        registro = inv.Inventario()
+        if a.mappa == "-":
+            print(mappa_testo(registro))
+        else:
+            Path(a.mappa).write_text(mappa_html(registro), encoding="utf-8")
+            print(f"scritto {a.mappa} — {len(registro.voci)} oggetti in "
+                  f"{len(registro.per_luogo())} luoghi")
+        return 0
+    if a.cartella:
+        return leggi_cartella(a.cartella, cascata, not a.solo_lettura,
+                              a.soglia, a.limite)
     if a.foto:
         return leggi_foto(a.foto, cascata, not a.solo_lettura, a.soglia)
     if a.serve:

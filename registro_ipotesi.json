@@ -112,5 +112,26 @@
       "ultima": null,
       "ultimo_esito": null
     }
+  },
+  {
+    "id": "H7",
+    "testo": "La geolocalizzazione delle fotografie distingue le stanze di una casa: da quelle coordinate si puo costruire una mappa degli oggetti.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se, su fotografie scattate in stanze diverse della stessa casa, la distanza fra i centri delle stanze e piu piccola dell errore di posizione che il telefono stesso dichiara nel campo EXIF GPSHPositioningError (o, se non lo dichiara, della dispersione misurata fra foto della stessa stanza).",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h7_gps_stanze.py",
+        "~/prova-gps"
+      ],
+      "descrizione": "confronta la distanza fra le stanze con l errore dichiarato dal telefono; richiede fotografie reali dell autore, una sottocartella per stanza"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
   }
 ]

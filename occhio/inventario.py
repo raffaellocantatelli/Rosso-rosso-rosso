@@ -46,6 +46,18 @@ SOGLIA_IMPRONTA = 10
 
 ARCHIVIO = Path(os.environ.get("OCCHIO_INVENTARIO", "output/inventario.jsonl"))
 
+
+def _etichetta(luogo) -> str:
+    """Nome leggibile di un luogo dichiarato. Import tardivo: `inventario`
+    deve restare utilizzabile anche senza il modulo dei luoghi."""
+    if not luogo:
+        return "(luogo non dichiarato)"
+    try:
+        from .luogo import etichetta
+        return etichetta(luogo)
+    except Exception:
+        return str(luogo)
+
 TIPI_NOTI = (
     "dvd", "blu-ray", "vhs", "cd", "vinile", "libro", "rivista",
     "scatola", "elettronica", "documento", "quadro", "altro",
@@ -124,6 +136,7 @@ class Inventario:
         self.percorso = Path(percorso)
         self.voci: list[dict] = []
         self._per_chiave: dict[str, dict] = {}
+        self.foto_lette: set[str] = set()
         self.carica()
 
     # -- lettura ----------------------------------------------------------
@@ -132,6 +145,7 @@ class Inventario:
         """Rilegge il file da zero. Righe illeggibili contate, non silenziate."""
         self.voci = []
         self._per_chiave = {}
+        self.foto_lette: set[str] = set()
         self.righe_illeggibili = 0
         if not self.percorso.exists():
             return 0
@@ -162,9 +176,18 @@ class Inventario:
             esistente["visto_ultimo"] = voce.get("visto_ultimo", esistente.get("visto_ultimo"))
             if voce.get("impronta") and voce["impronta"] not in esistente.setdefault("impronte", []):
                 esistente["impronte"].append(voce["impronta"])
+            # Un oggetto puo' essere visto in piu' luoghi: e' un fatto, non un
+            # conflitto — i libri si spostano. Si conservano tutti, in ordine.
+            if voce.get("luogo"):
+                luoghi = esistente.setdefault("luoghi", [])
+                if voce["luogo"] not in luoghi:
+                    luoghi.append(voce["luogo"])
             return
+        if voce.get("foto_sha"):
+            self.foto_lette.add(voce["foto_sha"])
         voce.setdefault("avvistamenti", 1)
         voce.setdefault("impronte", [voce["impronta"]] if voce.get("impronta") else [])
+        voce.setdefault("luoghi", [voce["luogo"]] if voce.get("luogo") else [])
         self.voci.append(voce)
         if k:
             self._per_chiave[k] = voce
@@ -201,7 +224,8 @@ class Inventario:
 
     def registra(self, tipo: str, titolo: str, impronta: str | None = None,
                  testo_letto: str = "", confidenza: float | None = None,
-                 fonte: str = "telecamera", note: str = "") -> dict:
+                 fonte: str = "telecamera", note: str = "",
+                 luogo: dict | None = None, foto_sha: str | None = None) -> dict:
         """Scrive un evento in coda al file e aggiorna la vista.
 
         Un oggetto senza chiave utilizzabile non viene scritto: solleva
@@ -229,6 +253,13 @@ class Inventario:
             "visto_primo": ora if stato == "NUOVO" else (esistente or {}).get("visto_primo", ora),
             "visto_ultimo": ora,
             "evento": "nuovo" if stato == "NUOVO" else "avvistamento",
+            # Il luogo e' DICHIARATO, mai dedotto da una coordinata: dentro
+            # casa il GPS ha un errore piu' grande della casa (H7). Vedi
+            # occhio/luogo.py e falsificatori/h7_gps_stanze.py.
+            "luogo": luogo or None,
+            # L'impronta della fotografia da cui viene: ripassare la stessa
+            # cartella non ripaga la stessa lettura al fornitore.
+            "foto_sha": foto_sha,
         }
         self.percorso.parent.mkdir(parents=True, exist_ok=True)
         with open(self.percorso, "a", encoding="utf-8") as f:
@@ -238,6 +269,14 @@ class Inventario:
         return voce
 
     # -- resoconto --------------------------------------------------------
+
+    def per_luogo(self) -> dict[str, list]:
+        """L'inventario riorganizzato per dove stanno le cose. E' la mappa."""
+        mappa: dict[str, list] = {}
+        for v in self.voci:
+            for l in (v.get("luoghi") or [None]):
+                mappa.setdefault(_etichetta(l), []).append(v)
+        return dict(sorted(mappa.items()))
 
     def per_tipo(self) -> dict[str, int]:
         conteggio: dict[str, int] = {}
@@ -250,10 +289,13 @@ class Inventario:
         import io
         buf = io.StringIO()
         w = _csv.writer(buf)
-        w.writerow(["tipo", "titolo", "avvistamenti", "visto_primo", "visto_ultimo",
-                    "confidenza", "testo_letto"])
+        w.writerow(["tipo", "titolo", "luogo", "avvistamenti", "visto_primo",
+                    "visto_ultimo", "confidenza", "testo_letto"])
         for v in sorted(self.voci, key=lambda x: (x.get("tipo", ""), x.get("titolo", ""))):
-            w.writerow([v.get("tipo", ""), v.get("titolo", ""), v.get("avvistamenti", 1),
+            luoghi = v.get("luoghi") or []
+            w.writerow([v.get("tipo", ""), v.get("titolo", ""),
+                        " | ".join(_etichetta(x) for x in luoghi),
+                        v.get("avvistamenti", 1),
                         v.get("visto_primo", ""), v.get("visto_ultimo", ""),
                         v.get("confidenza", ""), v.get("testo_letto", "")])
         return buf.getvalue()
