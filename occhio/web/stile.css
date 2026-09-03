@@ -1,0 +1,130 @@
+/* occhio — foglio di stile. Origine protetta: Claudio Terzi [CT-LGAI-001].
+   Scuro per scelta: si usa in piedi, in una stanza, guardando uno schermo
+   davanti a uno scaffale. Il verde e' l'unica cosa che deve saltare all'occhio. */
+
+:root {
+  --fondo:#0c0e12; --pannello:#141821; --bordo:#232a38;
+  --testo:#e8ecf4; --tenue:#8b96ab;
+  --verde:#2ee06a; --ciano:#35d6f0; --ambra:#ffb020; --rosso:#ff4d4d;
+}
+* { box-sizing:border-box; }
+html, body { height:100%; margin:0; }
+body {
+  background:var(--fondo); color:var(--testo);
+  font:15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow:hidden;
+}
+
+#fascia-stub {
+  padding:8px 14px; font-weight:700; font-size:13px; color:#1a1206; text-align:center;
+  background:repeating-linear-gradient(45deg,#ffb020,#ffb020 12px,#c98600 12px,#c98600 24px);
+}
+
+main { display:flex; height:100%; }
+#fascia-stub:not([hidden]) ~ main { height:calc(100% - 37px); }
+
+/* ---- scena ---- */
+#scena { position:relative; flex:1 1 auto; background:#000; overflow:hidden; }
+#video, #sovrimpressione { position:absolute; inset:0; width:100%; height:100%; }
+#video { object-fit:cover; }
+#sovrimpressione { pointer-events:none; }
+
+/* [hidden] non basta quando l'elemento ha un display esplicito: senza questa
+   riga il pannello di partenza resta sopra il video anche a telecamera accesa.
+   Verificato con uno scatto reale il 03/09. */
+#spento[hidden], #comandi button[hidden], #lab-ritmo[hidden] { display:none !important; }
+
+#spento {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:14px; text-align:center;
+  padding:24px; background:radial-gradient(ellipse at center,#171c26,#0a0c10);
+}
+#spento h1 { margin:0; font-size:52px; letter-spacing:-1.5px; font-weight:800; }
+#spento p { margin:0; max-width:44ch; color:var(--tenue); }
+.minuto { font-size:12.5px; color:var(--tenue); }
+code { background:#0006; padding:1px 5px; border-radius:4px; }
+
+button {
+  font:inherit; color:var(--testo); background:#1e2532; border:1px solid var(--bordo);
+  padding:8px 14px; border-radius:9px; cursor:pointer;
+}
+button:hover { background:#28303f; }
+button.grosso { font-size:17px; padding:14px 26px; background:var(--verde); color:#04150a;
+  border:0; font-weight:700; border-radius:12px; }
+button.grosso:hover { filter:brightness(1.08); }
+
+#hud { position:absolute; top:12px; left:12px; display:flex; gap:8px; flex-wrap:wrap; }
+.pillola {
+  background:#0009; backdrop-filter:blur(6px); border:1px solid var(--bordo);
+  padding:5px 11px; border-radius:999px; font-size:12.5px; color:var(--tenue);
+}
+.pillola.verde { color:var(--verde); border-color:#2ee06a44; }
+
+#comandi { position:absolute; bottom:14px; left:12px; display:flex; gap:8px; align-items:center; }
+#comandi label { display:flex; gap:8px; align-items:center; font-size:12.5px;
+  color:var(--tenue); background:#0009; padding:6px 12px; border-radius:9px;
+  border:1px solid var(--bordo); }
+#ritmo { width:110px; }
+
+#legenda { position:absolute; bottom:14px; right:14px; display:flex; gap:14px;
+  font-size:12px; color:var(--tenue); background:#0009; padding:7px 12px;
+  border-radius:9px; border:1px solid var(--bordo); }
+#legenda span { display:flex; align-items:center; gap:6px; }
+.q { width:10px; height:10px; border-radius:3px; display:inline-block; }
+.q.verde { background:var(--verde); } .q.ciano { background:var(--ciano); }
+.q.ambra { background:var(--ambra); }
+
+/* ---- pannello ---- */
+#pannello { flex:0 0 380px; background:var(--pannello); border-left:1px solid var(--bordo);
+  display:flex; flex-direction:column; min-width:0; }
+.schede { display:flex; border-bottom:1px solid var(--bordo); }
+.scheda { flex:1; border:0; border-radius:0; background:transparent; color:var(--tenue);
+  padding:13px 8px; border-bottom:2px solid transparent; }
+.scheda.attiva { color:var(--testo); border-bottom-color:var(--verde); background:#0000; }
+.scheda b { color:var(--verde); }
+
+.vista { display:none; flex:1; min-height:0; flex-direction:column; }
+.vista.attiva { display:flex; }
+
+#elenco { list-style:none; margin:0; padding:8px; overflow-y:auto; flex:1; }
+#elenco li { padding:9px 11px; border-radius:9px; border:1px solid transparent;
+  display:flex; gap:10px; align-items:baseline; }
+#elenco li.appena { border-color:#2ee06a55; background:#2ee06a12; }
+#elenco .tipo { font-size:10.5px; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--tenue); flex:0 0 62px; }
+#elenco .titolo { flex:1; min-width:0; overflow-wrap:anywhere; }
+#elenco .volte { font-size:11.5px; color:var(--tenue); }
+
+#incerti { padding:0 8px; }
+.incerto { border:1px solid #ffb02055; background:#ffb0200f; border-radius:10px;
+  padding:10px; margin:8px 0; }
+.incerto .letto { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px;
+  color:var(--ambra); word-break:break-all; }
+.incerto input { width:100%; margin:8px 0 6px; background:#0d1016; color:var(--testo);
+  border:1px solid var(--bordo); border-radius:7px; padding:7px 9px; font:inherit; }
+.incerto .riga { display:flex; gap:6px; }
+.incerto button { padding:6px 11px; font-size:13px; }
+
+#vuoto { padding:14px; }
+#pannello footer { border-top:1px solid var(--bordo); padding:10px 12px;
+  display:flex; justify-content:space-between; align-items:center; gap:10px; }
+#pannello footer a { color:var(--ciano); font-size:13px; }
+#file-inv { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+#messaggi { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:10px; }
+.msg { padding:9px 12px; border-radius:11px; max-width:92%; white-space:pre-wrap; }
+.msg.io { background:#1e2532; align-self:flex-end; }
+.msg.lui { background:#0f141c; border:1px solid var(--bordo); }
+.msg.sistema { background:#0f141c; border:1px dashed var(--bordo); color:var(--tenue);
+  font-size:12.5px; max-width:100%; }
+.msg.errore { border-color:#ff4d4d55; color:#ffb3b3; background:#ff4d4d0f; }
+#modulo-chat { display:flex; gap:8px; padding:10px; border-top:1px solid var(--bordo); }
+#campo-chat { flex:1; min-width:0; background:#0d1016; color:var(--testo);
+  border:1px solid var(--bordo); border-radius:9px; padding:9px 11px; font:inherit; }
+
+@media (max-width:900px) {
+  main { flex-direction:column; }
+  #scena { flex:1 1 55%; }
+  #pannello { flex:1 1 45%; border-left:0; border-top:1px solid var(--bordo); }
+  #legenda { display:none; }
+}

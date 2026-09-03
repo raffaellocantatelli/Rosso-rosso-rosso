@@ -92,5 +92,25 @@
       "ultima": "2026-08-26T00:27:36+00:00",
       "ultimo_esito": "regge"
     }
+  },
+  {
+    "id": "H6",
+    "testo": "Ripassare con la telecamera sugli stessi oggetti non gonfia l inventario: il conteggio misura gli oggetti, non le passate.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se, data due volte la stessa lettura, il totale dell inventario cresce; o se il riconoscimento non sopravvive al riavvio (dipende dalla sessione invece che dal file); o se due oggetti diversi vengono fusi in una voce sola.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h6_occhio_ripasso.py"
+      ],
+      "descrizione": "due passate identiche su un inventario temporaneo: il totale deve restare invariato, e restare tale dopo un riavvio"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
   }
 ]

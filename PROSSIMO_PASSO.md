@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-09-02, 23:30 UTC
+# Prossimo passo — consegna del 2026-09-03, 18:40 UTC
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -38,6 +38,63 @@ Deve comparire sotto «Repository secrets» qui:
 **Non serve una chiave nuova.** Se quella di stasera è stata rigenerata, va
 bene qualunque chiave Gemini valida — o DeepSeek, o Anthropic: la cascata
 prende la prima disponibile.
+
+## 1-bis. Aggiunto il 03/09: `occhio` — il primo modulo che guarda fuori
+
+**RECUPERATO.** C'è un modulo nuovo, `occhio/`, chiesto dall'autore: si accende
+la telecamera, si cammina per casa, e ciò che è già catalogato si illumina di
+verde mentre ciò che è nuovo viene scritto. Gira, ha 30 prove che passano senza
+chiavi, e non aggiunge nessuna dipendenza (`requests` + libreria standard —
+`fastapi`, `Pillow` e `dotenv` **non sono installati** in questo ambiente, e un
+sistema che chiede un `pip install` per partire non verrà provato).
+
+Perché riguarda H2 e non è un diversivo: è il primo pezzo di questo progetto
+che registra qualcosa che **esiste indipendentemente dal progetto** — oggetti
+in un armadio, controllabili da chiunque apra quell'armadio. Non è ancora un
+contatto ai sensi di §7 (nessuno ha agito verso di noi), ma è la prima volta
+che il sistema misura il mondo invece di sé.
+
+**Ipotesi H6 registrata, con falsificatore eseguibile:** *ripassare con la
+telecamera sugli stessi oggetti non gonfia l'inventario.* Regge sul banco
+(`python3 falsificatori/h6_occhio_ripasso.py` → REGGE). **È rimasta APERTA nel
+registro apposta:** il verificatore non è stato eseguito per davvero da questa
+sessione, perché senza `dotenv` H5 fallisce per un difetto d'ambiente e non del
+progetto, e non voglio depositare uno stato che dice qualcosa sull'ambiente
+credendo di dire qualcosa sul progetto. Eseguilo tu, o lascialo alla Action:
+
+```bash
+python -m sdq1 --verifica-ipotesi --prova   # per vedere cosa farebbe
+python -m sdq1 --verifica-ipotesi           # per scriverlo
+```
+
+**UNKNOWN, ed è il numero che conta:** quanti dorsi un modello legge davvero
+in penombra, di traverso, con il riflesso della plastica. Nessuna chiave di
+visione è configurata qui, quindi **nessun modello ha ancora guardato un
+oggetto vero.** È la stessa chiave che blocca il daily (§1 qui sopra): una
+sola, e sblocca due cose.
+
+L'esperimento che costa venti minuti, e che va fatto prima di scrivere altro
+codice — non «costruire di più», ma ottenere un numero:
+
+```bash
+python -m occhio --check                            # deve dire: L'OCCHIO È APERTO
+python -m occhio --foto ~/scaffale.jpg --solo-lettura
+# poi conta a mano quanti oggetti ci sono nella foto.
+# letti / presenti è la sola misura che valga. Scrivi i due numeri.
+```
+
+**Previsione dichiarata adesso, per non poterla aggiustare dopo (IPOTESI):**
+su una foto frontale e ben illuminata di uno scaffale di DVD, il rapporto
+letti/presenti starà fra 0,5 e 0,9. Sotto 0,3 la telecamera in movimento non
+ha senso e il problema è la fotografia, non il programma. Cade se il primo
+tentativo serio esce fuori da questa forbice.
+
+Verdetto su Emergent, che l'autore ha chiesto: in `OCCHIO.md` §6. In breve —
+non serve, perché la parte che Emergent fa bene è già fatta, e quella che
+resta (tarare le soglie camminando per casa) non la può fare un generatore.
+L'unico motivo valido sarebbe l'involucro nativo per il telefono, perché
+`getUserMedia` fuori da `localhost` vuole `https` — e se quel fastidio
+impedisce di provarlo, allora risolve il problema vero, che è **provarlo**.
 
 ## 2. Cosa fare appena il secret è al posto giusto
 

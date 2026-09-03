@@ -14,8 +14,8 @@
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 17871,
-      "sha256": "364087471e46bf70befc962c59859c1ea4d723b64a9b607ba41d4120ae342537"
+      "byte": 19792,
+      "sha256": "6b9757fa2bb3b8b92c3919d06bcdd95aff4cae8ef379329353425e40b0f6519a"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -36,6 +36,10 @@
     "falsificatori/h5_tracce.py": {
       "byte": 2610,
       "sha256": "7c99a7ea01282b5e1c14f45d6decca04da491ee1a6706e370377f4b4cc6dc244"
+    },
+    "falsificatori/h6_occhio_ripasso.py": {
+      "byte": 5733,
+      "sha256": "c2aecffe97ba874661f26055cee9e4a06b382ca9c5aaf7ee7f54fa6a93af6771"
     },
     "latenza.py": {
       "byte": 5373,
@@ -237,6 +241,38 @@
       "byte": 270,
       "sha256": "32773a4dd5fca6e0235399cdf4286e7822b4eb29e9ff322f5eb0e8a29e1cef84"
     },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-03_0911.md": {
+      "byte": 1039,
+      "sha256": "16e522734856a2dc1bef95e1a869c58d8b778a935f0b59e27ea4ff4d3953a3e4"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-03_1011.md": {
+      "byte": 1306,
+      "sha256": "fe5d99feb586e7bbb679673d96845e5eed49c9a6f5eae0c0ac6b08dfb31c5bcd"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-03_1100.md": {
+      "byte": 7150,
+      "sha256": "3119d919662fb2a3cae19ab49f6d8a4585d6914dd15f5619f8118b7993395434"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-03_1209.md": {
+      "byte": 10802,
+      "sha256": "89952abb161881c2e0ca1f65202f8ef9ded05ab86988a0be6453f416c275555c"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-03_1300.md": {
+      "byte": 5775,
+      "sha256": "3edccff7300feb6e41b14cae4e31f7cd022c4c08cab4f7a65e43858225de430b"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-03_1415.md": {
+      "byte": 3817,
+      "sha256": "7d84215a572cede44bb2d235f4defff61f0087ee555564fc3611ebd126bb30f7"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-03_1801.md": {
+      "byte": 10312,
+      "sha256": "20580e795a1f45a255a94a61302b3db1e932621cd6969d8ee619811dbb390c69"
+    },
+    "memoria/R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md": {
+      "byte": 1270,
+      "sha256": "46cdb913cf19c0f0371b6938a8be6af3f79577709bfe306f5fcff3cbb83e44c0"
+    },
     "memoria/R3_WORK_QUEUE.yaml": {
       "byte": 760,
       "sha256": "3b3a7d0981b5d105cc7533ecf671222ea04e5aba1e58c6edd5f828ac2b70f64d"
@@ -413,6 +449,38 @@
       "byte": 4006,
       "sha256": "042f883b375a88eb15d9f792529e42bd85a03affb765ea93f4323de0806492f3"
     },
+    "memoria/R3_WORK_QUEUE_2026-09-03_0911.yaml": {
+      "byte": 3400,
+      "sha256": "4cfa57128bfc09907a1ea513278a865ecff6552a723d7dd7a063975be6749580"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-03_1011.yaml": {
+      "byte": 2770,
+      "sha256": "0a14dfa03b749b56e0ee526b134f67a00f330035eb2cee24e01a8f199ec3abcd"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-03_1018.yaml": {
+      "byte": 828,
+      "sha256": "24a131aa4d5082cf458ace19ac1182761da792af464fda42c30cbaee477511f8"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-03_1100.yaml": {
+      "byte": 2520,
+      "sha256": "0f470f234545dae1eb854e0399f387e0cdb25a5750c7534c9638f37c4956a0fc"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-03_1209.yaml": {
+      "byte": 3138,
+      "sha256": "f4c93b1f5d538e1c7b088db3918ac39b380c802fe64b781f02944ab7a56d6d64"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-03_1300.yaml": {
+      "byte": 2150,
+      "sha256": "6349bedf8f5cf83f0ed9c55785e3d7c74f3032861e147a16549d2c9746dbaaed"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-03_1415.yaml": {
+      "byte": 1732,
+      "sha256": "81935d790571d3727c26a8bebce8d58002fe3528a717ac9b239d11f4e9e9cab5"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-03_1801.yaml": {
+      "byte": 2328,
+      "sha256": "d524f5aeee1bdf72ea56ae4dc5e281d67b34a52781aacaebcc44d27b7f5be5d3"
+    },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
       "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
@@ -466,8 +534,8 @@
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
     "registro_ipotesi.json": {
-      "byte": 3651,
-      "sha256": "f9e7083ebef13c05840d5cad48012390e844904110946e5fdf752a1d0c384e27"
+      "byte": 4504,
+      "sha256": "f20138bcb2fcd7a08af7825138868df9234510c57e053121095724a865d7ac6c"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
@@ -645,6 +713,10 @@
       "byte": 2403,
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
+    "tests/test_occhio.py": {
+      "byte": 10156,
+      "sha256": "80b11bc24ea22850f12e008d86cd9aaa9c7f09e3a4c6db0cca59bd6c6d7ce172"
+    },
     "tests/test_rlaif.py": {
       "byte": 5152,
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
@@ -662,6 +734,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-02T23:26:19.281283+00:00",
+  "generato": "2026-09-03T18:40:26.362783+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

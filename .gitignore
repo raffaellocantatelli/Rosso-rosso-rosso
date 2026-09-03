@@ -22,3 +22,11 @@ creazioni/
 backup_sistema_rosso.json
 output/rlaif_decisioni.jsonl
 .pytest_cache/
+
+# occhio — l'inventario è materiale personale: cosa c'è dentro casa.
+# Questo repository è PUBBLICO (CLAUDE.md §2.5) e la decisione di pubblicare
+# è sempre e solo dell'autore. Il registro resta locale finché non è lui a
+# dire il contrario: nessun nodo estenda la scelta del 23/08 da solo.
+output/inventario.jsonl
+output/inventario*.jsonl
+inventario*.csv
