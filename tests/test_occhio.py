@@ -537,3 +537,129 @@ def test_occhio_non_scrive_mai_un_file_immagine():
         for sospetto in ("write_bytes", '"wb"', "'wb'", "PIL", "ImageDraw"):
             assert sospetto not in sorgente, (
                 f"{modulo.__name__} sembra scrivere immagini: {sospetto}")
+
+
+# --------------------------------------------------------------------------
+# la pianta — il disegno sì, il posizionamento no
+# --------------------------------------------------------------------------
+
+from occhio import planimetria as pln  # noqa: E402
+
+PIANTA = {
+    "alloggio": "via-roma-12",
+    "zone": [
+        # stanza a L: il centro del riquadro cade FUORI dalla stanza
+        {"nome": "soggiorno", "scatto": 1,
+         "punti": [[26, 0], [78, 0], [78, 40], [52, 40], [52, 22], [26, 22]]},
+        {"nome": "bagno", "scatto": 2, "punti": [[0, 52], [30, 52], [30, 80], [0, 80]]},
+    ],
+}
+
+
+def _dentro(punto, poligono):
+    """Punto dentro poligono, a raggi. Serve solo a questa prova."""
+    x, y = punto
+    dentro = False
+    n = len(poligono)
+    for i in range(n):
+        x0, y0 = poligono[i]
+        x1, y1 = poligono[(i + 1) % n]
+        if (y0 > y) != (y1 > y):
+            xi = (x1 - x0) * (y - y0) / (y1 - y0) + x0
+            if x < xi:
+                dentro = not dentro
+    return dentro
+
+
+def test_l_etichetta_di_una_stanza_a_L_resta_dentro_la_stanza():
+    """Col centro del riquadro l'etichetta finirebbe nella stanza accanto,
+    e il disegno direbbe una cosa falsa.
+
+    La L del soggiorno di PIANTA non basta a provarlo: il suo centro del
+    riquadro cade per caso dentro la stanza. Serve una L più marcata —
+    trovato eseguendo il test, che infatti è passato dalla parte sbagliata.
+    """
+    a_elle = [[0, 0], [60, 0], [60, 20], [20, 20], [20, 60], [0, 60]]
+    riq = pln._riquadro(a_elle)
+    centro_riquadro = ((riq[0] + riq[2]) / 2, (riq[1] + riq[3]) / 2)
+    assert not _dentro(centro_riquadro, a_elle)            # il difetto esiste
+    # e nemmeno il baricentro dell'area basta, su una L marcata:
+    assert not _dentro(pln._baricentro(a_elle), a_elle)
+    # ciò che regge è cercare il punto più interno, non scegliere una formula
+    assert _dentro(pln._punto_etichetta(a_elle), a_elle)
+
+
+@pytest.mark.parametrize("forma", [
+    [[0, 0], [60, 0], [60, 20], [20, 20], [20, 60], [0, 60]],          # L
+    [[26, 0], [78, 0], [78, 40], [52, 40], [52, 22], [26, 22]],        # L dolce
+    [[0, 0], [40, 0], [40, 40], [0, 40]],                              # rettangolo
+    [[0, 0], [50, 0], [50, 10], [30, 10], [30, 30], [50, 30],
+     [50, 40], [0, 40]],                                              # C
+])
+def test_il_punto_etichetta_sta_sempre_dentro(forma):
+    assert _dentro(pln._punto_etichetta(forma), forma)
+
+
+def test_una_zona_con_un_oggetto_mancante_diventa_rossa(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("elettronica", "Phon Dyson", luogo=lg.dal_percorso("/f/bagno/x.jpg", "/f"))
+    r.registra("dvd", "Heat", luogo=lg.dal_percorso("/f/soggiorno/x.jpg", "/f"))
+    diff = {"mancanti": [{"titolo": "Phon Dyson", "luogo": {"stanza": "bagno"}}]}
+    s = pln.stato_zone(r, diff, fatte={"soggiorno"})
+    assert s["zone"]["bagno"] == pln.MANCA
+    assert s["zone"]["soggiorno"] == pln.FATTA
+    assert s["mancanti"]["bagno"] == ["Phon Dyson"]
+
+
+def test_una_zona_non_ancora_vista_resta_ambra(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("altro", "Ombrellone", luogo=lg.dal_percorso("/f/terrazzo/x.jpg", "/f"))
+    assert pln.stato_zone(r)["zone"]["terrazzo"] == pln.DA_FARE
+
+
+def test_il_disegno_porta_i_nomi_e_l_ordine_degli_scatti():
+    d = pln.svg(PIANTA, {"zone": {"soggiorno": pln.FATTA, "bagno": pln.MANCA}})
+    assert "soggiorno" in d and "bagno" in d
+    assert pln.COLORI[pln.FATTA] in d and pln.COLORI[pln.MANCA] in d
+    assert 'data-stato="manca"' in d
+    assert d.startswith("<svg") and d.endswith("</svg>")
+
+
+def test_il_nome_di_una_zona_e_sfuggito():
+    d = pln.svg({"zone": [{"nome": "<script>x</script>",
+                           "punti": [[0, 0], [10, 0], [10, 10], [0, 10]]}]})
+    assert "<script>" not in d
+
+
+def test_la_pianta_di_partenza_esce_dalle_stanze_dell_inventario(tmp_path):
+    """Il foglio bianco è il vero motivo per cui una pianta non viene fatta."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    for stanza in ("cucina", "bagno", "camera"):
+        r.registra("altro", f"oggetto in {stanza}",
+                   luogo=lg.dal_percorso(f"/f/{stanza}/x.jpg", "/f"))
+    modello = pln.modello_da_inventario(r, "via-roma-12")
+    assert {z["nome"] for z in modello["zone"]} == {"cucina", "bagno", "camera"}
+    assert all(len(z["punti"]) == 4 for z in modello["zone"])
+    assert [z["scatto"] for z in modello["zone"]] == [1, 2, 3]
+    # e deve essere ricaricabile senza perdere niente
+    f = tmp_path / "p.json"
+    f.write_text(json.dumps(modello, ensure_ascii=False), encoding="utf-8")
+    assert pln.carica(f) == modello
+
+
+def test_la_pianta_non_ha_bisogno_di_niente(tmp_path):
+    """Nessuna dipendenza, nessun sensore: si scrive a mano in dieci minuti."""
+    import inspect
+    sorgente = inspect.getsource(pln)
+    for sospetto in ("import numpy", "import PIL", "ARKit", "RoomPlan", "requests"):
+        assert f"\n{sospetto}" not in sorgente
+
+
+def test_la_pianta_entra_nella_mappa(tmp_path):
+    from occhio import cartella
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("dvd", "Heat", luogo=lg.dal_percorso("/f/soggiorno/x.jpg", "/f"))
+    pagina = cartella.mappa_html(r, PIANTA, fatte={"soggiorno"})
+    assert "<svg" in pagina and "zona verificata" in pagina
+    # e senza pianta la mappa resta valida
+    assert "<svg" not in cartella.mappa_html(r)

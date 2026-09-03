@@ -225,6 +225,10 @@ def main(argv=None) -> int:
     ap.add_argument("--mappa", metavar="FILE.html", nargs="?", const="-",
                     help="dove sta cosa: a schermo, o in una pagina HTML se dai un file")
     ap.add_argument("--limite", type=int, help="quante fotografie al massimo (per provare)")
+    ap.add_argument("--pianta", metavar="FILE.json",
+                    help="pianta stilizzata delle zone, da mostrare in cima alla mappa")
+    ap.add_argument("--pianta-modello", metavar="FILE.json",
+                    help="scrive una pianta di partenza dalle stanze dell inventario")
     g = ap.add_argument_group("affitto breve — lo stato controfirmato")
     g.add_argument("--consegna", metavar="ALLOGGIO",
                    help="deposita lo stato attuale come consegna all ospite")
@@ -274,13 +278,26 @@ def main(argv=None) -> int:
     if (a.consegna or a.riconsegna or a.controfirma or a.differenza
             or a.verifica_consegne):
         return consegne(a)
+    if a.pianta_modello:
+        from .planimetria import modello_da_inventario
+        modello = modello_da_inventario(inv.Inventario())
+        Path(a.pianta_modello).write_text(
+            json.dumps(modello, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"scritto {a.pianta_modello} — {len(modello['zone'])} zone.")
+        print("Aprilo e sposta i rettangoli finché somigliano alla casa:")
+        print("bastano le proporzioni, non serve la misura vera, non serve il LiDAR.")
+        return 0
     if a.mappa:
         from .cartella import mappa_html, mappa_testo
         registro = inv.Inventario()
         if a.mappa == "-":
             print(mappa_testo(registro))
         else:
-            Path(a.mappa).write_text(mappa_html(registro), encoding="utf-8")
+            pianta = None
+            if a.pianta:
+                from .planimetria import carica
+                pianta = carica(a.pianta)
+            Path(a.mappa).write_text(mappa_html(registro, pianta), encoding="utf-8")
             print(f"scritto {a.mappa} — {len(registro.voci)} oggetti in "
                   f"{len(registro.per_luogo())} luoghi")
         return 0

@@ -137,16 +137,35 @@ def mappa_testo(registro) -> str:
     return "\n".join(righe) or "(nessun oggetto)"
 
 
-def mappa_html(registro) -> str:
+def mappa_html(registro, pianta=None, differenza=None, fatte=()) -> str:
     """Una pagina sola, senza dipendenze, apribile con due clic.
 
-    Non e' una pianta della casa: e' un albero. Una pianta la darebbe il LiDAR
-    (RoomPlan), che pero' misura la GEOMETRIA e non legge nessun titolo — e
-    per averla serve un'app nativa. Questo albero risponde alla domanda vera,
-    «dov'e' quel disco», che una pianta 3D non risponde meglio.
+    Con una pianta (`--pianta`) in testa c'e' il disegno stilizzato delle zone,
+    colorate per stato: verde verificata, ambra da fare, rosso manca qualcosa.
+    La pianta si scrive a mano in dieci minuti — **non serve il LiDAR per
+    disegnare una pianta**, e vedi occhio/planimetria.py per il motivo per cui
+    il LiDAR qui non risolverebbe il problema che sembra risolvere.
     """
     per_luogo = registro.per_luogo()
     totale = len(registro.voci)
+
+    # La pianta, se c'e': non decorazione, ma la lista delle cose da fare.
+    # Verde = zona verificata, ambra = da fare, rosso = qui manca qualcosa.
+    disegno = ""
+    if pianta:
+        from . import planimetria as pl
+        conteggi = {}
+        for posto, oggetti in per_luogo.items():
+            conteggi[posto.split(" › ")[0]] = conteggi.get(posto.split(" › ")[0], 0) + len(oggetti)
+        stati = pl.stato_zone(registro, differenza, fatte)
+        avvisi = "".join(
+            f'<li><b>{html.escape(z)}</b>: manca {html.escape(", ".join(t))}</li>'
+            for z, t in stati["mancanti"].items())
+        disegno = ('<div class=pianta>' + pl.svg(pianta, stati, conteggi)
+                   + pl.legenda_html()
+                   + (f'<ul class=manca>{avvisi}</ul>' if avvisi else "")
+                   + '</div>')
+
     corpo = []
     for posto, oggetti in per_luogo.items():
         tipi = {}
@@ -182,6 +201,16 @@ ul{{list-style:none;margin:0;padding:0}}
 li{{padding:5px 0;border-top:1px solid var(--b);display:flex;gap:9px;align-items:baseline}}
 .t{{color:var(--m);font-size:10px;text-transform:uppercase;letter-spacing:.6px;flex:0 0 56px}}
 .v{{color:var(--m);font-size:11px;margin-left:auto}}
+.pianta{{background:#0a0d12;border:1px solid var(--b);border-radius:13px;
+padding:18px;margin:0 0 22px;text-align:center}}
+.leg{{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;color:var(--m);
+font-size:12px;margin:12px 0 0}}
+.leg span{{display:flex;align-items:center;gap:6px}}
+.leg i{{width:10px;height:10px;border-radius:3px;display:inline-block}}
+.manca{{list-style:none;margin:14px auto 0;padding:10px 14px;max-width:60ch;text-align:left;
+background:#ff4d4d12;border:1px solid #ff4d4d44;border-radius:9px;font-size:13px}}
+.manca b{{color:#ff4d4d}}
+.zona text{{pointer-events:none}}
 footer{{color:var(--m);font-size:12px;margin-top:30px;max-width:80ch;border-top:1px solid var(--b);padding-top:14px}}
 </style></head><body>
 <h1>occhio — mappa</h1>
@@ -190,6 +219,7 @@ footer{{color:var(--m);font-size:12px;margin-top:30px;max-width:80ch;border-top:
 dentro casa l'errore della posizione è più grande della casa, e una mappa
 costruita su quelle coordinate mostrerebbe rumore con l'aria di un dato.
 Puoi misurarlo sulle tue foto con <code>falsificatori/h7_gps_stanze.py</code>.</p>
+{disegno}
 <main>{"".join(corpo) or "<p class=cap>Nessun oggetto nel registro.</p>"}</main>
 <footer>Generato da <code>python -m occhio --mappa</code>. Origine protetta:
 Claudio Terzi [CT-LGAI-001]. Ogni riga è verificabile aprendo il mobile che la porta.</footer>

@@ -291,6 +291,57 @@ un file Python.
    L'inventario prodotto dal modello **non è una prova fotografica**: è un
    indice che punta alle fotografie originali, ed è così che va presentato.
 
+## 5-quater. La pianta stilizzata (aggiunto 03/09)
+
+L'obiezione dell'autore è giusta e coglie un difetto reale del disegno
+precedente: **dichiarare la stanza scrivendola è attrito**, e l'attrito uccide
+il vincolo dei tre minuti. Chi pulisce non digita niente.
+
+Ma dentro «pianta con le zone che si accendono» ci sono due cose di costo
+diversissimo, e vanno separate.
+
+### 1. Il disegno come interfaccia — costa niente, e c'è
+
+```bash
+python -m occhio --pianta-modello pianta.json   # parte dalle stanze già note
+# apri il file, sposta i rettangoli finché somiglia alla casa
+python -m occhio --mappa mappa.html --pianta pianta.json
+```
+
+La pianta di un bilocale sono otto rettangoli in un file di testo, dieci
+minuti. **Non serve il LiDAR per disegnare una pianta.** Le zone si colorano
+per stato — verde verificata, ambra da fare, rosso *qui manca qualcosa* — e i
+numeri nei cerchi sono l'ordine degli scatti. È lo stesso verde di sempre,
+salito di scala: prima erano gli oggetti catalogati, adesso sono le zone
+verificate. **La pianta è la lista delle cose da fare.**
+
+Un difetto trovato dal test, non previsto: l'etichetta di una stanza a L
+finiva nella stanza accanto. Il centro del riquadro cade fuori dalla stanza —
+e **anche il baricentro dell'area ci cade**, su una L marcata. Non si sceglie
+una formula: si cerca il punto più lontano da ogni muro. Quattro forme sono
+sotto test, L e C comprese.
+
+### 2. Il posizionamento automatico — costa molto ed è controindicato
+
+«Mi avvicino alla zona e lui ci va da solo» richiede di sapere dove sei dentro
+casa. Il GPS non può (H7). Resta ARKit con una mappa del mondo salvata
+(`ARWorldMap`), che è vera e funziona.
+
+**RECUPERATO** (fonti in §7, lette il 03/09/2026): la rilocalizzazione
+ARWorldMap dipende dalla qualità della scansione originale, è probabilistica
+prima della conferma visiva, accumula deriva dove i punti caratteristici sono
+pochi, e **viene ingannata dai cambiamenti dell'ambiente nel tempo**.
+
+Qui sta l'argomento che decide: **in un alloggio in affitto l'ambiente cambia
+a ogni ospite.** Ciò che vuoi rilevare — oggetti spostati o spariti — è
+esattamente ciò che rompe la localizzazione. Il meccanismo fallisce
+precisamente dove il prodotto ne avrebbe bisogno. E costa un'app nativa.
+
+**Verdetto: prendi il disegno, lascia il posizionamento.** La zona si
+seleziona toccandola sulla pianta, oppure non si seleziona affatto perché gli
+scatti sono in ordine fisso — «scatto 3 di 8: piano cucina». Zero tecnologia,
+zero errore, e risolve lo stesso attrito.
+
 ## 6. Vale la pena usare Emergent per costruire questo?
 
 Hai chiesto due cose: se convenga usare **Emergent** e se il programma
@@ -405,6 +456,12 @@ Sui due vincoli Airbnb (§5-ter), letti il 03/09/2026:
 - [Host Damage Protection Terms — Airbnb Help Center](https://www.airbnb.com/help/article/2869) *(fonte della piattaforma)*
 - [Airbnb 2026 Terms Update: Damage Claim Evidence Rules Explained — Rakidzich](https://www.rakidzich.com/articles/airbnb-terms-update-ai-evidence-damage-claims-2026)
 - [Airbnb Camera Rules: What Hosts Can and Can't Do in 2026 — Hostfully](https://www.hostfully.com/blog/airbnb-camera-rules/)
+
+Sui limiti della rilocalizzazione ARKit (§5-quater), letto il 03/09/2026:
+
+- [Localization Limitations of ARCore, ARKit and Hololens in Dynamic Large-scale Industry Environments (PDF)](https://www.scitepress.org/Papers/2020/89899/89899.pdf) *(articolo con misure proprie)*
+- [Indoor Navigation App Development With ARKit — DZone](https://dzone.com/articles/indoor-navigation-app-development-with-arkit)
+- [How I built persistent AR zones with ARWorldMap and Core Location](https://medium.com/@hwqmtmd/how-i-built-persistent-ar-zones-with-arworldmap-and-core-location-07448463786f) *(resoconto di chi l'ha costruito)*
 
 Il divieto sulle prove alterate dall'IA (20/04/2026) l'ho letto in una fonte
 di terzi, non nei termini di Airbnb: **verificalo sui termini prima di

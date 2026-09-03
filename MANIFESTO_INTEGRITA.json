@@ -726,8 +726,8 @@
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
     "tests/test_occhio.py": {
-      "byte": 22147,
-      "sha256": "44804ee3a1fff718c1e8209de2997d79a24516626afc986f7eab90f777c7d237"
+      "byte": 27584,
+      "sha256": "dcc5e99502d609156bd6c0c8f3ebd0971b9a8c333b4e9b7ba300e79bfabc1c5e"
     },
     "tests/test_rlaif.py": {
       "byte": 5152,
@@ -746,6 +746,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-03T19:19:39.821681+00:00",
+  "generato": "2026-09-03T19:26:35.526421+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
