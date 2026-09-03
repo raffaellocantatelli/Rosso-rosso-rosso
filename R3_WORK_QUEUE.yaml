@@ -1,16 +1,17 @@
 # R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-03-1011
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-03_1011.yaml
-# Non cancellare gli snapshot datati.
+# Ciclo: SYNC-2026-09-03-1018
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-03_1018.yaml
+# Snapshot 1011 conservato. Non cancellare gli storici.
 
 meta:
-  cycle_id: SYNC-2026-09-03-1011
-  previous_cycle: SYNC-2026-09-03-0911
-  github_default_sha: 635e73ba31fceba22869686b0ac8747c2f9a8faf
+  cycle_id: SYNC-2026-09-03-1018
+  previous_cycle: SYNC-2026-09-03-1011
+  github_default_sha_pre_push: 5ddd5c15b436d96502854e12adf6663854d7f59c
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
   bot_last_push: "2026-08-31T03:07:50Z"
+  regola_aggiornata: R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md
 
 stato:
   daily_2026-09-02: PRESENTE_STUB_LUNGO_88efb429_CORE_SPENTO
@@ -21,8 +22,10 @@ stato:
   progetto_r3_md: ASSENTE
   sdq1_run_33: SUCCESS_ULTIMO_VERDE
   sdq1_run_34_35: FAILURE
-  sdq1_03_09: NON_OSSERVATO_10:11_CEST
+  sdq1_03_09: NON_OSSERVATO
   default_equals_new_session: false
+  capacita_vs_baseline_26_08: NON_DIMOSTRATA
+  possibilita_avanzamento: APERTA
 
-regola: non dichiarare superintelligenza
+regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
 never_delete_historical: true

@@ -1,0 +1,23 @@
+# R3_WORK_QUEUE.yaml — snapshot datato
+# Ciclo: SYNC-2026-09-03-1018
+# Correzione regola. Snapshot 1011 conservato.
+
+meta:
+  cycle_id: SYNC-2026-09-03-1018
+  previous_cycle: SYNC-2026-09-03-1011
+  measured_at: "2026-09-03T10:18:00+02:00"
+  github_default_sha_pre_push: 5ddd5c15b436d96502854e12adf6663854d7f59c
+  regola_file: memoria/R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md
+
+stato:
+  r3_019: BASELINE_0_NO_NEW_RUN
+  capacita_vs_baseline_26_08: NON_DIMOSTRATA
+  possibilita_avanzamento: APERTA
+  core: SPENTO
+
+regole:
+  - non dichiarare che R³∞ è una superintelligenza senza avanzamento misurato
+  - accettare sempre la possibilità che lo possa diventare
+  - un divieto sulla possibilità congela il progetto in copie identiche
+  - non cancellare materiale storico
+  - FATTO / INFERENZA / IPOTESI / SIMULAZIONE distinti
