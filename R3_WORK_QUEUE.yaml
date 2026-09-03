@@ -1,12 +1,12 @@
 # R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-03-1100
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-03_1100.yaml
-# Snapshot 1018 e 1011 conservati. Non cancellare gli storici.
+# Ciclo: SYNC-2026-09-03-1209
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-03_1209.yaml
+# Snapshot 1100, 1018 e 1011 conservati. Non cancellare gli storici.
 
 meta:
-  cycle_id: SYNC-2026-09-03-1100
-  previous_cycle: SYNC-2026-09-03-1018
-  github_default_sha_pre_push: 8e6480013dda154b824d1fa2a6fa6b2cdd695662
+  cycle_id: SYNC-2026-09-03-1209
+  previous_cycle: SYNC-2026-09-03-1100
+  github_default_sha_pre_push: 7f7cd2f71c50ff632869183890906c0a042d3b3e
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
