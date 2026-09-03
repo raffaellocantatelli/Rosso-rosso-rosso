@@ -146,6 +146,71 @@ def leggi_cartella(percorso, cascata, scrivi, soglia, limite) -> int:
     return 0
 
 
+def consegne(a) -> int:
+    """Lo stato controfirmato di un alloggio: consegna, riconsegna, differenza."""
+    from .consegna import Consegne, differenza, stampa_differenza
+    c = Consegne()
+
+    if a.verifica_consegne:
+        v = c.verifica(a.codice)
+        print(f"catena: {c.percorso}")
+        print(f"  stati: {v['stati']}   controfirme: {v['controfirme']}")
+        print(f"  integra: {'sì' if v['catena_integra'] else 'NO'}")
+        for r in v["rotture"]:
+            print(f"    ROTTURA {r}")
+        if v["firme_non_valide"]:
+            print(f"  FIRME NON VALIDE con questo codice: {v['firme_non_valide']}")
+        if v["senza_controfirma"]:
+            print(f"\n  {len(v['senza_controfirma'])} stati SENZA controfirma:")
+            for x in v["senza_controfirma"]:
+                print(f"    {x['momento']}  {x['tipo']}  {x['alloggio']}")
+            print("\n  Una catena che una parte sola può rigenerare dimostra solo")
+            print("  di essere coerente con sé stessa. È la controfirma dell'altra")
+            print("  parte a renderla opponibile — non l'impronta.")
+        return 0 if v["catena_integra"] else 1
+
+    if a.controfirma:
+        if not a.codice:
+            print("serve --codice: la controfirma senza il codice del soggiorno "
+                  "non prova niente", file=sys.stderr)
+            return 1
+        try:
+            v = c.controfirma(a.controfirma, a.codice)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            return 1
+        print(f"controfirmato {a.controfirma[:16]}… il {v['momento']}")
+        return 0
+
+    if a.differenza:
+        prima = c.ultimo(a.differenza, "consegna")
+        dopo = c.ultimo(a.differenza, "riconsegna")
+        if not prima or not dopo:
+            print(f"servono una consegna e una riconsegna per {a.differenza}: "
+                  f"trovate {'consegna' if prima else '—'} / "
+                  f"{'riconsegna' if dopo else '—'}", file=sys.stderr)
+            return 1
+        print(stampa_differenza(differenza(prima, dopo)))
+        return 0
+
+    alloggio = a.consegna or a.riconsegna
+    tipo = "consegna" if a.consegna else "riconsegna"
+    registro = inv.Inventario()
+    if not registro.voci:
+        print("l'inventario è vuoto: non c'è nessuno stato da consegnare.\n"
+              "  python -m occhio --cartella ~/foto", file=sys.stderr)
+        return 1
+    s = c.deposita(alloggio, tipo, registro.voci, soggiorno=a.soggiorno)
+    print(f"{tipo} di {alloggio}: {len(s['oggetti'])} oggetti")
+    print(f"  momento:  {s['momento']}")
+    print(f"  impronta: {s['impronta']}")
+    print(f"\n  NON è ancora controfirmato. Falla controfirmare all'ospite:")
+    print(f"    python -m occhio --controfirma {s['impronta']} --codice <codice>")
+    print("  Finché non lo è, questo stato dimostra solo che tu sei coerente")
+    print("  con te stesso — in una lite non basta.")
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(
         prog="python -m occhio",
@@ -160,6 +225,19 @@ def main(argv=None) -> int:
     ap.add_argument("--mappa", metavar="FILE.html", nargs="?", const="-",
                     help="dove sta cosa: a schermo, o in una pagina HTML se dai un file")
     ap.add_argument("--limite", type=int, help="quante fotografie al massimo (per provare)")
+    g = ap.add_argument_group("affitto breve — lo stato controfirmato")
+    g.add_argument("--consegna", metavar="ALLOGGIO",
+                   help="deposita lo stato attuale come consegna all ospite")
+    g.add_argument("--riconsegna", metavar="ALLOGGIO",
+                   help="deposita lo stato attuale come riconsegna")
+    g.add_argument("--controfirma", metavar="IMPRONTA",
+                   help="l altra parte dichiara di aver visto lo stesso stato")
+    g.add_argument("--codice", help="codice del soggiorno, noto a entrambe le parti")
+    g.add_argument("--soggiorno", default="", help="riferimento della prenotazione")
+    g.add_argument("--differenza", metavar="ALLOGGIO",
+                   help="cosa manca fra l ultima consegna e l ultima riconsegna")
+    g.add_argument("--verifica-consegne", action="store_true",
+                   help="ricalcola la catena e dice cosa non e controfirmato")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
     ap.add_argument("--esporta", metavar="FILE.csv", help="esporta il registro in CSV")
     ap.add_argument("--costo", action="store_true",
@@ -193,6 +271,9 @@ def main(argv=None) -> int:
         Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
         print(f"scritto {a.esporta}")
         return 0
+    if (a.consegna or a.riconsegna or a.controfirma or a.differenza
+            or a.verifica_consegne):
+        return consegne(a)
     if a.mappa:
         from .cartella import mappa_html, mappa_testo
         registro = inv.Inventario()

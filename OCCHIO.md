@@ -208,6 +208,89 @@ muri, porte, finestre, mobili — esportabile in USDZ.
   documento *è* la pianta con gli oggetti sopra. Cioè: non è una funzione per
   te, è una funzione per un cliente.
 
+## 5-ter. Affitti brevi: lo stato controfirmato (aggiunto 03/09)
+
+L'uso vero da cui è nata l'idea: un alloggio in affitto breve, e fra un ospite
+e l'altro la domanda «c'è ancora tutto?». Cambia la natura del prodotto, e con
+essa quella del problema tecnico.
+
+### Perché qui è molto più facile che in una casa privata
+
+Inventariare una casa è difficile perché il sistema deve **scoprire** cosa c'è:
+il modello guarda uno scaffale ignoto e legge titoli mai visti. È lì che stava
+il numero UNKNOWN di §1, `letti/presenti`.
+
+Qui no. **La lista la dichiara il proprietario una volta sola**, e da quel
+momento il modello non scopre più niente: **verifica** che una cosa nota sia
+ancora al suo posto. «La macchina del caffè che era su quel ripiano c'è
+ancora» è un problema molto più piccolo di «che oggetti ci sono in questa
+stanza», e sbaglia molto meno.
+
+**Il pivot fa sparire la parte tecnicamente più difficile.** Non l'ha
+migliorata: l'ha resa non necessaria.
+
+### Dove sta il valore, che non è la lista
+
+Il valore è lo **stato**: due parti, un momento datato, e una differenza che
+nessuna delle due può riscrivere da sola. La lista è il meccanismo; il prodotto
+è *chi ha ragione quando manca la macchina del caffè*.
+
+```bash
+python -m occhio --cartella ~/alloggi/via-roma-12     # legge la casa vuota
+python -m occhio --consegna via-roma-12 --soggiorno HMX88
+python -m occhio --controfirma <impronta> --codice HMX88     # lo fa l'ospite
+# ... il soggiorno ...
+python -m occhio --riconsegna via-roma-12
+python -m occhio --differenza via-roma-12             # cosa manca
+python -m occhio --verifica-consegne --codice HMX88
+```
+
+### La cosa più importante del modulo
+
+Una catena di impronte controllata da una parte sola **non prova niente.** Se
+il proprietario può rigenerarla, dimostra solo che è coerente con sé stessa.
+
+Non è un'opinione: è la **prova 4 di H8**, che è costruita apposta per rompere
+il modulo che la contiene. Rigenera l'intera catena da capo, con un titolo
+falso, e mostra che risulta **perfettamente integra**. Se `occhio` presentasse
+l'integrità come prova, offrirebbe come garanzia il proprio riflesso — §4
+travestito da crittografia, il modo più elegante di ingannarsi che questo
+progetto abbia incontrato finora.
+
+Ciò che rende opponibile uno stato è la **controfirma dell'altra parte**, che
+ha interesse opposto. Perciò: uno stato nasce sempre non controfirmato anche
+quando il codice c'è già; la controfirma porta il proprio momento e non si può
+aggiungere a posteriori fingendo che ci fosse; e ogni stato senza controfirma
+resta contato e dichiarato, in `--verifica-consegne` e in fondo a ogni
+differenza.
+
+**UNKNOWN, e per davvero: il valore legale.** La controfirma prova che due
+parti che avevano lo stesso codice hanno dichiarato lo stesso stato. Non prova
+l'identità di nessuno. Se sia opponibile in giudizio lo dice un avvocato, non
+un file Python.
+
+### Due vincoli trovati alla fonte, che decidono il progetto
+
+**RECUPERATO (fonti in §7, lette il 03/09/2026).**
+
+1. **Airbnb vieta le telecamere interne dal 30/04/2024, in modo assoluto** —
+   anche dichiarate, visibili, spente o scollegate. Questo *non* vieta al
+   proprietario di fotografare la casa **vuota** fra un soggiorno e l'altro,
+   che è cosa diversa. Ma vieta qualunque cosa somigli a un dispositivo
+   installato che riprende l'interno. **Vincolo di progetto, non dettaglio:**
+   a mano, a casa vuota, mai fisso, e l'app dell'ospite chiede una conferma,
+   non una ripresa.
+2. **Dal 20/04/2026 Airbnb esclude dalle prove nei reclami danni le immagini
+   generate o alterate dall'IA** — comprese correzioni innocenti come la
+   luminosità fatta da un'app con IA. Conseguenza diretta sul codice: la
+   fotografia **originale non va mai toccata**. `occhio` la legge, ne calcola
+   l'impronta sha256, e **non scrive mai un'immagine da nessuna parte**; la
+   copia ridotta che va al modello vive in memoria e non tocca il disco.
+   C'è un test che fallisce se qualcuno lo cambia:
+   `test_occhio_non_scrive_mai_un_file_immagine`.
+   L'inventario prodotto dal modello **non è una prova fotografica**: è un
+   indice che punta alle fotografie originali, ed è così che va presentato.
+
 ## 6. Vale la pena usare Emergent per costruire questo?
 
 Hai chiesto due cose: se convenga usare **Emergent** e se il programma
@@ -314,6 +397,19 @@ Su RoomPlan e il LiDAR (§5-bis), letto il 03/09/2026:
 - [Introducing RoomPlan — Apple Developer](https://developer.apple.com/augmented-reality/roomplan) *(fonte del produttore)*
 - [3D Parametric Room Representation with RoomPlan — Apple Machine Learning Research](https://machinelearning.apple.com/research/roomplan) *(fonte del produttore)*
 - [iOS 16 'RoomPlan' API creates 3D floor plans using LiDAR — 9to5Mac](https://9to5mac.com/2022/06/15/ios-16-roomplan-api-3d-floor-plans/)
+
+Sui due vincoli Airbnb (§5-ter), letti il 03/09/2026:
+
+- [Restrictions on security cameras and other devices in homes — Airbnb Help Center](https://www.airbnb.com/help/article/3061) *(fonte della piattaforma)*
+- [Un aggiornamento sulla nostra politica sulle telecamere di sorveglianza — Airbnb News](https://news.airbnb.com/it/un-aggiornamento-sulla-nostra-politica-sulle-le-telecamere-di-sorveglianza) *(fonte della piattaforma)*
+- [Host Damage Protection Terms — Airbnb Help Center](https://www.airbnb.com/help/article/2869) *(fonte della piattaforma)*
+- [Airbnb 2026 Terms Update: Damage Claim Evidence Rules Explained — Rakidzich](https://www.rakidzich.com/articles/airbnb-terms-update-ai-evidence-damage-claims-2026)
+- [Airbnb Camera Rules: What Hosts Can and Can't Do in 2026 — Hostfully](https://www.hostfully.com/blog/airbnb-camera-rules/)
+
+Il divieto sulle prove alterate dall'IA (20/04/2026) l'ho letto in una fonte
+di terzi, non nei termini di Airbnb: **verificalo sui termini prima di
+costruirci sopra una promessa commerciale.** È il tipo di affermazione su cui
+un intero prodotto può poggiare, e una sola fonte non basta (P5).
 
 Per P5 una recensione non conferma un'affermazione dell'azienda che recensisce
 se non aggiunge un'esecuzione propria. Le ultime due dichiarano di averlo

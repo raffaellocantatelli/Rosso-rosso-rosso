@@ -416,3 +416,124 @@ def test_il_titolo_html_della_mappa_e_sfuggito(tmp_path):
     r = inv.Inventario(tmp_path / "i.jsonl")
     r.registra("dvd", "<script>alert(1)</script> Heat", fonte="foto")
     assert "<script>alert" not in cartella.mappa_html(r)
+
+
+# --------------------------------------------------------------------------
+# affitto breve — lo stato controfirmato
+# --------------------------------------------------------------------------
+
+from occhio import consegna as cons  # noqa: E402
+
+CODICE = "HMX88-2026"
+TRE = [
+    {"chiave": "elettronica:nespresso", "titolo": "Nespresso Vertuo",
+     "luogo": {"stanza": "cucina"}, "foto_sha": "a" * 64},
+    {"chiave": "elettronica:tv", "titolo": "LG OLED 55",
+     "luogo": {"stanza": "salotto"}, "foto_sha": "b" * 64},
+    {"chiave": "dvd:heat", "titolo": "Heat",
+     "luogo": {"stanza": "salotto"}, "foto_sha": "c" * 64},
+]
+
+
+def test_la_differenza_trova_cio_che_manca(tmp_path):
+    c = cons.Consegne(tmp_path / "c.jsonl")
+    a = c.deposita("casa", "consegna", TRE)
+    b = c.deposita("casa", "riconsegna", TRE[1:])
+    d = cons.differenza(a, b)
+    assert [o["titolo"] for o in d["mancanti"]] == ["Nespresso Vertuo"]
+    assert d["invariati"] == 2
+
+
+def test_la_differenza_vede_uno_spostamento(tmp_path):
+    c = cons.Consegne(tmp_path / "c.jsonl")
+    a = c.deposita("casa", "consegna", TRE)
+    b = c.deposita("casa", "riconsegna",
+                   [dict(TRE[0], luogo={"stanza": "salotto"})] + TRE[1:])
+    d = cons.differenza(a, b)
+    assert not d["mancanti"] and len(d["spostati"]) == 1
+
+
+def test_uno_stato_nasce_sempre_non_controfirmato(tmp_path):
+    """Anche quando il codice c'è già: la controfirma è un atto separato,
+    con un momento suo."""
+    c = cons.Consegne(tmp_path / "c.jsonl")
+    s = c.deposita("casa", "consegna", TRE)
+    assert s["controfirma"] is None
+    assert c.verifica(CODICE)["controfirme"] == 0
+
+
+def test_la_controfirma_porta_il_proprio_momento(tmp_path):
+    """Non si può aggiungere a posteriori fingendo che ci fosse dall'inizio."""
+    c = cons.Consegne(tmp_path / "c.jsonl")
+    s = c.deposita("casa", "consegna", TRE)
+    v = c.controfirma(s["impronta"], CODICE)
+    assert v["momento"] and v["riferimento"] == s["impronta"]
+    assert c.verifica(CODICE)["controfirme"] == 1
+
+
+def test_una_riga_riscritta_rompe_la_verifica(tmp_path):
+    p = tmp_path / "c.jsonl"
+    c = cons.Consegne(p)
+    c.deposita("casa", "consegna", TRE)
+    righe = p.read_text(encoding="utf-8").splitlines()
+    v = json.loads(righe[0])
+    v["oggetti"][0]["titolo"] = "Caffettiera da tre euro"
+    p.write_text(json.dumps(v, ensure_ascii=False) + "\n", encoding="utf-8")
+    assert cons.Consegne(p).verifica()["catena_integra"] is False
+
+
+def test_una_firma_con_il_codice_sbagliato_si_vede(tmp_path):
+    c = cons.Consegne(tmp_path / "c.jsonl")
+    s = c.deposita("casa", "consegna", TRE)
+    c.controfirma(s["impronta"], "codice-di-un-altro")
+    assert c.verifica(CODICE)["firme_non_valide"]
+
+
+def test_una_catena_rifatta_da_capo_risulta_integra_e_va_detto(tmp_path):
+    """LA PROVA CHE CONTA, e che rompe il modulo che la contiene.
+
+    Una catena rigenerata dal solo proprietario è perfettamente coerente con
+    sé stessa — quindi «integra» non è una prova. Se il sistema presentasse
+    l'integrità come prova, offrirebbe come garanzia il proprio riflesso: §4
+    travestito da crittografia. Ciò che salva è che gli stati senza
+    controfirma restino contati e dichiarati.
+    """
+    c = cons.Consegne(tmp_path / "rifatta.jsonl")
+    c.deposita("casa", "consegna", [dict(TRE[0], titolo="Caffettiera da 3 euro")])
+    c.deposita("casa", "riconsegna", [])
+    v = c.verifica(CODICE)
+    assert v["catena_integra"] is True          # lo è davvero
+    assert v["controfirme"] == 0                # e non prova niente
+    assert len(v["senza_controfirma"]) == 2     # il sistema lo dice da sé
+    d = cons.differenza(c.stati[0], c.stati[1])
+    assert not d["prima_controfirmata"] and not d["dopo_controfirmata"]
+    assert "non e' controfirmato" in cons.stampa_differenza(d)
+
+
+def test_la_controfirma_non_si_attacca_a_uno_stato_inesistente(tmp_path):
+    c = cons.Consegne(tmp_path / "c.jsonl")
+    with pytest.raises(ValueError):
+        c.controfirma("f" * 64, CODICE)
+
+
+def test_tipo_di_stato_sconosciuto_rifiutato(tmp_path):
+    c = cons.Consegne(tmp_path / "c.jsonl")
+    with pytest.raises(ValueError):
+        c.deposita("casa", "sequestro", TRE)
+
+
+def test_occhio_non_scrive_mai_un_file_immagine():
+    """Airbnb esclude dalle prove le immagini generate o alterate dall'IA
+    (dal 20/04/2026, fonti in OCCHIO.md §7). Quindi la fotografia ORIGINALE
+    non va mai toccata: `occhio` la legge, ne calcola l'impronta, e non
+    scrive mai un'immagine da nessuna parte. La copia ridotta che va al
+    modello vive in memoria e non tocca il disco.
+    """
+    import inspect
+    from occhio import cartella, luogo, server, visione
+    for modulo in (cartella, luogo, server, visione):
+        sorgente = inspect.getsource(modulo)
+        # solo scritture vere: l'elenco delle estensioni ammesse non conta.
+        for sospetto in ("write_bytes", '"wb"', "'wb'", "PIL", "ImageDraw"):
+            assert sospetto not in sorgente, (
+                f"{modulo.__name__} sembra scrivere immagini: {sospetto}")
