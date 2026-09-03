@@ -153,5 +153,25 @@
       "ultima": null,
       "ultimo_esito": null
     }
+  },
+  {
+    "id": "H9",
+    "testo": "PORTAVIA converte una sparizione in una vendita senza mai far incassare al proprietario meno del minimo che ha dichiarato. Idea di Claudio Terzi, 3 settembre 2026.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se: un oggetto venduto compare ancora fra i mancanti non spiegati; o un oggetto non venduto viene classificato come comprato; o esiste una sola offerta accettabile che lasci il proprietario sotto il minimo dichiarato; o un oggetto escluso dalla vendita viene venduto a qualunque prezzo; o un immagine generata puo entrare nella catena delle prove.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h9_portavia.py"
+      ],
+      "descrizione": "cinque prove, fra cui una a forza bruta su tutte le offerte possibili per ogni oggetto a listino"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
   }
 ]

@@ -146,6 +146,78 @@ def leggi_cartella(percorso, cascata, scrivi, soglia, limite) -> int:
     return 0
 
 
+def _regole(a):
+    """Le regole del proprietario. Senza file, nulla e' in vendita."""
+    from .portavia import Regole
+    if not a.prezzi:
+        return Regole()
+    d = json.loads(Path(a.prezzi).read_text(encoding="utf-8"))
+    return Regole(prezzo_minimo=d.get("prezzo_minimo", {}),
+                  sconto_massimo=d.get("sconto_massimo", 0.15),
+                  commissione=d.get("commissione", 0.12),
+                  margine=d.get("margine", 0.25),
+                  mai=tuple(d.get("mai", ())),
+                  valuta=d.get("valuta", "EUR"))
+
+
+def portavia(a) -> int:
+    """PORTAVIA — idea di Claudio Terzi, 3 settembre 2026."""
+    from .portavia import ACCETTA, Portavia, parole_del_mediatore, valuta_offerta
+    regole = _regole(a)
+    pv = Portavia(regole=regole)
+    registro = inv.Inventario()
+    per_chiave = {v["chiave"]: v for v in registro.voci}
+
+    if a.vetrina:
+        in_vendita = [(k, v) for k, v in per_chiave.items()
+                      if regole.vendibile(k, v.get("titolo", ""))[0]]
+        if not in_vendita:
+            print("Niente in vendita. Le regole si danno con --prezzi FILE.json:")
+            print('  {"prezzo_minimo": {"dvd:heat": 8.0}, "commissione": 0.12}')
+            print("Il minimo e' quello che incassi TU, netto.")
+            return 0
+        print(f"VETRINA — {len(in_vendita)} oggetti, prezzi in {regole.valuta}\n")
+        print(f"  {'oggetto':<38} {'vedi':>8} {'minimo':>8} {'incassi':>8}")
+        print("  " + "-" * 66)
+        for k, v in sorted(in_vendita, key=lambda x: x[1].get("titolo", "")):
+            e = regole.esposto(k)
+            print(f"  {v.get('titolo','')[:36]:<38} {e:>8.2f}"
+                  f" {regole.limite(k):>8.2f} {regole.incasso_proprietario(e):>8.2f}")
+        print(f"\n  «vedi» e' il prezzo esposto all'ospite, «minimo» la piu' bassa")
+        print(f"  offerta accettabile. La commissione ({regole.commissione:.0%}) e' una")
+        print("  sola e va dichiarata a entrambe le parti.")
+        return 0
+
+    chiave, prezzo = (a.offerta or a.vendi)
+    titolo = per_chiave.get(chiave, {}).get("titolo", chiave)
+    try:
+        prezzo = float(prezzo)
+    except ValueError:
+        print("il prezzo dev'essere un numero", file=sys.stderr)
+        return 1
+
+    if a.offerta:
+        d = valuta_offerta(chiave, titolo, prezzo, regole)
+        print(parole_del_mediatore(d, titolo, regole))
+        if d["esito"] == ACCETTA:
+            print(f"\n  incasseresti {regole.incasso_proprietario(d['prezzo']):.2f} "
+                  f"{regole.valuta}. Per chiudere:")
+            print(f"    python -m occhio --vendi {chiave} {d['prezzo']}"
+                  + (f" --prezzi {a.prezzi}" if a.prezzi else ""))
+        return 0
+
+    d = valuta_offerta(chiave, titolo, prezzo, regole)
+    if d["esito"] != ACCETTA:
+        print(f"non si puo' vendere a questo prezzo: "
+              f"{d.get('motivo') or 'sotto il limite'}", file=sys.stderr)
+        return 1
+    v = pv.vendita(chiave, titolo, prezzo, soggiorno=a.soggiorno)
+    print(f"venduto «{titolo}» a {v['prezzo']:.2f} {v['valuta']}")
+    print(f"  commissione {v['commissione']:.2f} — a te {v['al_proprietario']:.2f}")
+    print("\n  Da adesso non risultera' piu' sparito: risultera' comprato.")
+    return 0
+
+
 def consegne(a) -> int:
     """Lo stato controfirmato di un alloggio: consegna, riconsegna, differenza."""
     from .consegna import Consegne, differenza, stampa_differenza
@@ -190,7 +262,26 @@ def consegne(a) -> int:
                   f"trovate {'consegna' if prima else '—'} / "
                   f"{'riconsegna' if dopo else '—'}", file=sys.stderr)
             return 1
-        print(stampa_differenza(differenza(prima, dopo)))
+        d = differenza(prima, dopo)
+        print(stampa_differenza(d))
+        # PORTAVIA: cio' che e' stato comprato non e' sparito. E' il punto.
+        from .portavia import Portavia, spiega_mancanti
+        pv = Portavia(regole=_regole(a))
+        if pv.movimenti:
+            s = spiega_mancanti(d, pv, a.soggiorno or None)
+            print("\n— PORTAVIA —")
+            if s["comprati"]:
+                print(f"COMPRATI ({len(s['comprati'])}), non spariti:")
+                for o in s["comprati"]:
+                    print(f"    {o['titolo']}  →  {o['vendita']['prezzo']:.2f} "
+                          f"{o['vendita']['valuta']}")
+            if s["non_spiegati"]:
+                print(f"\nRESTANO NON SPIEGATI ({len(s['non_spiegati'])}):")
+                for o in s["non_spiegati"]:
+                    print(f"    {o['titolo']}")
+            i = s["incasso"]
+            print(f"\nincasso del soggiorno: {i['lordo']:.2f} lordi, "
+                  f"{i['al_proprietario']:.2f} a te")
         return 0
 
     alloggio = a.consegna or a.riconsegna
@@ -242,6 +333,15 @@ def main(argv=None) -> int:
                    help="cosa manca fra l ultima consegna e l ultima riconsegna")
     g.add_argument("--verifica-consegne", action="store_true",
                    help="ricalcola la catena e dice cosa non e controfirmato")
+    v = ap.add_argument_group("PORTAVIA — quello che ti piace, portalo via")
+    v.add_argument("--prezzi", metavar="FILE.json",
+                   help="regole del proprietario: minimi, sconto massimo, commissione")
+    v.add_argument("--vetrina", action="store_true",
+                   help="cosa e in vendita e a che prezzo lo vede l ospite")
+    v.add_argument("--offerta", nargs=2, metavar=("CHIAVE", "PREZZO"),
+                   help="l ospite offre: il Mediatore risponde secondo le regole")
+    v.add_argument("--vendi", nargs=2, metavar=("CHIAVE", "PREZZO"),
+                   help="registra una vendita conclusa")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
     ap.add_argument("--esporta", metavar="FILE.csv", help="esporta il registro in CSV")
     ap.add_argument("--costo", action="store_true",
@@ -275,6 +375,8 @@ def main(argv=None) -> int:
         Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
         print(f"scritto {a.esporta}")
         return 0
+    if a.vetrina or a.offerta or a.vendi:
+        return portavia(a)
     if (a.consegna or a.riconsegna or a.controfirma or a.differenza
             or a.verifica_consegne):
         return consegne(a)

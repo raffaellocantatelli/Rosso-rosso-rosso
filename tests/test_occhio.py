@@ -663,3 +663,135 @@ def test_la_pianta_entra_nella_mappa(tmp_path):
     assert "<svg" in pagina and "zona verificata" in pagina
     # e senza pianta la mappa resta valida
     assert "<svg" not in cartella.mappa_html(r)
+
+
+# --------------------------------------------------------------------------
+# PORTAVIA — idea di Claudio Terzi, 3 settembre 2026
+# --------------------------------------------------------------------------
+
+import pathlib  # noqa: E402
+import tempfile  # noqa: E402
+
+from occhio import portavia as pv  # noqa: E402
+
+MINIMI = {"dvd:heat": 8.0, "altro:barolo": 35.0, "elettronica:sonos": 260.0}
+
+
+def regole(**kw):
+    base = dict(prezzo_minimo=MINIMI, sconto_massimo=0.15,
+                commissione=0.12, margine=0.25)
+    base.update(kw)
+    return pv.Regole(**base)
+
+
+@pytest.mark.parametrize("chiave", list(MINIMI))
+def test_il_proprietario_non_incassa_mai_meno_del_suo_minimo(chiave):
+    """È caduta davvero, la prima volta: lo sconto mangiava il minimo.
+    Da qui la prova a forza bruta invece di tre casi scelti."""
+    r = regole()
+    minimo = MINIMI[chiave]
+    offerta = 0.01
+    while offerta <= minimo * 3:
+        d = pv.valuta_offerta(chiave, "x", offerta, r)
+        if d["esito"] == pv.ACCETTA:
+            assert r.incasso_proprietario(d["prezzo"]) >= minimo - 0.01, (
+                f"accettata {offerta} su minimo {minimo}")
+        offerta = round(offerta + max(0.01, minimo / 200), 2)
+
+
+def test_esposto_maggiore_di_limite_maggiore_di_soglia():
+    r = regole()
+    assert r.esposto("dvd:heat") > r.limite("dvd:heat") >= r.soglia("dvd:heat")
+
+
+def test_senza_margine_non_c_e_trattativa():
+    r = regole(margine=0.0)
+    assert r.limite("dvd:heat") == r.soglia("dvd:heat") == r.esposto("dvd:heat")
+
+
+def test_cio_che_non_si_vende_non_si_vende_a_nessun_prezzo():
+    r = regole()
+    for parola in pv.MAI_IN_VENDITA:
+        d = pv.valuta_offerta(f"elettronica:{parola}", parola, 1_000_000.0, r)
+        assert d["esito"] == pv.RIFIUTA
+
+
+def test_un_oggetto_senza_prezzo_dichiarato_non_e_in_vendita():
+    """Il default è il più protettivo: nulla è in vendita finché non lo dici."""
+    assert pv.valuta_offerta("dvd:solaris", "Solaris", 500.0,
+                             regole())["esito"] == pv.RIFIUTA
+    assert pv.Regole().vendibile("dvd:heat", "Heat")[0] is False
+
+
+def test_il_proprietario_puo_escludere_altro():
+    r = regole(mai=("poltrona",))
+    assert pv.valuta_offerta("altro:poltrona verde", "Poltrona verde", 999.0,
+                             r)["esito"] == pv.RIFIUTA
+
+
+def test_offerta_non_valida():
+    for brutta in (0, -5):
+        assert pv.valuta_offerta("dvd:heat", "Heat", brutta,
+                                 regole())["esito"] == pv.RIFIUTA
+
+
+def test_regole_incoerenti_rifiutate():
+    for kw in ({"sconto_massimo": 1.5}, {"commissione": 1.0}, {"margine": -0.1}):
+        with pytest.raises(ValueError):
+            regole(**kw)
+
+
+def test_le_parole_del_mediatore_non_decidono_niente():
+    """Il modello parla, le regole decidono: la frase è derivata dalla
+    decisione, e nessun modello partecipa a `valuta_offerta`."""
+    import inspect
+    sorgente = inspect.getsource(pv.valuta_offerta)
+    for sospetto in ("visione", "Router", "requests", "generate", "leggi("):
+        assert sospetto not in sorgente
+    r = regole()
+    d = pv.valuta_offerta("dvd:heat", "Heat", 5.0, r)
+    assert "8" in pv.parole_del_mediatore(d, "Heat", r) or "9" in pv.parole_del_mediatore(d, "Heat", r)
+
+
+def test_cio_che_e_stato_comprato_non_e_sparito(tmp_path):
+    """Il cuore dell'idea: la lista smette di dire «mancano tre oggetti»
+    e dice «due li ha comprati, uno no»."""
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole())
+    p.vendita("dvd:heat", "Heat", 11.38, soggiorno="S1")
+    d = {"mancanti": [{"chiave": "dvd:heat", "titolo": "Heat"},
+                      {"chiave": "altro:asciugamani", "titolo": "Asciugamani"}]}
+    s = pv.spiega_mancanti(d, p, "S1")
+    assert [o["titolo"] for o in s["comprati"]] == ["Heat"]
+    assert [o["titolo"] for o in s["non_spiegati"]] == ["Asciugamani"]
+    assert s["comprati"][0]["vendita"]["prezzo"] == 11.38
+
+
+def test_una_vendita_di_un_altro_soggiorno_non_spiega_questo(tmp_path):
+    """Altrimenti basterebbe una vendita vecchia per giustificare ogni
+    sparizione futura: sarebbe l'eco di §4 con una fattura in mano."""
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole())
+    p.vendita("dvd:heat", "Heat", 11.38, soggiorno="S1")
+    d = {"mancanti": [{"chiave": "dvd:heat", "titolo": "Heat"}]}
+    s = pv.spiega_mancanti(d, p, "S2")
+    assert s["comprati"] == [] and len(s["non_spiegati"]) == 1
+
+
+def test_la_commissione_e_una_sola_e_torna(tmp_path):
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole(commissione=0.12))
+    v = p.vendita("dvd:heat", "Heat", 100.0)
+    assert v["commissione"] == 12.0 and v["al_proprietario"] == 88.0
+    assert p.incasso()["lordo"] == 100.0
+
+
+def test_un_immagine_generata_non_e_mai_una_prova():
+    """La VETRINA può generare l'immagine bella. La fotografia che dimostra
+    che l'oggetto c'era, no: è esclusa dalle prove nei reclami danni."""
+    assert pv.immagine_generata_ammessa_come_prova() is False
+    # La catena delle consegne non ha nessun punto d'ingresso per un'immagine:
+    # di ogni oggetto conserva quattro campi, e uno solo riguarda la
+    # fotografia — la sua IMPRONTA, non i suoi byte. Non c'è posto dove
+    # infilare un'immagine generata, ed è la garanzia per costruzione.
+    c = cons.Consegne(pathlib.Path(tempfile.mkdtemp()) / "c.jsonl")
+    s = c.deposita("casa", "consegna", TRE)
+    assert set(s["oggetti"][0]) == {"chiave", "titolo", "luogo", "foto_sha"}
+    assert len(s["oggetti"][0]["foto_sha"]) == 64  # è un'impronta, non un file
