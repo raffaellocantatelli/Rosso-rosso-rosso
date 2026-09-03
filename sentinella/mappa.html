@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentinella</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --fondo:#05090c; --mare:#070f15; --terra:#0f1c25; --confine:#1e3442; --reticolo:#102029;
+    --pannello:#0a141b; --linea:#1b2c38; --linea2:#132430;
+    --testo:#d7e2ec; --tenue:#7f93a6; --fioco:#54697a;
+    --menta:#7cffc4; --rossa:#ff5d5d; --ambra:#ffb347; --blu:#6cb6ff; --viola:#b69cff;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --cond:"IBM Plex Sans Condensed","Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; background:var(--fondo); color:var(--testo);
+    font-family:var(--cond); -webkit-font-smoothing:antialiased; overflow:hidden;}
+  button{font:inherit; color:inherit;}
+  ::selection{background:var(--menta); color:#05090c;}
+
+  .app{display:grid; grid-template-columns:1fr minmax(320px,380px); grid-template-rows:auto 1fr;
+       height:100vh; min-height:540px;}
+  @media (max-width:880px){
+    html,body{overflow:auto;}
+    .app{grid-template-columns:1fr; grid-template-rows:auto 58vh auto; height:auto;}
+  }
+
+  /* ── barra ───────────────────────────────────────────────── */
+  .barra{grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:14px 22px;
+         padding:11px 18px; border-bottom:1px solid var(--linea); background:var(--pannello);}
+  .logo{display:flex; align-items:center; gap:10px; margin-right:auto;}
+  .logo .occhio{width:26px; height:26px; flex:none;}
+  .logo strong{font-size:14.5px; letter-spacing:.13em; display:block; line-height:1.15;}
+  .logo small{font-size:10px; color:var(--tenue); letter-spacing:.05em;}
+  .sorgenti{display:flex; flex-wrap:wrap; gap:3px 16px; font-family:var(--mono); font-size:10.5px; color:var(--fioco);}
+  .sorgenti div{display:flex; gap:6px; align-items:baseline;}
+  .sorgenti .v{color:var(--testo); font-variant-numeric:tabular-nums;}
+  .sorgenti .x{color:var(--tenue); font-style:italic;}
+  .sorgenti .tetto{font-style:normal; font-size:8px; letter-spacing:.1em; color:var(--ambra);
+    border:1px solid var(--ambra); border-radius:3px; padding:0 3px; margin-left:4px;}
+  .azioni{display:flex; gap:8px; align-items:center;}
+  .bottone{all:unset; cursor:pointer; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; padding:5px 11px; border:1px solid var(--linea); border-radius:5px; color:var(--tenue);}
+  .bottone:hover{border-color:var(--tenue); color:var(--testo);}
+  .bottone:focus-visible{outline:2px solid var(--menta); outline-offset:2px;}
+  .bottone[aria-pressed="true"]{background:var(--menta); border-color:var(--menta); color:#05090c;}
+
+  /* ── mappa ───────────────────────────────────────────────── */
+  .scena{position:relative; overflow:hidden; background:var(--mare); min-height:320px;}
+  #tela{display:block; width:100%; height:100%; cursor:grab;}
+  #tela.trascina{cursor:grabbing;}
+  .legenda{position:absolute; left:14px; bottom:14px; display:flex; flex-wrap:wrap; gap:6px 16px;
+    background:#060d12e0; border:1px solid var(--linea); border-radius:7px; padding:9px 12px;
+    font-family:var(--mono); font-size:10px; color:var(--tenue); backdrop-filter:blur(6px); max-width:calc(100% - 28px);}
+  .legenda span{display:flex; align-items:center; gap:6px;}
+  .legenda i{width:8px; height:8px; border-radius:50%; display:block;}
+  .zoom{position:absolute; right:14px; bottom:14px; display:flex; flex-direction:column; gap:5px;}
+  .zoom button{all:unset; cursor:pointer; width:30px; height:30px; display:grid; place-items:center;
+    background:#060d12e0; border:1px solid var(--linea); border-radius:6px; color:var(--tenue); font-size:15px;}
+  .zoom button:hover{color:var(--testo); border-color:var(--tenue);}
+  .zoom button:focus-visible{outline:2px solid var(--menta); outline-offset:2px;}
+  .orologio{position:absolute; left:14px; top:14px; font-family:var(--mono); font-size:10px;
+    color:var(--fioco); background:#060d12cc; border:1px solid var(--linea); border-radius:6px; padding:5px 9px;}
+  .fumetto{position:absolute; pointer-events:none; z-index:6; max-width:250px; padding:8px 10px;
+    background:#040a0ef2; border:1px solid var(--linea); border-radius:7px; font-size:12px; line-height:1.4;
+    color:var(--testo); box-shadow:0 6px 22px #0009; opacity:0; transition:opacity .12s;}
+  .fumetto b{display:block; font-size:13px; margin-bottom:2px;}
+  .fumetto small{color:var(--tenue); font-family:var(--mono); font-size:10.5px;}
+
+  /* ── colonna delle segnalazioni ──────────────────────────── */
+  .rail{display:flex; flex-direction:column; border-left:1px solid var(--linea);
+        background:var(--pannello); min-height:0;}
+  @media (max-width:880px){ .rail{border-left:0; border-top:1px solid var(--linea);} }
+  .sintesi{padding:14px 16px; border-bottom:1px solid var(--linea); display:flex; gap:13px; align-items:flex-start;}
+  .faro{width:11px; height:11px; border-radius:50%; margin-top:5px; flex:none;}
+  .sintesi h1{margin:0; font-size:16px; font-weight:600; letter-spacing:.01em;}
+  .sintesi p{margin:3px 0 0; font-size:12px; color:var(--tenue); line-height:1.45;}
+  .filtri{display:flex; flex-wrap:wrap; gap:5px; padding:11px 16px; border-bottom:1px solid var(--linea);}
+  .filtri button{all:unset; cursor:pointer; font-family:var(--mono); font-size:10px; letter-spacing:.05em;
+    padding:3px 9px; border:1px solid var(--linea); border-radius:99px; color:var(--fioco);}
+  .filtri button[aria-pressed="true"]{color:#05090c; background:var(--tenue); border-color:var(--tenue);}
+  .filtri button:focus-visible{outline:2px solid var(--menta); outline-offset:2px;}
+  .elenco{overflow-y:auto; flex:1; min-height:0;}
+  @media (max-width:880px){ .elenco{max-height:none; overflow:visible;} }
+  .voce{all:unset; display:block; width:100%; cursor:pointer; padding:12px 16px;
+    border-bottom:1px solid var(--linea2); border-left:2px solid transparent;}
+  .voce:hover{background:#ffffff06;}
+  .voce[aria-expanded="true"]{background:#ffffff09;}
+  .voce:focus-visible{outline:2px solid var(--menta); outline-offset:-2px;}
+  .voce .capo{display:flex; gap:10px; align-items:baseline;}
+  .voce .punti{font-family:var(--mono); font-size:11px; font-variant-numeric:tabular-nums; min-width:22px;}
+  .voce .tit{font-size:13.5px; line-height:1.35; flex:1;}
+  .voce .meta{display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:5px; padding-left:32px;
+    font-family:var(--mono); font-size:10px; color:var(--fioco);}
+  .voce .quando{color:var(--tenue);}
+  .dettaglio{padding:2px 16px 14px 48px; font-size:12.5px; line-height:1.5; color:var(--tenue);
+    border-bottom:1px solid var(--linea2); background:#ffffff05;}
+  .dettaglio h4{margin:12px 0 5px; font-family:var(--mono); font-size:9.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--fioco); font-weight:400;}
+  .dettaglio ul{margin:0; padding-left:16px;}
+  .dettaglio li{margin-bottom:3px;}
+  .dettaglio .fonte a{color:var(--menta); word-break:break-word;}
+  .dettaglio .smentita{border-left:2px solid var(--linea); padding-left:10px; color:var(--fioco); font-style:italic;}
+  .vuoto{padding:26px 16px; color:var(--fioco); font-size:12.5px; text-align:center;}
+  .piede{padding:11px 16px; border-top:1px solid var(--linea); font-size:11px; line-height:1.5;
+    color:var(--fioco);}
+  .piede b{color:var(--tenue); font-weight:600;}
+
+  /* ── avviso istantanea ───────────────────────────────────── */
+  .congelata{grid-column:1/-1; display:flex; flex-wrap:wrap; gap:6px 14px; align-items:baseline;
+    padding:8px 18px; background:#1a1206; border-bottom:1px solid #3a2a10; color:#ffcf8f;
+    font-size:12px; line-height:1.45;}
+  .congelata b{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ambra);}
+  .congelata code{font-family:var(--mono); font-size:11.5px; background:#00000055; padding:1px 5px; border-radius:3px; color:#ffe3bb;}
+
+  /* ── pannello delle regole ───────────────────────────────── */
+  .velo{position:fixed; inset:0; background:#020608d0; z-index:20; display:none;
+    align-items:center; justify-content:center; padding:22px;}
+  .velo[data-aperto="1"]{display:flex;}
+  .regole{background:var(--pannello); border:1px solid var(--linea); border-radius:10px;
+    max-width:760px; width:100%; max-height:86vh; overflow-y:auto; padding:24px 26px;}
+  .regole h2{margin:0 0 4px; font-size:21px; font-weight:600;}
+  .regole > p{margin:0 0 18px; font-size:13.5px; line-height:1.55; color:var(--tenue); max-width:62ch;}
+  .regole section{border-top:1px solid var(--linea2); padding:14px 0;}
+  .regole h3{margin:0 0 7px; font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px;}
+  .regole h3 i{width:8px; height:8px; border-radius:50%; display:block;}
+  .regole pre{margin:7px 0 0; font-family:var(--mono); font-size:11.5px; line-height:1.7;
+    color:var(--tenue); background:#04090d; border-left:2px solid var(--linea); padding:10px 12px;
+    overflow-x:auto; white-space:pre-wrap;}
+  .regole .chiudi{float:right; margin:-6px -6px 0 12px;}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important;} }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="barra">
+    <div class="logo">
+      <svg class="occhio" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="none" stroke="#1e3442" stroke-width="1.4"></circle>
+        <circle cx="16" cy="16" r="9" fill="none" stroke="#7cffc4" stroke-width="1.2" opacity=".85"></circle>
+        <circle cx="16" cy="16" r="3.1" fill="#7cffc4"></circle>
+        <path d="M16 2v5M16 25v5M2 16h5M25 16h5" stroke="#7cffc4" stroke-width="1.2" opacity=".55"></path>
+      </svg>
+      <div><strong>SENTINELLA</strong><small>dal suolo al cielo, fonti pubbliche</small></div>
+    </div>
+    <div class="sorgenti" id="sorgenti"></div>
+    <div class="azioni">
+      <button class="bottone" id="btn-regole" type="button">come riconosce</button>
+      <button class="bottone" id="btn-aggiorna" type="button">aggiorna</button>
+    </div>
+  </div>
+
+  <div class="congelata" id="congelata" hidden></div>
+
+  <div class="scena" id="scena">
+    <canvas id="tela"></canvas>
+    <div class="orologio" id="orologio"></div>
+    <div class="legenda">
+      <span><i style="background:#ff5d5d"></i>sisma M≥5</span>
+      <span><i style="background:#ffb347"></i>sisma M2.5–5</span>
+      <span><i style="background:#b69cff"></i>bolide</span>
+      <span><i style="background:#7cffc4;opacity:.5"></i>ovale aurorale</span>
+      <span>zona in ombra: notte all'ora del dato</span>
+    </div>
+    <div class="zoom">
+      <button type="button" id="piu" aria-label="ingrandisci">+</button>
+      <button type="button" id="meno" aria-label="rimpicciolisci">−</button>
+      <button type="button" id="tutto" aria-label="tutto il mondo" style="font-size:11px">⤢</button>
+    </div>
+    <div class="fumetto" id="fumetto" role="status"></div>
+  </div>
+
+  <aside class="rail">
+    <div class="sintesi">
+      <span class="faro" id="faro"></span>
+      <div>
+        <h1 id="titolo-sintesi">lettura in corso…</h1>
+        <p id="sotto-sintesi">Interrogo USGS, NASA/JPL e NOAA.</p>
+      </div>
+    </div>
+    <div class="filtri" id="filtri"></div>
+    <div class="elenco" id="elenco"></div>
+    <div class="piede">
+      <b>Non è una previsione.</b> Sentinella ordina ciò che le agenzie hanno già
+      pubblicato, dichiara la regola che ha fatto scattare ogni segnalazione e la
+      condizione che la smentirebbe. Per decidere davvero, si va alla fonte.
+    </div>
+  </aside>
+</div>
+
+<div class="velo" id="velo" data-aperto="0">
+  <div class="regole" role="dialog" aria-modal="true" aria-label="Come riconosce">
+    <button class="bottone chiudi" id="chiudi-regole" type="button">chiudi</button>
+    <h2>Come riconosce</h2>
+    <p>Nessuna di queste soglie è una legge di natura: sono scelte, scritte in chiaro
+       perché chi le trova sbagliate possa cambiarle. Il codice che le applica è
+       <code>sentinella/riconoscitore.py</code>, e ogni riga qui sotto ha un test che la difende.</p>
+    <div id="testo-regole"></div>
+  </div>
+</div>
+
+<script>
+/* Innesto: sostituito in fase di build per la versione congelata.
+   In modalità "vivo" la pagina interroga il server locale. */
+var INNESTO = { modo: "vivo" };
+</script>
+<script>
+(function(){
+  "use strict";
+
+  var LIVELLI = { allerta:"#ff5d5d", attenzione:"#ffb347", informativo:"#6cb6ff" };
+  var TIPI = {
+    passaggio:      { nome:"passaggi ravvicinati", colore:"#6cb6ff" },
+    bolide:         { nome:"bolidi",               colore:"#b69cff" },
+    meteo_spaziale: { nome:"meteo spaziale",       colore:"#ffb347" },
+    geomagnetismo:  { nome:"geomagnetismo",        colore:"#7cffc4" },
+    sisma:          { nome:"sismi",                colore:"#ff5d5d" }
+  };
+
+  var tela = document.getElementById("tela"), ctx = tela.getContext("2d");
+  var scena = document.getElementById("scena"), fumetto = document.getElementById("fumetto");
+  var mondo = null, quadro = null, filtro = null, aperta = null, segnati = [];
+  var vista = { lon:0, lat:12, gradiPerPixel:0 }, dpr = 1;
+
+  /* ── proiezione equirettangolare ─────────────────────────── */
+  function dimensiona(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var r = scena.getBoundingClientRect();
+    tela.width = Math.max(1, Math.round(r.width * dpr));
+    tela.height = Math.max(1, Math.round(r.height * dpr));
+    if (!vista.gradiPerPixel) inquadraTutto();
+    disegna();
+  }
+  function larghezza(){ return tela.width / dpr; }
+  function altezza(){ return tela.height / dpr; }
+  function inquadraTutto(){
+    vista.lon = 0; vista.lat = 12;
+    vista.gradiPerPixel = Math.max(360 / larghezza(), 170 / altezza());
+    vincola();
+  }
+  function vincola(){
+    var mezzaLat = altezza() * vista.gradiPerPixel / 2;
+    if (mezzaLat >= 85) vista.lat = 0;
+    else vista.lat = Math.max(-85 + mezzaLat, Math.min(85 - mezzaLat, vista.lat));
+    var mezzaLon = larghezza() * vista.gradiPerPixel / 2;
+    if (mezzaLon >= 180) vista.lon = 0;
+    else vista.lon = Math.max(-180 + mezzaLon, Math.min(180 - mezzaLon, vista.lon));
+  }
+  function px(lon, lat){
+    return [ larghezza()/2 + (lon - vista.lon) / vista.gradiPerPixel,
+             altezza()/2  - (lat - vista.lat) / vista.gradiPerPixel ];
+  }
+  function geo(x, y){
+    return [ vista.lon + (x - larghezza()/2) * vista.gradiPerPixel,
+             vista.lat - (y - altezza()/2) * vista.gradiPerPixel ];
+  }
+
+  /* ── posizione del Sole: il terminatore è calcolato, non decorativo ── */
+  function sottosolare(quando){
+    var d = (quando - Date.UTC(2000,0,1,12)) / 86400000;
+    var g = (357.529 + 0.98560028 * d) * Math.PI/180;
+    var q = 280.459 + 0.98564736 * d;
+    var L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2*g)) * Math.PI/180;
+    var e = (23.439 - 0.00000036 * d) * Math.PI/180;
+    var decl = Math.asin(Math.sin(e) * Math.sin(L));
+    var ar = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)) * 180/Math.PI;
+    var eot = ((q % 360) - ar + 540) % 360 - 180;          // equazione del tempo, in gradi
+    var ore = ((quando % 86400000) + 86400000) % 86400000 / 3600000;
+    var lon = ((180 - ore * 15 - eot) + 540) % 360 - 180;
+    return { lat: decl * 180/Math.PI, lon: lon };
+  }
+
+  function disegnaNotte(quando){
+    var s = sottosolare(quando), decl = s.lat * Math.PI/180;
+    if (Math.abs(decl) < 0.0005) decl = 0.0005;
+    ctx.save(); ctx.beginPath();
+    var passo = 2, primo = true;
+    for (var lon = -180; lon <= 180; lon += passo){
+      var H = (lon - s.lon) * Math.PI/180;
+      var lat = Math.atan(-Math.cos(H) / Math.tan(decl)) * 180/Math.PI;
+      var p = px(lon, lat);
+      if (primo){ ctx.moveTo(p[0], p[1]); primo = false; } else ctx.lineTo(p[0], p[1]);
+    }
+    // Si chiude verso il polo che in questo momento è al buio.
+    var poloBuio = decl > 0 ? -90 : 90;
+    var a = px(180, poloBuio), b = px(-180, poloBuio);
+    ctx.lineTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.closePath();
+    ctx.fillStyle = "rgba(0,6,12,0.46)"; ctx.fill();
+    ctx.strokeStyle = "rgba(255,200,120,0.16)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.restore();
+  }
+
+  function disegnaAurora(confine){
+    if (confine == null || confine >= 82) return;
+    ctx.save();
+    [[confine, 90], [-90, -confine]].forEach(function(banda){
+      var g = px(0, banda[1])[1], h = px(0, banda[0])[1];
+      var grad = ctx.createLinearGradient(0, g, 0, h);
+      var verso = banda[1] === 90;
+      grad.addColorStop(0, verso ? "rgba(124,255,196,0.20)" : "rgba(124,255,196,0.02)");
+      grad.addColorStop(1, verso ? "rgba(124,255,196,0.02)" : "rgba(124,255,196,0.20)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, Math.min(g,h), larghezza(), Math.abs(h-g));
+    });
+    ctx.restore();
+  }
+
+  function disegnaReticolo(){
+    ctx.save(); ctx.strokeStyle = "#102029"; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var lon = -180; lon <= 180; lon += 30){ var p = px(lon, 0); ctx.moveTo(p[0], 0); ctx.lineTo(p[0], altezza()); }
+    for (var lat = -60; lat <= 60; lat += 30){ var q = px(0, lat); ctx.moveTo(0, q[1]); ctx.lineTo(larghezza(), q[1]); }
+    ctx.stroke();
+    ctx.strokeStyle = "#16303c"; ctx.beginPath();
+    var eq = px(0,0); ctx.moveTo(0, eq[1]); ctx.lineTo(larghezza(), eq[1]); ctx.stroke();
+    ctx.restore();
+  }
+
+  function disegnaTerre(){
+    if (!mondo) return;
+    ctx.save();
+    ctx.fillStyle = "#0f1c25"; ctx.strokeStyle = "#1e3442"; ctx.lineWidth = 0.9;
+    for (var i = 0; i < mondo.length; i++){
+      var poligono = mondo[i];
+      ctx.beginPath();
+      for (var a = 0; a < poligono.length; a++){
+        var anello = poligono[a];
+        for (var j = 0; j < anello.length; j++){
+          var p = px(anello[j][0], anello[j][1]);
+          if (j === 0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+        }
+        ctx.closePath();
+      }
+      ctx.fill(); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function raggioSisma(m){ return Math.max(2.4, Math.pow(Math.max(m,1), 1.7) * 0.55); }
+
+  function disegnaSegni(){
+    segnati = [];
+    if (!quadro) return;
+    var strati = quadro.strati || {};
+    (strati.sismi || []).forEach(function(s){
+      if (s.lat == null || s.lon == null) return;
+      var p = px(s.lon, s.lat), r = raggioSisma(s.mag || 1);
+      if (p[0] < -40 || p[0] > larghezza()+40 || p[1] < -40 || p[1] > altezza()+40) return;
+      var forte = (s.mag || 0) >= 5;
+      ctx.beginPath(); ctx.arc(p[0], p[1], r, 0, 6.284);
+      ctx.fillStyle = forte ? "rgba(255,93,93,0.55)" : "rgba(255,179,71,0.42)";
+      ctx.strokeStyle = forte ? "#ff5d5d" : "#ffb347"; ctx.lineWidth = 1; ctx.fill(); ctx.stroke();
+      segnati.push({ x:p[0], y:p[1], r:Math.max(r,6), tipo:"sisma",
+        titolo:"M" + (s.mag != null ? s.mag : "?") + " — " + (s.place || "località non dichiarata"),
+        riga:"profondità " + (s.depth_km != null ? s.depth_km + " km" : "?") +
+             (s.alert ? " · PAGER " + s.alert : "") + (s.tsunami ? " · flag tsunami" : "") });
+    });
+    (strati.bolidi || []).forEach(function(b){
+      var p = px(b.lon, b.lat);
+      if (p[0] < -40 || p[0] > larghezza()+40 || p[1] < -40 || p[1] > altezza()+40) return;
+      var r = Math.max(3, 3 + Math.log10(Math.max(b.energia_kt || 0.05, 0.05) / 0.05) * 3.4);
+      ctx.save(); ctx.translate(p[0], p[1]); ctx.rotate(Math.PI/4);
+      ctx.fillStyle = "rgba(182,156,255,0.5)"; ctx.strokeStyle = "#b69cff"; ctx.lineWidth = 1;
+      ctx.fillRect(-r, -r, r*2, r*2); ctx.strokeRect(-r, -r, r*2, r*2); ctx.restore();
+      segnati.push({ x:p[0], y:p[1], r:Math.max(r+2,7), tipo:"bolide",
+        titolo:"Bolide da " + (b.energia_kt != null ? b.energia_kt + " kt" : "energia ignota"),
+        riga:(b.quando_utc || "") + (b.quota_km ? " · " + b.quota_km + " km di quota" : "") });
+    });
+    if (aperta && aperta.dove){
+      var p = px(aperta.dove.lon, aperta.dove.lat);
+      ctx.save(); ctx.strokeStyle = LIVELLI[aperta.livello] || "#7cffc4"; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(p[0], p[1], 17, 0, 6.284); ctx.stroke();
+      ctx.beginPath(); ctx.arc(p[0], p[1], 25, 0, 6.284); ctx.globalAlpha = .35; ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function disegna(){
+    if (!ctx) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = "#070f15"; ctx.fillRect(0, 0, larghezza(), altezza());
+    disegnaReticolo();
+    disegnaTerre();
+    var statoGeo = quadro && quadro.geomagnetismo;
+    if (statoGeo) disegnaAurora(statoGeo.confine_aurorale_lat);
+    disegnaNotte(quadro && quadro.generato ? Date.parse(quadro.generato) : Date.now());
+    disegnaSegni();
+  }
+
+  /* ── navigazione ─────────────────────────────────────────── */
+  var trascino = null;
+  tela.addEventListener("pointerdown", function(e){
+    trascino = { x:e.clientX, y:e.clientY, lon:vista.lon, lat:vista.lat };
+    tela.classList.add("trascina"); tela.setPointerCapture(e.pointerId);
+  });
+  tela.addEventListener("pointermove", function(e){
+    var r = tela.getBoundingClientRect();
+    if (trascino){
+      vista.lon = trascino.lon - (e.clientX - trascino.x) * vista.gradiPerPixel;
+      vista.lat = trascino.lat + (e.clientY - trascino.y) * vista.gradiPerPixel;
+      vincola(); disegna(); nascondiFumetto(); return;
+    }
+    var x = e.clientX - r.left, y = e.clientY - r.top, trovato = null;
+    for (var i = segnati.length - 1; i >= 0; i--){
+      var s = segnati[i];
+      if ((x-s.x)*(x-s.x) + (y-s.y)*(y-s.y) <= s.r*s.r){ trovato = s; break; }
+    }
+    if (trovato) mostraFumetto(trovato, x, y); else nascondiFumetto();
+  });
+  ["pointerup","pointercancel","pointerleave"].forEach(function(ev){
+    tela.addEventListener(ev, function(){ trascino = null; tela.classList.remove("trascina"); });
+  });
+  tela.addEventListener("wheel", function(e){
+    e.preventDefault();
+    var r = tela.getBoundingClientRect(), prima = geo(e.clientX - r.left, e.clientY - r.top);
+    zoom(e.deltaY > 0 ? 1.16 : 1/1.16, prima, e.clientX - r.left, e.clientY - r.top);
+  }, { passive:false });
+
+  function zoom(fattore, ancora, ax, ay){
+    var massimo = Math.max(360 / larghezza(), 170 / altezza());
+    vista.gradiPerPixel = Math.max(0.012, Math.min(massimo, vista.gradiPerPixel * fattore));
+    if (ancora){
+      vista.lon = ancora[0] - (ax - larghezza()/2) * vista.gradiPerPixel;
+      vista.lat = ancora[1] + (ay - altezza()/2) * vista.gradiPerPixel;
+    }
+    vincola(); disegna();
+  }
+  document.getElementById("piu").onclick = function(){ zoom(1/1.4); };
+  document.getElementById("meno").onclick = function(){ zoom(1.4); };
+  document.getElementById("tutto").onclick = function(){ inquadraTutto(); disegna(); };
+
+  function mostraFumetto(s, x, y){
+    fumetto.innerHTML = "<b>" + testo(s.titolo) + "</b><small>" + testo(s.riga) + "</small>";
+    fumetto.style.opacity = "1";
+    var w = fumetto.offsetWidth, h = fumetto.offsetHeight;
+    fumetto.style.left = Math.min(Math.max(6, x + 14), larghezza() - w - 6) + "px";
+    fumetto.style.top = Math.min(Math.max(6, y - h - 10), altezza() - h - 6) + "px";
+  }
+  function nascondiFumetto(){ fumetto.style.opacity = "0"; }
+
+  function vaiA(lat, lon, gradi){
+    vista.lat = lat; vista.lon = lon;
+    vista.gradiPerPixel = Math.min(vista.gradiPerPixel, (gradi || 40) / Math.max(larghezza(), 1));
+    vincola(); disegna();
+  }
+
+  /* ── testo ───────────────────────────────────────────────── */
+  function testo(t){
+    return String(t == null ? "" : t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  function rigaSorgente(nome, s){
+    if (!s) return "";
+    if (s.status !== "ok") return '<div title="' + testo(s.error || "") + '"><span>' + nome +
+      '</span><span class="x">— ' + testo(s.status.replace(/_/g," ")) + "</span></div>";
+    if (s.truncated) return '<div title="tetto ' + s.cap + ": la sorgente ne ha mandati " + s.total +
+      '"><span>' + nome + '</span><span class="v">≥ ' + s.returned + '<i class="tetto">tetto</i></span></div>';
+    return "<div><span>" + nome + '</span><span class="v">' + s.returned + "</span></div>";
+  }
+
+  function dipingiSorgenti(){
+    var s = (quadro && quadro.sorgenti) || {};
+    document.getElementById("sorgenti").innerHTML =
+      rigaSorgente("sismi", s.sismi) + rigaSorgente("passaggi", s.passaggi) +
+      rigaSorgente("bolidi", s.bolidi) + rigaSorgente("meteo", s.meteo_spaziale) +
+      rigaSorgente("kp", s.geomagnetismo);
+  }
+
+  function dipingiSintesi(){
+    var faro = document.getElementById("faro");
+    var tit = document.getElementById("titolo-sintesi"), sot = document.getElementById("sotto-sintesi");
+    if (!quadro){ return; }
+    var attive = quadro.segnalazioni.filter(function(s){ return s.tempo !== "passato"; });
+    if (!quadro.quadro_completo){
+      faro.style.background = "#7f93a6";
+      tit.textContent = "Quadro incompleto";
+      var giu = (quadro.sorgenti_degradate || []).map(function(d){ return d.sorgente; }).join(", ");
+      sot.innerHTML = "Manca " + testo(giu) + ": con una finestra chiusa, «nessuna allerta» " +
+                      "sarebbe una frase che non possiamo dire.";
+      return;
+    }
+    var colore = LIVELLI[quadro.sintesi] || "#6cb6ff";
+    faro.style.background = colore;
+    faro.style.boxShadow = "0 0 12px " + colore;
+    var c = quadro.conteggi || {};
+    tit.textContent = quadro.sintesi === "allerta" ? "Allerta in corso"
+                    : quadro.sintesi === "attenzione" ? "Attenzione" : "Nessuna allerta in corso";
+    sot.textContent = attive.length + " segnalazioni attive su " + quadro.segnalazioni.length +
+      " lette · " + (c.allerta||0) + " allerta, " + (c.attenzione||0) + " attenzione, " +
+      (c.informativo||0) + " informative.";
+  }
+
+  function dipingiFiltri(){
+    var conta = {};
+    (quadro ? quadro.segnalazioni : []).forEach(function(s){ conta[s.tipo] = (conta[s.tipo]||0)+1; });
+    var html = '<button type="button" data-t="" aria-pressed="' + (filtro === null) + '">tutte</button>';
+    Object.keys(TIPI).forEach(function(t){
+      if (!conta[t]) return;
+      html += '<button type="button" data-t="' + t + '" aria-pressed="' + (filtro === t) + '">' +
+              TIPI[t].nome + " " + conta[t] + "</button>";
+    });
+    document.getElementById("filtri").innerHTML = html;
+  }
+
+  function dipingiElenco(){
+    var elenco = document.getElementById("elenco");
+    if (!quadro){ elenco.innerHTML = '<div class="vuoto">lettura in corso…</div>'; return; }
+    var voci = quadro.segnalazioni.filter(function(s){ return !filtro || s.tipo === filtro; });
+    if (!voci.length){ elenco.innerHTML = '<div class="vuoto">Nessuna segnalazione di questo tipo.</div>'; return; }
+    elenco.innerHTML = voci.map(function(s){
+      var col = LIVELLI[s.livello], apertaQui = aperta && aperta.id === s.id;
+      var riga = '<button class="voce" type="button" data-id="' + testo(s.id) + '" aria-expanded="' + !!apertaQui +
+        '" style="border-left-color:' + (apertaQui ? col : "transparent") + '">' +
+        '<span class="capo"><span class="punti" style="color:' + col + '">' + s.punteggio + "</span>" +
+        '<span class="tit">' + testo(s.titolo) + "</span></span>" +
+        '<span class="meta"><span style="color:' + col + '">' + s.livello + "</span>" +
+        "<span>" + testo(TIPI[s.tipo] ? TIPI[s.tipo].nome : s.tipo) + "</span>" +
+        '<span class="quando">' + testo(s.quando || "") + "</span>" +
+        (s.tempo === "passato"
+          ? "<span>" + (s.giorni_fa != null
+              ? (s.giorni_fa < 1 ? "oggi"
+                 : Math.round(s.giorni_fa) === 1 ? "ieri"
+                 : Math.round(s.giorni_fa) + " giorni fa")
+              : "già avvenuto") + "</span>"
+          : "") +
+        "</span></button>";
+      if (!apertaQui) return riga;
+      return riga + '<div class="dettaglio">' +
+        "<h4>riconosciuto da</h4><ul>" +
+        s.riconosciuto_da.map(function(r){ return "<li>" + testo(r) + "</li>"; }).join("") + "</ul>" +
+        (s.effetti ? "<h4>effetti possibili</h4><div>" + testo(s.effetti) + "</div>" : "") +
+        "<h4>confidenza</h4><div>" + testo(s.confidenza) +
+          (s.tetto_applicato ? " · punteggio limitato a " + s.tetto_applicato : "") + "</div>" +
+        "<h4>si smentisce così</h4><div class=\"smentita\">" + testo(s.smentito_se) + "</div>" +
+        '<h4>fonte</h4><div class="fonte"><a href="' + testo((s.dati && s.dati.url) || s.fonte.url) +
+          '" target="_blank" rel="noopener">' + testo(s.fonte.name) + "</a></div>" +
+        "</div>";
+    }).join("");
+  }
+
+  document.getElementById("filtri").addEventListener("click", function(e){
+    var b = e.target.closest("button[data-t]"); if (!b) return;
+    filtro = b.getAttribute("data-t") || null;
+    dipingiFiltri(); dipingiElenco();
+  });
+  document.getElementById("elenco").addEventListener("click", function(e){
+    var b = e.target.closest(".voce"); if (!b) return;
+    var id = b.getAttribute("data-id");
+    var s = quadro.segnalazioni.filter(function(v){ return v.id === id; })[0];
+    aperta = (aperta && aperta.id === id) ? null : s;
+    dipingiElenco();
+    if (aperta && aperta.dove) vaiA(aperta.dove.lat, aperta.dove.lon, 70);
+    else disegna();
+  });
+
+  /* ── le regole, in chiaro ────────────────────────────────── */
+  var TESTO_REGOLE = [
+    { tipo:"passaggio", titolo:"Passaggi ravvicinati — NASA/JPL CNEOS", corpo:
+      "punteggio = vicinanza + taglia × peso\n" +
+      "  vicinanza  60 punti a 0,1 distanze lunari, 0 a 20 LD (scala logaritmica)\n" +
+      "  taglia     40 punti a 1 km di diametro, 0 sotto i 5 m\n" +
+      "             il diametro viene da H con albedo 0,14, e l'intervallo 0,05–0,25\n" +
+      "             è dichiarato: l'albedo di un oggetto non osservato non si conosce\n" +
+      "  peso       la taglia conta in proporzione alla vicinanza: 4 km a 12 LD\n" +
+      "             è una curiosità astronomica, non un fenomeno di questa mappa\n" +
+      "TETTO 69 — un oggetto che manca la Terra non è mai «allerta», per quanto grande.\n" +
+      "Il tetto cade solo se il minimo dell'arco attuale entra sotto i 42.164 km\n" +
+      "(orbita geostazionaria) o sotto il raggio terrestre.\n" +
+      "confidenza: bassa se l'incertezza sull'istante supera 24 h o se distanza\n" +
+      "minima e massima differiscono di più di 3 volte." },
+    { tipo:"bolide", titolo:"Bolidi — NASA/JPL CNEOS Fireballs", corpo:
+      "punteggio = 20 + 22 × log10(energia_kt / 0,05), limitato a 95\n" +
+      "  riferimento: Chelyabinsk 2013 ≈ 440 kt\n" +
+      "Sono eventi già avvenuti: non anticipano niente, misurano quanto spesso accade.\n" +
+      "Per questo non alzano mai la sintesi in cima alla colonna." },
+    { tipo:"meteo_spaziale", titolo:"Meteo spaziale — NOAA SWPC", corpo:
+      "Il messaggio dell'agenzia viene letto, non interpretato:\n" +
+      "  K-index n        →  30 + 9 × (n − 4)     scala G1…G5\n" +
+      "  brillamento X    →  58 + 12 × log10(n)   classe M → 42\n" +
+      "  evento protonico →  58                   rischio sulle rotte polari\n" +
+      "  flusso elettroni →  38                   carica sui satelliti geostazionari\n" +
+      "confidenza sempre alta: l'ha emesso un'agenzia. Si smentisce quando il\n" +
+      "bollettino successivo annulla o declassa l'avviso." },
+    { tipo:"sisma", titolo:"Sismi — USGS", corpo:
+      "punteggio = 12 × magnitudo − 20, soglia di segnalazione M4,5\n" +
+      "  flag tsunami   +10, e dice «zona per cui vengono emessi messaggi»,\n" +
+      "                 non «tsunami atteso»: è la lettura sbagliata più comune\n" +
+      "  livello PAGER  se USGS lo dichiara, comanda: fissa il punteggio e ne è\n" +
+      "                 anche il tetto. Chi ha i modelli d'impatto sono loro.\n" +
+      "Un M6.3 con flag tsunami e PAGER verde resta «attenzione»: la prima versione\n" +
+      "di questa regola lo faceva salire ad allerta, contro il parere di USGS." },
+    { tipo:"sisma", titolo:"L'ordine della colonna", corpo:
+      "Il punteggio dice quanto è grave. L'ordine dice quanto riguarda adesso:\n" +
+      "sono due cose diverse, e stanno in due campi diversi.\n" +
+      "  ordine = punteggio                        per ciò che è in corso o futuro\n" +
+      "  ordine = punteggio × e^(−giorni/30)       per ciò che è già avvenuto\n" +
+      "Un bolide da 2,4 kt resta un evento da 57: scende in fondo perché è di sei\n" +
+      "mesi fa, non perché conti meno di quanto contava." },
+    { tipo:"geomagnetismo", titolo:"Geomagnetismo — indice Kp", corpo:
+      "Segnalazione solo da Kp ≥ 5. Il confine aurorale disegnato sulla mappa viene\n" +
+      "dalla retta empirica 67,5 − 2,5 × Kp: è indicativo, non un modello, ed è\n" +
+      "scritto anche nel dato che la mappa riceve." }
+  ];
+  document.getElementById("testo-regole").innerHTML = TESTO_REGOLE.map(function(r){
+    return "<section><h3><i style=\"background:" + TIPI[r.tipo].colore + "\"></i>" + r.titolo +
+           "</h3><pre>" + testo(r.corpo) + "</pre></section>";
+  }).join("");
+  var velo = document.getElementById("velo");
+  document.getElementById("btn-regole").onclick = function(){ velo.setAttribute("data-aperto","1"); };
+  document.getElementById("chiudi-regole").onclick = function(){ velo.setAttribute("data-aperto","0"); };
+  velo.addEventListener("click", function(e){ if (e.target === velo) velo.setAttribute("data-aperto","0"); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") velo.setAttribute("data-aperto","0"); });
+
+  /* ── caricamento ─────────────────────────────────────────── */
+  function orologio(){
+    var el = document.getElementById("orologio");
+    var quando = quadro && quadro.generato ? new Date(quadro.generato) : new Date();
+    el.textContent = (INNESTO.modo === "istantanea" ? "dato del " : "aggiornato ") +
+      quando.toISOString().slice(0,16).replace("T"," ") + " UTC";
+  }
+
+  function dipingiTutto(){
+    dipingiSorgenti(); dipingiSintesi(); dipingiFiltri(); dipingiElenco(); orologio(); disegna();
+  }
+
+  function fallito(motivo){
+    document.getElementById("faro").style.background = "#ff5d5d";
+    document.getElementById("titolo-sintesi").textContent = "Nessun dato";
+    document.getElementById("sotto-sintesi").textContent = motivo;
+    document.getElementById("elenco").innerHTML = '<div class="vuoto">' + testo(motivo) + "</div>";
+  }
+
+  var btn = document.getElementById("btn-aggiorna");
+  function carica(){
+    if (INNESTO.modo === "istantanea") return;
+    btn.textContent = "leggo…"; btn.disabled = true;
+    Promise.all([
+      fetch("api/quadro", { cache:"no-store" }).then(function(r){ return r.json(); }),
+      mondo ? Promise.resolve(mondo) : fetch("mondo.json").then(function(r){ return r.json(); })
+    ]).then(function(esiti){
+      quadro = esiti[0]; mondo = esiti[1]; dipingiTutto();
+    }).catch(function(err){
+      fallito("Il server locale non risponde (" + err.message + "). Sentinella è avviata?");
+    }).then(function(){
+      btn.textContent = "aggiorna"; btn.disabled = false;
+    });
+  }
+  btn.onclick = carica;
+
+  window.addEventListener("resize", dimensiona);
+
+  if (INNESTO.modo === "istantanea"){
+    quadro = INNESTO.quadro; mondo = INNESTO.mondo;
+    // In istantanea il bottone non ha niente da aggiornare: dirlo, invece di
+    // lasciarlo li' a non fare niente quando lo si preme.
+    btn.disabled = true;
+    btn.textContent = "orologio fermo";
+    btn.title = "Questa e' un'istantanea: per aggiornare serve l'applicazione, python -m sentinella";
+    var avviso = document.getElementById("congelata");
+    avviso.hidden = false;
+    avviso.innerHTML = "<b>istantanea</b><span>Questa pagina non è in diretta: una pagina pubblicata " +
+      "non può interrogare USGS, NASA e NOAA. I dati qui sono reali e fermi al <strong>" +
+      testo(INNESTO.presa) + " UTC</strong>. Per la diretta: <code>python -m sentinella</code>" +
+      " — libreria standard, nessuna chiave.</span>";
+    dimensiona(); dipingiTutto();
+  } else {
+    dimensiona(); carica();
+    setInterval(carica, 300000);
+  }
+})();
+</script>
+</body>
+</html>

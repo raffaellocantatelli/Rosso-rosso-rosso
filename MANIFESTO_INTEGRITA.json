@@ -17,6 +17,10 @@
       "byte": 17871,
       "sha256": "364087471e46bf70befc962c59859c1ea4d723b64a9b607ba41d4120ae342537"
     },
+    "artefatti/sentinella/sentinella.html": {
+      "byte": 351535,
+      "sha256": "1214d8779aee163a959f79bc41eefb48b711fcf99c63caddd738b5f67e7212d4"
+    },
     "artefatti/umbratheater/README.md": {
       "byte": 3750,
       "sha256": "af617c316605ac13dafd40e4b86720c7504c22dfae49ebdf9a2d0ddbdc2f7afe"
@@ -694,6 +698,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-03T08:34:10.563808+00:00",
+  "generato": "2026-09-03T11:59:21.947890+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
