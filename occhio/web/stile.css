@@ -128,3 +128,10 @@ button.grosso:hover { filter:brightness(1.08); }
   #pannello { flex:1 1 45%; border-left:0; border-top:1px solid var(--bordo); }
   #legenda { display:none; }
 }
+
+/* LA VOCE — il microfono legge e chiede, non scrive mai nel registro. */
+#microfono { flex:0 0 auto; font-size:17px; line-height:1; padding:9px 11px; }
+#microfono.ascolta { background:var(--verde); color:#04150a; border-color:transparent;
+  animation:pulsa 1.1s ease-in-out infinite; }
+@keyframes pulsa { 0%,100%{opacity:1} 50%{opacity:.55} }
+.msg.voce { border-left:3px solid var(--verde); }

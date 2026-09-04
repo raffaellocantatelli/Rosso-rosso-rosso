@@ -266,6 +266,49 @@ def spiega_mancanti(differenza: dict, portavia: Portavia,
     }
 
 
+def vendita_in_chiari(portavia, crediti, chiave: str, titolo: str,
+                      prezzo_eur: float, compratore: str, venditore: str,
+                      soggiorno: str = "", alloggio: str = "") -> dict:
+    """Una vendita pagata in CHIARI invece che in euro. Idea di Claudio Terzi.
+
+    Toglie l'attrito nel momento in cui il desiderio e' vivo: chi deve
+    tirare fuori la carta per un DVD da nove euro non lo compra; chi ha gia'
+    un saldo lo prende.
+
+    L'ordine dei passi non e' indifferente. **Prima si toglie al compratore,
+    poi si da' al venditore**: se si invertisse, un saldo insufficiente
+    lascerebbe il venditore pagato per una vendita mai avvenuta, e il libro
+    dei chiari conterrebbe valore nato dal nulla. Un'eccezione qui deve
+    lasciare il mondo com'era.
+
+    La commissione resta la stessa e resta dichiarata: cambia l'unita', non
+    il patto.
+    """
+    from .crediti import prezzo_in_chiari
+    prezzo = prezzo_in_chiari(prezzo_eur)
+    regole = portavia.regole
+    ok, motivo = regole.vendibile(chiave, titolo)
+    if not ok:
+        raise ValueError(motivo)
+    riferimento = f"portavia:{chiave}:{soggiorno or alloggio or '-'}"
+
+    crediti.spendi(compratore, prezzo, "acquisto", riferimento)
+    commissione = max(1, round(prezzo * regole.commissione)) if regole.commissione else 0
+    al_venditore = prezzo - commissione
+    if al_venditore > 0:
+        crediti.emetti(venditore, al_venditore, "vendita", riferimento)
+
+    voce = portavia._scrivi({
+        "tipo": "vendita", "chiave": chiave, "titolo": titolo,
+        "prezzo": prezzo, "commissione": commissione,
+        "al_proprietario": al_venditore, "valuta": "chiari",
+        "compratore": compratore, "venditore": venditore,
+        "soggiorno": soggiorno, "alloggio": alloggio,
+        "momento": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    })
+    return voce
+
+
 def immagine_generata_ammessa_come_prova() -> bool:
     """Sempre falso, e sta scritto qui perche' sia citabile da un test.
 

@@ -342,6 +342,85 @@ seleziona toccandola sulla pianta, oppure non si seleziona affatto perché gli
 scatti sono in ordine fisso — «scatto 3 di 8: piano cucina». Zero tecnologia,
 zero errore, e risolve lo stesso attrito.
 
+## 5-quinquies. LA VOCE e I CHIARI (aggiunto 03-04/09)
+
+### LA VOCE — parlare alla casa
+
+```bash
+python -m occhio --voce "che vini ho in cucina"
+python -m occhio --voce "dov'è il phon"
+python -m occhio --voce "cosa posso cucinare stasera"
+```
+
+Riconoscimento e sintesi stanno nel browser (`SpeechRecognition`,
+`speechSynthesis`): non costano niente e **nessun audio esce da casa** — parte
+solo la frase scritta. Ciò che si può contare si conta senza chiamare nessun
+modello: è una tabella di parole, e una tabella si rilegge quando sbaglia.
+
+**La voce non scrive mai nel registro.** Non è prudenza generica: a una voce
+non si può chiedere chi sta parlando, e in un alloggio in affitto la stanza è
+piena di gente che non è il proprietario. «Vendi il televisore a dieci euro»
+detto ad alta voce deve non fare assolutamente niente. C'è un test che
+fallisce se qualcuno apre una via di scrittura.
+
+Tre difetti trovati **eseguendo**, non rileggendo: «cucina» è insieme una
+stanza e un verbo (e «che vini ho in cucina» finiva interpretato come
+richiesta di ricette); «dov'è il phon» rispondeva con tutta l'elettronica,
+perché cercare non è elencare; e una domanda non capita elencava l'inventario
+intero, perché senza filtri il filtro non filtra.
+
+### L'innesto privato
+
+Ciò che il sistema **sa fare** è pubblico. Ciò che lo rende **bravo** —
+taratura della trattativa, prezzi, creatività del suggerimento — può stare in
+`occhio/privato/`, che non è versionato. Interfaccia in
+[`INNESTO_PRIVATO.md`](INNESTO_PRIVATO.md). Se manca, il sistema **lo dice**
+invece di improvvisare: alla domanda «cosa cucino» risponde con la dispensa
+vera e aggiunge «il suggerimento lo fa la parte privata, che qui non è
+installata — quindi non me lo invento».
+
+### I CHIARI — pagare senza denaro
+
+```bash
+python -m occhio --accredita ospite 40 "soggiorno:HMX88" --causale soggiorno
+python -m occhio --saldo ospite
+python -m occhio --libro
+```
+
+L'idea, dell'autore: *«non vendo a 15 euro, lo vendo a 15 crediti».* Toglie
+l'attrito nel momento in cui il desiderio è vivo: chi deve tirare fuori la
+carta per un DVD da nove euro non lo compra; chi ha già un saldo lo prende.
+
+**Il muro che decide la forma del modulo.** C'è una differenza enorme fra un
+buono di circuito chiuso — si ottiene e si spende dentro il servizio, non si
+riscatta, non passa di mano — e una moneta trasferibile e riconvertibile, che
+in Europa è terreno di moneta elettronica e servizi di pagamento:
+autorizzazione, capitale, antiriciclaggio. **Non è un dettaglio da sistemare
+dopo: è un'azienda diversa**, e si attraversa per sbaglio scrivendo una
+funzione comoda.
+
+Quattro vincoli imposti dal codice, non dalle buone intenzioni:
+
+1. `converti_in_denaro()` **solleva sempre**, ed esiste per essere citata da
+   un test e per rendere rumoroso il giorno in cui qualcuno la riscriverà;
+2. il trasferimento fra persone è **spento**; se qualcuno lo accende, ogni
+   movimento resta marchiato `fuori_dal_circuito_chiuso` — altrimenti nessuno
+   si accorgerebbe di aver cambiato mestiere;
+3. non si emette un chiaro senza un **riferimento a un fatto avvenuto**: un
+   saldo che cresce senza che nulla sia entrato dall'esterno è §4 con un
+   simbolo di valuta davanti;
+4. una vendita in chiari è **atomica** — prima si toglie al compratore, poi si
+   dà al venditore. Invertendo, un saldo insufficiente pagherebbe il venditore
+   per una vendita mai avvenuta.
+
+Difetto trovato dal test: `int(1.5)` dava `1` in silenzio. Mezzo chiaro
+sparirebbe senza che nessuno lo sappia, ed è così che due somme cominciano a
+divergere. Ora le quantità frazionarie sono rifiutate.
+
+**UNKNOWN, e per davvero:** dove passi esattamente il confine nel tuo caso lo
+dice un avvocato che si occupa di servizi di pagamento. Ciò che il codice fa è
+impedirti di attraversarlo per sbaglio.
+
 ## 6. Vale la pena usare Emergent per costruire questo?
 
 Hai chiesto due cose: se convenga usare **Emergent** e se il programma

@@ -30,3 +30,11 @@ output/rlaif_decisioni.jsonl
 output/inventario.jsonl
 output/inventario*.jsonl
 inventario*.csv
+
+# occhio/privato — la parte che completa, e che non è pubblica.
+# Decisione dell'autore, 03/09/2026: pubblico ciò che il sistema SA FARE,
+# privato ciò che lo rende BRAVO (taratura della trattativa, prezzi, dati
+# d'uso, creatività del suggerimento). Non è una seconda copia del
+# programma (§6 regola 2): è un punto d'innesto dichiarato in occhio/voce.py.
+# Se manca, tutto funziona e il sistema dichiara che manca — non finge.
+occhio/privato/

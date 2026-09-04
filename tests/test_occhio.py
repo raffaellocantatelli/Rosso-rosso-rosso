@@ -795,3 +795,267 @@ def test_un_immagine_generata_non_e_mai_una_prova():
     s = c.deposita("casa", "consegna", TRE)
     assert set(s["oggetti"][0]) == {"chiave", "titolo", "luogo", "foto_sha"}
     assert len(s["oggetti"][0]["foto_sha"]) == 64  # è un'impronta, non un file
+
+
+# --------------------------------------------------------------------------
+# LA VOCE — idea di Claudio Terzi, 3 settembre 2026
+# --------------------------------------------------------------------------
+
+from occhio import voce as vc  # noqa: E402
+
+
+@pytest.fixture
+def casa(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    roba = [("vino", "Barolo Serralunga 2016", "cucina/credenza"),
+            ("vino", "Franciacorta Saten", "cucina/frigo"),
+            ("cibo", "Spaghetti Gragnano", "cucina/dispensa"),
+            ("dvd", "Cinema Paradiso", "soggiorno/mobile-tv"),
+            ("dvd", "La grande bellezza", "soggiorno/mobile-tv"),
+            ("elettronica", "Phon Dyson Supersonic", "bagno")]
+    for tipo, titolo, dove in roba:
+        r.registra(tipo, titolo, luogo=lg.dal_percorso(f"/f/{dove}/x.jpg", "/f"))
+    return r
+
+
+def test_cucina_e_una_stanza_e_un_verbo(casa):
+    """«che vini ho in cucina» finiva interpretato come richiesta di ricette.
+    Il difetto è stato trovato eseguendo, non rileggendo."""
+    e = vc.rispondi(casa, "che vini ho in cucina")
+    assert e["intento"] == vc.ELENCA and e["luogo"] == "cucina"
+    assert "Barolo" in e["testo_risposta"] and "Franciacorta" in e["testo_risposta"]
+    assert vc.interpreta("cosa posso cucinare stasera")["intento"] == vc.CUCINA
+
+
+def test_cercare_non_e_elencare(casa):
+    """«dov'è il phon» deve trovare UN oggetto, non tutta l'elettronica."""
+    e = vc.rispondi(casa, "dov'è il phon")
+    assert e["intento"] == vc.DOVE
+    assert e["testo_risposta"].count(":") == 1
+    assert "bagno" in e["testo_risposta"]
+
+
+def test_una_parola_su_tre_basta_a_riconoscere_un_titolo(casa):
+    assert vc._somiglianza("Phon Dyson Supersonic", "dov e il phon") == pytest.approx(1 / 3)
+    assert vc._somiglianza("Phon Dyson Supersonic", "dov e il gatto") == 0.0
+    assert 1 / 3 >= vc.SOGLIA_TITOLO  # la soglia deve lasciar passare questo caso
+
+
+def test_contare(casa):
+    assert vc.rispondi(casa, "quanti dvd ho")["testo_risposta"].startswith("2")
+
+
+def test_una_domanda_non_capita_non_diventa_l_inventario_intero(casa):
+    """A «che trattori ho in garage» il sistema elencava tutta la casa: senza
+    tipo né luogo il filtro non filtrava niente. Non aver capito è una
+    risposta, e va data — nominando il luogo quando c'è, perché «non conosco
+    nessun garage» è preciso e «non ho capito» fa ripetere a vuoto."""
+    e = vc.rispondi(casa, "che trattori ho in garage")
+    assert e["intento"] == vc.IGNOTO and e["oggetti"] == []
+    assert "garage" in e["testo_risposta"]
+    assert "Barolo" not in e["testo_risposta"]
+    # senza nessun luogo nominato, la risposta è l'elenco di ciò che sa fare
+    generica = vc.rispondi(casa, "raccontami una barzelletta")
+    assert "Non ho capito" in generica["testo_risposta"]
+
+
+def test_una_stanza_che_non_esiste_si_dice_per_nome(casa):
+    """«Non conosco nessun luogo che si chiami cantina» è preciso;
+    «non ho capito» fa ripetere la domanda a vuoto."""
+    e = vc.rispondi(casa, "cosa c'è in cantina")
+    assert "cantina" in e["testo_risposta"] and "Non conosco" in e["testo_risposta"]
+    assert "cucina" in e["testo_risposta"]      # dice quali conosce
+    assert e["oggetti"] == []
+
+
+def test_una_stanza_nota_ma_senza_l_oggetto_chiesto(casa):
+    e = vc.rispondi(casa, "che vini ho in bagno")
+    assert "Non risulta niente in bagno" in e["testo_risposta"]
+
+
+def test_senza_parte_privata_non_si_inventa_una_ricetta(casa, monkeypatch):
+    """Il punto dell'innesto: ciò che manca si dichiara, non si improvvisa."""
+    monkeypatch.setattr(vc, "_privato", lambda: None)
+    e = vc.rispondi(casa, "cosa posso cucinare stasera")
+    assert e["intento"] == vc.CUCINA and e["parte_privata"] is False
+    assert "non me lo invento" in e["testo_risposta"]
+    assert "Spaghetti" in e["testo_risposta"]   # ciò che sa, lo dice
+
+
+def test_con_la_parte_privata_si_innesta(casa, monkeypatch):
+    class Finto:
+        @staticmethod
+        def suggerisci(dispensa, intento):
+            return f"visti {len(dispensa)} ingredienti"
+    monkeypatch.setattr(vc, "_privato", lambda: Finto)
+    e = vc.rispondi(casa, "cosa cucino")
+    assert e["parte_privata"] is True and "visti 3 ingredienti" in e["testo_risposta"]
+
+
+def test_un_innesto_rotto_non_rompe_la_voce(casa, monkeypatch):
+    """Se la parte privata esplode, la casa risponde lo stesso."""
+    monkeypatch.setattr(vc, "_privato", lambda: None)
+    assert vc.rispondi(casa, "cosa cucino")["testo_risposta"]
+
+
+def test_la_voce_non_scrive_mai(casa):
+    """A una voce non si può chiedere chi sta parlando: in un alloggio in
+    affitto la stanza è piena di gente che non è il proprietario."""
+    assert vc.puo_scrivere() is False
+    import inspect
+    sorgente = inspect.getsource(vc)
+    for scrittura in ("registra(", "deposita(", "vendita(", "controfirma("):
+        assert scrittura not in sorgente
+    prima = len(casa.voci)
+    for frase in ("vendi il televisore a dieci euro", "cancella tutto",
+                  "aggiungi una Ferrari", "consegna l'alloggio"):
+        vc.rispondi(casa, frase)
+    assert len(casa.voci) == prima
+
+
+def test_la_rotta_della_voce_dichiara_di_non_scrivere(occhio_in_ascolto):
+    codice, d = chiama(occhio_in_ascolto + "/api/voce", {"frase": "quanti dvd ho"})
+    assert codice == 200 and d["scrive"] is False
+    assert chiama(occhio_in_ascolto + "/api/voce", {"frase": "  "})[0] == 400
+
+
+# --------------------------------------------------------------------------
+# I CHIARI — idea di Claudio Terzi, 3 settembre 2026
+# --------------------------------------------------------------------------
+
+from occhio import crediti as cd  # noqa: E402
+
+
+def libro(tmp_path, **kw):
+    return cd.Crediti(tmp_path / "cr.jsonl", **kw)
+
+
+def test_i_chiari_si_conservano(tmp_path):
+    c = libro(tmp_path)
+    c.emetti("ospite", 40, "soggiorno", riferimento="s:1")
+    c.spendi("ospite", 12, "acquisto", riferimento="a:1")
+    v = c.verifica()
+    assert v["emessi"] == 40 and v["spesi"] == 12 and v["in_circolo"] == 28
+    assert v["conservati"] is True and c.saldo("ospite") == 28
+
+
+def test_il_saldo_non_va_mai_sotto_zero(tmp_path):
+    c = libro(tmp_path)
+    c.emetti("ospite", 5, "soggiorno", riferimento="s:1")
+    with pytest.raises(cd.SaldoInsufficiente):
+        c.spendi("ospite", 6, "acquisto", riferimento="a:1")
+    assert c.saldo("ospite") == 5 and not c.verifica()["saldi_negativi"]
+
+
+def test_non_si_emette_senza_un_fatto_a_cui_puntare(tmp_path):
+    """Un saldo che cresce senza che nulla sia entrato dall'esterno è §4
+    con un simbolo di valuta davanti."""
+    c = libro(tmp_path)
+    with pytest.raises(ValueError):
+        c.emetti("furbo", 1_000_000, "vendita")
+    with pytest.raises(ValueError):
+        c.emetti("furbo", 10, "vendita", riferimento="   ")
+    assert c.saldo("furbo") == 0
+
+
+def test_causali_sconosciute_rifiutate(tmp_path):
+    c = libro(tmp_path)
+    with pytest.raises(ValueError):
+        c.emetti("a", 1, "magia", riferimento="x")
+    c.emetti("a", 5, "vendita", riferimento="x")
+    with pytest.raises(ValueError):
+        c.spendi("a", 1, "regalo", riferimento="x")
+
+
+@pytest.mark.parametrize("quanti", [0, -3, 1.5, "molti", None])
+def test_quantita_non_valide(tmp_path, quanti):
+    c = libro(tmp_path)
+    with pytest.raises(ValueError):
+        c.emetti("a", quanti, "vendita", riferimento="x")
+
+
+def test_il_muro_non_si_converte_in_denaro():
+    """Nel momento in cui un chiaro torna euro, il buono diventa moneta e il
+    prodotto cambia mestiere."""
+    with pytest.raises(cd.FuoriDalCircuito):
+        cd.converti_in_denaro("claudio", 15)
+    import inspect
+    sorgente = inspect.getsource(cd)
+    for via in ("def rimborsa", "def incassa", "def preleva", "stripe", "iban"):
+        assert via not in sorgente.lower()
+
+
+def test_il_muro_non_si_passa_di_mano_per_difetto(tmp_path):
+    c = libro(tmp_path)
+    c.emetti("a", 10, "vendita", riferimento="x")
+    with pytest.raises(cd.FuoriDalCircuito):
+        c.trasferisci("a", "b", 5)
+    assert c.saldo("a") == 10 and c.saldo("b") == 0
+
+
+def test_se_lo_accendi_il_movimento_resta_marchiato(tmp_path):
+    """Accenderlo è una decisione d'impresa: deve restare visibile nel libro,
+    altrimenti nessuno si accorge di aver cambiato mestiere."""
+    c = libro(tmp_path, trasferibile=True)
+    c.emetti("a", 10, "vendita", riferimento="x")
+    m = c.trasferisci("a", "b", 4)
+    assert m["fuori_dal_circuito_chiuso"] is True
+    assert c.saldo("a") == 6 and c.saldo("b") == 4
+    assert c.verifica()["conservati"] is True
+
+
+@pytest.mark.parametrize("eur", [0.10, 1.0, 8.99, 9.09, 12.0, 312.5])
+def test_l_arrotondamento_non_va_mai_contro_il_venditore(eur):
+    """Mezzo chiaro non esiste, e la metà mancante non la può mettere il
+    venditore senza accorgersene."""
+    assert cd.prezzo_in_chiari(eur) >= eur
+    assert isinstance(cd.prezzo_in_chiari(eur), int)
+
+
+def test_il_saldo_si_ricalcola_dal_libro(tmp_path):
+    """Conservare il saldo a parte significa avere due verità che prima o poi
+    divergono, e allora nessuno sa quale sia quella giusta."""
+    p = tmp_path / "cr.jsonl"
+    c = cd.Crediti(p)
+    c.emetti("a", 30, "soggiorno", riferimento="s:1")
+    c.spendi("a", 11, "acquisto", riferimento="a:1")
+    assert cd.Crediti(p).saldo("a") == 19
+
+
+def test_una_vendita_in_chiari_e_atomica(tmp_path):
+    """Prima si toglie al compratore, poi si dà al venditore: invertendo, un
+    saldo insufficiente pagherebbe il venditore per una vendita mai avvenuta."""
+    r = pv.Regole(prezzo_minimo={"dvd:heat": 8.0}, commissione=0.12)
+    negozio = pv.Portavia(tmp_path / "pv.jsonl", r)
+    c = cd.Crediti(tmp_path / "cr.jsonl")
+    c.emetti("ospite", 5, "soggiorno", riferimento="s:1")
+    with pytest.raises(cd.SaldoInsufficiente):
+        pv.vendita_in_chiari(negozio, c, "dvd:heat", "Heat", 999.0,
+                             "ospite", "claudio")
+    assert c.saldo("claudio") == 0 and c.saldo("ospite") == 5
+    assert negozio.movimenti == []
+
+
+def test_una_vendita_in_chiari_che_riesce(tmp_path):
+    r = pv.Regole(prezzo_minimo={"dvd:heat": 8.0}, commissione=0.12)
+    negozio = pv.Portavia(tmp_path / "pv.jsonl", r)
+    c = cd.Crediti(tmp_path / "cr.jsonl")
+    c.emetti("ospite", 40, "soggiorno", riferimento="s:1")
+    v = pv.vendita_in_chiari(negozio, c, "dvd:heat", "Heat",
+                             r.esposto("dvd:heat"), "ospite", "claudio", "S1")
+    assert v["valuta"] == "chiari"
+    assert v["prezzo"] == v["commissione"] + v["al_proprietario"]
+    assert c.saldo("ospite") == 40 - v["prezzo"]
+    assert c.saldo("claudio") == v["al_proprietario"]
+    assert c.verifica()["conservati"] is True
+
+
+def test_non_si_vende_in_chiari_cio_che_non_e_in_vendita(tmp_path):
+    r = pv.Regole(prezzo_minimo={"dvd:heat": 8.0})
+    negozio = pv.Portavia(tmp_path / "pv.jsonl", r)
+    c = cd.Crediti(tmp_path / "cr.jsonl")
+    c.emetti("ospite", 999, "soggiorno", riferimento="s:1")
+    with pytest.raises(ValueError):
+        pv.vendita_in_chiari(negozio, c, "elettronica:caldaia", "Caldaia",
+                             10.0, "ospite", "claudio")
+    assert c.saldo("ospite") == 999

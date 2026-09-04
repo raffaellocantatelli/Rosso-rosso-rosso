@@ -360,3 +360,68 @@ fetch("/api/stato").then((r) => r.json()).then((d) => {
   pillola("#p-totale", d.inventario.oggetti + " oggetti");
   aggiornaInventario();
 }).catch(() => {});
+
+
+/* ------------------------------------------------------------------ *
+ * LA VOCE — idea di Claudio Terzi, 3 settembre 2026.
+ *
+ * Riconoscimento e sintesi stanno nel browser: non costano niente e non
+ * mandano audio da nessuna parte. Ciò che parte è solo la frase scritta.
+ *
+ * La regola che non si tocca: da qui non si scrive MAI nel registro.
+ * A una voce non si può chiedere chi sta parlando, e in un alloggio in
+ * affitto la stanza è piena di gente che non è il proprietario.
+ * ------------------------------------------------------------------ */
+const Ascolto = window.SpeechRecognition || window.webkitSpeechRecognition;
+let ascoltatore = null;
+
+function parla(testo) {
+  if (!window.speechSynthesis) return;
+  const v = new SpeechSynthesisUtterance(testo);
+  v.lang = "it-IT"; v.rate = 1.03;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(v);
+}
+
+async function chiediAllaCasa(frase, adAltaVoce) {
+  messaggio("io", frase);
+  const attesa = messaggio("lui voce", "…");
+  try {
+    const r = await fetch("/api/voce", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ frase }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.errore || r.status);
+    attesa.textContent = d.risposta;
+    if (adAltaVoce) parla(d.risposta);
+  } catch (e) {
+    attesa.textContent = "non ho potuto rispondere: " + e.message;
+    attesa.className = "msg errore";
+  }
+}
+
+$("#microfono").onclick = () => {
+  if (!Ascolto) {
+    return messaggio("errore", "Questo browser non ascolta. Scrivi la domanda: "
+      + "funziona uguale.");
+  }
+  if (ascoltatore) { ascoltatore.stop(); return; }
+  ascoltatore = new Ascolto();
+  ascoltatore.lang = "it-IT";
+  ascoltatore.interimResults = false;
+  ascoltatore.maxAlternatives = 1;
+  $("#microfono").classList.add("ascolta");
+  ascoltatore.onresult = (e) => chiediAllaCasa(e.results[0][0].transcript, true);
+  ascoltatore.onerror = (e) => messaggio("errore", "microfono: " + e.error);
+  ascoltatore.onend = () => {
+    $("#microfono").classList.remove("ascolta");
+    ascoltatore = null;
+  };
+  ascoltatore.start();
+};
+
+/* Scrivere la domanda invece di dirla non fa perdere niente: il modulo di
+ * chat resta attivo e passa da /api/chat, che legge lo stesso inventario.
+ * Chi è in una casa con altra gente, o senza microfono, ha la stessa
+ * funzione — ed è il motivo per cui la voce non è mai l'unica strada. */

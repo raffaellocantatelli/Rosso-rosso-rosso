@@ -173,5 +173,25 @@
       "ultima": null,
       "ultimo_esito": null
     }
+  },
+  {
+    "id": "H10",
+    "testo": "I CHIARI restano un buono di circuito chiuso: si conservano, non diventano mai denaro, e nessun saldo va sotto zero. Idea dei crediti interni: Claudio Terzi, 3 settembre 2026.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se: i chiari non si conservano (emessi diversi da spesi piu in circolo); o un saldo diventa negativo; o si emettono chiari senza un riferimento a un fatto avvenuto; o esiste una via per riconvertirli in denaro; o il trasferimento fra persone e attivo per difetto, o quando acceso non viene marchiato; o una vendita in chiari paga il venditore quando il compratore non ha il saldo; o l arrotondamento va contro il venditore.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h10_crediti.py"
+      ],
+      "descrizione": "sette prove su un libro temporaneo: conservazione, saldo non negativo, emissione senza causale, il muro del denaro, il muro del trasferimento, atomicita della vendita, arrotondamento"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
   }
 ]

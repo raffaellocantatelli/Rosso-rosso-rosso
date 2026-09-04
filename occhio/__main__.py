@@ -160,6 +160,61 @@ def _regole(a):
                   valuta=d.get("valuta", "EUR"))
 
 
+def chiari(a) -> int:
+    """I CHIARI — idea di Claudio Terzi, 3 settembre 2026."""
+    from . import crediti as cd
+    c = cd.Crediti()
+
+    if a.accredita:
+        conto, quanti, riferimento = a.accredita
+        # La conversione sta qui e non nel libro: `Crediti` rifiuta le
+        # stringhe di proposito — un libro contabile che indovina il tipo di
+        # ciò che gli arriva è un libro che prima o poi indovina male.
+        try:
+            quanti = int(quanti)
+        except ValueError:
+            print(f"quantità non valida: {quanti!r} — serve un numero intero",
+                  file=sys.stderr)
+            return 1
+        try:
+            v = c.emetti(conto, quanti, a.causale, riferimento=riferimento)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            return 1
+        print(f"{v['quanti']} {cd.UNITA_PLURALE} a {conto} "
+              f"({cd.CAUSALI_EMISSIONE[a.causale]})")
+        print(f"  saldo: {c.saldo(conto)}")
+        return 0
+
+    if a.saldo:
+        n = c.saldo(a.saldo)
+        print(f"{a.saldo}: {n} {cd.UNITA_PLURALE if n != 1 else cd.UNITA}")
+        for m_ in c.estratto(a.saldo)[-8:]:
+            segno = "+" if m_.get("a") == a.saldo else "−"
+            print(f"  {m_['momento']}  {segno}{m_['quanti']:<4} {m_['causale']}"
+                  f"  {m_.get('riferimento','')[:40]}")
+        return 0
+
+    v = c.verifica()
+    print(f"libro dei chiari: {c.percorso}")
+    print(f"  conti: {v['conti']}   emessi: {v['emessi']}   spesi: {v['spesi']}"
+          f"   in circolo: {v['in_circolo']}")
+    print(f"  conservati: {'sì' if v['conservati'] else 'NO'}"
+          f"   saldi negativi: {len(v['saldi_negativi'])}")
+    if v["trasferibile"]:
+        print("\n  ATTENZIONE: il trasferimento fra persone è ACCESO.")
+        print("  Il circuito non è più chiuso: sei nel perimetro di moneta")
+        print("  elettronica e servizi di pagamento. Non è un interruttore")
+        print("  tecnico, è un'azienda diversa.")
+    else:
+        print("\n  circuito chiuso: i chiari non si trasferiscono fra persone")
+        print("  e non si convertono in denaro. È ciò che li tiene un buono")
+        print("  commerciale invece che moneta.")
+    if not v["conservati"] or v["saldi_negativi"]:
+        return 1
+    return 0
+
+
 def portavia(a) -> int:
     """PORTAVIA — idea di Claudio Terzi, 3 settembre 2026."""
     from .portavia import ACCETTA, Portavia, parole_del_mediatore, valuta_offerta
@@ -342,6 +397,16 @@ def main(argv=None) -> int:
                    help="l ospite offre: il Mediatore risponde secondo le regole")
     v.add_argument("--vendi", nargs=2, metavar=("CHIAVE", "PREZZO"),
                    help="registra una vendita conclusa")
+    k = ap.add_argument_group("I CHIARI — pagare senza denaro, dentro il circuito")
+    k.add_argument("--saldo", metavar="CONTO", help="quanti chiari ha un conto")
+    k.add_argument("--libro", action="store_true",
+                   help="stato del libro dei chiari: emessi, spesi, in circolo")
+    k.add_argument("--accredita", nargs=3, metavar=("CONTO", "QUANTI", "RIFERIMENTO"),
+                   help="emette chiari contro un fatto avvenuto")
+    k.add_argument("--causale", default="vendita",
+                   help="causale dell emissione (vendita, soggiorno, lasciato, rimborso)")
+    ap.add_argument("--voce", metavar="FRASE",
+                    help="una domanda alla casa, come la diresti a voce")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
     ap.add_argument("--esporta", metavar="FILE.csv", help="esporta il registro in CSV")
     ap.add_argument("--costo", action="store_true",
@@ -374,6 +439,17 @@ def main(argv=None) -> int:
     if a.esporta:
         Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
         print(f"scritto {a.esporta}")
+        return 0
+    if a.saldo or a.libro or a.accredita:
+        return chiari(a)
+    if a.voce:
+        from . import voce as vc
+        regole = _regole(a) if a.prezzi else None
+        e = vc.rispondi(inv.Inventario(), a.voce, regole=regole)
+        print(f"[{e['intento']}] {e['testo_risposta']}")
+        if e["intento"] == vc.CUCINA and not vc.parte_privata_presente():
+            print("\n  (la parte creativa sta in occhio/privato/ — vedi "
+                  "INNESTO_PRIVATO.md)")
         return 0
     if a.vetrina or a.offerta or a.vendi:
         return portavia(a)

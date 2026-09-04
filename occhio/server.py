@@ -171,6 +171,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._conferma()
         if percorso == "/api/chat":
             return self._chat()
+        if percorso == "/api/voce":
+            return self._voce()
         return self._json(404, {"errore": "rotta sconosciuta"})
 
     # -- statico ----------------------------------------------------------
@@ -289,6 +291,31 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(400, {"errore": str(e)})
         return self._json(200, {"voce": voce, "totale_inventario": totale})
 
+
+    def _voce(self):
+        """Una domanda a voce. Legge, cerca, propone — non scrive mai.
+
+        A una voce non si puo' chiedere chi sta parlando: in un alloggio in
+        affitto la stanza e' piena di gente che non e' il proprietario, e
+        «vendi il televisore a dieci euro» detto ad alta voce deve non fare
+        assolutamente niente. Questa rotta non ha nessun percorso di scrittura.
+        """
+        dati = self._corpo() or {}
+        frase = str(dati.get("frase", "")).strip()[:400]
+        if not frase:
+            return self._json(400, {"errore": "frase vuota"})
+        from . import voce as vc
+        with self.stato.lock:
+            esito = vc.rispondi(self.stato.inventario, frase)
+        return self._json(200, {
+            "domanda": frase,
+            "intento": esito["intento"],
+            "risposta": esito["testo_risposta"],
+            "oggetti": [{"tipo": o.get("tipo"), "titolo": o.get("titolo")}
+                        for o in esito.get("oggetti", [])[:20]],
+            "parte_privata": esito.get("parte_privata", vc.parte_privata_presente()),
+            "scrive": vc.puo_scrivere(),
+        })
 
     def _chat(self):
         """La conversazione che accompagna la passata con la telecamera.

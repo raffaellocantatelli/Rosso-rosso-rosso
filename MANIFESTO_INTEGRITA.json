@@ -21,6 +21,10 @@
       "byte": 1321,
       "sha256": "e11880d315ca08302b3039ecd95340a7f23caa8cbf8cad6215186f46d70cbe39"
     },
+    "falsificatori/h10_crediti.py": {
+      "byte": 5683,
+      "sha256": "5e0f3f7c4c7118a503d064c88ba18da69a4a62647338a97b90e4cac78fb1a701"
+    },
     "falsificatori/h2_battito_e_contatto.py": {
       "byte": 2695,
       "sha256": "1edd2c2c5d4516621e68fa28d03067d9081ee6d03bae6aee7b640460306238c0"
@@ -546,8 +550,8 @@
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
     "registro_ipotesi.json": {
-      "byte": 7459,
-      "sha256": "37f9d5da6ee5081eedd53835af79dedebeec418eeeda31197fa435cd9a76a704"
+      "byte": 8628,
+      "sha256": "b302bda43c30da7ddcd2a6a370675bb1304e6963402214e2fff8af3108a7cc2f"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
@@ -730,8 +734,8 @@
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
     "tests/test_occhio.py": {
-      "byte": 33113,
-      "sha256": "a690757941bf48c01f25a75e176d4c58a8b7a99f82e2720814995d55ed8940a6"
+      "byte": 44260,
+      "sha256": "b8b29d1975b88b08beaf36e6485ee313e9e6af6878c0cdd58a558829f509ffd2"
     },
     "tests/test_rlaif.py": {
       "byte": 5152,
@@ -750,6 +754,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-03T19:33:17.044687+00:00",
+  "generato": "2026-09-04T03:17:41.257554+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
