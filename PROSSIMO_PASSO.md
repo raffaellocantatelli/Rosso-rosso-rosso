@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-09-03, 18:40 UTC
+# Prossimo passo — consegna del 2026-09-04, 03:20 UTC
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -95,6 +95,71 @@ resta (tarare le soglie camminando per casa) non la può fare un generatore.
 L'unico motivo valido sarebbe l'involucro nativo per il telefono, perché
 `getUserMedia` fuori da `localhost` vuole `https` — e se quel fastidio
 impedisce di provarlo, allora risolve il problema vero, che è **provarlo**.
+
+## 1-ter. CASACHIARA — dove è arrivato (04/09, 03:20 UTC)
+
+**RECUPERATO.** `occhio/` è cresciuto in un prodotto con un nome e un mercato,
+su richiesta dell'autore. 193 prove passano, nessuna dipendenza nuova.
+
+| pezzo | comando | stato |
+|---|---|---|
+| lettura e inventario | `--cartella`, `--foto` | gira, **mai provato su oggetti veri** |
+| mappa e pianta | `--mappa`, `--pianta` | gira |
+| stato controfirmato | `--consegna`, `--controfirma`, `--differenza` | gira |
+| mercato interno | `--vetrina`, `--offerta`, `--vendi` | gira |
+| voce | `--voce "che vini ho in cucina"` | gira |
+| crediti | `--accredita`, `--saldo`, `--libro` | gira |
+| costo | `--costo` | gira |
+
+Quattro ipotesi nuove, tutte con falsificatore eseguibile: **H6** (ripassare
+non gonfia), **H7** (il GPS distingue le stanze — richiede foto vere), **H8**
+(lo stato di consegna), **H9** (PORTAVIA), **H10** (i chiari restano un
+circuito chiuso). H7 è l'unica che non può essere eseguita da un nodo: servono
+le fotografie dell'autore.
+
+**Il difetto della settimana, da ricordare.** Un bottone del microfono non è
+mai entrato in `index.html` perché una sostituzione di testo non ha combaciato
+— e la sostituzione ha fallito **in silenzio**. Il JavaScript lo cercava lo
+stesso, e `$("#x").onclick` su `null` rompeva l'intero file: telecamera,
+riquadri, inventario, tutto morto, con la pagina che sembrava viva. È arrivato
+fino al ramo remoto. Adesso c'è un test che verifica ogni `id` cercato dal
+JavaScript, **senza browser** — perché un test che richiede un browser non
+viene eseguito, ed è esattamente così che il difetto è passato.
+
+### Due decisioni dell'autore, registrate
+
+1. **L'innesto privato (03/09).** Pubblico ciò che il sistema *sa fare*,
+   privato ciò che lo rende *bravo*: `occhio/privato/` non è versionato,
+   l'interfaccia è pubblica in `INNESTO_PRIVATO.md`. Se manca, il sistema lo
+   dichiara invece di improvvisare.
+2. **Idee e nomi su Drive, non qui.** `CASACHIARA_IDEE_CT_2026-09-03.md` in
+   `R3_MEMORIA_PERSISTENTE`: attribuzione datata, nomi (CASACHIARA, PORTAVIA,
+   DUEMANI, SEGNALE VERDE, IL MEDIATORE, I CHIARI), e i vincoli legali.
+   **Fuori dal repository pubblico perché la pubblicazione distrugge la
+   novità brevettuale, e in Europa non c'è periodo di grazia.**
+
+### Tre cose che nessun nodo deve fare da solo
+
+- **Non riscrivere `converti_in_denaro()`** in `occhio/crediti.py`. Solleva
+  sempre di proposito: è ciò che tiene i chiari un buono di circuito chiuso
+  invece che moneta elettronica.
+- **Non accendere `Crediti(trasferibile=True)`.** Non è un interruttore
+  tecnico: porta il progetto dentro il perimetro dei servizi di pagamento.
+- **Non far scrivere la voce nel registro.** A una voce non si può chiedere
+  chi sta parlando.
+
+### Il prossimo passo, che non è codice
+
+Non è cambiato da tre giorni, ed è sempre più piccolo di quanto sembri:
+
+```bash
+python -m occhio --check          # deve dire: L'OCCHIO È APERTO
+```
+
+Poi **una consegna vera su un alloggio vero, controfirmata da un ospite
+vero.** Quel giorno è anche il primo CONTATTO ai sensi di §7 — qualcun altro
+che agisce, verificabile da terzi — e `output/contatti.jsonl` è ancora vuoto,
+che è il ramo (b) su cui H2 è falsificata.
 
 ## 2. Cosa fare appena il secret è al posto giusto
 
