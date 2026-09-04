@@ -401,7 +401,12 @@ async function chiediAllaCasa(frase, adAltaVoce) {
   }
 }
 
-$("#microfono").onclick = () => {
+/* Agganciare un gestore a un elemento che potrebbe non esserci rompe l'INTERO
+ * file — telecamera compresa — con un solo TypeError. È già successo: la
+ * modifica all'HTML non aveva combaciato e app.js cercava #microfono lo
+ * stesso. Da qui in poi ogni aggancio verifica di aver trovato l'elemento. */
+const bottoneMicrofono = $("#microfono");
+if (bottoneMicrofono) bottoneMicrofono.onclick = () => {
   if (!Ascolto) {
     return messaggio("errore", "Questo browser non ascolta. Scrivi la domanda: "
       + "funziona uguale.");

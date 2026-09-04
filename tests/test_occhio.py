@@ -1059,3 +1059,45 @@ def test_non_si_vende_in_chiari_cio_che_non_e_in_vendita(tmp_path):
         pv.vendita_in_chiari(negozio, c, "elettronica:caldaia", "Caldaia",
                              10.0, "ospite", "claudio")
     assert c.saldo("ospite") == 999
+
+
+# --------------------------------------------------------------------------
+# l'interfaccia: ogni id cercato dal JavaScript deve esistere nell'HTML
+# --------------------------------------------------------------------------
+
+def test_ogni_id_cercato_dal_javascript_esiste():
+    """Un `$("#x").onclick` su un elemento assente rompe l'INTERO file — la
+    telecamera compresa — con un solo TypeError, e la pagina sembra viva.
+
+    È già successo: una modifica all'HTML non ha combaciato, app.js ha
+    continuato a cercare #microfono, e il difetto è arrivato fino al ramo
+    remoto. Un browser l'avrebbe preso; questo test lo prende senza browser,
+    che è la ragione per cui esiste.
+    """
+    import re
+    web = pathlib.Path(__file__).resolve().parent.parent / "occhio" / "web"
+    html = (web / "index.html").read_text(encoding="utf-8")
+    js = (web / "app.js").read_text(encoding="utf-8")
+    presenti = set(re.findall(r'id="([A-Za-z0-9_-]+)"', html))
+    cercati = set(re.findall(r'\$\("#([A-Za-z0-9_-]+)"\)', js))
+    cercati |= set(re.findall(r'querySelector\("#([A-Za-z0-9_-]+)"\)', js))
+    mancanti = cercati - presenti
+    assert not mancanti, f"app.js cerca id che l'HTML non ha: {sorted(mancanti)}"
+
+
+def test_le_classi_e_i_dati_usati_dal_javascript_esistono():
+    import re
+    web = pathlib.Path(__file__).resolve().parent.parent / "occhio" / "web"
+    html = (web / "index.html").read_text(encoding="utf-8")
+    js = (web / "app.js").read_text(encoding="utf-8")
+    for selettore in re.findall(r'querySelectorAll\("\.([A-Za-z0-9_-]+)"\)', js):
+        assert selettore in html, f"app.js usa .{selettore}, assente dall'HTML"
+    # le viste a schede: ogni data-vista deve avere il suo #vista-...
+    for vista in re.findall(r'data-vista="([a-z-]+)"', html):
+        assert f'id="vista-{vista}"' in html, f"manca il riquadro vista-{vista}"
+
+
+def test_il_foglio_di_stile_e_lo_script_sono_serviti(occhio_in_ascolto):
+    for risorsa in ("/stile.css", "/app.js"):
+        with urllib.request.urlopen(occhio_in_ascolto + risorsa, timeout=10) as r:
+            assert r.status == 200 and len(r.read()) > 200
