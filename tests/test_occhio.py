@@ -1252,3 +1252,60 @@ def test_ogni_registro_del_prodotto_e_fuori_dal_repository_pubblico():
     assert not non_protetti, (
         "registri non ignorati, finirebbero nel repository pubblico: "
         + ", ".join(non_protetti))
+
+
+# --------------------------------------------------------------------------
+# due difetti trovati depurando, e i test che li tengono chiusi
+# --------------------------------------------------------------------------
+
+def test_la_scorciatoia_sul_titolo_non_compete_col_tipo_dichiarato(tmp_path):
+    """«che vini ho in cucina» rispondeva anche «Divano rosso» e «Cassa di
+    bottiglie vuote»: «rosso» e «bottiglie» stavano fra le parole usate per
+    riconoscere un vino dal titolo. Un ripiego non deve competere col dato."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    cucina = lg.dal_percorso("/f/cucina/x.jpg", "/f")
+    for tipo, titolo in [("altro", "Divano rosso"), ("vino", "Barolo 2016"),
+                         ("vino", "Franciacorta Saten"),
+                         ("altro", "Cassa di bottiglie vuote")]:
+        r.registra(tipo, titolo, luogo=cucina)
+    e = vc.rispondi(r, "che vini ho in cucina")
+    titoli = {o["titolo"] for o in e["oggetti"]}
+    assert titoli == {"Barolo 2016", "Franciacorta Saten"}
+    assert "Divano rosso" not in e["testo_risposta"]
+
+
+def test_il_ripiego_sul_titolo_serve_ancora_quando_serve(tmp_path):
+    """Se nessun oggetto è catalogato come vino, il titolo è l'unica strada —
+    ma solo con termini inequivocabili."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    cucina = lg.dal_percorso("/f/cucina/x.jpg", "/f")
+    for titolo in ("Divano rosso", "Barolo Serralunga 2016",
+                   "Cassa di bottiglie vuote"):
+        r.registra("altro", titolo, luogo=cucina)
+    e = vc.rispondi(r, "che vini ho in cucina")
+    assert {o["titolo"] for o in e["oggetti"]} == {"Barolo Serralunga 2016"}
+
+
+def test_una_fusione_di_titoli_non_e_mai_silenziosa(tmp_path):
+    """«The Matrix» e «MATRIX, THE» devono fondersi — è il motivo per cui
+    l'articolo si toglie. Ma allora si fondono anche «Heat» e «The Heat», che
+    sono due film. Non si può avere l'una senza l'altra: quindi la fusione si
+    vede. Una fusione visibile è un problema; una silenziosa è un registro
+    che mente."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    for titolo in ("Heat", "The Heat", "MATRIX, THE", "The Matrix", "Solaris"):
+        r.registra("dvd", titolo)
+    assert len(r.voci) == 3
+    fusioni = {v["chiave"]: v["titoli_visti"] for v in r.fusioni()}
+    assert fusioni["dvd:heat"] == ["Heat", "The Heat"]
+    assert fusioni["dvd:matrix"] == ["MATRIX, THE", "The Matrix"]
+    # un titolo visto una volta sola non è una fusione
+    assert "dvd:solaris" not in fusioni
+
+
+def test_le_fusioni_sopravvivono_alla_rilettura(tmp_path):
+    p = tmp_path / "i.jsonl"
+    r = inv.Inventario(p)
+    r.registra("dvd", "Heat")
+    r.registra("dvd", "The Heat")
+    assert len(inv.Inventario(p).fusioni()) == 1

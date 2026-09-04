@@ -182,12 +182,25 @@ class Inventario:
                 luoghi = esistente.setdefault("luoghi", [])
                 if voce["luogo"] not in luoghi:
                     luoghi.append(voce["luogo"])
+            # Titoli originali distinti che sono finiti sulla stessa chiave.
+            # «The Matrix» e «MATRIX, THE» devono fondersi — e' il motivo per
+            # cui l'articolo si toglie. Ma allora si fondono anche «Heat»
+            # (1995) e «The Heat» (2013), che sono due film. Non si puo'
+            # avere l'una cosa senza l'altra con la sola normalizzazione,
+            # quindi la fusione non si nasconde: si registra e si mostra.
+            titolo = str(voce.get("titolo", "")).strip()
+            if titolo:
+                visti = esistente.setdefault("titoli_visti", [])
+                if titolo not in visti:
+                    visti.append(titolo)
             return
         if voce.get("foto_sha"):
             self.foto_lette.add(voce["foto_sha"])
         voce.setdefault("avvistamenti", 1)
         voce.setdefault("impronte", [voce["impronta"]] if voce.get("impronta") else [])
         voce.setdefault("luoghi", [voce["luogo"]] if voce.get("luogo") else [])
+        voce.setdefault("titoli_visti",
+                        [voce["titolo"]] if voce.get("titolo") else [])
         self.voci.append(voce)
         if k:
             self._per_chiave[k] = voce
@@ -277,6 +290,17 @@ class Inventario:
             for l in (v.get("luoghi") or [None]):
                 mappa.setdefault(_etichetta(l), []).append(v)
         return dict(sorted(mappa.items()))
+
+    def fusioni(self) -> list[dict]:
+        """Voci su cui sono finiti titoli originali diversi.
+
+        E' il posto in cui guardare quando un conteggio sembra basso: se
+        «Heat» e «The Heat» sono diventati una voce sola, qui si vede, e
+        `--conferma` permette di separarli dando a uno un titolo distinto.
+        Una fusione visibile e' un problema; una fusione silenziosa e' un
+        registro che mente.
+        """
+        return [v for v in self.voci if len(v.get("titoli_visti", [])) > 1]
 
     def per_tipo(self) -> dict[str, int]:
         conteggio: dict[str, int] = {}

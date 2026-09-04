@@ -80,6 +80,12 @@ def mostra_inventario(json_out=False) -> int:
     print()
     for tipo, n in registro.per_tipo().items():
         print(f"  {tipo:<12} {n}")
+    fusioni = registro.fusioni()
+    if fusioni:
+        print(f"\n  {len(fusioni)} voci su cui sono finiti titoli diversi:")
+        for v in fusioni:
+            print(f"    {v['chiave']:<28} {' / '.join(v['titoli_visti'])}")
+        print("  Se sono oggetti diversi, dai a uno un titolo che li distingua.")
     return 0
 
 

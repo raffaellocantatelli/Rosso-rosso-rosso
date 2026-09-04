@@ -74,6 +74,11 @@ FAMIGLIE = {
     "libro": ("libro", "libri", "romanzo", "romanzi", "lettura"),
     "vino": ("vino", "vini", "bottiglia", "bottiglie", "rosso", "bianco",
              "barolo", "chianti", "prosecco"),
+    # Le parole qui sopra servono a capire l'INTENTO («che vini ho»). Per
+    # riconoscere un OGGETTO dal titolo servono termini inequivocabili:
+    # «rosso» e «bottiglie» stanno in «Divano rosso» e «Cassa di bottiglie
+    # vuote», e la domanda sul vino rispondeva anche quelli. Trovato
+    # depurando, con un inventario costruito apposta per romperlo.
     "cibo": ("cibo", "mangiare", "dispensa", "pasta", "riso", "conserve"),
     "elettronica": ("elettronica", "apparecchi", "elettrodomestici", "phon",
                     "televisore", "tv", "macchina del caffe"),
@@ -137,14 +142,31 @@ def interpreta(frase: str, luoghi_noti=()) -> dict:
 # rispondere
 # --------------------------------------------------------------------------
 
+#: Termini che identificano un vino anche quando il tipo dichiarato e' altro.
+#: Sono INEQUIVOCABILI di proposito: «rosso» e «bottiglie» non ci sono, perche'
+#: stanno anche in «Divano rosso» e «Cassa di bottiglie vuote».
+INDIZI_NEL_TITOLO = {
+    "vino": ("vino", "barolo", "barbaresco", "chianti", "prosecco",
+             "franciacorta", "brunello", "amarone", "champagne", "spumante",
+             "docg", "doc "),
+}
+
+
 def _filtra(registro, tipo=None, luogo=None) -> list[dict]:
+    """Filtra per tipo e per luogo.
+
+    La scorciatoia sui titoli e' un **ripiego**, e un ripiego non deve
+    competere con il dato dichiarato: si usa solo se nessun oggetto porta
+    davvero quel tipo. Altrimenti una casa con un Barolo catalogato bene
+    risponderebbe lo stesso «Divano rosso».
+    """
+    esatti = [v for v in registro.voci if normalizza(v.get("tipo", "")) == tipo] if tipo else None
+    usa_indizi = bool(tipo) and not esatti and tipo in INDIZI_NEL_TITOLO
     fuori = []
     for v in registro.voci:
         if tipo and normalizza(v.get("tipo", "")) != tipo:
-            # il vino sta spesso sotto «altro»: si guarda anche il titolo
-            if not (tipo == "vino" and "vino" not in v.get("tipo", "")
-                    and any(s in _piatto(v.get("titolo", ""))
-                            for s in FAMIGLIE["vino"])):
+            if not (usa_indizi and any(i in _piatto(v.get("titolo", ""))
+                                       for i in INDIZI_NEL_TITOLO[tipo])):
                 continue
         if luogo:
             etichette = [_etichetta(l) for l in (v.get("luoghi") or [None])]

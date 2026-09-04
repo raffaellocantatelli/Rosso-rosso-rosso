@@ -61,6 +61,38 @@ python -m occhio --controfirma <impronta> --codice HMX88   # ← questa riga non
 python -m occhio --differenza via-roma-12
 ```
 
+## 0-quinquies. Due difetti trovati depurando (04/09)
+
+Nessuno dei due veniva da un incidente: sono usciti costruendo apposta i casi
+che dovevano romperli.
+
+**1. «Che vini ho in cucina» rispondeva anche «Divano rosso».** Il filtro
+usava le stesse parole per due scopi diversi: riconoscere l'*intento* («che
+vini ho» — dove «rosso» e «bianco» aiutano) e riconoscere l'*oggetto* dal
+titolo (dove «rosso» sta anche in «Divano rosso» e «bottiglie» in «Cassa di
+bottiglie vuote»). Adesso sono due elenchi separati, e soprattutto: **la
+scorciatoia sul titolo è un ripiego, e un ripiego non compete col dato
+dichiarato.** Si usa solo se nessun oggetto porta davvero quel tipo.
+
+**2. «Heat» e «The Heat» diventavano lo stesso film.** Questo non è un difetto
+riparabile: togliere l'articolo è il motivo per cui «The Matrix» e
+«MATRIX, THE» si fondono come devono, e la stessa regola fonde due film che
+si chiamano quasi uguale. **Non si può avere l'una cosa senza l'altra con la
+sola normalizzazione.**
+
+Quindi non è stato risolto fingendo: è stato reso **visibile**. Ogni voce
+conserva i titoli originali distinti che ci sono finiti sopra, e
+`python -m occhio --inventario` li segnala:
+
+```
+  2 voci su cui sono finiti titoli diversi:
+    dvd:heat                     Heat / The Heat
+  Se sono oggetti diversi, dai a uno un titolo che li distingua.
+```
+
+**Una fusione visibile è un problema; una fusione silenziosa è un registro
+che mente.**
+
 ## 0-ter. CAPACITA.json — l'inventario di INVENTARIUM
 
 ```bash

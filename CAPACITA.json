@@ -22,7 +22,7 @@
   ],
   "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
   "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
-  "generato": "2026-09-04T04:14:12Z",
+  "generato": "2026-09-04T05:46:39Z",
   "generato_da": "python -m occhio --capacita",
   "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
   "moduli": {
@@ -44,6 +44,11 @@
               "nome": "csv",
               "firma": "(self) -> 'str'",
               "descrizione": ""
+            },
+            {
+              "nome": "fusioni",
+              "firma": "(self) -> 'list[dict]'",
+              "descrizione": "Voci su cui sono finiti titoli originali diversi."
             },
             {
               "nome": "per_luogo",
