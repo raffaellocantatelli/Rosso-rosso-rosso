@@ -48,6 +48,33 @@ difende. (E *Tallium*, che univa i due, è il nome di un metallo velenoso.)
 prima di stampare qualunque cosa — è dovuta diligenza, non ricerca sui
 concorrenti.
 
+## 0-ter. CAPACITA.json — l'inventario di INVENTARIUM
+
+```bash
+python -m occhio --capacita CAPACITA.json    # oppure --capacita per vederlo a schermo
+```
+
+Tutto ciò che il sistema sa fare, in una struttura leggibile da una macchina:
+11 moduli, 44 funzioni, 14 classi, 61 metodi, 37 comandi, 7 forme di dati,
+10 ipotesi con i loro falsificatori, 5 vincoli non negoziabili.
+
+**È generato per introspezione dal codice, non scritto a mano.** Un elenco
+scritto a mano diverge al primo comando nuovo e nessuno se ne accorge finché
+non serve: è la malattia delle sette copie dell'indice applicata alla
+documentazione. Qui i comandi vengono dal parser vero, le funzioni dalle
+firme vere, e **la forma dei dati da un record che il codice scrive davvero**
+in una cartella temporanea — perché uno schema dichiarato può mentire, un
+record scritto no.
+
+Tre prove lo tengono onesto: se aggiungi un comando o una funzione pubblica e
+non rigeneri, **falliscono**. Una quarta genera il manifesto due volte e
+verifica che differisca solo per l'orario: se no, dentro c'è qualcosa di non
+deterministico e il manifesto non è una fonte.
+
+Serve a tre lettori: chi integra il prodotto, un altro nodo che apre il
+repository, e un partner internazionale che deve capire in dieci minuti cosa
+c'è dentro senza leggere il codice.
+
 ## 1. Che cosa fa
 
 Cammini per casa con il telefono in mano. La telecamera guarda uno scaffale.

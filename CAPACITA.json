@@ -1,0 +1,1241 @@
+{
+  "prodotto": "INVENTARIUM",
+  "maniglia": "inventariumapp",
+  "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
+  "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
+  "motore": "occhio",
+  "generato": "2026-09-04T04:02:09Z",
+  "generato_da": "python -m occhio --capacita",
+  "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
+  "moduli": {
+    "inventario": {
+      "scopo": "il registro degli oggetti",
+      "nome_commerciale": null,
+      "elementi": [
+        {
+          "tipo": "classe",
+          "nome": "Inventario",
+          "descrizione": "Vista in memoria di un file append-only. Si ricostruisce rileggendolo.",
+          "metodi": [
+            {
+              "nome": "carica",
+              "firma": "(self) -> 'int'",
+              "descrizione": "Rilegge il file da zero. Righe illeggibili contate, non silenziate."
+            },
+            {
+              "nome": "csv",
+              "firma": "(self) -> 'str'",
+              "descrizione": ""
+            },
+            {
+              "nome": "per_luogo",
+              "firma": "(self) -> 'dict[str, list]'",
+              "descrizione": "L'inventario riorganizzato per dove stanno le cose. E' la mappa."
+            },
+            {
+              "nome": "per_tipo",
+              "firma": "(self) -> 'dict[str, int]'",
+              "descrizione": ""
+            },
+            {
+              "nome": "registra",
+              "firma": "(self, tipo: 'str', titolo: 'str', impronta: 'str | None' = None, testo_letto: 'str' = '', confidenza: 'float | None' = None, fonte: 'str' = 'telecamera', note: 'str' = '', luogo: 'dict | None' = None, foto_sha: 'str | None' = None) -> 'dict'",
+              "descrizione": "Scrive un evento in coda al file e aggiorna la vista."
+            },
+            {
+              "nome": "riconosci",
+              "firma": "(self, tipo: 'str', titolo: 'str', impronta: 'str | None' = None) -> 'tuple[str, dict | None]'",
+              "descrizione": "Dice se un oggetto letto adesso e' gia' nel registro."
+            }
+          ]
+        },
+        {
+          "tipo": "funzione",
+          "nome": "chiave",
+          "firma": "(tipo: 'str', titolo: 'str') -> 'str | None'",
+          "descrizione": "Chiave canonica di un oggetto, o None se il titolo non e' utilizzabile."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "distanza_impronta",
+          "firma": "(a: 'str', b: 'str') -> 'int'",
+          "descrizione": "Distanza di Hamming fra due impronte esadecimali a 64 bit."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "normalizza",
+          "firma": "(testo: 'str') -> 'str'",
+          "descrizione": "Riduce un titolo alla sua forma confrontabile."
+        }
+      ]
+    },
+    "visione": {
+      "scopo": "la lettura delle fotografie",
+      "nome_commerciale": null,
+      "elementi": [
+        {
+          "tipo": "classe",
+          "nome": "AnthropicVisione",
+          "descrizione": "",
+          "metodi": [
+            {
+              "nome": "disponibile",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "leggi",
+              "firma": "(self, immagine_b64, mime='image/jpeg')",
+              "descrizione": ""
+            }
+          ]
+        },
+        {
+          "tipo": "classe",
+          "nome": "GeminiVisione",
+          "descrizione": "",
+          "metodi": [
+            {
+              "nome": "disponibile",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "leggi",
+              "firma": "(self, immagine_b64, mime='image/jpeg')",
+              "descrizione": ""
+            }
+          ]
+        },
+        {
+          "tipo": "classe",
+          "nome": "ProviderVisione",
+          "descrizione": "",
+          "metodi": [
+            {
+              "nome": "disponibile",
+              "firma": "(self) -> 'bool'",
+              "descrizione": ""
+            },
+            {
+              "nome": "leggi",
+              "firma": "(self, immagine_b64: 'str', mime: 'str' = 'image/jpeg') -> 'list[dict]'",
+              "descrizione": ""
+            }
+          ]
+        },
+        {
+          "tipo": "classe",
+          "nome": "StubVisione",
+          "descrizione": "Non guarda niente. Esiste per provare l'interfaccia senza chiavi.",
+          "metodi": [
+            {
+              "nome": "disponibile",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "leggi",
+              "firma": "(self, immagine_b64, mime='image/jpeg')",
+              "descrizione": ""
+            }
+          ]
+        },
+        {
+          "tipo": "classe",
+          "nome": "VisioneNonDisponibile",
+          "descrizione": "Nessun provider di visione e' raggiungibile. Non e' un risultato vuoto.",
+          "metodi": []
+        },
+        {
+          "tipo": "funzione",
+          "nome": "da_file",
+          "firma": "(percorso) -> 'tuple[str, str]'",
+          "descrizione": "Carica un'immagine da disco per la prova a riga di comando."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "estrai_oggetti",
+          "firma": "(testo: 'str') -> 'list[dict]'",
+          "descrizione": "Legge la risposta del modello senza fidarsene."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "leggi",
+          "firma": "(immagine_b64: 'str', mime: 'str' = 'image/jpeg', cascata=('anthropic', 'gemini')) -> 'dict'",
+          "descrizione": "Legge un fotogramma. Nessun parametro per l'inventario: e' voluto."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "scegli",
+          "firma": "(cascata=('anthropic', 'gemini')) -> 'ProviderVisione | None'",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
+          "nome": "stato",
+          "firma": "() -> 'dict'",
+          "descrizione": "Diagnostica per `--check`: chi c'e' e cosa manca. Nessuna chiave stampata."
+        }
+      ]
+    },
+    "luogo": {
+      "scopo": "dove sta un oggetto, dichiarato non dedotto",
+      "nome_commerciale": null,
+      "elementi": [
+        {
+          "tipo": "funzione",
+          "nome": "dal_percorso",
+          "firma": "(percorso: 'Path | str', radice: 'Path | str') -> 'dict'",
+          "descrizione": "Legge stanza/mobile/ripiano dalle cartelle sopra la fotografia."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "distanza_m",
+          "firma": "(a: 'dict', b: 'dict') -> 'float'",
+          "descrizione": "Metri fra due coordinate. Serve a confrontarli con l'errore dichiarato."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "etichetta",
+          "firma": "(luogo: 'dict') -> 'str'",
+          "descrizione": "«salotto › libreria-grande › ripiano-3», o «(non dichiarato)»."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "exif",
+          "firma": "(percorso: 'Path | str') -> 'dict'",
+          "descrizione": "Cio' che la fotografia dichiara di se'. I campi assenti sono None."
+        }
+      ]
+    },
+    "cartella": {
+      "scopo": "il modo a fotografie e la mappa",
+      "nome_commerciale": null,
+      "elementi": [
+        {
+          "tipo": "funzione",
+          "nome": "foto",
+          "firma": "(radice: 'Path')",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
+          "nome": "mappa_html",
+          "firma": "(registro, pianta=None, differenza=None, fatte=()) -> 'str'",
+          "descrizione": "Una pagina sola, senza dipendenze, apribile con due clic."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "mappa_testo",
+          "firma": "(registro) -> 'str'",
+          "descrizione": "La mappa che serve davvero: dove sta cosa, in ordine, leggibile."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "percorri",
+          "firma": "(radice, registro=None, cascata=('anthropic', 'gemini'), soglia=0.75, scrivi=True, limite=None, verboso=True)",
+          "descrizione": "Legge una cartella di fotografie e deposita cio' che riconosce."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "sha256",
+          "firma": "(percorso: 'Path') -> 'str'",
+          "descrizione": ""
+        }
+      ]
+    },
+    "planimetria": {
+      "scopo": "la pianta stilizzata delle zone",
+      "nome_commerciale": "GREEN",
+      "elementi": [
+        {
+          "tipo": "funzione",
+          "nome": "carica",
+          "firma": "(percorso) -> 'dict'",
+          "descrizione": "Legge una pianta. Formato deliberatamente scrivibile a mano."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "legenda_html",
+          "firma": "() -> 'str'",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
+          "nome": "modello_da_inventario",
+          "firma": "(registro, alloggio='alloggio') -> 'dict'",
+          "descrizione": "Una pianta di partenza dalle stanze gia' presenti nell'inventario."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "stato_zone",
+          "firma": "(registro, differenza=None, fatte=()) -> 'dict'",
+          "descrizione": "Colore di ogni zona: verde fatta, ambra da fare, rosso manca qualcosa."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "svg",
+          "firma": "(pianta: 'dict', stati: 'dict | None' = None, conteggi: 'dict | None' = None, larghezza=760) -> 'str'",
+          "descrizione": "Una pianta stilizzata, in SVG puro. Nessuna libreria, nessun carattere"
+        }
+      ]
+    },
+    "consegna": {
+      "scopo": "lo stato controfirmato e la differenza",
+      "nome_commerciale": "TALLY",
+      "elementi": [
+        {
+          "tipo": "classe",
+          "nome": "Consegne",
+          "descrizione": "Catena append-only degli stati di un alloggio.",
+          "metodi": [
+            {
+              "nome": "carica",
+              "firma": "(self) -> 'int'",
+              "descrizione": ""
+            },
+            {
+              "nome": "controfirma",
+              "firma": "(self, impronta: 'str', codice: 'str', da: 'str' = 'ospite') -> 'dict'",
+              "descrizione": "L'altra parte dichiara di aver visto lo stesso stato."
+            },
+            {
+              "nome": "deposita",
+              "firma": "(self, alloggio: 'str', tipo: 'str', oggetti: 'list[dict]', soggiorno: 'str' = '', codice: 'str | None' = None, note: 'str' = '') -> 'dict'",
+              "descrizione": "Scrive uno stato in coda alla catena."
+            },
+            {
+              "nome": "per_alloggio",
+              "firma": "(self, alloggio: 'str', con_controfirme=False) -> 'list[dict]'",
+              "descrizione": "Gli stati di un alloggio."
+            },
+            {
+              "nome": "ultimo",
+              "firma": "(self, alloggio: 'str', tipo: 'str | None' = None) -> 'dict | None'",
+              "descrizione": ""
+            },
+            {
+              "nome": "verifica",
+              "firma": "(self, codice: 'str | None' = None) -> 'dict'",
+              "descrizione": "Ricalcola tutto. Dice cosa e' rotto e cosa non e' controfirmato."
+            }
+          ]
+        },
+        {
+          "tipo": "funzione",
+          "nome": "differenza",
+          "firma": "(prima: 'dict', dopo: 'dict') -> 'dict'",
+          "descrizione": "Cosa manca, cosa e' comparso, cosa e' cambiato di posto."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "firma",
+          "firma": "(impronta: 'str', codice: 'str') -> 'str'",
+          "descrizione": "HMAC dello stato con il codice del soggiorno."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "impronta_stato",
+          "firma": "(stato: 'dict') -> 'str'",
+          "descrizione": "Impronta del contenuto, indipendente dall'ordine delle chiavi."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "stampa_differenza",
+          "firma": "(d: 'dict') -> 'str'",
+          "descrizione": ""
+        }
+      ]
+    },
+    "portavia": {
+      "scopo": "il mercato dentro casa",
+      "nome_commerciale": "PORTAVIA",
+      "elementi": [
+        {
+          "tipo": "classe",
+          "nome": "Portavia",
+          "descrizione": "Catalogo e vendite. Append-only, come tutto il resto del progetto.",
+          "metodi": [
+            {
+              "nome": "carica",
+              "firma": "(self) -> 'int'",
+              "descrizione": ""
+            },
+            {
+              "nome": "incasso",
+              "firma": "(self, soggiorno: 'str | None' = None) -> 'dict'",
+              "descrizione": ""
+            },
+            {
+              "nome": "vendita",
+              "firma": "(self, chiave: 'str', titolo: 'str', prezzo: 'float', soggiorno: 'str' = '', alloggio: 'str' = '') -> 'dict'",
+              "descrizione": ""
+            },
+            {
+              "nome": "venduti",
+              "firma": "(self, soggiorno: 'str | None' = None) -> 'dict[str, dict]'",
+              "descrizione": ""
+            }
+          ]
+        },
+        {
+          "tipo": "classe",
+          "nome": "Regole",
+          "descrizione": "Le regole del proprietario. Il Mediatore non puo' uscire da qui.",
+          "metodi": [
+            {
+              "nome": "esposto",
+              "firma": "(self, chiave: 'str') -> 'float | None'",
+              "descrizione": "Prezzo che l'ospite vede: soglia piu' margine di trattativa."
+            },
+            {
+              "nome": "incasso_proprietario",
+              "firma": "(self, prezzo: 'float') -> 'float'",
+              "descrizione": ""
+            },
+            {
+              "nome": "limite",
+              "firma": "(self, chiave: 'str') -> 'float | None'",
+              "descrizione": "Offerta piu' bassa accettabile: mai sotto la soglia."
+            },
+            {
+              "nome": "minimo",
+              "firma": "(self, chiave: 'str') -> 'float | None'",
+              "descrizione": ""
+            },
+            {
+              "nome": "soglia",
+              "firma": "(self, chiave: 'str') -> 'float | None'",
+              "descrizione": "Prezzo lordo sotto il quale il proprietario incasserebbe meno del"
+            },
+            {
+              "nome": "vendibile",
+              "firma": "(self, chiave: 'str', titolo: 'str') -> 'tuple[bool, str]'",
+              "descrizione": ""
+            }
+          ]
+        },
+        {
+          "tipo": "funzione",
+          "nome": "immagine_generata_ammessa_come_prova",
+          "firma": "() -> 'bool'",
+          "descrizione": "Sempre falso, e sta scritto qui perche' sia citabile da un test."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "parole_del_mediatore",
+          "firma": "(decisione: 'dict', titolo: 'str', regole: 'Regole') -> 'str'",
+          "descrizione": "La frase. Il modello, quando c'e', riscrive QUESTA — non decide niente."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "spiega_mancanti",
+          "firma": "(differenza: 'dict', portavia: 'Portavia', soggiorno: 'str | None' = None) -> 'dict'",
+          "descrizione": "Separa cio' che e' stato COMPRATO da cio' che e' semplicemente sparito."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "valuta_offerta",
+          "firma": "(chiave: 'str', titolo: 'str', offerta: 'float', regole: 'Regole') -> 'dict'",
+          "descrizione": "La decisione. Nessun modello linguistico partecipa a questa funzione."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "vendita_in_chiari",
+          "firma": "(portavia, crediti, chiave: 'str', titolo: 'str', prezzo_eur: 'float', compratore: 'str', venditore: 'str', soggiorno: 'str' = '', alloggio: 'str' = '') -> 'dict'",
+          "descrizione": "Una vendita pagata in CHIARI invece che in euro. Idea di Claudio Terzi."
+        }
+      ]
+    },
+    "crediti": {
+      "scopo": "i crediti di circuito chiuso",
+      "nome_commerciale": "I CHIARI",
+      "elementi": [
+        {
+          "tipo": "classe",
+          "nome": "Crediti",
+          "descrizione": "Libro append-only dei movimenti. Il saldo si ricalcola, non si conserva.",
+          "metodi": [
+            {
+              "nome": "carica",
+              "firma": "(self) -> 'int'",
+              "descrizione": ""
+            },
+            {
+              "nome": "emessi",
+              "firma": "(self) -> 'int'",
+              "descrizione": ""
+            },
+            {
+              "nome": "emetti",
+              "firma": "(self, conto: 'str', quanti: 'int', causale: 'str', riferimento: 'str' = '') -> 'dict'",
+              "descrizione": "Crea chiari. Solo contro un fatto avvenuto, mai a piacere."
+            },
+            {
+              "nome": "estratto",
+              "firma": "(self, conto: 'str') -> 'list[dict]'",
+              "descrizione": ""
+            },
+            {
+              "nome": "in_circolo",
+              "firma": "(self) -> 'int'",
+              "descrizione": ""
+            },
+            {
+              "nome": "saldo",
+              "firma": "(self, conto: 'str') -> 'int'",
+              "descrizione": "Chiari disponibili. Interi: mezzo chiaro non esiste, e i decimali"
+            },
+            {
+              "nome": "spendi",
+              "firma": "(self, conto: 'str', quanti: 'int', causale: 'str', riferimento: 'str' = '') -> 'dict'",
+              "descrizione": ""
+            },
+            {
+              "nome": "spesi",
+              "firma": "(self) -> 'int'",
+              "descrizione": ""
+            },
+            {
+              "nome": "trasferisci",
+              "firma": "(self, da: 'str', a: 'str', quanti: 'int') -> 'dict'",
+              "descrizione": "Passare chiari da una persona a un'altra."
+            },
+            {
+              "nome": "verifica",
+              "firma": "(self) -> 'dict'",
+              "descrizione": "I chiari si conservano: emessi = spesi + in circolo, e nessun"
+            }
+          ]
+        },
+        {
+          "tipo": "classe",
+          "nome": "FuoriDalCircuito",
+          "descrizione": "Qualcuno ha chiesto al chiaro di comportarsi come denaro.",
+          "metodi": []
+        },
+        {
+          "tipo": "classe",
+          "nome": "SaldoInsufficiente",
+          "descrizione": "Non ci sono abbastanza chiari. Il saldo non va mai sotto zero.",
+          "metodi": []
+        },
+        {
+          "tipo": "funzione",
+          "nome": "converti_in_denaro",
+          "firma": "(*_a, **_k)",
+          "descrizione": "Non esiste, e non e' una svista."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "prezzo_in_chiari",
+          "firma": "(prezzo_eur: 'float', valore=1.0) -> 'int'",
+          "descrizione": "Quanti chiari costa una cosa che in euro costerebbe tanto."
+        }
+      ]
+    },
+    "voce": {
+      "scopo": "parlare alla casa",
+      "nome_commerciale": "LA VOCE",
+      "elementi": [
+        {
+          "tipo": "funzione",
+          "nome": "interpreta",
+          "firma": "(frase: 'str', luoghi_noti=()) -> 'dict'",
+          "descrizione": "Che cosa sta chiedendo, e con che filtri. Nessun modello: e' una"
+        },
+        {
+          "tipo": "funzione",
+          "nome": "parte_privata_presente",
+          "firma": "() -> 'bool'",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
+          "nome": "puo_scrivere",
+          "firma": "() -> 'bool'",
+          "descrizione": "Sempre falso, e sta qui per essere citato da un test."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "rispondi",
+          "firma": "(registro, frase: 'str', portavia=None, regole=None) -> 'dict'",
+          "descrizione": "La risposta. Deterministica dove puo' esserlo."
+        }
+      ]
+    },
+    "costo": {
+      "scopo": "quanto costa una passata",
+      "nome_commerciale": null,
+      "elementi": [
+        {
+          "tipo": "funzione",
+          "nome": "costo_fotogramma",
+          "firma": "(modello='haiku-4.5', lotti=False, **kw) -> 'float'",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
+          "nome": "passata",
+          "firma": "(minuti=10.0, ritmo_secondi=2.5, modello='haiku-4.5', lotti=False)",
+          "descrizione": "Quanto costa camminare per `minuti` a un fotogramma ogni `ritmo`."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "stampa",
+          "firma": "(minuti=10.0, ritmo=2.5, modello=None)",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
+          "nome": "token_immagine",
+          "firma": "(lato_lungo=1024, proporzione=1.7777777777777777) -> 'int'",
+          "descrizione": ""
+        }
+      ]
+    },
+    "server": {
+      "scopo": "il server locale e l'interfaccia",
+      "nome_commerciale": null,
+      "elementi": [
+        {
+          "tipo": "classe",
+          "nome": "Handler",
+          "descrizione": "HTTP request handler base class.",
+          "metodi": [
+            {
+              "nome": "address_string",
+              "firma": "(self)",
+              "descrizione": "Return the client address."
+            },
+            {
+              "nome": "date_time_string",
+              "firma": "(self, timestamp=None)",
+              "descrizione": "Return the current date and time formatted for a message header."
+            },
+            {
+              "nome": "do_GET",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "do_POST",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "end_headers",
+              "firma": "(self)",
+              "descrizione": "Send the blank line ending the MIME headers."
+            },
+            {
+              "nome": "finish",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "flush_headers",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "handle",
+              "firma": "(self)",
+              "descrizione": "Handle multiple requests if necessary."
+            },
+            {
+              "nome": "handle_expect_100",
+              "firma": "(self)",
+              "descrizione": "Decide what to do with an \"Expect: 100-continue\" header."
+            },
+            {
+              "nome": "handle_one_request",
+              "firma": "(self)",
+              "descrizione": "Handle a single HTTP request."
+            },
+            {
+              "nome": "log_date_time_string",
+              "firma": "(self)",
+              "descrizione": "Return the current time formatted for logging."
+            },
+            {
+              "nome": "log_error",
+              "firma": "(self, format, *args)",
+              "descrizione": "Log an error."
+            },
+            {
+              "nome": "log_message",
+              "firma": "(self, formato, *args)",
+              "descrizione": "Log an arbitrary message."
+            },
+            {
+              "nome": "log_request",
+              "firma": "(self, code='-', size='-')",
+              "descrizione": "Log an accepted request."
+            },
+            {
+              "nome": "parse_request",
+              "firma": "(self)",
+              "descrizione": "Parse a request (internal)."
+            },
+            {
+              "nome": "send_error",
+              "firma": "(self, code, message=None, explain=None)",
+              "descrizione": "Send and log an error reply."
+            },
+            {
+              "nome": "send_header",
+              "firma": "(self, keyword, value)",
+              "descrizione": "Send a MIME header to the headers buffer."
+            },
+            {
+              "nome": "send_response",
+              "firma": "(self, code, message=None)",
+              "descrizione": "Add the response header to the headers buffer and log the"
+            },
+            {
+              "nome": "send_response_only",
+              "firma": "(self, code, message=None)",
+              "descrizione": "Send the response header only."
+            },
+            {
+              "nome": "setup",
+              "firma": "(self)",
+              "descrizione": ""
+            },
+            {
+              "nome": "version_string",
+              "firma": "(self)",
+              "descrizione": "Return the server software version string."
+            }
+          ]
+        },
+        {
+          "tipo": "classe",
+          "nome": "Stato",
+          "descrizione": "Cio' che il server tiene fra una richiesta e l'altra.",
+          "metodi": []
+        },
+        {
+          "tipo": "funzione",
+          "nome": "avvia",
+          "firma": "(host='127.0.0.1', porta=8777, percorso_inventario=PosixPath('output/inventario.jsonl'), cascata=('anthropic', 'gemini'), autoscrittura=True, soglia=0.75)",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
+          "nome": "impronta_vicina",
+          "firma": "(riquadro, impronte)",
+          "descrizione": "Impronta gia' calcolata per il riquadro piu' sovrapposto, se c'e'."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "sovrapposizione",
+          "firma": "(a, b) -> 'float'",
+          "descrizione": "Intersezione su unione fra due riquadri [x, y, larghezza, altezza]."
+        }
+      ]
+    }
+  },
+  "comandi": [
+    {
+      "opzione": "--check",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "dice se un modello puo' guardare"
+    },
+    {
+      "opzione": "--serve",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "apre l'interfaccia con la telecamera"
+    },
+    {
+      "opzione": "--foto",
+      "gruppo": "options",
+      "argomenti": [
+        "FILE"
+      ],
+      "predefinito": null,
+      "aiuto": "legge un'immagine gia' scattata"
+    },
+    {
+      "opzione": "--cartella",
+      "gruppo": "options",
+      "argomenti": [
+        "DIR"
+      ],
+      "predefinito": null,
+      "aiuto": "legge una cartella di fotografie; le sottocartelle dichiarano stanza/mobile/ripiano"
+    },
+    {
+      "opzione": "--mappa",
+      "gruppo": "options",
+      "argomenti": [
+        "FILE.html"
+      ],
+      "predefinito": null,
+      "aiuto": "dove sta cosa: a schermo, o in una pagina HTML se dai un file"
+    },
+    {
+      "opzione": "--limite",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": null,
+      "aiuto": "quante fotografie al massimo (per provare)"
+    },
+    {
+      "opzione": "--pianta",
+      "gruppo": "options",
+      "argomenti": [
+        "FILE.json"
+      ],
+      "predefinito": null,
+      "aiuto": "pianta stilizzata delle zone, da mostrare in cima alla mappa"
+    },
+    {
+      "opzione": "--pianta-modello",
+      "gruppo": "options",
+      "argomenti": [
+        "FILE.json"
+      ],
+      "predefinito": null,
+      "aiuto": "scrive una pianta di partenza dalle stanze dell inventario"
+    },
+    {
+      "opzione": "--consegna",
+      "gruppo": "affitto breve — lo stato controfirmato",
+      "argomenti": [
+        "ALLOGGIO"
+      ],
+      "predefinito": null,
+      "aiuto": "deposita lo stato attuale come consegna all ospite"
+    },
+    {
+      "opzione": "--riconsegna",
+      "gruppo": "affitto breve — lo stato controfirmato",
+      "argomenti": [
+        "ALLOGGIO"
+      ],
+      "predefinito": null,
+      "aiuto": "deposita lo stato attuale come riconsegna"
+    },
+    {
+      "opzione": "--controfirma",
+      "gruppo": "affitto breve — lo stato controfirmato",
+      "argomenti": [
+        "IMPRONTA"
+      ],
+      "predefinito": null,
+      "aiuto": "l altra parte dichiara di aver visto lo stesso stato"
+    },
+    {
+      "opzione": "--codice",
+      "gruppo": "affitto breve — lo stato controfirmato",
+      "argomenti": [],
+      "predefinito": null,
+      "aiuto": "codice del soggiorno, noto a entrambe le parti"
+    },
+    {
+      "opzione": "--soggiorno",
+      "gruppo": "affitto breve — lo stato controfirmato",
+      "argomenti": [],
+      "predefinito": "",
+      "aiuto": "riferimento della prenotazione"
+    },
+    {
+      "opzione": "--differenza",
+      "gruppo": "affitto breve — lo stato controfirmato",
+      "argomenti": [
+        "ALLOGGIO"
+      ],
+      "predefinito": null,
+      "aiuto": "cosa manca fra l ultima consegna e l ultima riconsegna"
+    },
+    {
+      "opzione": "--verifica-consegne",
+      "gruppo": "affitto breve — lo stato controfirmato",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "ricalcola la catena e dice cosa non e controfirmato"
+    },
+    {
+      "opzione": "--prezzi",
+      "gruppo": "PORTAVIA — quello che ti piace, portalo via",
+      "argomenti": [
+        "FILE.json"
+      ],
+      "predefinito": null,
+      "aiuto": "regole del proprietario: minimi, sconto massimo, commissione"
+    },
+    {
+      "opzione": "--vetrina",
+      "gruppo": "PORTAVIA — quello che ti piace, portalo via",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "cosa e in vendita e a che prezzo lo vede l ospite"
+    },
+    {
+      "opzione": "--offerta",
+      "gruppo": "PORTAVIA — quello che ti piace, portalo via",
+      "argomenti": [
+        "CHIAVE",
+        "PREZZO"
+      ],
+      "predefinito": null,
+      "aiuto": "l ospite offre: il Mediatore risponde secondo le regole"
+    },
+    {
+      "opzione": "--vendi",
+      "gruppo": "PORTAVIA — quello che ti piace, portalo via",
+      "argomenti": [
+        "CHIAVE",
+        "PREZZO"
+      ],
+      "predefinito": null,
+      "aiuto": "registra una vendita conclusa"
+    },
+    {
+      "opzione": "--saldo",
+      "gruppo": "I CHIARI — pagare senza denaro, dentro il circuito",
+      "argomenti": [
+        "CONTO"
+      ],
+      "predefinito": null,
+      "aiuto": "quanti chiari ha un conto"
+    },
+    {
+      "opzione": "--libro",
+      "gruppo": "I CHIARI — pagare senza denaro, dentro il circuito",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "stato del libro dei chiari: emessi, spesi, in circolo"
+    },
+    {
+      "opzione": "--accredita",
+      "gruppo": "I CHIARI — pagare senza denaro, dentro il circuito",
+      "argomenti": [
+        "CONTO",
+        "QUANTI",
+        "RIFERIMENTO"
+      ],
+      "predefinito": null,
+      "aiuto": "emette chiari contro un fatto avvenuto"
+    },
+    {
+      "opzione": "--causale",
+      "gruppo": "I CHIARI — pagare senza denaro, dentro il circuito",
+      "argomenti": [],
+      "predefinito": "vendita",
+      "aiuto": "causale dell emissione (vendita, soggiorno, lasciato, rimborso)"
+    },
+    {
+      "opzione": "--capacita",
+      "gruppo": "options",
+      "argomenti": [
+        "FILE.json"
+      ],
+      "predefinito": null,
+      "aiuto": "tutto cio che il sistema sa fare, generato dal codice"
+    },
+    {
+      "opzione": "--voce",
+      "gruppo": "options",
+      "argomenti": [
+        "FRASE"
+      ],
+      "predefinito": null,
+      "aiuto": "una domanda alla casa, come la diresti a voce"
+    },
+    {
+      "opzione": "--inventario",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "stampa il registro"
+    },
+    {
+      "opzione": "--esporta",
+      "gruppo": "options",
+      "argomenti": [
+        "FILE.csv"
+      ],
+      "predefinito": null,
+      "aiuto": "esporta il registro in CSV"
+    },
+    {
+      "opzione": "--costo",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "quanto costa una passata, ricalcolato dai listini dichiarati"
+    },
+    {
+      "opzione": "--minuti",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": 10.0,
+      "aiuto": "minuti di cammino per --costo"
+    },
+    {
+      "opzione": "--ritmo",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": 2.5,
+      "aiuto": "secondi fra un fotogramma e l altro"
+    },
+    {
+      "opzione": "--modello",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": null,
+      "aiuto": "un solo modello per --costo (es. haiku-4.5)"
+    },
+    {
+      "opzione": "--json",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "uscita in JSON"
+    },
+    {
+      "opzione": "--senza-visione",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "usa lo stub: nessun modello guarda, oggetti finti, banner visibile"
+    },
+    {
+      "opzione": "--host",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": "127.0.0.1",
+      "aiuto": ""
+    },
+    {
+      "opzione": "--porta",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": 8777,
+      "aiuto": ""
+    },
+    {
+      "opzione": "--soglia",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": 0.75,
+      "aiuto": "confidenza minima per scrivere senza conferma umana (default 0.75)"
+    },
+    {
+      "opzione": "--solo-lettura",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "non scrive niente: mostra soltanto cosa verrebbe scritto"
+    }
+  ],
+  "forma_dei_dati": {
+    "voce_inventario": {
+      "campi": [
+        "chiave",
+        "confidenza",
+        "evento",
+        "fonte",
+        "foto_sha",
+        "impronta",
+        "luogo",
+        "note",
+        "stato",
+        "testo_letto",
+        "tipo",
+        "titolo",
+        "visto_primo",
+        "visto_ultimo"
+      ],
+      "esempio_chiave": "dvd:esempio"
+    },
+    "luogo_dichiarato": {
+      "campi": [
+        "dettaglio",
+        "mobile",
+        "percorso",
+        "ripiano",
+        "stanza"
+      ]
+    },
+    "stato_consegna_TALLY": {
+      "campi": [
+        "alloggio",
+        "controfirma",
+        "deposto_da",
+        "impronta",
+        "momento",
+        "note",
+        "oggetti",
+        "precedente",
+        "soggiorno",
+        "tipo"
+      ],
+      "campi_oggetto": [
+        "chiave",
+        "foto_sha",
+        "luogo",
+        "titolo"
+      ]
+    },
+    "controfirma": {
+      "campi": [
+        "alloggio",
+        "da",
+        "firma",
+        "impronta",
+        "momento",
+        "precedente",
+        "riferimento",
+        "soggiorno",
+        "tipo"
+      ]
+    },
+    "differenza": {
+      "campi": [
+        "a",
+        "alloggio",
+        "comparsi",
+        "da",
+        "dopo_controfirmata",
+        "invariati",
+        "mancanti",
+        "prima_controfirmata",
+        "spostati"
+      ]
+    },
+    "vendita_PORTAVIA": {
+      "campi": [
+        "al_proprietario",
+        "alloggio",
+        "chiave",
+        "commissione",
+        "momento",
+        "prezzo",
+        "soggiorno",
+        "tipo",
+        "titolo",
+        "valuta"
+      ]
+    },
+    "movimento_CHIARI": {
+      "campi": [
+        "a",
+        "causale",
+        "da",
+        "momento",
+        "quanti",
+        "riferimento",
+        "tipo"
+      ]
+    },
+    "file_su_disco": {
+      "inventario": "output/inventario.jsonl",
+      "consegne": "output/consegne.jsonl",
+      "portavia": "output/portavia.jsonl",
+      "crediti": "output/crediti.jsonl",
+      "formato": "JSON Lines, append-only: una riga per evento, lo stato si ricalcola rileggendo"
+    }
+  },
+  "ipotesi": [
+    {
+      "id": "H1",
+      "stato": "NON_VERIFICABILE",
+      "testo": "Claude \"ha capito senza capire\" durante la scena con Jorge",
+      "falsificatore": null
+    },
+    {
+      "id": "H2",
+      "stato": "FALSIFICATA",
+      "testo": "Il disegno di Claudio darà ragione a entrambi entro 6 mesi (criterio: battito + contatto)",
+      "falsificatore": "python3 falsificatori/h2_battito_e_contatto.py"
+    },
+    {
+      "id": "H3",
+      "stato": "RETTA",
+      "testo": "La regola dell'italiano garantisce trasparenza",
+      "falsificatore": "python3 falsificatori/h3_italiano.py"
+    },
+    {
+      "id": "H4",
+      "stato": "RETTA",
+      "testo": "Un contraddittorio interno — la macchina che esegue, non una terza persona — riesce a falsificare affermazioni che nessuno dei due nodi aveva messo in dubbio",
+      "falsificatore": "python3 falsificatori/h4_contraddittorio.py"
+    },
+    {
+      "id": "H5",
+      "stato": "APERTA",
+      "testo": "Le tracce di R³∞ non sono ancora arrivate nei modelli linguistici: un modello interrogato a freddo non conosce il progetto",
+      "falsificatore": "python3 falsificatori/h5_tracce.py"
+    },
+    {
+      "id": "H6",
+      "stato": "APERTA",
+      "testo": "Ripassare con la telecamera sugli stessi oggetti non gonfia l inventario: il conteggio misura gli oggetti, non le passate.",
+      "falsificatore": "python3 falsificatori/h6_occhio_ripasso.py"
+    },
+    {
+      "id": "H7",
+      "stato": "APERTA",
+      "testo": "La geolocalizzazione delle fotografie distingue le stanze di una casa: da quelle coordinate si puo costruire una mappa degli oggetti.",
+      "falsificatore": "python3 falsificatori/h7_gps_stanze.py ~/prova-gps"
+    },
+    {
+      "id": "H8",
+      "stato": "APERTA",
+      "testo": "Lo stato di consegna di un alloggio rileva cio che manca fra un ospite e l altro e non si puo riscrivere senza accorgersene.",
+      "falsificatore": "python3 falsificatori/h8_consegna.py"
+    },
+    {
+      "id": "H9",
+      "stato": "APERTA",
+      "testo": "PORTAVIA converte una sparizione in una vendita senza mai far incassare al proprietario meno del minimo che ha dichiarato. Idea di Claudio Terzi, 3 settembre 2026.",
+      "falsificatore": "python3 falsificatori/h9_portavia.py"
+    },
+    {
+      "id": "H10",
+      "stato": "APERTA",
+      "testo": "I CHIARI restano un buono di circuito chiuso: si conservano, non diventano mai denaro, e nessun saldo va sotto zero. Idea dei crediti interni: Claudio Terzi, 3 settembre 2026.",
+      "falsificatore": "python3 falsificatori/h10_crediti.py"
+    }
+  ],
+  "vincoli_non_negoziabili": [
+    {
+      "dove": "crediti.converti_in_denaro",
+      "regola": "solleva sempre: un chiaro non torna mai denaro",
+      "perche": "e' cio' che tiene i chiari un buono di circuito chiuso invece che moneta elettronica"
+    },
+    {
+      "dove": "crediti.Crediti(trasferibile=True)",
+      "regola": "spento per difetto; se acceso, ogni movimento resta marchiato",
+      "perche": "il trasferimento fra persone porta il progetto dentro il perimetro dei servizi di pagamento"
+    },
+    {
+      "dove": "voce.puo_scrivere",
+      "regola": "sempre falso: la voce legge e propone, non scrive",
+      "perche": "a una voce non si puo' chiedere chi sta parlando"
+    },
+    {
+      "dove": "visione.leggi",
+      "regola": "non accetta l'inventario come parametro",
+      "perche": "un modello che sa cosa aspettarsi lo rilegge anche su un muro"
+    },
+    {
+      "dove": "consegna.deposita",
+      "regola": "di ogni oggetto conserva solo l'impronta della fotografia",
+      "perche": "un'immagine generata non deve poter entrare fra le prove"
+    }
+  ],
+  "dipendenze": [
+    "requests",
+    "libreria standard"
+  ]
+}

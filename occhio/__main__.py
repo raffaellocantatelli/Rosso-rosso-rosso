@@ -357,7 +357,13 @@ def consegne(a) -> int:
     return 0
 
 
-def main(argv=None) -> int:
+def costruisci_parser() -> argparse.ArgumentParser:
+    """Il parser, separato da main() perche' `occhio.capacita` possa leggerlo.
+
+    Un elenco dei comandi scritto a mano diverge dal codice al primo comando
+    nuovo, e nessuno se ne accorge finche' non serve. Qui l'elenco si ricava
+    dal parser vero.
+    """
     ap = argparse.ArgumentParser(
         prog="python -m occhio",
         description="Inventario di oggetti reali attraverso la telecamera. "
@@ -405,6 +411,8 @@ def main(argv=None) -> int:
                    help="emette chiari contro un fatto avvenuto")
     k.add_argument("--causale", default="vendita",
                    help="causale dell emissione (vendita, soggiorno, lasciato, rimborso)")
+    ap.add_argument("--capacita", metavar="FILE.json", nargs="?", const="-",
+                    help="tutto cio che il sistema sa fare, generato dal codice")
     ap.add_argument("--voce", metavar="FRASE",
                     help="una domanda alla casa, come la diresti a voce")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
@@ -423,6 +431,11 @@ def main(argv=None) -> int:
                     help="confidenza minima per scrivere senza conferma umana (default 0.75)")
     ap.add_argument("--solo-lettura", action="store_true",
                     help="non scrive niente: mostra soltanto cosa verrebbe scritto")
+    return ap
+
+
+def main(argv=None) -> int:
+    ap = costruisci_parser()
     a = ap.parse_args(argv)
 
     carica_env()
@@ -439,6 +452,20 @@ def main(argv=None) -> int:
     if a.esporta:
         Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
         print(f"scritto {a.esporta}")
+        return 0
+    if a.capacita:
+        from .capacita import conta, genera
+        manifesto = genera()
+        testo = json.dumps(manifesto, ensure_ascii=False, indent=2)
+        if a.capacita == "-":
+            print(testo)
+        else:
+            Path(a.capacita).write_text(testo + "\n", encoding="utf-8")
+            c = conta(manifesto)
+            print(f"scritto {a.capacita}")
+            for k, v in c.items():
+                print(f"  {k:<16} {v}")
+            print("\n  Generato per introspezione: non modificarlo a mano.")
         return 0
     if a.saldo or a.libro or a.accredita:
         return chiari(a)

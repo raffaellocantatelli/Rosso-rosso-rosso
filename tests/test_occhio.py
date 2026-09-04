@@ -1121,3 +1121,66 @@ def test_la_dimostrazione_gira_intera(tmp_path, monkeypatch, capsys):
     assert "COMPRATI: ['Perfetti sconosciuti']" in uscita
     assert "NON SPIEGATI: ['Phon Dyson Supersonic']" in uscita
     assert "Tutti i dati sono inventati" in uscita
+
+
+# --------------------------------------------------------------------------
+# CAPACITA.json — il manifesto non deve poter divergere dal codice
+# --------------------------------------------------------------------------
+
+from occhio import capacita as cap  # noqa: E402
+
+
+def _manifesto_depositato():
+    p = pathlib.Path(__file__).resolve().parent.parent / "CAPACITA.json"
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def test_il_manifesto_copre_ogni_comando():
+    """Se aggiungi un'opzione e non rigeneri, questa prova fallisce. È la
+    differenza fra una documentazione e una promessa."""
+    fresco = {c["opzione"] for c in cap._comandi()}
+    depositato = {c["opzione"] for c in _manifesto_depositato()["comandi"]}
+    mancanti = fresco - depositato
+    assert not mancanti, (
+        f"comandi non nel manifesto: {sorted(mancanti)} — "
+        "rigenera con: python -m occhio --capacita CAPACITA.json")
+    assert not (depositato - fresco), "il manifesto elenca comandi che non esistono più"
+
+
+def test_il_manifesto_copre_ogni_funzione_pubblica():
+    depositato = _manifesto_depositato()["moduli"]
+    for nome in cap.MODULI:
+        fresco = {e["nome"] for e in cap._funzioni(nome)}
+        assert nome in depositato, f"modulo {nome} assente dal manifesto"
+        noto = {e["nome"] for e in depositato[nome]["elementi"]}
+        assert not (fresco - noto), (
+            f"{nome}: non nel manifesto {sorted(fresco - noto)} — rigenera")
+
+
+def test_il_manifesto_dichiara_le_porte_chiuse():
+    """Chi legge il manifesto per integrare il prodotto deve incontrare i tre
+    divieti prima di provarci."""
+    v = {x["dove"] for x in _manifesto_depositato()["vincoli_non_negoziabili"]}
+    assert "crediti.converti_in_denaro" in v
+    assert "voce.puo_scrivere" in v
+    assert any("trasferibile" in x for x in v)
+
+
+def test_la_forma_dei_dati_viene_da_record_veri(tmp_path):
+    """Uno schema dichiarato a mano può mentire; un record scritto dal codice
+    no. I campi del manifesto devono combaciare con una voce vera."""
+    forme = cap._forma_dei_dati()
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    voce = r.registra("dvd", "Prova", luogo=lg.dal_percorso("/f/salotto/x.jpg", "/f"))
+    assert set(forme["voce_inventario"]["campi"]) == set(voce)
+    assert "impronta" in forme["stato_consegna_TALLY"]["campi"]
+    assert forme["file_su_disco"]["formato"].startswith("JSON Lines")
+
+
+def test_il_manifesto_si_rigenera_uguale_a_meno_dell_ora():
+    """Due generazioni di fila devono differire solo per il momento: se no,
+    dentro c'è qualcosa di non deterministico e il manifesto non è una fonte."""
+    a, b = cap.genera(), cap.genera()
+    for m in (a, b):
+        m.pop("generato")
+    assert a == b
