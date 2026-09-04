@@ -98,7 +98,7 @@ impedisce di provarlo, allora risolve il problema vero, che è **provarlo**.
 
 ## 1-ter. Il prodotto: dove è arrivato, e cosa è stato depurato (04/09)
 
-**RECUPERATO.** 203 prove passano, nessuna dipendenza nuova, tutto spinto su
+**RECUPERATO.** 206 prove passano, nessuna dipendenza nuova, tutto spinto su
 `claude/camera-inventory-system-2f07f1`.
 
 | pezzo | comando |
@@ -142,7 +142,7 @@ linea, 5,99 € una volta**. Questo è **uno stato concordato fra due parti**.
 `--controfirma` è una riga che in un'app fuori linea non può esistere.
 Dettagli in `OCCHIO.md` §0-quater.
 
-### Due difetti trovati depurando, non da un incidente
+### Quattro difetti trovati depurando, non da un incidente
 
 1. **Tre registri su quattro non erano ignorati da git.** Solo
    `inventario.jsonl` lo era: consegne (con le firme dell'ospite), vendite
@@ -155,6 +155,16 @@ Dettagli in `OCCHIO.md` §0-quater.
    pagina. Corretto, con un test che verifica ogni `id` cercato dal
    JavaScript **senza browser** — perché un test che richiede un browser non
    viene eseguito, ed è così che il difetto era arrivato al remoto.
+3. **«Che vini ho in cucina» rispondeva anche «Divano rosso».** Lo stesso
+   elenco di parole serviva a riconoscere l'*intento* e l'*oggetto*: «rosso»
+   sta anche in «Divano rosso». Adesso sono due elenchi, e la scorciatoia sul
+   titolo è un ripiego che **non compete col tipo dichiarato**.
+4. **«Heat» e «The Heat» diventavano lo stesso film** — e non è riparabile:
+   togliere l'articolo è il motivo per cui «The Matrix» e «MATRIX, THE» si
+   fondono come devono. Non risolto fingendo, ma **reso visibile**: ogni voce
+   conserva i titoli distinti che ci sono finiti sopra e `--inventario` li
+   segnala. *Una fusione visibile è un problema; una silenziosa è un registro
+   che mente.*
 
 ### Tre cose che nessun nodo deve fare da solo
 
