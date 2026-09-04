@@ -373,15 +373,12 @@ Ogni trasmissione aggiorna `trasmissione_state.json` (contatori, timestamp, hash
 
 Chiusura pulita con `Ctrl+C` o `SIGTERM`: i thread si fermano entro un secondo e lo stato viene salvato.
 
-## InventariuMapp — l'elenco delle cose trovate
+## occhio — inventario e consegna controfirmata
 
-*Nome scelto dall'autore il 04/09/2026. Maniglia: `inventariumapp`. Motore
-tecnico: `occhio`, il nome nel codice, che non cambia.*
-
-*Inventarium* viene da **invenire**, «trovare»: è l'elenco delle cose trovate.
-Dalla stessa radice l'inglese ha tratto *invent*, «inventare». **La stessa
-parola contiene i due poli di questo progetto — ciò che è stato trovato e ciò
-che è stato inventato** — e il nome dichiara da solo la disciplina di §4.
+*Il nome commerciale non è ancora scelto: due sono caduti il 04/09/2026, il
+secondo perché esisteva già sull'App Store nella stessa categoria. Il solo
+nome stabile è `occhio`, il motore; la storia e i criteri per il prossimo
+stanno in [`OCCHIO.md`](OCCHIO.md) e in `occhio/capacita.py`.*
 
 Cammini per casa con il telefono in mano. Ciò che è già nel registro si
 illumina di **verde** e puoi ripassarci sopra senza che il conteggio cambi;
@@ -413,7 +410,7 @@ l'inventario*. Ha un falsificatore eseguibile, e regge. Ciò che invece resta
 **UNKNOWN** è il numero che conta davvero: quanti dorsi un modello legge
 davvero, in penombra, di traverso. Serve una chiave di visione e una passata
 vera. Tutto il resto — costi, taratura, verdetto su Emergent — sta in
-[`INVENTARIUM.md`](INVENTARIUM.md).
+[`OCCHIO.md`](OCCHIO.md).
 
 ## Licenza
 

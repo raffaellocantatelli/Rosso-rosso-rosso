@@ -3,7 +3,7 @@
 Nessuna di queste prove chiama un modello: girano senza chiavi, nella Action,
 sempre. Cio' che non si puo' provare senza un modello — se il riconoscimento
 dei titoli sia buono — non viene finto qui: si misura camminando, ed e'
-scritto in INVENTARIUM.md fra le cose ancora UNKNOWN.
+scritto in OCCHIO.md fra le cose ancora UNKNOWN.
 """
 
 import json
@@ -524,7 +524,7 @@ def test_tipo_di_stato_sconosciuto_rifiutato(tmp_path):
 
 def test_occhio_non_scrive_mai_un_file_immagine():
     """Airbnb esclude dalle prove le immagini generate o alterate dall'IA
-    (dal 20/04/2026, fonti in INVENTARIUM.md §7). Quindi la fotografia ORIGINALE
+    (dal 20/04/2026, fonti in OCCHIO.md §7). Quindi la fotografia ORIGINALE
     non va mai toccata: `occhio` la legge, ne calcola l'impronta, e non
     scrive mai un'immagine da nessuna parte. La copia ridotta che va al
     modello vive in memoria e non tocca il disco.
@@ -1111,7 +1111,7 @@ def test_la_dimostrazione_gira_intera(tmp_path, monkeypatch, capsys):
                 "OCCHIO_PORTAVIA", "OCCHIO_CREDITI"):
         monkeypatch.delenv(var, raising=False)
     percorso = (pathlib.Path(__file__).resolve().parent.parent
-                / "esempi" / "dimostrazione_inventarium.py")
+                / "esempi" / "dimostrazione.py")
     spec = importlib.util.spec_from_file_location("dimostrazione", percorso)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
@@ -1187,65 +1187,68 @@ def test_il_manifesto_si_rigenera_uguale_a_meno_dell_ora():
 
 
 # --------------------------------------------------------------------------
-# il marchio: una maiuscola sbagliata si nota
+# i nomi caduti non devono tornare
 # --------------------------------------------------------------------------
 
-#: Le sole forme ammesse. Tutto il resto è un refuso, e in un marchio un
-#: refuso non è un dettaglio: è un'altra parola.
-FORME_AMMESSE = {
-    "InventariuMapp",   # marchio grafico
-    "inventariumapp",   # maniglia, dominio, terminale
-    "INVENTARIUMAPP",   # tutto maiuscolo, se serve
-}
+#: Nomi bruciati il 04/09/2026. Possono comparire solo dove si spiega che
+#: sono caduti — mai come nome del prodotto.
+NOMI_CADUTI = ("CASACHIARA", "Casachiara", "InventariuMapp",
+               "InventariumApp", "inventariumapp")
+
+#: Le parole che rendono lecita la menzione: si sta raccontando la caduta,
+#: non si sta usando il nome.
+PAROLE_DI_CADUTA = ("cadut", "scartat", "bloccat", "esiste già", "esiste gia",
+                    "non è utilizzabile", "App Store", "anteriorit",
+                    "restringe", "descrittiv", "marchio grafico", "maniglia")
 
 
-#: Due forme sbagliate che il progetto NOMINA di proposito, e le sole parole
-#: che rendono lecita la menzione. Citare una forma scartata spiegando perché
-#: è diverso dall'usarla per distrazione, e il test deve saper distinguere —
-#: altrimenti la prima cosa che si fa per farlo passare è indebolirlo.
-CITAZIONI_LECITE = {
-    "InventariumApp": ("descrittiv", "scartat", "rifiutat", "invece di"),
-    "inventariumap": ("refuso", "una sola p", "typo"),
-}
-
-
-def test_il_marchio_si_scrive_in_un_modo_solo():
-    """Riscrivere un marchio a mano dieci volte significa sbagliarlo una.
-    Le costanti stanno in occhio/capacita.py; questa prova sorveglia il resto."""
-    import re
+def test_i_nomi_caduti_non_tornano_come_marchio():
+    """Due nomi sono caduti, il secondo dopo aver rinominato tutto. Questo
+    test è ciò che impedisce al terzo di entrare senza che nessuno se ne
+    accorga: possono comparire solo dove si spiega che sono caduti."""
     radice = pathlib.Path(__file__).resolve().parent.parent
-    schema = re.compile(r"[Ii]nventariu[Mm]?[Aa]pp?", re.IGNORECASE)
     sbagliate = []
     for f in list(radice.glob("*.md")) + list(radice.glob("occhio/*.py")) + \
-             list(radice.glob("esempi/*.py")):
+             list(radice.glob("esempi/*.py")) + list(radice.glob("falsificatori/*.py")):
         for riga, testo in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
-            for trovata in schema.findall(testo):
-                if trovata in FORME_AMMESSE:
-                    continue
-                giustificazioni = CITAZIONI_LECITE.get(trovata, ())
-                if any(g in testo.lower() for g in giustificazioni):
-                    continue   # citata spiegando perché è sbagliata: lecito
-                sbagliate.append(f"{f.name}:{riga}  «{trovata}»")
-    assert not sbagliate, "marchio scritto male:\n  " + "\n  ".join(sbagliate)
+            for nome in NOMI_CADUTI:
+                if nome in testo and not any(p in testo for p in PAROLE_DI_CADUTA):
+                    sbagliate.append(f"{f.name}:{riga}  «{nome}»  {testo.strip()[:60]}")
+    assert not sbagliate, ("un nome caduto usato senza dire che è caduto:\n  "
+                           + "\n  ".join(sbagliate))
 
 
-def test_la_scappatoia_delle_citazioni_non_apre_una_porta():
-    """Se bastasse nominare la forma sbagliata per farla passare, il test non
-    servirebbe: la giustificazione deve stare sulla riga."""
-    import re
-    schema = re.compile(r"[Ii]nventariu[Mm]?[Aa]pp?", re.IGNORECASE)
-    riga_sciatta = "Scarica InventariumApp dallo store."
-    trovata = schema.findall(riga_sciatta)[0]
-    assert trovata not in FORME_AMMESSE
-    assert not any(g in riga_sciatta.lower()
-                   for g in CITAZIONI_LECITE[trovata])
-
-
-def test_le_costanti_del_marchio_sono_in_un_posto_solo():
-    assert cap.PRODOTTO == "Inventarium"          # legale e parlato
-    assert cap.MARCHIO == "InventariuMapp"        # grafico: la M rivela MAP
-    assert cap.MANIGLIA == "inventariumapp"       # dominio e terminale
-    assert "MAP" in cap.MARCHIO.upper()
+def test_il_codice_non_dipende_da_un_marchio():
+    """Il secondo nome è caduto DOPO che tutto il repository era stato
+    rinominato. Da qui in poi il marchio è un dato, non una struttura: se
+    cambia, cambia una riga."""
+    assert cap.MOTORE == "occhio"
+    assert cap.NOME_COMMERCIALE is None      # non ancora scelto, e lo dice
+    assert len(cap.NOMI_SCARTATI) == 2
+    assert all("motivo" in n for n in cap.NOMI_SCARTATI)
+    assert cap.CRITERI_DEL_NOME[0].startswith("non nominare la LISTA")
     m = _manifesto_depositato()
-    assert (m["prodotto"], m["marchio"], m["maniglia"]) == (
-        cap.PRODOTTO, cap.MARCHIO, cap.MANIGLIA)
+    assert m["nome_commerciale"] is None and m["motore"] == "occhio"
+
+
+def test_ogni_registro_del_prodotto_e_fuori_dal_repository_pubblico():
+    """Era ignorato solo inventario.jsonl. Consegne (con le firme dell'ospite),
+    vendite (prezzi e compratori) e crediti (saldi delle persone) sarebbero
+    finiti in un repository PUBBLICO alla prima esecuzione vera.
+
+    La prova non guarda un elenco scritto a mano: chiede ai moduli dove
+    scrivono. Un modulo nuovo che deposita altrove viene scoperto qui.
+    """
+    import subprocess
+    from occhio import consegna as cs, crediti as cd, inventario as ivn, portavia as pvv
+    radice = pathlib.Path(__file__).resolve().parent.parent
+    percorsi = [ivn.ARCHIVIO, cs.CATENA, pvv.CATALOGO, cd.LIBRO]
+    non_protetti = []
+    for p in percorsi:
+        esito = subprocess.run(["git", "check-ignore", "-q", str(p)],
+                               cwd=radice, capture_output=True)
+        if esito.returncode != 0:
+            non_protetti.append(str(p))
+    assert not non_protetti, (
+        "registri non ignorati, finirebbero nel repository pubblico: "
+        + ", ".join(non_protetti))

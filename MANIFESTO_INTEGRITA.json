@@ -14,8 +14,8 @@
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 20238,
-      "sha256": "e0f131fe453f8d88c4b21e609f25eb0435bcc2ea17cfbe8eed7d4029b8fb0f6f"
+      "byte": 20068,
+      "sha256": "b9df841852c49e56ef03c83c98b1ef3d0cd2bb9fe74d08fded6e1fea1064889e"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -54,8 +54,8 @@
       "sha256": "0adef5dd3a1f788e631cec2b9fd7a3fb4f153c608c10b05b2fc76daeb9cfba49"
     },
     "falsificatori/h9_portavia.py": {
-      "byte": 5794,
-      "sha256": "7d5d2e99796bdff7e1b3bcaeca0cf962ed4c2031adb44e1da0dd3e09db5bb381"
+      "byte": 5789,
+      "sha256": "8ff3e3f63c5dc39c78f32a63f8750c24ab8adcaba5941acde814baf98f139aea"
     },
     "latenza.py": {
       "byte": 5373,
@@ -734,8 +734,8 @@
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
     "tests/test_occhio.py": {
-      "byte": 53147,
-      "sha256": "9290e02198c66fc93ba0845351a8459cf095a6d5447674b20dac95c0c982fcdb"
+      "byte": 53500,
+      "sha256": "b938522b5fb0708d7b458918dee9f84f2bdf3d9ea283f91af564568e2ae65ba8"
     },
     "tests/test_rlaif.py": {
       "byte": 5152,
@@ -754,6 +754,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-04T04:08:51.923771+00:00",
+  "generato": "2026-09-04T04:15:03.606907+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

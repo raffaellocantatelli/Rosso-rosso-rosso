@@ -27,9 +27,17 @@ output/rlaif_decisioni.jsonl
 # Questo repository è PUBBLICO (CLAUDE.md §2.5) e la decisione di pubblicare
 # è sempre e solo dell'autore. Il registro resta locale finché non è lui a
 # dire il contrario: nessun nodo estenda la scelta del 23/08 da solo.
-output/inventario.jsonl
+# Tutti i registri del prodotto, non solo l'inventario: le consegne portano
+# le firme dell'ospite, portavia i prezzi e chi ha comprato cosa, crediti i
+# saldi delle persone. Era ignorato solo inventario.jsonl — gli altri tre
+# sarebbero finiti in un repository PUBBLICO alla prima esecuzione vera.
+# Trovato durante una depurazione, non da un incidente.
 output/inventario*.jsonl
+output/consegne*.jsonl
+output/portavia*.jsonl
+output/crediti*.jsonl
 inventario*.csv
+capacita_privato*.json
 
 # occhio/privato — la parte che completa, e che non è pubblica.
 # Decisione dell'autore, 03/09/2026: pubblico ciò che il sistema SA FARE,

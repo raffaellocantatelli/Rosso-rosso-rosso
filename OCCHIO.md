@@ -1,93 +1,27 @@
-# InventariuMapp
-
-> ## ⚠ NOME BLOCCATO — 4 settembre 2026
->
-> **RECUPERATO** dall'App Store, guardato dall'autore: esiste già
-> **«Inventarium: Inventaire Maison»** di Marco Tini, 5,99 €, categoria
-> Utilità, francese + 9 lingue. Stesso nome, stessa categoria, stesso
-> negozio: il nome **non è utilizzabile** e non va difeso.
->
-> Non rinominare niente finché l'autore non sceglie il nuovo nome. Il codice
-> non dipende dal marchio: il motore si chiama `occhio` e non cambia.
->
-> **Ciò che resta valido è tutto il resto:** l'etimologia (§0), la
-> distinzione fra nome legale e marchio, e soprattutto **la differenza di
-> prodotto** — vedi §0-quater, che è la ragione per cui la scoperta è una
-> buona notizia e non un disastro.
-
+# occhio — inventario e consegna controfirmata di oggetti reali
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
-Nome legale e parlato: **Inventarium**. Marchio grafico: **InventariuMapp**.
-Maniglia: `inventariumapp`. Scelti dall'autore il 4 settembre 2026.
-Motore tecnico: `occhio` (il nome nel codice, che non cambia).
 
-> *Inventarium — l'elenco delle cose trovate.*
-
-## 0. Perché questo nome
-
-*Inventarium* viene da **invenire** — *in-* + *venire*, «imbattersi in,
-**trovare**». Un *inventarium* è alla lettera **l'elenco delle cose trovate**.
-
-Dalla stessa radice l'inglese ha tratto *invent*, che però è scivolato a
-significare «**inventare**», cioè fabbricare dal nulla.
-
-**La stessa parola, a duemila anni di distanza, contiene i due poli esatti di
-questo progetto: ciò che è stato TROVATO e ciò che è stato INVENTATO.**
-RECUPERATO contro inventato. Non è decorazione: è la tesi. Un inventario che
-inventa è il difetto di `CLAUDE.md` §4, e il nome lo dichiara da solo.
-
-Funziona fuori dall'Italia per una ragione precisa: ha un cognato in ogni
-lingua di mercato — *inventory*, *inventario*, *inventaire*, *Inventar*,
-*inventário* — quindi **nessuno deve imparare cosa significa**; ma la forma
-latina piena non è la parola d'uso di nessuno, quindi **si difende come
-marchio**. È la combinazione rara. «Casa chiara», il nome precedente, non
-aveva né l'una né l'altra: intraducibile e locale.
-
-### La M maiuscola
-
-**InventariuMapp** contiene **MAP**, e la mappa è una funzione vera del
-prodotto — gli oggetti si localizzano su una pianta. Il gioco è stato visto
-dall'autore, non costruito a tavolino, ed è per questo che regge: non è un
-bisticcio a vuoto, dice una cosa che il programma fa davvero.
-
-Vale anche legalmente: «InventariumApp» si legge come due parti descrittive
-attaccate — *inventarium* + *app* — e le parti descrittive non si proteggono.
-**InventariuMapp**, con la doppia P che non è più la parola «app», è un
-termine coniato, e un termine coniato si difende.
-
-Tre cose da tenere presenti, perché il marchio non lavori contro di te:
-
-- **la doppia P va insegnata**: chi sente il nome scrive `inventariumap` con una sola p.
-  Quel dominio va comprato anche lui: ogni refuso è una visita persa;
-- **la maiuscola in mezzo non sopravvive**: URL, email, terminale, atti legali
-  la appiattiscono in `inventariumapp`. Il gioco vive nel logo e nel testo;
-- **quindi due forme, non una**: *Inventarium* è il nome legale e parlato —
-  si analizza al primo ascolto — **InventariuMapp** è il marchio grafico.
-  Stanno in `occhio/capacita.py` come costanti, in un posto solo, perché una
-  maiuscola sbagliata in un marchio si nota e riscriverlo dieci volte a mano
-  significa sbagliarlo una.
-
-**Un nome scartato, e vale la pena sapere perché:** *Inventa*. Accorcia
-proprio la parte che il latino teneva separata e la fa collassare su
-«inventare». Per un prodotto la cui unica disciplina è non inventare sarebbe
-il nome peggiore possibile — direbbe ad alta voce il difetto da cui si
-difende. (E *Tallium*, che univa i due, è il nome di un metallo velenoso.)
-
-## 0-bis. I pezzi e i loro nomi
-
-| Nome | Cos'è | Da dove viene |
-|---|---|---|
-| **INVENTARIUM** | il prodotto | l'elenco delle cose trovate |
-| **TALLY** | la consegna controfirmata | il *tally stick* medievale: un bastone inciso, spaccato in due, una metà a testa — **e le due metà devono combaciare**. È lo stato a due mani, seicento anni prima |
-| **GREEN** | verde / ambra / rosso | non ha bisogno di traduzione in nessuna lingua: è l'asset più internazionale del prodotto |
-| **PORTAVIA** | il mercato dentro casa | in attesa di decisione: la versione internazionale proposta è *Take Home* |
-| **IL MEDIATORE** | tratta entro le regole | proposta: *The Broker* |
-| **I CHIARI** | i crediti di circuito chiuso | proposta: *Credits* — generico **di proposito**, perché un buono con un nome da valuta sembra una valuta |
-| **`occhio`** | il motore che legge | resta il nome tecnico nel codice |
-
-**UNKNOWN:** marchio e dominio non sono stati verificati. Vanno controllati
-prima di stampare qualunque cosa — è dovuta diligenza, non ricerca sui
-concorrenti.
+> ### Il nome commerciale non è ancora scelto
+>
+> Due nomi sono caduti il 4 settembre 2026, e il secondo è caduto **dopo**
+> che tutto il repository era stato rinominato:
+>
+> | nome | perché è caduto |
+> |---|---|
+> | **CASACHIARA** | «casa» restringe il prodotto a un solo caso d'uso, e non si pronuncia fuori dall'Italia |
+> | **Inventarium / InventariuMapp** | **RECUPERATO** dall'App Store: esiste già «Inventarium: Inventaire Maison» (Marco Tini, 5,99 €, categoria Utilità) — stesso nome, stessa categoria, stesso negozio |
+>
+> **La lezione, che costa due rinomine:** la ricerca di anteriorità viene
+> *prima* del nome, non dopo. App Store, EUIPO, dominio.
+>
+> Da qui in poi **il codice non dipende più da un marchio**: il solo nome
+> stabile è `occhio`, il motore. Il nome commerciale è un dato in
+> `occhio/capacita.py`, non una struttura — quando ci sarà, è una riga.
+>
+> I criteri che il prossimo nome deve rispettare stanno in `CRITERI_DEL_NOME`,
+> e il primo è quello che conta: **non nominare la lista, nominare l'accordo.**
+> La lista la fa anche il concorrente; l'accordo no.
 
 ## 0-quater. Perché quel prodotto non è questo prodotto
 

@@ -18,7 +18,7 @@ Due promesse, e cadono insieme perché una senza l'altra non vale:
    la prova è a forza bruta su tutte le offerte, non su tre casi scelti.
 
 E una terza, che protegge le prove: **un'immagine generata non entra mai
-nella catena delle consegne** (INVENTARIUM.md §5-ter).
+nella catena delle consegne** (OCCHIO.md §5-ter).
 
 Esce 0 se H9 CADE, 1 se REGGE, 2 se non conclusa.
 """

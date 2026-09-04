@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""occhio.capacita — l'inventario di INVENTARIUM: tutto cio' che sa fare.
+"""occhio.capacita — l'inventario di il prodotto: tutto cio' che sa fare.
 
 Origine protetta: Claudio Terzi [CT-LGAI-001].
 
@@ -30,25 +30,38 @@ from __future__ import annotations
 
 import inspect
 import json
-import os
 import tempfile
 import time
 from pathlib import Path
 
-#: Il nome legale e parlato. È questo che si scrive in un contratto e si dice
-#: al telefono: si analizza al primo ascolto.
-PRODOTTO = "Inventarium"
+#: **Il nome commerciale non è ancora scelto**, e il codice non finge che lo
+#: sia: due nomi sono già caduti, e il secondo è caduto DOPO che tutto il
+#: repository era stato rinominato. Da qui in poi il prodotto ha un solo nome
+#: stabile — il motore — e il marchio è un dato, non una struttura.
+MOTORE = "occhio"
+NOME_COMMERCIALE = None
 
-#: Il marchio grafico. La M maiuscola rende visibile MAP, che è una funzione
-#: vera del prodotto — non un gioco di parole a vuoto. Vive nel logo e nel
-#: testo; in URL, email e terminale la maiuscola sparisce comunque.
-#: Sta qui e non sparso nei file perché una maiuscola sbagliata in un marchio
-#: si nota, e riscriverlo a mano dieci volte significa sbagliarlo una.
-MARCHIO = "InventariuMapp"
+#: I nomi caduti, con il perché. Non è nostalgia: serve a impedire che un
+#: nodo futuro li riproponga, e a ricordare in quale ordine si fanno le cose.
+NOMI_SCARTATI = [
+    {"nome": "CASACHIARA", "caduto": "2026-09-04",
+     "motivo": "«casa» restringe il prodotto a un solo caso d'uso e non si "
+               "pronuncia fuori dall'Italia"},
+    {"nome": "Inventarium / InventariuMapp", "caduto": "2026-09-04",
+     "motivo": "esiste gia' «Inventarium: Inventaire Maison» (Marco Tini) "
+               "sull'App Store, stessa categoria: stesso nome, stesso negozio",
+     "lezione": "la ricerca di anteriorita' viene PRIMA del nome, non dopo. "
+                "Qui e' arrivata dopo, e ha costretto a rinominare due volte"},
+]
 
-#: Dominio e maniglia. Da comprare anche `inventariumap` (una sola p): chi
-#: sente il nome scrive quello, e ogni refuso è una visita persa.
-MANIGLIA = "inventariumapp"
+#: Cio' che il prossimo nome deve rispettare, imparato dai due che sono caduti.
+CRITERI_DEL_NOME = [
+    "non nominare la LISTA: e' cio' che fa anche il concorrente. Nominare "
+    "l'ACCORDO, che e' cio' che lui non puo' fare",
+    "pronunciabile in inglese, spagnolo, francese, tedesco, portoghese",
+    "coniato, non descrittivo: le parole descrittive non si proteggono",
+    "verificato PRIMA su App Store, EUIPO e dominio",
+]
 
 #: I moduli che compongono il prodotto, con il nome commerciale di ciascuno.
 MODULI = {
@@ -197,24 +210,13 @@ def _ipotesi() -> list[dict]:
 def genera() -> dict:
     """Il manifesto. Ogni voce viene dal codice, nessuna e' scritta a mano."""
     return {
-        "prodotto": PRODOTTO,
-        "marchio": MARCHIO,
-        "maniglia": MANIGLIA,
-        "nome_bloccato": {
-            "dal": "2026-09-04",
-            "motivo": "esiste gia' «Inventarium: Inventaire Maison» (Marco "
-                      "Tini) sull'App Store, stessa categoria: stesso nome, "
-                      "stesso negozio, non utilizzabile",
-            "conseguenza": "il nome commerciale e' da riscegliere; il motore "
-                           "si chiama `occhio` e non dipende dal marchio",
-            "cosa_resta_valido": "la differenza di prodotto: quello e' un "
-                                 "elenco personale fuori linea, questo e' uno "
-                                 "stato concordato fra due parti",
-        },
+        "motore": MOTORE,
+        "nome_commerciale": NOME_COMMERCIALE,
+        "nomi_scartati": NOMI_SCARTATI,
+        "criteri_del_nome": CRITERI_DEL_NOME,
         "significato": "inventarium, dal latino invenire: l'elenco delle cose "
                        "trovate — non di quelle inventate",
         "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
-        "motore": "occhio",
         "generato": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "generato_da": "python -m occhio --capacita",
         "avvertenza": "generato per introspezione dal codice. Non modificarlo "

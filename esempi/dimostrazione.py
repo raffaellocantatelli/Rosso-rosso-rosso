@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Rigenera l'intera dimostrazione di INVENTARIUM con un comando.
+"""Rigenera l'intera dimostrazione di il prodotto con un comando.
 
 Origine protetta: Claudio Terzi [CT-LGAI-001].
 Idee di PORTAVIA, dei CHIARI e della VOCE: Claudio Terzi, 3 settembre 2026.
 
-    python3 esempi/dimostrazione_inventarium.py            # in una cartella temporanea
-    python3 esempi/dimostrazione_inventarium.py --qui      # in ./dimostrazione/
+    python3 esempi/dimostrazione.py            # in una cartella temporanea
+    python3 esempi/dimostrazione.py --qui      # in ./dimostrazione/
 
 Perche' uno script e non dei file salvati. Le immagini e i dati della
 dimostrazione erano finiti in una cartella effimera: archiviarli avrebbe

@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-09-04, 03:20 UTC
+# Prossimo passo — consegna del 2026-09-04, 04:15 UTC
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -89,77 +89,95 @@ letti/presenti starà fra 0,5 e 0,9. Sotto 0,3 la telecamera in movimento non
 ha senso e il problema è la fotografia, non il programma. Cade se il primo
 tentativo serio esce fuori da questa forbice.
 
-Verdetto su Emergent, che l'autore ha chiesto: in `INVENTARIUM.md` §6. In breve —
+Verdetto su Emergent, che l'autore ha chiesto: in `OCCHIO.md` §6. In breve —
 non serve, perché la parte che Emergent fa bene è già fatta, e quella che
 resta (tarare le soglie camminando per casa) non la può fare un generatore.
 L'unico motivo valido sarebbe l'involucro nativo per il telefono, perché
 `getUserMedia` fuori da `localhost` vuole `https` — e se quel fastidio
 impedisce di provarlo, allora risolve il problema vero, che è **provarlo**.
 
-## 1-ter. INVENTARIUM — dove è arrivato (04/09, 03:20 UTC)
+## 1-ter. Il prodotto: dove è arrivato, e cosa è stato depurato (04/09)
 
-**RECUPERATO.** `occhio/` è cresciuto in un prodotto con un nome e un mercato,
-su richiesta dell'autore. 193 prove passano, nessuna dipendenza nuova.
+**RECUPERATO.** 203 prove passano, nessuna dipendenza nuova, tutto spinto su
+`claude/camera-inventory-system-2f07f1`.
 
-| pezzo | comando | stato |
-|---|---|---|
-| lettura e inventario | `--cartella`, `--foto` | gira, **mai provato su oggetti veri** |
-| mappa e pianta | `--mappa`, `--pianta` | gira |
-| stato controfirmato | `--consegna`, `--controfirma`, `--differenza` | gira |
-| mercato interno | `--vetrina`, `--offerta`, `--vendi` | gira |
-| voce | `--voce "che vini ho in cucina"` | gira |
-| crediti | `--accredita`, `--saldo`, `--libro` | gira |
-| costo | `--costo` | gira |
+| pezzo | comando |
+|---|---|
+| lettura e inventario | `--cartella`, `--foto` |
+| mappa e pianta | `--mappa`, `--pianta` |
+| consegna controfirmata (TALLY) | `--consegna`, `--controfirma`, `--differenza` |
+| mercato interno (PORTAVIA) | `--vetrina`, `--offerta`, `--vendi` |
+| crediti di circuito chiuso | `--accredita`, `--saldo`, `--libro` |
+| voce | `--voce "che vini ho in cucina"` |
+| costo di una passata | `--costo` |
+| manifesto delle funzioni | `--capacita CAPACITA.json` |
+| la dimostrazione intera | `python3 esempi/dimostrazione.py` |
 
-Quattro ipotesi nuove, tutte con falsificatore eseguibile: **H6** (ripassare
-non gonfia), **H7** (il GPS distingue le stanze — richiede foto vere), **H8**
-(lo stato di consegna), **H9** (PORTAVIA), **H10** (i chiari restano un
-circuito chiuso). H7 è l'unica che non può essere eseguita da un nodo: servono
-le fotografie dell'autore.
+Cinque ipotesi nuove con falsificatore: **H6** (ripassare non gonfia),
+**H7** (il GPS distingue le stanze — *non conclusa*, servono le tue foto),
+**H8** (lo stato di consegna), **H9** (comprato ≠ sparito), **H10** (i chiari
+restano un circuito chiuso). Reggono tutte tranne H7, che aspetta te.
 
-**Il difetto della settimana, da ricordare.** Un bottone del microfono non è
-mai entrato in `index.html` perché una sostituzione di testo non ha combaciato
-— e la sostituzione ha fallito **in silenzio**. Il JavaScript lo cercava lo
-stesso, e `$("#x").onclick` su `null` rompeva l'intero file: telecamera,
-riquadri, inventario, tutto morto, con la pagina che sembrava viva. È arrivato
-fino al ramo remoto. Adesso c'è un test che verifica ogni `id` cercato dal
-JavaScript, **senza browser** — perché un test che richiede un browser non
-viene eseguito, ed è esattamente così che il difetto è passato.
+### Il nome commerciale non c'è, ed è una buona notizia
 
-### Due decisioni dell'autore, registrate
+Due nomi caduti il 04/09, il secondo **dopo** aver rinominato tutto.
 
-1. **L'innesto privato (03/09).** Pubblico ciò che il sistema *sa fare*,
-   privato ciò che lo rende *bravo*: `occhio/privato/` non è versionato,
-   l'interfaccia è pubblica in `INNESTO_PRIVATO.md`. Se manca, il sistema lo
-   dichiara invece di improvvisare.
-2. **Idee e nomi su Drive, non qui.** `INVENTARIUM_IDEE_CT_2026-09-03.md` in
-   `R3_MEMORIA_PERSISTENTE`: attribuzione datata, nomi (INVENTARIUM, PORTAVIA,
-   TALLY, SEGNALE VERDE, IL MEDIATORE, I CHIARI), e i vincoli legali.
-   **Fuori dal repository pubblico perché la pubblicazione distrugge la
-   novità brevettuale, e in Europa non c'è periodo di grazia.**
+- **CASACHIARA** è caduto perché «casa» restringe il prodotto a un solo caso
+  d'uso e non si pronuncia fuori dall'Italia;
+- **InventariuMapp** è caduto perché esiste già sull'App Store nella stessa
+  categoria: `«Inventarium: Inventaire Maison»`, Marco Tini, 5,99 €, visto
+  dall'autore.
+
+**La lezione costa due rinomine:** la ricerca di anteriorità viene *prima*
+del nome. App Store, EUIPO, dominio.
+
+**Ora il codice non dipende più da un marchio.** Il solo nome stabile è
+`occhio`; il nome commerciale è un dato in `occhio/capacita.py`
+(`NOME_COMMERCIALE = None`) con la storia dei caduti e i criteri per il
+prossimo. Un test impedisce che un nome caduto torni senza che si dica che è
+caduto.
+
+E la scoperta vale più del nome: quel prodotto è **un elenco personale fuori
+linea, 5,99 € una volta**. Questo è **uno stato concordato fra due parti**.
+`--controfirma` è una riga che in un'app fuori linea non può esistere.
+Dettagli in `OCCHIO.md` §0-quater.
+
+### Due difetti trovati depurando, non da un incidente
+
+1. **Tre registri su quattro non erano ignorati da git.** Solo
+   `inventario.jsonl` lo era: consegne (con le firme dell'ospite), vendite
+   (prezzi e compratori) e crediti (saldi delle persone) sarebbero finiti in
+   un repository **pubblico** alla prima esecuzione reale. Chiuso, e una prova
+   chiede ai moduli dove scrivono invece di leggere un elenco — così un modulo
+   nuovo che deposita altrove viene scoperto.
+2. **Un bottone del microfono non era mai entrato nell'HTML** (sostituzione di
+   testo fallita in silenzio) e `$("#x").onclick` su `null` rompeva l'intera
+   pagina. Corretto, con un test che verifica ogni `id` cercato dal
+   JavaScript **senza browser** — perché un test che richiede un browser non
+   viene eseguito, ed è così che il difetto era arrivato al remoto.
 
 ### Tre cose che nessun nodo deve fare da solo
 
-- **Non riscrivere `converti_in_denaro()`** in `occhio/crediti.py`. Solleva
-  sempre di proposito: è ciò che tiene i chiari un buono di circuito chiuso
-  invece che moneta elettronica.
-- **Non accendere `Crediti(trasferibile=True)`.** Non è un interruttore
-  tecnico: porta il progetto dentro il perimetro dei servizi di pagamento.
-- **Non far scrivere la voce nel registro.** A una voce non si può chiedere
+- **Non riscrivere `converti_in_denaro()`**: solleva sempre di proposito, ed
+  è ciò che tiene i chiari un buono commerciale invece che moneta elettronica.
+- **Non accendere `Crediti(trasferibile=True)`**: porta il progetto dentro il
+  perimetro dei servizi di pagamento.
+- **Non far scrivere la voce nel registro**: a una voce non si può chiedere
   chi sta parlando.
 
 ### Il prossimo passo, che non è codice
 
-Non è cambiato da tre giorni, ed è sempre più piccolo di quanto sembri:
-
 ```bash
-python -m occhio --check          # deve dire: L'OCCHIO È APERTO
+python -m occhio --check     # deve dire: L'OCCHIO È APERTO
 ```
 
+Serve una chiave di visione in `.env` — **la stessa che blocca il daily**.
+Una sola, e sblocca due cose.
+
 Poi **una consegna vera su un alloggio vero, controfirmata da un ospite
-vero.** Quel giorno è anche il primo CONTATTO ai sensi di §7 — qualcun altro
-che agisce, verificabile da terzi — e `output/contatti.jsonl` è ancora vuoto,
-che è il ramo (b) su cui H2 è falsificata.
+vero.** Quel giorno è anche il primo CONTATTO ai sensi di §7, e
+`output/contatti.jsonl` è ancora vuoto: è il ramo (b) su cui H2 resta
+falsificata, verificato di nuovo stanotte.
 
 ## 2. Cosa fare appena il secret è al posto giusto
 
