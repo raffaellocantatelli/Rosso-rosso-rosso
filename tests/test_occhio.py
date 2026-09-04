@@ -1101,3 +1101,23 @@ def test_il_foglio_di_stile_e_lo_script_sono_serviti(occhio_in_ascolto):
     for risorsa in ("/stile.css", "/app.js"):
         with urllib.request.urlopen(occhio_in_ascolto + risorsa, timeout=10) as r:
             assert r.status == 200 and len(r.read()) > 200
+
+
+def test_la_dimostrazione_gira_intera(tmp_path, monkeypatch, capsys):
+    """La dimostrazione è uno script e non dei file archiviati proprio perché
+    non possa divergere dal codice: se si rompe, questo test lo dice."""
+    import importlib.util
+    for var in ("OCCHIO_INVENTARIO", "OCCHIO_CONSEGNE",
+                "OCCHIO_PORTAVIA", "OCCHIO_CREDITI"):
+        monkeypatch.delenv(var, raising=False)
+    percorso = (pathlib.Path(__file__).resolve().parent.parent
+                / "esempi" / "dimostrazione_casachiara.py")
+    spec = importlib.util.spec_from_file_location("dimostrazione", percorso)
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    assert modulo.main([]) == 0
+    uscita = capsys.readouterr().out
+    # il punto della dimostrazione: uno comprato, uno no
+    assert "COMPRATI: ['Perfetti sconosciuti']" in uscita
+    assert "NON SPIEGATI: ['Phon Dyson Supersonic']" in uscita
+    assert "Tutti i dati sono inventati" in uscita
