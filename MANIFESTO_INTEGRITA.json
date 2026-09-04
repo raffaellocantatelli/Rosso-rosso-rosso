@@ -14,8 +14,8 @@
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "README.md": {
-      "byte": 20235,
-      "sha256": "8eb7bc16aafb9b725cd7e69709158ea8a238ed0ed141412de2ef51f527b93752"
+      "byte": 20238,
+      "sha256": "e0f131fe453f8d88c4b21e609f25eb0435bcc2ea17cfbe8eed7d4029b8fb0f6f"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -734,8 +734,8 @@
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
     "tests/test_occhio.py": {
-      "byte": 50134,
-      "sha256": "9c86943fd0e3755ea97d2c8941b226cbdda123bd08261e0c9b5a9e508a1b3967"
+      "byte": 53147,
+      "sha256": "9290e02198c66fc93ba0845351a8459cf095a6d5447674b20dac95c0c982fcdb"
     },
     "tests/test_rlaif.py": {
       "byte": 5152,
@@ -754,6 +754,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-04T04:03:08.005058+00:00",
+  "generato": "2026-09-04T04:06:34.792230+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

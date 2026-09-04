@@ -35,7 +35,19 @@ import tempfile
 import time
 from pathlib import Path
 
-PRODOTTO = "INVENTARIUM"
+#: Il nome legale e parlato. È questo che si scrive in un contratto e si dice
+#: al telefono: si analizza al primo ascolto.
+PRODOTTO = "Inventarium"
+
+#: Il marchio grafico. La M maiuscola rende visibile MAP, che è una funzione
+#: vera del prodotto — non un gioco di parole a vuoto. Vive nel logo e nel
+#: testo; in URL, email e terminale la maiuscola sparisce comunque.
+#: Sta qui e non sparso nei file perché una maiuscola sbagliata in un marchio
+#: si nota, e riscriverlo a mano dieci volte significa sbagliarlo una.
+MARCHIO = "InventariuMapp"
+
+#: Dominio e maniglia. Da comprare anche `inventariumap` (una sola p): chi
+#: sente il nome scrive quello, e ogni refuso è una visita persa.
 MANIGLIA = "inventariumapp"
 
 #: I moduli che compongono il prodotto, con il nome commerciale di ciascuno.
@@ -186,6 +198,7 @@ def genera() -> dict:
     """Il manifesto. Ogni voce viene dal codice, nessuna e' scritta a mano."""
     return {
         "prodotto": PRODOTTO,
+        "marchio": MARCHIO,
         "maniglia": MANIGLIA,
         "significato": "inventarium, dal latino invenire: l'elenco delle cose "
                        "trovate — non di quelle inventate",

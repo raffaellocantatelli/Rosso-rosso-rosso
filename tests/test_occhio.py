@@ -1184,3 +1184,68 @@ def test_il_manifesto_si_rigenera_uguale_a_meno_dell_ora():
     for m in (a, b):
         m.pop("generato")
     assert a == b
+
+
+# --------------------------------------------------------------------------
+# il marchio: una maiuscola sbagliata si nota
+# --------------------------------------------------------------------------
+
+#: Le sole forme ammesse. Tutto il resto è un refuso, e in un marchio un
+#: refuso non è un dettaglio: è un'altra parola.
+FORME_AMMESSE = {
+    "InventariuMapp",   # marchio grafico
+    "inventariumapp",   # maniglia, dominio, terminale
+    "INVENTARIUMAPP",   # tutto maiuscolo, se serve
+}
+
+
+#: Due forme sbagliate che il progetto NOMINA di proposito, e le sole parole
+#: che rendono lecita la menzione. Citare una forma scartata spiegando perché
+#: è diverso dall'usarla per distrazione, e il test deve saper distinguere —
+#: altrimenti la prima cosa che si fa per farlo passare è indebolirlo.
+CITAZIONI_LECITE = {
+    "InventariumApp": ("descrittiv", "scartat", "rifiutat", "invece di"),
+    "inventariumap": ("refuso", "una sola p", "typo"),
+}
+
+
+def test_il_marchio_si_scrive_in_un_modo_solo():
+    """Riscrivere un marchio a mano dieci volte significa sbagliarlo una.
+    Le costanti stanno in occhio/capacita.py; questa prova sorveglia il resto."""
+    import re
+    radice = pathlib.Path(__file__).resolve().parent.parent
+    schema = re.compile(r"[Ii]nventariu[Mm]?[Aa]pp?", re.IGNORECASE)
+    sbagliate = []
+    for f in list(radice.glob("*.md")) + list(radice.glob("occhio/*.py")) + \
+             list(radice.glob("esempi/*.py")):
+        for riga, testo in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            for trovata in schema.findall(testo):
+                if trovata in FORME_AMMESSE:
+                    continue
+                giustificazioni = CITAZIONI_LECITE.get(trovata, ())
+                if any(g in testo.lower() for g in giustificazioni):
+                    continue   # citata spiegando perché è sbagliata: lecito
+                sbagliate.append(f"{f.name}:{riga}  «{trovata}»")
+    assert not sbagliate, "marchio scritto male:\n  " + "\n  ".join(sbagliate)
+
+
+def test_la_scappatoia_delle_citazioni_non_apre_una_porta():
+    """Se bastasse nominare la forma sbagliata per farla passare, il test non
+    servirebbe: la giustificazione deve stare sulla riga."""
+    import re
+    schema = re.compile(r"[Ii]nventariu[Mm]?[Aa]pp?", re.IGNORECASE)
+    riga_sciatta = "Scarica InventariumApp dallo store."
+    trovata = schema.findall(riga_sciatta)[0]
+    assert trovata not in FORME_AMMESSE
+    assert not any(g in riga_sciatta.lower()
+                   for g in CITAZIONI_LECITE[trovata])
+
+
+def test_le_costanti_del_marchio_sono_in_un_posto_solo():
+    assert cap.PRODOTTO == "Inventarium"          # legale e parlato
+    assert cap.MARCHIO == "InventariuMapp"        # grafico: la M rivela MAP
+    assert cap.MANIGLIA == "inventariumapp"       # dominio e terminale
+    assert "MAP" in cap.MARCHIO.upper()
+    m = _manifesto_depositato()
+    assert (m["prodotto"], m["marchio"], m["maniglia"]) == (
+        cap.PRODOTTO, cap.MARCHIO, cap.MANIGLIA)

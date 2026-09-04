@@ -1,10 +1,11 @@
 {
-  "prodotto": "INVENTARIUM",
+  "prodotto": "Inventarium",
+  "marchio": "InventariuMapp",
   "maniglia": "inventariumapp",
   "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
   "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
   "motore": "occhio",
-  "generato": "2026-09-04T04:02:09Z",
+  "generato": "2026-09-04T04:06:34Z",
   "generato_da": "python -m occhio --capacita",
   "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
   "moduli": {

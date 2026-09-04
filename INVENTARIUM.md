@@ -1,7 +1,8 @@
-# INVENTARIUM
+# InventariuMapp
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
-Nome scelto dall'autore il 4 settembre 2026. Maniglia: `inventariumapp`.
+Nome legale e parlato: **Inventarium**. Marchio grafico: **InventariuMapp**.
+Maniglia: `inventariumapp`. Scelti dall'autore il 4 settembre 2026.
 Motore tecnico: `occhio` (il nome nel codice, che non cambia).
 
 > *Inventarium — l'elenco delle cose trovate.*
@@ -25,6 +26,30 @@ lingua di mercato — *inventory*, *inventario*, *inventaire*, *Inventar*,
 latina piena non è la parola d'uso di nessuno, quindi **si difende come
 marchio**. È la combinazione rara. «Casa chiara», il nome precedente, non
 aveva né l'una né l'altra: intraducibile e locale.
+
+### La M maiuscola
+
+**InventariuMapp** contiene **MAP**, e la mappa è una funzione vera del
+prodotto — gli oggetti si localizzano su una pianta. Il gioco è stato visto
+dall'autore, non costruito a tavolino, ed è per questo che regge: non è un
+bisticcio a vuoto, dice una cosa che il programma fa davvero.
+
+Vale anche legalmente: «InventariumApp» si legge come due parti descrittive
+attaccate — *inventarium* + *app* — e le parti descrittive non si proteggono.
+**InventariuMapp**, con la doppia P che non è più la parola «app», è un
+termine coniato, e un termine coniato si difende.
+
+Tre cose da tenere presenti, perché il marchio non lavori contro di te:
+
+- **la doppia P va insegnata**: chi sente il nome scrive `inventariumap` con una sola p.
+  Quel dominio va comprato anche lui: ogni refuso è una visita persa;
+- **la maiuscola in mezzo non sopravvive**: URL, email, terminale, atti legali
+  la appiattiscono in `inventariumapp`. Il gioco vive nel logo e nel testo;
+- **quindi due forme, non una**: *Inventarium* è il nome legale e parlato —
+  si analizza al primo ascolto — **InventariuMapp** è il marchio grafico.
+  Stanno in `occhio/capacita.py` come costanti, in un posto solo, perché una
+  maiuscola sbagliata in un marchio si nota e riscriverlo dieci volte a mano
+  significa sbagliarlo una.
 
 **Un nome scartato, e vale la pena sapere perché:** *Inventa*. Accorcia
 proprio la parte che il latino teneva separata e la fa collassare su

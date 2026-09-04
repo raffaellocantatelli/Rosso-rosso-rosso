@@ -373,7 +373,7 @@ Ogni trasmissione aggiorna `trasmissione_state.json` (contatori, timestamp, hash
 
 Chiusura pulita con `Ctrl+C` o `SIGTERM`: i thread si fermano entro un secondo e lo stato viene salvato.
 
-## INVENTARIUM — l'elenco delle cose trovate
+## InventariuMapp — l'elenco delle cose trovate
 
 *Nome scelto dall'autore il 04/09/2026. Maniglia: `inventariumapp`. Motore
 tecnico: `occhio`, il nome nel codice, che non cambia.*
