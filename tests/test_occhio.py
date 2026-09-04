@@ -3,7 +3,7 @@
 Nessuna di queste prove chiama un modello: girano senza chiavi, nella Action,
 sempre. Cio' che non si puo' provare senza un modello — se il riconoscimento
 dei titoli sia buono — non viene finto qui: si misura camminando, ed e'
-scritto in OCCHIO.md fra le cose ancora UNKNOWN.
+scritto in INVENTARIUM.md fra le cose ancora UNKNOWN.
 """
 
 import json
@@ -524,7 +524,7 @@ def test_tipo_di_stato_sconosciuto_rifiutato(tmp_path):
 
 def test_occhio_non_scrive_mai_un_file_immagine():
     """Airbnb esclude dalle prove le immagini generate o alterate dall'IA
-    (dal 20/04/2026, fonti in OCCHIO.md §7). Quindi la fotografia ORIGINALE
+    (dal 20/04/2026, fonti in INVENTARIUM.md §7). Quindi la fotografia ORIGINALE
     non va mai toccata: `occhio` la legge, ne calcola l'impronta, e non
     scrive mai un'immagine da nessuna parte. La copia ridotta che va al
     modello vive in memoria e non tocca il disco.
@@ -1111,7 +1111,7 @@ def test_la_dimostrazione_gira_intera(tmp_path, monkeypatch, capsys):
                 "OCCHIO_PORTAVIA", "OCCHIO_CREDITI"):
         monkeypatch.delenv(var, raising=False)
     percorso = (pathlib.Path(__file__).resolve().parent.parent
-                / "esempi" / "dimostrazione_casachiara.py")
+                / "esempi" / "dimostrazione_inventarium.py")
     spec = importlib.util.spec_from_file_location("dimostrazione", percorso)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)

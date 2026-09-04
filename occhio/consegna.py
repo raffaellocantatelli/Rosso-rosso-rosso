@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
-"""occhio.consegna — lo stato controfirmato di un alloggio, e la differenza.
+"""occhio.consegna — TALLY: lo stato controfirmato, e la differenza.
 
 Origine protetta: Claudio Terzi [CT-LGAI-001].
+
+Nome commerciale del meccanismo: **TALLY**. Il *tally stick* medievale era un
+bastone inciso con l'importo di un debito e poi spaccato in due nel senso
+della lunghezza: una meta' al creditore, una al debitore. Le venature del
+legno rendevano le due meta' irripetibili, e nessuna delle due parti poteva
+alterare la propria senza che smettesse di combaciare con l'altra.
+
+E' esattamente cio' che fa questo modulo, seicento anni prima: due parti in
+conflitto d'interessi, uno stato che nessuna delle due puo' riscrivere da
+sola. La crittografia qui non aggiunge l'idea — la rende eseguibile.
 
 Questo modulo nasce dall'uso vero: un alloggio in affitto breve, e fra un
 ospite e l'altro la domanda «c'e' ancora tutto?». Cambia la natura del

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Rigenera l'intera dimostrazione di CASACHIARA con un comando.
+"""Rigenera l'intera dimostrazione di INVENTARIUM con un comando.
 
 Origine protetta: Claudio Terzi [CT-LGAI-001].
 Idee di PORTAVIA, dei CHIARI e della VOCE: Claudio Terzi, 3 settembre 2026.
 
-    python3 esempi/dimostrazione_casachiara.py            # in una cartella temporanea
-    python3 esempi/dimostrazione_casachiara.py --qui      # in ./dimostrazione/
+    python3 esempi/dimostrazione_inventarium.py            # in una cartella temporanea
+    python3 esempi/dimostrazione_inventarium.py --qui      # in ./dimostrazione/
 
 Perche' uno script e non dei file salvati. Le immagini e i dati della
 dimostrazione erano finiti in una cartella effimera: archiviarli avrebbe
@@ -127,7 +127,7 @@ def main(argv=None):
     print(f"  {len(reg.voci)} oggetti in {len(reg.per_luogo())} luoghi")
 
     # 2. la consegna, controfirmata
-    titolo("2. DUEMANI — la consegna, controfirmata dall'ospite")
+    titolo("2. TALLY — la consegna, controfirmata dall'ospite")
     c = Consegne(cartella / "consegne.jsonl")
     prima = c.deposita(ALLOGGIO, "consegna", reg.voci, SOGGIORNO)
     c.controfirma(prima["impronta"], SOGGIORNO)

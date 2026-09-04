@@ -89,14 +89,14 @@ letti/presenti starà fra 0,5 e 0,9. Sotto 0,3 la telecamera in movimento non
 ha senso e il problema è la fotografia, non il programma. Cade se il primo
 tentativo serio esce fuori da questa forbice.
 
-Verdetto su Emergent, che l'autore ha chiesto: in `OCCHIO.md` §6. In breve —
+Verdetto su Emergent, che l'autore ha chiesto: in `INVENTARIUM.md` §6. In breve —
 non serve, perché la parte che Emergent fa bene è già fatta, e quella che
 resta (tarare le soglie camminando per casa) non la può fare un generatore.
 L'unico motivo valido sarebbe l'involucro nativo per il telefono, perché
 `getUserMedia` fuori da `localhost` vuole `https` — e se quel fastidio
 impedisce di provarlo, allora risolve il problema vero, che è **provarlo**.
 
-## 1-ter. CASACHIARA — dove è arrivato (04/09, 03:20 UTC)
+## 1-ter. INVENTARIUM — dove è arrivato (04/09, 03:20 UTC)
 
 **RECUPERATO.** `occhio/` è cresciuto in un prodotto con un nome e un mercato,
 su richiesta dell'autore. 193 prove passano, nessuna dipendenza nuova.
@@ -132,9 +132,9 @@ viene eseguito, ed è esattamente così che il difetto è passato.
    privato ciò che lo rende *bravo*: `occhio/privato/` non è versionato,
    l'interfaccia è pubblica in `INNESTO_PRIVATO.md`. Se manca, il sistema lo
    dichiara invece di improvvisare.
-2. **Idee e nomi su Drive, non qui.** `CASACHIARA_IDEE_CT_2026-09-03.md` in
-   `R3_MEMORIA_PERSISTENTE`: attribuzione datata, nomi (CASACHIARA, PORTAVIA,
-   DUEMANI, SEGNALE VERDE, IL MEDIATORE, I CHIARI), e i vincoli legali.
+2. **Idee e nomi su Drive, non qui.** `INVENTARIUM_IDEE_CT_2026-09-03.md` in
+   `R3_MEMORIA_PERSISTENTE`: attribuzione datata, nomi (INVENTARIUM, PORTAVIA,
+   TALLY, SEGNALE VERDE, IL MEDIATORE, I CHIARI), e i vincoli legali.
    **Fuori dal repository pubblico perché la pubblicazione distrugge la
    novità brevettuale, e in Europa non c'è periodo di grazia.**
 

@@ -35,7 +35,7 @@ parte del sistema che parla.
 
 **Il confine con le prove, che non va mai attraversato.** Le immagini
 generate o ritoccate dall'IA sono escluse dalle prove nei reclami danni
-(OCCHIO.md §5-ter). La VETRINA — la presentazione bella di un oggetto — puo'
+(INVENTARIUM.md §5-ter). La VETRINA — la presentazione bella di un oggetto — puo'
 essere generata; la fotografia che dimostra che quell'oggetto c'era **no, mai**.
 Sono due binari, e in questo modulo non si toccano: un'immagine generata non
 puo' diventare `foto_sha` di nulla, e c'e' un test che fallisce se qualcuno

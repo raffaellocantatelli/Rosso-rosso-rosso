@@ -1,6 +1,54 @@
-# occhio — inventario di oggetti reali attraverso la telecamera
+# INVENTARIUM
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
+Nome scelto dall'autore il 4 settembre 2026. Maniglia: `inventariumapp`.
+Motore tecnico: `occhio` (il nome nel codice, che non cambia).
+
+> *Inventarium — l'elenco delle cose trovate.*
+
+## 0. Perché questo nome
+
+*Inventarium* viene da **invenire** — *in-* + *venire*, «imbattersi in,
+**trovare**». Un *inventarium* è alla lettera **l'elenco delle cose trovate**.
+
+Dalla stessa radice l'inglese ha tratto *invent*, che però è scivolato a
+significare «**inventare**», cioè fabbricare dal nulla.
+
+**La stessa parola, a duemila anni di distanza, contiene i due poli esatti di
+questo progetto: ciò che è stato TROVATO e ciò che è stato INVENTATO.**
+RECUPERATO contro inventato. Non è decorazione: è la tesi. Un inventario che
+inventa è il difetto di `CLAUDE.md` §4, e il nome lo dichiara da solo.
+
+Funziona fuori dall'Italia per una ragione precisa: ha un cognato in ogni
+lingua di mercato — *inventory*, *inventario*, *inventaire*, *Inventar*,
+*inventário* — quindi **nessuno deve imparare cosa significa**; ma la forma
+latina piena non è la parola d'uso di nessuno, quindi **si difende come
+marchio**. È la combinazione rara. «Casa chiara», il nome precedente, non
+aveva né l'una né l'altra: intraducibile e locale.
+
+**Un nome scartato, e vale la pena sapere perché:** *Inventa*. Accorcia
+proprio la parte che il latino teneva separata e la fa collassare su
+«inventare». Per un prodotto la cui unica disciplina è non inventare sarebbe
+il nome peggiore possibile — direbbe ad alta voce il difetto da cui si
+difende. (E *Tallium*, che univa i due, è il nome di un metallo velenoso.)
+
+## 0-bis. I pezzi e i loro nomi
+
+| Nome | Cos'è | Da dove viene |
+|---|---|---|
+| **INVENTARIUM** | il prodotto | l'elenco delle cose trovate |
+| **TALLY** | la consegna controfirmata | il *tally stick* medievale: un bastone inciso, spaccato in due, una metà a testa — **e le due metà devono combaciare**. È lo stato a due mani, seicento anni prima |
+| **GREEN** | verde / ambra / rosso | non ha bisogno di traduzione in nessuna lingua: è l'asset più internazionale del prodotto |
+| **PORTAVIA** | il mercato dentro casa | in attesa di decisione: la versione internazionale proposta è *Take Home* |
+| **IL MEDIATORE** | tratta entro le regole | proposta: *The Broker* |
+| **I CHIARI** | i crediti di circuito chiuso | proposta: *Credits* — generico **di proposito**, perché un buono con un nome da valuta sembra una valuta |
+| **`occhio`** | il motore che legge | resta il nome tecnico nel codice |
+
+**UNKNOWN:** marchio e dominio non sono stati verificati. Vanno controllati
+prima di stampare qualunque cosa — è dovuta diligenza, non ricerca sui
+concorrenti.
+
+## 1. Che cosa fa
 
 Cammini per casa con il telefono in mano. La telecamera guarda uno scaffale.
 Quello che è già scritto nel registro si illumina di **verde** e puoi
