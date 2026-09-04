@@ -200,6 +200,17 @@ def genera() -> dict:
         "prodotto": PRODOTTO,
         "marchio": MARCHIO,
         "maniglia": MANIGLIA,
+        "nome_bloccato": {
+            "dal": "2026-09-04",
+            "motivo": "esiste gia' «Inventarium: Inventaire Maison» (Marco "
+                      "Tini) sull'App Store, stessa categoria: stesso nome, "
+                      "stesso negozio, non utilizzabile",
+            "conseguenza": "il nome commerciale e' da riscegliere; il motore "
+                           "si chiama `occhio` e non dipende dal marchio",
+            "cosa_resta_valido": "la differenza di prodotto: quello e' un "
+                                 "elenco personale fuori linea, questo e' uno "
+                                 "stato concordato fra due parti",
+        },
         "significato": "inventarium, dal latino invenire: l'elenco delle cose "
                        "trovate — non di quelle inventate",
         "origine_protetta": "Claudio Terzi [CT-LGAI-001]",

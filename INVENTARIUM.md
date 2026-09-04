@@ -1,5 +1,21 @@
 # InventariuMapp
 
+> ## ⚠ NOME BLOCCATO — 4 settembre 2026
+>
+> **RECUPERATO** dall'App Store, guardato dall'autore: esiste già
+> **«Inventarium: Inventaire Maison»** di Marco Tini, 5,99 €, categoria
+> Utilità, francese + 9 lingue. Stesso nome, stessa categoria, stesso
+> negozio: il nome **non è utilizzabile** e non va difeso.
+>
+> Non rinominare niente finché l'autore non sceglie il nuovo nome. Il codice
+> non dipende dal marchio: il motore si chiama `occhio` e non cambia.
+>
+> **Ciò che resta valido è tutto il resto:** l'etimologia (§0), la
+> distinzione fra nome legale e marchio, e soprattutto **la differenza di
+> prodotto** — vedi §0-quater, che è la ragione per cui la scoperta è una
+> buona notizia e non un disastro.
+
+
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 Nome legale e parlato: **Inventarium**. Marchio grafico: **InventariuMapp**.
 Maniglia: `inventariumapp`. Scelti dall'autore il 4 settembre 2026.
@@ -72,6 +88,44 @@ difende. (E *Tallium*, che univa i due, è il nome di un metallo velenoso.)
 **UNKNOWN:** marchio e dominio non sono stati verificati. Vanno controllati
 prima di stampare qualunque cosa — è dovuta diligenza, non ricerca sui
 concorrenti.
+
+## 0-quater. Perché quel prodotto non è questo prodotto
+
+**RECUPERATO** dalla scheda: *«Votre inventaire, hors ligne»* — il loro punto
+di forza dichiarato è che funziona **fuori linea**, 5,99 € una volta sola,
+foto, etichette, posizione, prezzo, valore, stato.
+
+È un ottimo prodotto, ed è **un altro prodotto**. «Fuori linea» non è un
+dettaglio tecnico: è strutturalmente incompatibile con l'unica cosa che dà
+valore a questo progetto, cioè **una seconda parte che controfirma.** Un
+elenco che vive solo sul tuo telefono non può essere concordato con nessuno.
+
+| Loro | Qui |
+|---|---|
+| un elenco delle **tue** cose | uno **stato concordato fra due parti** |
+| fuori linea, per definizione | serve l'altra parte, per definizione |
+| 5,99 € una volta | ricorrente, per immobile |
+| foto ed etichette | **catena a prova di manomissione** e differenza fra due momenti (TALLY) |
+| — | il mercato dentro casa: ciò che manca è stato **comprato**, non rubato (PORTAVIA) |
+| — | crediti di circuito chiuso |
+| — | interrogazione a voce |
+| utilità personale | **strumento professionale**: gestori, perizie, depositi cauzionali |
+
+**Che esistano è una buona notizia:** qualcuno ha investito nel costruire un
+inventario domestico, quindi il bisogno è reale — ed è la prima prova esterna
+che questo progetto abbia mai avuto su questo mercato. Dice anche dove **non**
+andare: il segmento personale e fuori linea è occupato e vale 5,99 € una
+tantum. Spinge esattamente dove il codice è già andato da solo: **due parti,
+ricorrente, professionale.**
+
+La differenziazione qui non è un esercizio di marketing da fare dopo.
+**È già scritta, e si esegue:**
+
+```bash
+python -m occhio --consegna via-roma-12 --soggiorno HMX88
+python -m occhio --controfirma <impronta> --codice HMX88   # ← questa riga non esiste in un'app fuori linea
+python -m occhio --differenza via-roma-12
+```
 
 ## 0-ter. CAPACITA.json — l'inventario di INVENTARIUM
 
