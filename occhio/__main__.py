@@ -341,8 +341,10 @@ def consegne(a) -> int:
                 for o in s["non_spiegati"]:
                     print(f"    {o['titolo']}")
             i = s["incasso"]
-            print(f"\nincasso del soggiorno: {i['lordo']:.2f} lordi, "
-                  f"{i['al_proprietario']:.2f} a te")
+            print("\nincasso del soggiorno:")
+            for valuta, c in sorted(i["per_valuta"].items()):
+                print(f"    {c['lordo']:.2f} {valuta} lordi, "
+                      f"{c['al_proprietario']:.2f} a te")
         return 0
 
     alloggio = a.consegna or a.riconsegna
@@ -526,8 +528,12 @@ def main(argv=None) -> int:
                   file=sys.stderr)
             return 2
         from .server import avvia
+        pianta = None
+        if a.pianta:
+            from .planimetria import carica
+            pianta = carica(a.pianta)
         avvia(a.host, a.porta, cascata=cascata,
-              autoscrittura=not a.solo_lettura, soglia=a.soglia)
+              autoscrittura=not a.solo_lettura, soglia=a.soglia, pianta=pianta)
         return 0
 
     ap.print_help()

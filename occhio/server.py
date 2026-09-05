@@ -82,12 +82,14 @@ def impronta_vicina(riquadro, impronte):
 class Stato:
     """Cio' che il server tiene fra una richiesta e l'altra."""
 
-    def __init__(self, percorso_inventario, cascata, autoscrittura, soglia):
+    def __init__(self, percorso_inventario, cascata, autoscrittura, soglia,
+                 pianta=None):
         self.lock = threading.Lock()
         self.inventario = inv.Inventario(percorso_inventario)
         self.cascata = cascata
         self.autoscrittura = autoscrittura
         self.soglia = soglia
+        self.pianta = pianta
         self.fotogrammi = 0
         self.letture_riuscite = 0
         self.errori = 0
@@ -147,6 +149,8 @@ class Handler(BaseHTTPRequestHandler):
                 "letture_riuscite": s.letture_riuscite,
                 "errori": s.errori,
             })
+        if percorso == "/api/quadro":
+            return self._quadro()
         if percorso == "/api/inventario":
             with self.stato.lock:
                 voci = sorted(self.stato.inventario.voci,
@@ -177,7 +181,87 @@ class Handler(BaseHTTPRequestHandler):
 
     # -- statico ----------------------------------------------------------
 
+    def _quadro(self):
+        """Tutto lo stato in una chiamata sola: la console lo disegna intero.
+
+        Sono cinque letture che l'interfaccia farebbe comunque, e farle
+        separate significa disegnare cinque volte una schermata incoerente
+        mentre arrivano. Qui il quadro e' uno, e o c'e' tutto o non c'e'.
+        """
+        s = self.stato
+        with s.lock:
+            reg = s.inventario
+            per_luogo = reg.per_luogo()
+            voci = sorted(reg.voci, key=lambda v: v.get("visto_ultimo", ""), reverse=True)
+            fusioni = reg.fusioni()
+
+            quadro = {
+                "oggetti": [{"chiave": v.get("chiave"), "tipo": v.get("tipo"),
+                             "titolo": v.get("titolo"),
+                             "zona": (self._zona(v)),
+                             "avvistamenti": v.get("avvistamenti", 1),
+                             "fonte": v.get("fonte")}
+                            for v in voci],
+                "zone": {z.split(" › ")[0]: len(o) for z, o in per_luogo.items()},
+                "totale": len(reg.voci),
+                "fusioni": [{"chiave": f["chiave"], "titoli": f["titoli_visti"]}
+                            for f in fusioni],
+                "pianta": s.pianta,
+                "stub": s.cascata == ("stub",),
+                "consegne": [], "differenza": None, "vendite": [], "chiari": None,
+            }
+
+        # TALLY, PORTAVIA e i chiari sono file a se': si leggono senza il lock
+        # dell'inventario, e se mancano il quadro resta valido e lo dice.
+        try:
+            from .consegna import Consegne, differenza
+            c = Consegne()
+            alloggi = sorted({x.get("alloggio") for x in c.stati if x.get("alloggio")})
+            for a in alloggi:
+                prima, dopo = c.ultimo(a, "consegna"), c.ultimo(a, "riconsegna")
+                controfirme = {v.get("riferimento") for v in c.stati
+                               if v.get("tipo") == "controfirma"}
+                quadro["consegne"].append({
+                    "alloggio": a,
+                    "consegna": {"momento": prima["momento"],
+                                 "controfirmata": prima["impronta"] in controfirme,
+                                 "oggetti": len(prima["oggetti"])} if prima else None,
+                    "riconsegna": {"momento": dopo["momento"],
+                                   "controfirmata": dopo["impronta"] in controfirme,
+                                   "oggetti": len(dopo["oggetti"])} if dopo else None,
+                })
+                if prima and dopo and quadro["differenza"] is None:
+                    quadro["differenza"] = differenza(prima, dopo)
+        except Exception as e:
+            quadro["consegne_errore"] = vis.oscura_segreti(e)
+
+        try:
+            from .portavia import Portavia, spiega_mancanti
+            pv = Portavia()
+            quadro["vendite"] = pv.movimenti[-8:]
+            quadro["incasso"] = pv.incasso()
+            if quadro["differenza"]:
+                quadro["differenza"] = spiega_mancanti(quadro["differenza"], pv)
+        except Exception:
+            pass
+
+        try:
+            from .crediti import Crediti
+            quadro["chiari"] = Crediti().verifica()
+        except Exception:
+            pass
+
+        return self._json(200, quadro)
+
+    @staticmethod
+    def _zona(voce):
+        from .inventario import _etichetta
+        luoghi = voce.get("luoghi") or [voce.get("luogo")]
+        return _etichetta(luoghi[0]).split(" › ")[0] if luoghi and luoghi[0] else None
+
     def _statico(self, percorso):
+        if percorso in ("/console", "/console/"):
+            percorso = "/console.html"
         nome = "index.html" if percorso in ("/", "") else percorso.lstrip("/")
         # Nessuna risalita di directory: il server gira nella cartella di casa
         # di qualcuno, e `/../../.env` conterrebbe le chiavi.
@@ -364,8 +448,9 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def avvia(host="127.0.0.1", porta=8777, percorso_inventario=inv.ARCHIVIO,
-          cascata=vis.CASCATA, autoscrittura=True, soglia=0.75):
-    Handler.stato = Stato(percorso_inventario, tuple(cascata), autoscrittura, soglia)
+          cascata=vis.CASCATA, autoscrittura=True, soglia=0.75, pianta=None):
+    Handler.stato = Stato(percorso_inventario, tuple(cascata), autoscrittura,
+                          soglia, pianta)
     srv = ThreadingHTTPServer((host, porta), Handler)
     if host not in ("127.0.0.1", "localhost", "::1"):
         sys.stderr.write(

@@ -22,7 +22,7 @@
   ],
   "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
   "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
-  "generato": "2026-09-04T05:46:39Z",
+  "generato": "2026-09-05T18:17:06Z",
   "generato_da": "python -m occhio --capacita",
   "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
   "moduli": {
@@ -388,7 +388,7 @@
             {
               "nome": "incasso",
               "firma": "(self, soggiorno: 'str | None' = None) -> 'dict'",
-              "descrizione": ""
+              "descrizione": "Quanto e' entrato, tenuto separato per valuta."
             },
             {
               "nome": "vendita",
@@ -743,7 +743,7 @@
         {
           "tipo": "funzione",
           "nome": "avvia",
-          "firma": "(host='127.0.0.1', porta=8777, percorso_inventario=PosixPath('output/inventario.jsonl'), cascata=('anthropic', 'gemini'), autoscrittura=True, soglia=0.75)",
+          "firma": "(host='127.0.0.1', porta=8777, percorso_inventario=PosixPath('output/inventario.jsonl'), cascata=('anthropic', 'gemini'), autoscrittura=True, soglia=0.75, pianta=None)",
           "descrizione": ""
         },
         {

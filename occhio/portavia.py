@@ -233,11 +233,32 @@ class Portavia:
                 and (soggiorno is None or m.get("soggiorno") == soggiorno)}
 
     def incasso(self, soggiorno: str | None = None) -> dict:
+        """Quanto e' entrato, tenuto separato per valuta.
+
+        Sommare euro e CHIARI darebbe un numero che non esiste. La console lo
+        ha reso evidente: mostrava «9.00» e accanto l'unita' dell'ultima
+        vendita, che poteva essere l'altra. Quindi: `per_valuta` e' sempre la
+        verita'; i campi piatti restano solo quando c'e' una valuta sola, e
+        valgono `None` quando ce n'e' piu' d'una. Un `None` che rompe una
+        stampa e' meglio di un totale che non significa niente.
+        """
         v = list(self.venduti(soggiorno).values())
-        return {"vendite": len(v),
-                "lordo": round(sum(x["prezzo"] for x in v), 2),
-                "commissione": round(sum(x["commissione"] for x in v), 2),
-                "al_proprietario": round(sum(x["al_proprietario"] for x in v), 2)}
+        per_valuta: dict[str, dict] = {}
+        for x in v:
+            c = per_valuta.setdefault(x.get("valuta") or "?", {
+                "vendite": 0, "lordo": 0.0, "commissione": 0.0,
+                "al_proprietario": 0.0})
+            c["vendite"] += 1
+            for k in ("lordo", "commissione", "al_proprietario"):
+                c[k] = round(c[k] + float(x["prezzo" if k == "lordo" else k]), 2)
+        sola = list(per_valuta)[0] if len(per_valuta) == 1 else None
+        piatti = per_valuta[sola] if sola else {
+            "lordo": None, "commissione": None, "al_proprietario": None}
+        return {"vendite": len(v), "valuta": sola,
+                "valute": sorted(per_valuta), "per_valuta": per_valuta,
+                "lordo": piatti["lordo"],
+                "commissione": piatti["commissione"],
+                "al_proprietario": piatti["al_proprietario"]}
 
 
 # --------------------------------------------------------------------------

@@ -7,6 +7,8 @@ scritto in OCCHIO.md fra le cose ancora UNKNOWN.
 """
 
 import json
+import os
+import sys
 import threading
 import urllib.request
 import urllib.error
@@ -1238,11 +1240,29 @@ def test_ogni_registro_del_prodotto_e_fuori_dal_repository_pubblico():
 
     La prova non guarda un elenco scritto a mano: chiede ai moduli dove
     scrivono. Un modulo nuovo che deposita altrove viene scoperto qui.
+
+    Lo chiede in un processo separato e SENZA le variabili d'ambiente: la
+    suite le punta alla sandbox (conftest), e chiedere qui darebbe i percorsi
+    della sandbox — sempre fuori dal repository, quindi una prova che passa
+    sempre. È il difetto di §4 in miniatura: la prova che interroga la propria
+    configurazione invece della realtà che deve proteggere.
     """
     import subprocess
-    from occhio import consegna as cs, crediti as cd, inventario as ivn, portavia as pvv
     radice = pathlib.Path(__file__).resolve().parent.parent
-    percorsi = [ivn.ARCHIVIO, cs.CATENA, pvv.CATALOGO, cd.LIBRO]
+    ambiente = {k: v for k, v in os.environ.items() if not k.startswith("OCCHIO_")}
+    letto = subprocess.run(
+        [sys.executable, "-c",
+         "from occhio import consegna, crediti, inventario, portavia as pv;"
+         "print(inventario.ARCHIVIO); print(consegna.CATENA);"
+         "print(pv.CATALOGO); print(crediti.LIBRO)"],
+        cwd=radice, env=ambiente, capture_output=True, text=True)
+    assert letto.returncode == 0, letto.stderr
+    percorsi = [x for x in letto.stdout.split("\n") if x.strip()]
+    assert len(percorsi) == 4, percorsi
+    # e devono essere percorsi DENTRO il repository, se no non provano niente
+    for x in percorsi:
+        assert not pathlib.Path(x).is_absolute(), (
+            f"{x} è assoluto: la prova non direbbe niente sul repository")
     non_protetti = []
     for p in percorsi:
         esito = subprocess.run(["git", "check-ignore", "-q", str(p)],
@@ -1309,3 +1329,178 @@ def test_le_fusioni_sopravvivono_alla_rilettura(tmp_path):
     r.registra("dvd", "Heat")
     r.registra("dvd", "The Heat")
     assert len(inv.Inventario(p).fusioni()) == 1
+
+
+# --------------------------------------------------------------------------
+# LA CONSOLE — una schermata sola, e deve dire la verità
+# --------------------------------------------------------------------------
+
+def _console(nome):
+    web = pathlib.Path(__file__).resolve().parent.parent / "occhio" / "web"
+    return (web / nome).read_text(encoding="utf-8")
+
+
+def test_ogni_id_cercato_dalla_console_esiste():
+    """Stessa ragione di `test_ogni_id_cercato_dal_javascript_esiste`: un
+    `$("#x")` su un elemento assente rompe l'intero file con un TypeError, e
+    la pagina resta lì bella e morta. Il difetto è già arrivato al ramo
+    remoto una volta."""
+    import re
+    html, js = _console("console.html"), _console("console.js")
+    presenti = set(re.findall(r'id="([A-Za-z0-9_-]+)"', html))
+    cercati = set(re.findall(r'\$\("#([A-Za-z0-9_-]+)"\)', js))
+    cercati |= set(re.findall(r'querySelector(?:All)?\("#([A-Za-z0-9_-]+)', js))
+    mancanti = cercati - presenti
+    assert not mancanti, f"console.js cerca id assenti dall'HTML: {sorted(mancanti)}"
+
+
+def test_la_console_dichiara_i_suoi_fogli():
+    html = _console("console.html")
+    assert 'href="console.css"' in html and 'src="console.js"' in html
+    # il segno in alto porta alla telecamera: la console non è un vicolo cieco
+    assert 'href="/"' in html
+
+
+def test_le_classi_disegnate_dalla_console_esistono_nel_foglio():
+    """Una classe scritta dal JavaScript e assente dal CSS non dà errore:
+    dà una schermata senza stile, che è peggio perché sembra funzionare."""
+    import re
+    js, css = _console("console.js"), _console("console.css")
+    for classe in ("zona", "spenta", "allarme", "buono", "riga", "segnale",
+                   "comprato", "manca", "vuoto", "firma", "fatto", "aperto"):
+        assert classe in js, f"la classe {classe} non è più usata: aggiorna il test"
+        assert f".{classe}" in css, f"console.css non definisce .{classe}"
+    # tre stati e tre colori: se qualcuno ne aggiunge un quarto, la pianta
+    # colora una zona con `undefined` e non lo dice a nessuno
+    colori = re.search(r"const COLORI = \{([^}]*)\}", js).group(1)
+    assert sorted(re.findall(r"(\w+):", colori)) == ["da_fare", "fatta", "manca"]
+
+
+def test_la_console_e_i_suoi_fogli_sono_serviti(occhio_in_ascolto):
+    for risorsa in ("/console", "/console.css", "/console.js"):
+        with urllib.request.urlopen(occhio_in_ascolto + risorsa, timeout=10) as r:
+            assert r.status == 200 and len(r.read()) > 200
+
+
+def test_il_quadro_e_uno_e_arriva_intero(occhio_in_ascolto):
+    """Cinque letture separate disegnerebbero cinque schermate incoerenti
+    mentre arrivano: `/api/quadro` o c'è tutto o non c'è."""
+    codice, q = chiama(occhio_in_ascolto + "/api/quadro")
+    assert codice == 200
+    for chiave in ("oggetti", "zone", "totale", "fusioni", "pianta", "stub",
+                   "consegne", "differenza", "vendite", "chiari"):
+        assert chiave in q, f"il quadro non porta {chiave}"
+    assert q["stub"] is True          # la fixture gira in modo stub
+    assert q["oggetti"] == [] and q["totale"] == 0
+
+
+def test_il_quadro_conta_gli_oggetti_che_il_registro_contiene(occhio_in_ascolto):
+    """Il numero in alto e l'elenco sotto vengono dalla stessa lettura: se
+    divergono, la schermata mente su sé stessa."""
+    with srv.Handler.stato.lock:
+        r = srv.Handler.stato.inventario
+        r.registra("dvd", "Heat", luogo={"stanza": "salotto"})
+        r.registra("dvd", "Solaris", luogo={"stanza": "salotto"})
+        r.registra("altro", "Phon", luogo={"stanza": "bagno"})
+    codice, q = chiama(occhio_in_ascolto + "/api/quadro")
+    assert codice == 200
+    assert q["totale"] == 3 == len(q["oggetti"])
+    assert sum(q["zone"].values()) == 3
+    assert set(q["zone"]) == {"salotto", "bagno"}
+    # ogni oggetto porta la zona con cui la pianta lo filtrerà
+    assert {o["titolo"]: o["zona"] for o in q["oggetti"]} == {
+        "Heat": "salotto", "Solaris": "salotto", "Phon": "bagno"}
+
+
+def test_una_fusione_arriva_fino_alla_console(occhio_in_ascolto):
+    """Il registro non nasconde le fusioni; nemmeno il quadro."""
+    with srv.Handler.stato.lock:
+        r = srv.Handler.stato.inventario
+        r.registra("dvd", "Heat")
+        r.registra("dvd", "The Heat")
+    _, q = chiama(occhio_in_ascolto + "/api/quadro")
+    assert [f["titoli"] for f in q["fusioni"]] == [["Heat", "The Heat"]]
+
+
+def test_il_quadro_regge_i_registri_mancanti(occhio_in_ascolto):
+    """Consegne, PORTAVIA e CHIARI sono file a sé: se non esistono ancora —
+    ed è il caso di chiunque apra la console il primo giorno — il quadro
+    resta valido e lo dice con dei vuoti, non con un errore 500."""
+    _, q = chiama(occhio_in_ascolto + "/api/quadro")
+    assert q["consegne"] == [] and q["differenza"] is None
+    assert "consegne_errore" not in q, q.get("consegne_errore")
+
+
+# --------------------------------------------------------------------------
+# l'incasso: due valute non si sommano
+# --------------------------------------------------------------------------
+
+def test_l_incasso_non_somma_mai_euro_e_chiari(tmp_path):
+    """La console lo ha reso visibile: mostrava un totale e accanto l'unità
+    dell'ultima vendita. Sommare euro e CHIARI dà un numero che non esiste in
+    nessuna delle due valute."""
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole(commissione=0.10))
+    p.vendita("dvd:heat", "Heat", 100.0)
+    p._scrivi({"tipo": "vendita", "chiave": "dvd:solaris", "titolo": "Solaris",
+               "prezzo": 15, "commissione": 2, "al_proprietario": 13,
+               "valuta": "chiari", "soggiorno": "", "alloggio": "",
+               "momento": "2026-09-05T00:00:00Z"})
+    i = p.incasso()
+    assert i["vendite"] == 2
+    assert i["valute"] == ["EUR", "chiari"]
+    assert i["per_valuta"]["EUR"]["lordo"] == 100.0
+    assert i["per_valuta"]["chiari"]["lordo"] == 15.0
+    # i campi piatti valgono solo con una valuta sola: qui devono tacere
+    assert i["lordo"] is None and i["al_proprietario"] is None
+    assert i["valuta"] is None
+
+
+def test_con_una_valuta_sola_i_campi_piatti_restano(tmp_path):
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole(commissione=0.12))
+    p.vendita("dvd:heat", "Heat", 100.0)
+    i = p.incasso()
+    assert i["valuta"] == "EUR" and i["lordo"] == 100.0
+    assert i["al_proprietario"] == 88.0
+    assert i["per_valuta"]["EUR"]["commissione"] == 12.0
+
+
+def test_nascondere_un_elemento_lo_nasconde_davvero():
+    """`el.hidden = true` non fa niente se il foglio dà a quell'elemento un
+    `display` esplicito. È successo due volte: il pannello sopra il video, e
+    la legenda che spiegava tre colori assenti dalla schermata. Un elenco di
+    eccezioni invecchia; una regola per tutti no."""
+    import re
+    for foglio in ("stile.css", "console.css"):
+        css = re.sub(r"\s+", "", _console(foglio))
+        # il selettore dev'essere `[hidden]` da solo, non `#x li[hidden]`:
+        # prima di lui può esserci solo la fine di una regola o di un commento
+        assert re.search(r"(^|[}/;])\[hidden\]\{display:none!important;?\}", css), (
+            f"{foglio} non neutralizza [hidden]: nascondere non nasconderà")
+
+
+# --------------------------------------------------------------------------
+# i falsificatori: un crash non è mai «REGGE»
+# --------------------------------------------------------------------------
+
+def test_nessun_falsificatore_muore_prima_di_essere_protetto():
+    """`main_protetto` trasforma un'eccezione in esito 2 — ma solo dentro
+    `main()`. Un import in testa al file avviene PRIMA, e Python esce con 1,
+    che in questo contratto significa REGGE.
+
+    È successo il 05/09: `h5_tracce` importava `esperimenti.tracce`, che
+    importa `dotenv`, assente qui. H5 risultava «regge» senza che una sola
+    domanda fosse mai partita — il difetto di §4 dentro lo strumento
+    costruito per impedirlo, per la seconda volta.
+    """
+    import subprocess
+    radice = pathlib.Path(__file__).resolve().parent.parent
+    falsificatori = sorted((radice / "falsificatori").glob("h*.py"))
+    assert len(falsificatori) >= 9, "falsificatori spariti?"
+    for f in falsificatori:
+        esito = subprocess.run(
+            [sys.executable, "-c",
+             f"import importlib; importlib.import_module('falsificatori.{f.stem}')"],
+            cwd=radice, capture_output=True, text=True)
+        assert esito.returncode == 0, (
+            f"{f.name} non si importa nemmeno: uscirebbe con 1, cioè «REGGE».\n"
+            + esito.stderr)

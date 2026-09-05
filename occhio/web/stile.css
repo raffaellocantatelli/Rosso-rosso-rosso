@@ -31,8 +31,10 @@ main { display:flex; height:100%; }
 
 /* [hidden] non basta quando l'elemento ha un display esplicito: senza questa
    riga il pannello di partenza resta sopra il video anche a telecamera accesa.
-   Verificato con uno scatto reale il 03/09. */
-#spento[hidden], #comandi button[hidden], #lab-ritmo[hidden] { display:none !important; }
+   Verificato con uno scatto reale il 03/09. Era un elenco di eccezioni; il
+   05/09 la stessa cosa e' ricapitata nella console con un elemento che non
+   era nell'elenco, quindi adesso la regola vale per tutti. */
+[hidden] { display:none !important; }
 
 #spento {
   position:absolute; inset:0; display:flex; flex-direction:column;
