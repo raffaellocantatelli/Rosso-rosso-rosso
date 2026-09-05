@@ -61,6 +61,42 @@ FUORI, IN_VENDITA, TRATTATIVA, VENDUTO = "fuori", "in_vendita", "trattativa", "v
 MAI_IN_VENDITA = ("caldaia", "boiler", "condizionatore", "cucina a gas",
                   "porta", "finestra", "estintore", "rilevatore")
 
+# --------------------------------------------------------------------------
+# I TRE GENERI — idea di Claudio Terzi, 5 settembre 2026
+# --------------------------------------------------------------------------
+#
+# «Dividerei bene la parte market, la parte ristorazione, la parte
+# esperienze.» Non e' una divisione estetica: sono tre cose che si comportano
+# in modo diverso davanti alla **differenza di fine soggiorno**, che e' il
+# punto in cui questo prodotto o dice la verita' o non serve a niente.
+#
+#   PORTAVIA  (merce)      esce di casa.      Venderla SPIEGA un'assenza.
+#   APRILA    (consumo)    finisce in casa.   Venderla SPIEGA un'assenza.
+#   RESTACI   (esperienza) resta dov'e'.      Venderla NON spiega NIENTE.
+#
+# La terza riga e' l'unica che conta davvero, ed e' il motivo per cui i
+# generi stanno nel codice e non in una pagina di marketing: se una serata
+# in vasca potesse "spiegare" un phon mancante, il registro avrebbe imparato
+# a giustificare le assenze con incassi che non c'entrano — e sarebbe di
+# nuovo il sistema che parla a se' stesso di §4, stavolta con i soldi.
+MERCE, CONSUMO, ESPERIENZA = "merce", "consumo", "esperienza"
+GENERI = (MERCE, CONSUMO, ESPERIENZA)
+
+#: Nomi commerciali dei tre generi. Sono imperativi come PORTAVIA: dicono
+#: insieme il permesso e l'atto. Vanno cercati (App Store, EUIPO, dominio)
+#: PRIMA di adottarli — la lezione e' costata due rinomine.
+NOMI_DEI_GENERI = {MERCE: "PORTAVIA", CONSUMO: "APRILA", ESPERIENZA: "RESTACI"}
+
+#: L'invariante. Un genere spiega un'assenza solo se l'oggetto poteva
+#: davvero uscire di casa o finire.
+SPIEGA_ASSENZA = {MERCE: True, CONSUMO: True, ESPERIENZA: False}
+
+
+def genere_valido(genere: str) -> str:
+    if genere not in GENERI:
+        raise ValueError(f"genere sconosciuto: {genere!r} (attesi: {GENERI})")
+    return genere
+
 
 class Regole:
     """Le regole del proprietario. Il Mediatore non puo' uscire da qui.
@@ -72,7 +108,8 @@ class Regole:
 
     def __init__(self, prezzo_minimo: dict[str, float] | None = None,
                  sconto_massimo: float = 0.15, commissione: float = 0.12,
-                 margine: float = 0.25, mai: tuple = (), valuta: str = "EUR"):
+                 margine: float = 0.25, mai: tuple = (), valuta: str = "EUR",
+                 generi: dict[str, str] | None = None):
         if not 0 <= sconto_massimo < 1:
             raise ValueError("sconto_massimo va fra 0 e 1")
         if not 0 <= commissione < 1:
@@ -93,6 +130,14 @@ class Regole:
         self.margine = margine
         self.mai = tuple(m.lower() for m in mai) + MAI_IN_VENDITA
         self.valuta = valuta
+        #: chiave -> genere. Il difetto sta dal lato sicuro: cio' che non e'
+        #: dichiarato e' MERCE, cioe' qualcosa che puo' uscire di casa e che
+        #: quindi va riconciliato. Dichiarare per sbaglio un'esperienza come
+        #: merce fa vedere un'assenza in piu'; il contrario ne nasconde una.
+        self.generi = {k: genere_valido(v) for k, v in (generi or {}).items()}
+
+    def genere(self, chiave: str) -> str:
+        return self.generi.get(chiave, MERCE)
 
     def vendibile(self, chiave: str, titolo: str) -> tuple[bool, str]:
         t = f"{chiave} {titolo}".lower()
@@ -214,23 +259,49 @@ class Portavia:
         return voce
 
     def vendita(self, chiave: str, titolo: str, prezzo: float,
-                soggiorno: str = "", alloggio: str = "") -> dict:
+                soggiorno: str = "", alloggio: str = "",
+                genere: str | None = None, quantita: int = 1,
+                quando: str = "") -> dict:
+        """Registra una vendita. `genere` decide come sara' letta a fine
+
+        soggiorno: vedi SPIEGA_ASSENZA in testa al modulo.
+
+        `quantita` e' un fatto sulla vendita — «due bottiglie» — e **non**
+        una giacenza: questo modulo non sa quante bottiglie ci fossero,
+        perche' l'inventario tiene una voce per titolo e non un conteggio.
+        Dichiararlo qui e' l'unico modo onesto di scriverlo senza far
+        credere che il magazzino sia gestito.
+        """
         lordo = round(float(prezzo), 2)
         commissione = round(lordo * self.regole.commissione, 2)
+        if quantita < 1 or int(quantita) != quantita:
+            raise ValueError("quantita deve essere un intero >= 1")
         return self._scrivi({
             "tipo": "vendita", "chiave": chiave, "titolo": titolo,
+            "genere": genere_valido(genere or self.regole.genere(chiave)),
+            "quantita": int(quantita),
             "prezzo": lordo,
             "commissione": commissione,
             "al_proprietario": round(lordo - commissione, 2),
             "valuta": self.regole.valuta,
+            "quando": quando,
             "soggiorno": soggiorno, "alloggio": alloggio,
             "momento": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         })
 
-    def venduti(self, soggiorno: str | None = None) -> dict[str, dict]:
+    def venduti(self, soggiorno: str | None = None,
+                solo_generi: tuple | None = None) -> dict[str, dict]:
+        """Le vendite, per chiave.
+
+        `solo_generi` serve a chi deve spiegare un'assenza: un movimento
+        senza genere e' una vendita scritta prima del 05/09 e vale MERCE,
+        che e' l'ipotesi che non nasconde niente.
+        """
         return {m["chiave"]: m for m in self.movimenti
                 if m.get("tipo") == "vendita"
-                and (soggiorno is None or m.get("soggiorno") == soggiorno)}
+                and (soggiorno is None or m.get("soggiorno") == soggiorno)
+                and (solo_generi is None
+                     or m.get("genere", MERCE) in solo_generi)}
 
     def incasso(self, soggiorno: str | None = None) -> dict:
         """Quanto e' entrato, tenuto separato per valuta.
@@ -244,18 +315,22 @@ class Portavia:
         """
         v = list(self.venduti(soggiorno).values())
         per_valuta: dict[str, dict] = {}
+        per_genere: dict[str, dict] = {}
         for x in v:
-            c = per_valuta.setdefault(x.get("valuta") or "?", {
-                "vendite": 0, "lordo": 0.0, "commissione": 0.0,
-                "al_proprietario": 0.0})
-            c["vendite"] += 1
-            for k in ("lordo", "commissione", "al_proprietario"):
-                c[k] = round(c[k] + float(x["prezzo" if k == "lordo" else k]), 2)
+            for indice, chiave_gruppo in ((per_valuta, x.get("valuta") or "?"),
+                                          (per_genere, x.get("genere", MERCE))):
+                c = indice.setdefault(chiave_gruppo, {
+                    "vendite": 0, "lordo": 0.0, "commissione": 0.0,
+                    "al_proprietario": 0.0})
+                c["vendite"] += 1
+                for k in ("lordo", "commissione", "al_proprietario"):
+                    c[k] = round(c[k] + float(x["prezzo" if k == "lordo" else k]), 2)
         sola = list(per_valuta)[0] if len(per_valuta) == 1 else None
         piatti = per_valuta[sola] if sola else {
             "lordo": None, "commissione": None, "al_proprietario": None}
         return {"vendite": len(v), "valuta": sola,
                 "valute": sorted(per_valuta), "per_valuta": per_valuta,
+                "per_genere": per_genere,
                 "lordo": piatti["lordo"],
                 "commissione": piatti["commissione"],
                 "al_proprietario": piatti["al_proprietario"]}
@@ -274,7 +349,11 @@ def spiega_mancanti(differenza: dict, portavia: Portavia,
     solo il terzo e' un problema. Un proprietario che apre questa schermata
     vede meno conflitto e piu' incasso, che era esattamente il punto.
     """
-    vendute = portavia.venduti(soggiorno)
+    # Solo cio' che poteva uscire di casa o finire puo' spiegare un'assenza.
+    # Una serata in vasca venduta ieri non giustifica un phon che non c'e'
+    # oggi: l'oggetto e' ancora li', e se non c'e' e' un'altra storia.
+    spiegano = tuple(g for g in GENERI if SPIEGA_ASSENZA[g])
+    vendute = portavia.venduti(soggiorno, solo_generi=spiegano)
     comprati, non_spiegati = [], []
     for o in differenza.get("mancanti", []):
         v = vendute.get(o.get("chiave"))
@@ -289,7 +368,9 @@ def spiega_mancanti(differenza: dict, portavia: Portavia,
 
 def vendita_in_chiari(portavia, crediti, chiave: str, titolo: str,
                       prezzo_eur: float, compratore: str, venditore: str,
-                      soggiorno: str = "", alloggio: str = "") -> dict:
+                      soggiorno: str = "", alloggio: str = "",
+                      genere: str | None = None, quantita: int = 1,
+                      quando: str = "") -> dict:
     """Una vendita pagata in CHIARI invece che in euro. Idea di Claudio Terzi.
 
     Toglie l'attrito nel momento in cui il desiderio e' vivo: chi deve
@@ -321,6 +402,8 @@ def vendita_in_chiari(portavia, crediti, chiave: str, titolo: str,
 
     voce = portavia._scrivi({
         "tipo": "vendita", "chiave": chiave, "titolo": titolo,
+        "genere": genere_valido(genere or regole.genere(chiave)),
+        "quantita": int(quantita), "quando": quando,
         "prezzo": prezzo, "commissione": commissione,
         "al_proprietario": al_venditore, "valuta": "chiari",
         "compratore": compratore, "venditore": venditore,

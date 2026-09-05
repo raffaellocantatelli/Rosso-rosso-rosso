@@ -22,7 +22,7 @@
   ],
   "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
   "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
-  "generato": "2026-09-05T18:17:06Z",
+  "generato": "2026-09-05T19:49:14Z",
   "generato_da": "python -m occhio --capacita",
   "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
   "moduli": {
@@ -392,13 +392,13 @@
             },
             {
               "nome": "vendita",
-              "firma": "(self, chiave: 'str', titolo: 'str', prezzo: 'float', soggiorno: 'str' = '', alloggio: 'str' = '') -> 'dict'",
-              "descrizione": ""
+              "firma": "(self, chiave: 'str', titolo: 'str', prezzo: 'float', soggiorno: 'str' = '', alloggio: 'str' = '', genere: 'str | None' = None, quantita: 'int' = 1, quando: 'str' = '') -> 'dict'",
+              "descrizione": "Registra una vendita. `genere` decide come sara' letta a fine"
             },
             {
               "nome": "venduti",
-              "firma": "(self, soggiorno: 'str | None' = None) -> 'dict[str, dict]'",
-              "descrizione": ""
+              "firma": "(self, soggiorno: 'str | None' = None, solo_generi: 'tuple | None' = None) -> 'dict[str, dict]'",
+              "descrizione": "Le vendite, per chiave."
             }
           ]
         },
@@ -411,6 +411,11 @@
               "nome": "esposto",
               "firma": "(self, chiave: 'str') -> 'float | None'",
               "descrizione": "Prezzo che l'ospite vede: soglia piu' margine di trattativa."
+            },
+            {
+              "nome": "genere",
+              "firma": "(self, chiave: 'str') -> 'str'",
+              "descrizione": ""
             },
             {
               "nome": "incasso_proprietario",
@@ -441,6 +446,12 @@
         },
         {
           "tipo": "funzione",
+          "nome": "genere_valido",
+          "firma": "(genere: 'str') -> 'str'",
+          "descrizione": ""
+        },
+        {
+          "tipo": "funzione",
           "nome": "immagine_generata_ammessa_come_prova",
           "firma": "() -> 'bool'",
           "descrizione": "Sempre falso, e sta scritto qui perche' sia citabile da un test."
@@ -466,7 +477,7 @@
         {
           "tipo": "funzione",
           "nome": "vendita_in_chiari",
-          "firma": "(portavia, crediti, chiave: 'str', titolo: 'str', prezzo_eur: 'float', compratore: 'str', venditore: 'str', soggiorno: 'str' = '', alloggio: 'str' = '') -> 'dict'",
+          "firma": "(portavia, crediti, chiave: 'str', titolo: 'str', prezzo_eur: 'float', compratore: 'str', venditore: 'str', soggiorno: 'str' = '', alloggio: 'str' = '', genere: 'str | None' = None, quantita: 'int' = 1, quando: 'str' = '') -> 'dict'",
           "descrizione": "Una vendita pagata in CHIARI invece che in euro. Idea di Claudio Terzi."
         }
       ]
@@ -912,6 +923,13 @@
       "aiuto": "l ospite offre: il Mediatore risponde secondo le regole"
     },
     {
+      "opzione": "--genere",
+      "gruppo": "PORTAVIA — quello che ti piace, portalo via",
+      "argomenti": [],
+      "predefinito": null,
+      "aiuto": "che cosa stai vendendo: merce esce di casa (PORTAVIA), consumo finisce in casa (APRILA), esperienza resta dov'e' (RESTACI) e non spiega nessuna assenza. Senza, vale quello dichiarato in --prezzi, o merce."
+    },
+    {
       "opzione": "--vendi",
       "gruppo": "PORTAVIA — quello che ti piace, portalo via",
       "argomenti": [
@@ -1141,8 +1159,11 @@
         "alloggio",
         "chiave",
         "commissione",
+        "genere",
         "momento",
         "prezzo",
+        "quando",
+        "quantita",
         "soggiorno",
         "tipo",
         "titolo",
@@ -1228,6 +1249,12 @@
       "stato": "APERTA",
       "testo": "I CHIARI restano un buono di circuito chiuso: si conservano, non diventano mai denaro, e nessun saldo va sotto zero. Idea dei crediti interni: Claudio Terzi, 3 settembre 2026.",
       "falsificatore": "python3 falsificatori/h10_crediti.py"
+    },
+    {
+      "id": "H11",
+      "stato": "APERTA",
+      "testo": "Vendere un'esperienza non fa sparire niente: solo cio' che puo' uscire di casa (merce) o finire (consumo) spiega un'assenza nella differenza di fine soggiorno. Idea della divisione in tre generi — mercato, ristorazione, esperienze: Claudio Terzi, 5 settembre 2026.",
+      "falsificatore": "python3 falsificatori/h11_generi.py"
     }
   ],
   "vincoli_non_negoziabili": [

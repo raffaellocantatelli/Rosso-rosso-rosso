@@ -45,6 +45,9 @@ ARREDO = [
         ("elettronica", "Nespresso Vertuo Next"), ("elettronica", "Bimby TM6"),
         ("altro", "Set 6 bicchieri Duralex"), ("altro", "Bollitore Smeg")]),
     ("cucina/credenza", [("vino", "Barolo Serralunga 2016")]),
+    # RESTACI: non e' un oggetto che si porta via, e' la casa usata meglio.
+    # Sta nell'inventario perche' l'ospite deve poterla vedere e chiedere.
+    ("bagno", [("esperienza", "Serata in vasca")]),
     ("cucina/frigo", [("vino", "Franciacorta Saten"), ("cibo", "Parmigiano 24 mesi")]),
     ("cucina/dispensa", [("cibo", "Spaghetti Gragnano 500g"),
                          ("cibo", "Passata di pomodoro Mutti")]),
@@ -60,7 +63,12 @@ PREZZI = {
     "prezzo_minimo": {"dvd:cinema paradiso": 9.0, "dvd:perfetti sconosciuti": 7.0,
                       "altro:poltrona velluto verde": 220.0,
                       "elettronica:sonos beam": 260.0,
-                      "vino:barolo serralunga 2016": 28.0},
+                      "vino:barolo serralunga 2016": 28.0,
+                      "esperienza:serata in vasca": 24.0},
+    # I tre generi — idea di Claudio Terzi, 5 settembre 2026. Cio' che non e'
+    # dichiarato vale MERCE, cioe' qualcosa che puo' uscire di casa.
+    "generi": {"vino:barolo serralunga 2016": "consumo",
+               "esperienza:serata in vasca": "esperienza"},
     "sconto_massimo": 0.15, "commissione": 0.12, "margine": 0.25, "valuta": "EUR",
 }
 
@@ -134,10 +142,11 @@ def main(argv=None):
     print(f"  impronta {prima['impronta'][:16]}… — controfirmata")
 
     # 3. PORTAVIA: durante il soggiorno l'ospite compra
-    titolo("3. PORTAVIA — l'ospite compra invece di portarlo via")
+    titolo("3. I TRE BANCHI — l'ospite compra invece di portare via")
     regole = Regole(prezzo_minimo=PREZZI["prezzo_minimo"],
                     sconto_massimo=PREZZI["sconto_massimo"],
-                    commissione=PREZZI["commissione"], margine=PREZZI["margine"])
+                    commissione=PREZZI["commissione"], margine=PREZZI["margine"],
+                    generi=PREZZI["generi"])
     pv = Portavia(cartella / "portavia.jsonl", regole)
     cr = Crediti(cartella / "crediti.jsonl")
     cr.emetti("ospite", 40, "soggiorno", riferimento=f"soggiorno:{SOGGIORNO}")
@@ -148,10 +157,28 @@ def main(argv=None):
           f"(commissione {v['commissione']}, al proprietario {v['al_proprietario']})")
     print(f"  saldo ospite: {cr.saldo('ospite')} — proprietario: {cr.saldo('proprietario')}")
 
+    # APRILA: la bottiglia si beve, e a fine soggiorno manchera' per davvero
+    b = pv.vendita("vino:barolo serralunga 2016", "Barolo Serralunga 2016",
+                   regole.esposto("vino:barolo serralunga 2016"),
+                   soggiorno=SOGGIORNO, alloggio=ALLOGGIO)
+    print(f"  APRILA   «{b['titolo']}» {b['prezzo']:.2f} {b['valuta']} — "
+          f"si consuma: a fine soggiorno mancherà, e sarà spiegato")
+
+    # RESTACI: la vasca resta dov'e'. Incassa e non spiega nessuna assenza.
+    e = pv.vendita("esperienza:serata in vasca", "Serata in vasca",
+                   regole.esposto("esperienza:serata in vasca"),
+                   soggiorno=SOGGIORNO, alloggio=ALLOGGIO,
+                   quando="giovedì 21:00")
+    print(f"  RESTACI  «{e['titolo']}» {e['prezzo']:.2f} {e['valuta']} — "
+          f"resta in casa: non spiegherà nessuna assenza")
+
     # 4. la riconsegna: manca il phon, e il DVD non manca — e' stato comprato
     titolo("4. La differenza — ciò che manca, e ciò che è stato comprato")
+    # la bottiglia bevuta manca quanto il phon rubato: la differenza le vede
+    # uguali, ed e' il genere della vendita a separarle
     restanti = [x for x in reg.voci
-                if x["titolo"] not in (COMPRATO[1], SPARITO)]
+                if x["titolo"] not in (COMPRATO[1], SPARITO,
+                                       "Barolo Serralunga 2016")]
     dopo = c.deposita(ALLOGGIO, "riconsegna", restanti, SOGGIORNO)
     c.controfirma(dopo["impronta"], SOGGIORNO)
     d = differenza(prima, dopo)

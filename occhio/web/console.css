@@ -158,6 +158,14 @@ h2 em{font-style:normal;color:var(--v);text-transform:none;letter-spacing:0;font
   border-top:1px solid var(--bordo)}
 #vendite li:first-child{border-top:0}
 #vendite .pr{margin-left:auto;color:var(--v);font-weight:600;font-variant-numeric:tabular-nums}
+/* i tre banchi: il nome commerciale grande, il genere piccolo accanto —
+   il nome vende, il genere dice come sarà letto a fine soggiorno */
+#vendite li.banco{border-top:0;padding:14px 2px 4px;gap:8px}
+#vendite li.banco:first-child{padding-top:2px}
+#vendite .nome{font-size:11px;font-weight:700;letter-spacing:1.1px;color:var(--testo)}
+#vendite .genere{font-size:10.5px;color:var(--fioco)}
+#vendite .resta{margin-left:auto;font-size:10px;font-weight:600;letter-spacing:.4px;
+  color:var(--a);border:1px solid #ffb02044;border-radius:6px;padding:1px 7px}
 .chiari{margin-top:14px;padding:12px 13px;border-radius:10px;background:var(--carta2);
   font-size:12.5px;color:var(--tenue)}
 .chiari b{color:var(--testo);font-variant-numeric:tabular-nums}

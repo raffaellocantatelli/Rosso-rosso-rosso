@@ -163,7 +163,8 @@ def _regole(a):
                   commissione=d.get("commissione", 0.12),
                   margine=d.get("margine", 0.25),
                   mai=tuple(d.get("mai", ())),
-                  valuta=d.get("valuta", "EUR"))
+                  valuta=d.get("valuta", "EUR"),
+                  generi=d.get("generi", {}))
 
 
 def chiari(a) -> int:
@@ -237,14 +238,24 @@ def portavia(a) -> int:
             print('  {"prezzo_minimo": {"dvd:heat": 8.0}, "commissione": 0.12}')
             print("Il minimo e' quello che incassi TU, netto.")
             return 0
-        print(f"VETRINA — {len(in_vendita)} oggetti, prezzi in {regole.valuta}\n")
-        print(f"  {'oggetto':<38} {'vedi':>8} {'minimo':>8} {'incassi':>8}")
-        print("  " + "-" * 66)
-        for k, v in sorted(in_vendita, key=lambda x: x[1].get("titolo", "")):
-            e = regole.esposto(k)
-            print(f"  {v.get('titolo','')[:36]:<38} {e:>8.2f}"
-                  f" {regole.limite(k):>8.2f} {regole.incasso_proprietario(e):>8.2f}")
-        print(f"\n  «vedi» e' il prezzo esposto all'ospite, «minimo» la piu' bassa")
+        from .portavia import GENERI, NOMI_DEI_GENERI
+        print(f"VETRINA — {len(in_vendita)} voci, prezzi in {regole.valuta}\n")
+        # Tre banchi, non un elenco: cio' che esce di casa, cio' che si
+        # consuma e cio' che resta si comprano con la testa in tre modi
+        # diversi, e a fine soggiorno si leggono in tre modi diversi.
+        for genere in GENERI:
+            righe = [(k, v) for k, v in in_vendita if regole.genere(k) == genere]
+            if not righe:
+                continue
+            print(f"  {NOMI_DEI_GENERI[genere]} — {genere}")
+            print(f"  {'voce':<38} {'vedi':>8} {'minimo':>8} {'incassi':>8}")
+            print("  " + "-" * 66)
+            for k, v in sorted(righe, key=lambda x: x[1].get("titolo", "")):
+                e = regole.esposto(k)
+                print(f"  {v.get('titolo','')[:36]:<38} {e:>8.2f}"
+                      f" {regole.limite(k):>8.2f} {regole.incasso_proprietario(e):>8.2f}")
+            print()
+        print(f"  «vedi» e' il prezzo esposto all'ospite, «minimo» la piu' bassa")
         print(f"  offerta accettabile. La commissione ({regole.commissione:.0%}) e' una")
         print("  sola e va dichiarata a entrambe le parti.")
         return 0
@@ -272,10 +283,17 @@ def portavia(a) -> int:
         print(f"non si puo' vendere a questo prezzo: "
               f"{d.get('motivo') or 'sotto il limite'}", file=sys.stderr)
         return 1
-    v = pv.vendita(chiave, titolo, prezzo, soggiorno=a.soggiorno)
-    print(f"venduto «{titolo}» a {v['prezzo']:.2f} {v['valuta']}")
+    from .portavia import ESPERIENZA, SPIEGA_ASSENZA
+    v = pv.vendita(chiave, titolo, prezzo, soggiorno=a.soggiorno,
+                   genere=a.genere)
+    print(f"venduto «{titolo}» a {v['prezzo']:.2f} {v['valuta']} "
+          f"({v['genere']})")
     print(f"  commissione {v['commissione']:.2f} — a te {v['al_proprietario']:.2f}")
-    print("\n  Da adesso non risultera' piu' sparito: risultera' comprato.")
+    if SPIEGA_ASSENZA[v["genere"]]:
+        print("\n  Da adesso non risultera' piu' sparito: risultera' comprato.")
+    else:
+        print("\n  E' un'esperienza: l'oggetto resta in casa, quindi questa")
+        print("  vendita NON spieghera' nessuna assenza a fine soggiorno.")
     return 0
 
 
@@ -345,6 +363,12 @@ def consegne(a) -> int:
             for valuta, c in sorted(i["per_valuta"].items()):
                 print(f"    {c['lordo']:.2f} {valuta} lordi, "
                       f"{c['al_proprietario']:.2f} a te")
+            if len(i.get("per_genere", {})) > 1:
+                from .portavia import NOMI_DEI_GENERI
+                print("  di cui, per genere:")
+                for genere, c in sorted(i["per_genere"].items()):
+                    print(f"    {NOMI_DEI_GENERI.get(genere, genere):<9} "
+                          f"{c['vendite']:>2} vendite, {c['lordo']:>8.2f} lordi")
         return 0
 
     alloggio = a.consegna or a.riconsegna
@@ -409,6 +433,11 @@ def costruisci_parser() -> argparse.ArgumentParser:
                    help="cosa e in vendita e a che prezzo lo vede l ospite")
     v.add_argument("--offerta", nargs=2, metavar=("CHIAVE", "PREZZO"),
                    help="l ospite offre: il Mediatore risponde secondo le regole")
+    v.add_argument("--genere", choices=("merce", "consumo", "esperienza"),
+                   help="che cosa stai vendendo: merce esce di casa (PORTAVIA), "
+                        "consumo finisce in casa (APRILA), esperienza resta "
+                        "dov'e' (RESTACI) e non spiega nessuna assenza. "
+                        "Senza, vale quello dichiarato in --prezzi, o merce.")
     v.add_argument("--vendi", nargs=2, metavar=("CHIAVE", "PREZZO"),
                    help="registra una vendita conclusa")
     k = ap.add_argument_group("I CHIARI — pagare senza denaro, dentro il circuito")

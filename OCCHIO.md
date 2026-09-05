@@ -541,6 +541,106 @@ divergere. Ora le quantità frazionarie sono rifiutate.
 dice un avvocato che si occupa di servizi di pagamento. Ciò che il codice fa è
 impedirti di attraversarlo per sbaglio.
 
+## 5-sexies. I tre generi, e il bagno (aggiunto 05/09)
+
+Idea di Claudio Terzi, 5 settembre 2026: *«Dividerei bene la parte market, la
+parte ristorazione, la parte esperienze — magari posso organizzare di più il
+bagno con la schiuma, le luci, i trattamenti di bellezza.»*
+
+**Non è una divisione estetica.** Sono tre cose che si comportano in modo
+diverso davanti alla differenza di fine soggiorno, che è il punto in cui
+questo prodotto o dice la verità o non serve a niente:
+
+| genere | nome | che cosa succede all'oggetto | spiega un'assenza? |
+|---|---|---|---|
+| merce | **PORTAVIA** | esce di casa | **sì** |
+| consumo | **APRILA** | finisce in casa | **sì** |
+| esperienza | **RESTACI** | resta dov'è | **no, mai** |
+
+La terza riga è l'unica che conta davvero, ed è il motivo per cui i generi
+stanno nel codice e non in una pagina di presentazione. Se una serata in
+vasca venduta martedì potesse «spiegare» un phon sparito giovedì, il registro
+avrebbe imparato a **giustificare le assenze con incassi che non c'entrano** —
+il difetto di `CLAUDE.md` §4, stavolta con i soldi in mano. E lo direbbe
+dentro l'unico documento che l'ospite controfirma.
+
+`SPIEGA_ASSENZA` in `occhio/portavia.py` è quella regola, e **H11** è
+l'ipotesi che la misura: `python3 falsificatori/h11_generi.py` prova ogni
+genere su ogni oggetto mancante. Verificato il 05/09 che sa cadere: cambiando
+l'invariante, esce 0.
+
+```bash
+python -m occhio --vendi "vino:barolo" 39.77 --genere consumo    --prezzi prezzi.json
+python -m occhio --vendi "esperienza:vasca" 34.10 --genere esperienza --prezzi prezzi.json
+```
+
+### Il bagno: no, non è una stupidata. È il migliore dei tre
+
+Lo hai chiesto, quindi la risposta secca: **non è una stupidata, ed è il
+genere con il margine più alto dei tre.** Le ragioni, in ordine di peso:
+
+1. **Non si perde niente.** La merce venduta va ricomprata, la bottiglia
+   bevuta va rimessa. La vasca domani è ancora lì e si rivende identica. Il
+   costo è la schiuma, le candele e mezz'ora di riordino.
+2. **Non si può rubare.** È l'unico ricavo del prodotto che non ha bisogno né
+   di riconciliazione né di fiducia.
+3. **Non ha un prezzo di riferimento.** Un DVD lo cerchi su internet in dieci
+   secondi e sai se ti stanno spennando. Una «serata in vasca» no: è lì che il
+   Mediatore ha spazio, ed è lì che il margine vive.
+4. **È la ragione per cui l'ospite apre l'applicazione** — che era il problema
+   originale di TALLY: un inventario è un controllo, e nessuno firma un
+   controllo volentieri.
+
+**L'unica riga che va scritta bene, e costa zero adesso:** vendi **la
+preparazione e i prodotti**, non un *trattamento*. Un trattamento di bellezza
+eseguito da una persona è un'attività regolata (in Italia serve la
+qualifica di estetista); apparecchiare una vasca con schiuma, sali, luci e una
+playlist non lo è. Commercialmente è la stessa cosa; giuridicamente sono due
+mondi. Scrivilo così fin dal primo annuncio e non ci ripensi più.
+
+**IPOTESI, da falsificare con un ospite vero:** l'esperienza sarà il genere
+più venduto dei tre a parità di esposizione, perché è l'unico che non chiede
+di portarsi via niente. Cade se, sui primi dieci soggiorni con tutti e tre i
+banchi esposti, le esperienze vendute sono meno di un terzo del totale.
+
+## 5-septies. La realtà aumentata, e cosa è vero oggi (05/09)
+
+Idea di Claudio Terzi, 5 settembre 2026: *«Con gli occhialini di realtà
+aumentata, che proietta direttamente l'immagine sopra il posto stesso, un po'
+Terminator.»*
+
+Nome proposto per il segmento: **SOPRALUOGO** — una elle sola, di proposito:
+è una parola coniata (quindi difendibile) e si legge insieme «sopralluogo» e
+«sopra il luogo». Va cercata prima di adottarla: App Store, EUIPO, dominio.
+La lezione è costata due rinomine.
+
+Diviso onestamente in quello che è, non in quello che suona bene:
+
+- **RECUPERATO.** La sovrimpressione esiste già e funziona: `occhio/web`
+  disegna i riquadri sopra il video mentre la telecamera è accesa. Su un
+  telefono, oggi, la parte «Terminator» c'è — in due dimensioni.
+- **INFERITO.** Il passaggio agli occhiali non è un problema di ricerca ma di
+  imballaggio: i visori in commercio hanno un browser, e la pagina è una
+  pagina. Non è una promessa: è il motivo per cui non serve riscrivere niente
+  prima di aver provato.
+- **UNKNOWN, e resta tale.** Se sia *leggibile* — se un modello riconosca i
+  dorsi dei DVD di traverso, in penombra, mentre la testa si muove. Qui non
+  c'è nessun visore e nessuna chiave di visione: chiunque dica altro sta
+  inventando.
+
+**L'esperimento che va fatto prima, e costa zero:** il telefono appoggiato o
+in una custodia da collo, e si cammina. Nessuno lo tiene in mano, nessuno
+inquadra. Il numero che esce — quanti oggetti letti su quanti presenti, a
+passo normale — decide se gli occhiali servono a qualcosa. **Se leggere
+camminando va male, gli occhiali peggiorano il problema, non lo risolvono:**
+tolgono anche la mano che poteva correggere l'inquadratura.
+
+**Il confine che non si sposta.** Un visore che *proietta* qualcosa sopra il
+mondo è, per definizione, un'immagine sovrapposta alla realtà. Resta valido
+ciò che vale per la VETRINA (§5-ter): quell'immagine può essere bella quanto
+si vuole, **non entra mai nella catena delle prove.** La fotografia che
+dimostra che l'oggetto c'era è un'altra cosa, e non si tocca.
+
 ## 6. Vale la pena usare Emergent per costruire questo?
 
 Hai chiesto due cose: se convenga usare **Emergent** e se il programma

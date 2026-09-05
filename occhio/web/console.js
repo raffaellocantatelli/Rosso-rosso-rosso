@@ -87,19 +87,44 @@ function pianta() {
     return best || [(ax + bx) / 2, (ay + by) / 2];
   };
 
+  // Il disegno di una casa vera: pareti con spessore, pavimento con una
+  // trama, un'ombra sotto. Tutto calcolato dagli stessi poligoni — non c'è
+  // una porta, una finestra o un mobile in più di quelli misurati, perché
+  // disegnare una porta che nessuno ha misurato è inventare una casa.
+  const muro = Math.max(1.1, Math.min(3.2, w / 70));
   box.innerHTML = `<svg viewBox="${x0} ${y0} ${w} ${h}" role="img"
-      aria-label="pianta delle zone">${p.zone.map(z => {
+      aria-label="pianta delle zone">
+    <defs>
+      <pattern id="assito" width="6" height="6" patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="6" stroke="#ffffff" stroke-width=".45"
+          stroke-opacity=".05"/>
+      </pattern>
+      <filter id="rilievo" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="${(muro * .7).toFixed(2)}"
+          stdDeviation="${(muro * .8).toFixed(2)}" flood-color="#000"
+          flood-opacity=".55"/>
+      </filter>
+    </defs>
+    <g filter="url(#rilievo)">${p.zone.map(z =>
+      `<polygon points="${z.punti.map(q => q.join(",")).join(" ")}"
+         fill="#0e1219"/>`).join("")}</g>
+    ${p.zone.map(z => {
     const st = stati[z.nome] || "da_fare";
     const col = COLORI[st];
     const [cx, cy] = puntoEtichetta(z.punti);
     const n = QUADRO.zone[z.nome] || 0;
+    const punti = z.punti.map(q => q.join(",")).join(" ");
     const corpo = Math.max(2.2, Math.min(4.4,
       (Math.max(...z.punti.map(q => q[0])) - Math.min(...z.punti.map(q => q[0]))) * 1.3 / z.nome.length));
     return `<g class="zona" data-zona="${z.nome}" tabindex="0" role="button"
         aria-label="${z.nome}, ${n} oggetti, ${st.replace('_', ' ')}">
-      <polygon points="${z.punti.map(q => q.join(",")).join(" ")}"
-        fill="${col}" fill-opacity="${st === 'da_fare' ? .07 : .19}"
-        stroke="${col}" stroke-width="1" stroke-linejoin="round"/>
+      <polygon points="${punti}" fill="${col}" fill-opacity="${st === 'da_fare' ? .08 : .17}"/>
+      <polygon points="${punti}" fill="url(#assito)"/>
+      <polygon points="${punti}" fill="none" stroke="#e8ecf4" stroke-opacity=".82"
+        stroke-width="${muro.toFixed(2)}" stroke-linejoin="round"/>
+      <polygon points="${punti}" fill="none" stroke="${col}"
+        stroke-width="${(muro * .34).toFixed(2)}" stroke-linejoin="round"/>
       <text x="${cx}" y="${cy - 1}" font-size="${corpo.toFixed(2)}" fill="#e8ecf4"
         text-anchor="middle" font-family="ui-monospace,monospace">${z.nome}</text>
       <text x="${cx}" y="${(cy + corpo * 1.25).toFixed(2)}" font-size="${(corpo * .74).toFixed(2)}"
@@ -198,13 +223,29 @@ function registro() {
   }
 }
 
-/* ---------- il mercato ---------- */
+/* ---------- il mercato, nei suoi tre banchi ----------
+ * Merce, consumo ed esperienza non sono etichette: si leggono in modo
+ * diverso a fine soggiorno. Le prime due possono spiegare un'assenza —
+ * l'oggetto è uscito o è finito. La terza no: dopo averla venduta, la vasca
+ * è ancora lì. Tenerle mescolate insegnerebbe al registro a giustificare
+ * un'assenza con un incasso che non c'entra.
+ */
 function mercato() {
   const ul = $("#vendite");
   const v = QUADRO.vendite || [];
-  ul.innerHTML = v.length ? v.map(x => `<li>
-      <span class="tit">${x.titolo || ""}</span>
-      <span class="pr">${x.prezzo} ${x.valuta}</span></li>`).join("")
+  const nomi = QUADRO.generi || {};
+  const ordine = ["merce", "consumo", "esperienza"];
+  const gruppi = ordine
+    .map(g => [g, v.filter(x => (x.genere || "merce") === g)])
+    .filter(([, righe]) => righe.length);
+  ul.innerHTML = gruppi.length ? gruppi.map(([g, righe]) => `
+      <li class="banco"><span class="nome">${nomi[g] || g}</span>
+        <span class="genere">${g}</span>
+        ${g === "esperienza" ? '<span class="resta">resta in casa</span>' : ""}</li>`
+    + righe.map(x => `<li>
+        <span class="tit">${x.titolo || ""}${
+          x.quantita > 1 ? ` <span class="volte">×${x.quantita}</span>` : ""}</span>
+        <span class="pr">${x.prezzo} ${x.valuta}</span></li>`).join("")).join("")
     : '<li><span class="vuoto">Nessuna vendita. Niente è ancora stato comprato invece che portato via.</span></li>';
 
   const c = QUADRO.chiari, box = $("#chiari");
@@ -231,16 +272,19 @@ function numeri() {
   // cosa falsa. Il server tiene le valute separate: qui si mostra la prima
   // e si dichiara che ce n'è un'altra, invece di fonderle in un numero solo.
   const inc = QUADRO.incasso;
-  const righe = inc ? Object.entries(inc.per_valuta || {}) : [];
+  // La più grossa in cifre, le altre per nome. Mostrare la prima arrivata
+  // faceva vedere 9 chiari accanto a 65 euro non detti.
+  const righe = (inc ? Object.entries(inc.per_valuta || {}) : [])
+    .sort((a, b) => b[1].al_proprietario - a[1].al_proprietario);
   if (!righe.length) {
     testo($("#n-incasso"), "—");
     testo($("#box-incasso").querySelector("span"), "incasso");
   } else {
     const [valuta, c] = righe[0];
+    const altre = righe.slice(1).map(([v]) => v);
     testo($("#n-incasso"), c.al_proprietario.toFixed(2));
     testo($("#box-incasso").querySelector("span"),
-      righe.length === 1 ? `incasso · ${valuta}`
-                         : `incasso · ${valuta} + ${righe.length - 1} altra valuta`);
+      `incasso · ${valuta}${altre.length ? " +" + altre.join(" +") : ""}`);
   }
   $("#box-incasso").classList.toggle("buono", righe.length > 0);
 }

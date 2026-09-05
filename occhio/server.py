@@ -238,7 +238,11 @@ class Handler(BaseHTTPRequestHandler):
         try:
             from .portavia import Portavia, spiega_mancanti
             pv = Portavia()
-            quadro["vendite"] = pv.movimenti[-8:]
+            from .portavia import GENERI, MERCE, NOMI_DEI_GENERI
+            quadro["vendite"] = pv.movimenti[-12:]
+            quadro["generi"] = {g: NOMI_DEI_GENERI[g] for g in GENERI}
+            for v in quadro["vendite"]:
+                v.setdefault("genere", MERCE)
             quadro["incasso"] = pv.incasso()
             if quadro["differenza"]:
                 quadro["differenza"] = spiega_mancanti(quadro["differenza"], pv)

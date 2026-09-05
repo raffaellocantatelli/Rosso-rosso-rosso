@@ -1119,9 +1119,12 @@ def test_la_dimostrazione_gira_intera(tmp_path, monkeypatch, capsys):
     spec.loader.exec_module(modulo)
     assert modulo.main([]) == 0
     uscita = capsys.readouterr().out
-    # il punto della dimostrazione: uno comprato, uno no
-    assert "COMPRATI: ['Perfetti sconosciuti']" in uscita
+    # il punto della dimostrazione: due comprati, uno no — e il terzo
+    # incasso, la serata in vasca, NON compare fra i comprati perché non
+    # spiega nessuna assenza: l'oggetto è ancora lì
+    assert "COMPRATI: ['Perfetti sconosciuti', 'Barolo Serralunga 2016']" in uscita
     assert "NON SPIEGATI: ['Phon Dyson Supersonic']" in uscita
+    assert "RESTACI" in uscita and "Serata in vasca" in uscita
     assert "Tutti i dati sono inventati" in uscita
 
 
@@ -1367,7 +1370,8 @@ def test_le_classi_disegnate_dalla_console_esistono_nel_foglio():
     import re
     js, css = _console("console.js"), _console("console.css")
     for classe in ("zona", "spenta", "allarme", "buono", "riga", "segnale",
-                   "comprato", "manca", "vuoto", "firma", "fatto", "aperto"):
+                   "comprato", "manca", "vuoto", "firma", "fatto", "aperto",
+                   "banco", "resta"):
         assert classe in js, f"la classe {classe} non è più usata: aggiorna il test"
         assert f".{classe}" in css, f"console.css non definisce .{classe}"
     # tre stati e tre colori: se qualcuno ne aggiunge un quarto, la pianta
@@ -1504,3 +1508,124 @@ def test_nessun_falsificatore_muore_prima_di_essere_protetto():
         assert esito.returncode == 0, (
             f"{f.name} non si importa nemmeno: uscirebbe con 1, cioè «REGGE».\n"
             + esito.stderr)
+
+
+# --------------------------------------------------------------------------
+# i tre generi — idea di Claudio Terzi, 5 settembre 2026
+# --------------------------------------------------------------------------
+
+def test_cio_che_non_e_dichiarato_e_merce(tmp_path):
+    """Il difetto sta dal lato sicuro: un genere non dichiarato vale MERCE,
+    cioè qualcosa che può uscire di casa e va riconciliato. Sbagliare in
+    questa direzione fa vedere un'assenza in più; l'altra la nasconde."""
+    r = pv.Regole(prezzo_minimo={"dvd:heat": 8.0})
+    assert r.genere("dvd:heat") == pv.MERCE
+    assert r.genere("mai visto prima") == pv.MERCE
+
+
+def test_un_genere_inventato_non_entra(tmp_path):
+    with pytest.raises(ValueError):
+        pv.Regole(generi={"x": "abbonamento"})
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole())
+    with pytest.raises(ValueError):
+        p.vendita("dvd:heat", "Heat", 9.0, genere="noleggio")
+
+
+def test_un_esperienza_venduta_non_spiega_nessuna_assenza(tmp_path):
+    """L'invariante di H11. Se cadesse, il registro imparerebbe a
+    giustificare le assenze con incassi che non c'entrano — §4 con i soldi."""
+    p = pv.Portavia(tmp_path / "pv.jsonl", pv.Regole(
+        prezzo_minimo={"altro:vasca": 20.0, "dvd:heat": 8.0},
+        generi={"altro:vasca": pv.ESPERIENZA}))
+    p.vendita("altro:vasca", "Serata in vasca", 30.0)
+    p.vendita("dvd:heat", "Heat", 12.0)
+    d = {"mancanti": [{"chiave": "altro:vasca", "titolo": "Serata in vasca"},
+                      {"chiave": "dvd:heat", "titolo": "Heat"}]}
+    s = pv.spiega_mancanti(d, p)
+    assert [o["titolo"] for o in s["comprati"]] == ["Heat"]
+    assert [o["titolo"] for o in s["non_spiegati"]] == ["Serata in vasca"]
+    # ma l'incasso le conta tutte e due: il divieto è di spiegare, non di incassare
+    assert s["incasso"]["vendite"] == 2
+
+
+def test_il_consumo_spiega_l_assenza_perche_e_finito(tmp_path):
+    """La bottiglia bevuta manca quanto il phon rubato. È il genere della
+    vendita a separarle, non l'inventario, che le vede uguali."""
+    p = pv.Portavia(tmp_path / "pv.jsonl", pv.Regole(
+        prezzo_minimo={"vino:barolo": 28.0}, generi={"vino:barolo": pv.CONSUMO}))
+    p.vendita("vino:barolo", "Barolo", 40.0)
+    s = pv.spiega_mancanti({"mancanti": [{"chiave": "vino:barolo", "titolo": "Barolo"}]}, p)
+    assert [o["titolo"] for o in s["comprati"]] == ["Barolo"]
+
+
+def test_una_vendita_scritta_prima_dei_generi_vale_merce(tmp_path):
+    """Compatibilità all'indietro dalla parte che non nasconde niente."""
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole())
+    p._scrivi({"tipo": "vendita", "chiave": "dvd:heat", "titolo": "Heat",
+               "prezzo": 9.0, "commissione": 1.0, "al_proprietario": 8.0,
+               "valuta": "EUR", "soggiorno": "", "alloggio": "",
+               "momento": "2026-09-04T00:00:00Z"})
+    s = pv.spiega_mancanti({"mancanti": [{"chiave": "dvd:heat", "titolo": "Heat"}]}, p)
+    assert [o["titolo"] for o in s["comprati"]] == ["Heat"]
+    assert p.incasso()["per_genere"]["merce"]["vendite"] == 1
+
+
+def test_l_incasso_tiene_i_generi_separati(tmp_path):
+    p = pv.Portavia(tmp_path / "pv.jsonl", pv.Regole(
+        prezzo_minimo={"a": 1.0, "b": 1.0, "c": 1.0},
+        commissione=0.10,
+        generi={"b": pv.CONSUMO, "c": pv.ESPERIENZA}))
+    p.vendita("a", "Lampada", 100.0)
+    p.vendita("b", "Barolo", 40.0)
+    p.vendita("c", "Serata in vasca", 30.0)
+    i = p.incasso()
+    assert sorted(i["per_genere"]) == ["consumo", "esperienza", "merce"]
+    assert i["per_genere"]["merce"]["lordo"] == 100.0
+    assert i["per_genere"]["esperienza"]["al_proprietario"] == 27.0
+    # una valuta sola: i campi piatti restano, e sommano i tre generi
+    assert i["lordo"] == 170.0
+
+
+@pytest.mark.parametrize("quanti", [0, -1, 2.5])
+def test_una_quantita_che_non_e_un_intero_positivo_non_entra(tmp_path, quanti):
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole())
+    with pytest.raises(ValueError):
+        p.vendita("dvd:heat", "Heat", 9.0, quantita=quanti)
+
+
+def test_la_quantita_e_un_fatto_sulla_vendita_non_una_giacenza(tmp_path):
+    """Due bottiglie vendute si scrivono; quante ce ne fossero, questo
+    modulo non lo sa e non finge di saperlo — l'inventario tiene una voce
+    per titolo, non un conteggio."""
+    p = pv.Portavia(tmp_path / "pv.jsonl", regole())
+    v = p.vendita("vino:barolo", "Barolo", 80.0, genere=pv.CONSUMO, quantita=2)
+    assert v["quantita"] == 2
+    assert "giacenza" not in v and "rimanenti" not in v
+
+
+def test_il_quadro_porta_i_nomi_dei_tre_generi(occhio_in_ascolto):
+    """La console non deve inventarsi i nomi commerciali: li riceve."""
+    _, q = chiama(occhio_in_ascolto + "/api/quadro")
+    assert q["generi"] == {"merce": "PORTAVIA", "consumo": "APRILA",
+                           "esperienza": "RESTACI"}
+
+
+def test_la_console_distingue_l_esperienza_dalle_altre_due():
+    """Il segnale «resta in casa» sta accanto al solo genere che non spiega
+    un'assenza: è l'unica differenza che conta a fine soggiorno, e deve
+    vedersi senza aprire il codice."""
+    js = _console("console.js")
+    assert 'ordine = ["merce", "consumo", "esperienza"]' in js
+    assert 'g === "esperienza" ? \'<span class="resta">resta in casa</span>\'' in js
+
+
+def test_la_pianta_non_disegna_niente_che_non_sia_stato_misurato():
+    """Pareti spesse, pavimento e ombra si calcolano dai poligoni. Una porta
+    o un mobile no: disegnarli sarebbe inventare una casa, e questa
+    schermata sta accanto a una catena di prove."""
+    js = _console("console.js")
+    for inventato in ("porta", "finestra", "divano", "letto", "mobile"):
+        # nessun disegno di arredo: la parola può comparire solo nei commenti
+        codice = "\n".join(r for r in js.split("\n") if not r.strip().startswith(("//", "*", "/*")))
+        assert f'"{inventato}"' not in codice.lower(), (
+            f"la pianta disegna un {inventato} che nessuno ha misurato")

@@ -193,5 +193,25 @@
       "ultima": null,
       "ultimo_esito": null
     }
+  },
+  {
+    "id": "H11",
+    "testo": "Vendere un'esperienza non fa sparire niente: solo cio' che puo' uscire di casa (merce) o finire (consumo) spiega un'assenza nella differenza di fine soggiorno. Idea della divisione in tre generi — mercato, ristorazione, esperienze: Claudio Terzi, 5 settembre 2026.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se: la vendita di un'esperienza fa comparire un oggetto fra i comprati invece che fra i non spiegati; o un oggetto esce dal conto (comprati piu non spiegati diverso dai mancanti); o merce e consumo smettono di spiegare un'assenza; o l incasso non tiene i tre generi separati; o una vendita scritta prima dei generi smette di spiegare un'assenza.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h11_generi.py"
+      ],
+      "descrizione": "ogni genere su ogni oggetto mancante a forza bruta, i tre generi insieme, l incasso separato per genere, e un movimento senza genere che deve valere merce"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
   }
 ]
