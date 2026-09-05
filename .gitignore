@@ -50,3 +50,10 @@ occhio/privato/
 # La rassegna è append-only e va versionata: è la traccia delle risposte
 # arrivate dagli altri nodi, e serve proprio che sopravviva alla sessione.
 # (nessuna esclusione: elencata qui per dire che l'omissione è voluta)
+
+# `esempi/dimostrazione.py --qui` scrive qui: dati inventati, ma sono
+# comunque registri (inventario, consegne, vendite, saldi) e in questo
+# repository i registri non entrano — vedi sopra. Rigenerarli costa un
+# comando; averli versionati significherebbe che possono divergere dal
+# codice che li produce.
+dimostrazione/

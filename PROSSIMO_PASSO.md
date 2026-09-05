@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-09-04, 04:15 UTC
+# Prossimo passo — consegna del 2026-09-05, 18:20 UTC
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -118,7 +118,7 @@ quando è vuota, invece di sembrare piena.
 
 ## 1-ter. Il prodotto: dove è arrivato, e cosa è stato depurato (04/09)
 
-**RECUPERATO.** 206 prove passano, nessuna dipendenza nuova, tutto spinto su
+**RECUPERATO.** 232 prove passano, nessuna dipendenza nuova, tutto spinto su
 `claude/camera-inventory-system-2f07f1`.
 
 | pezzo | comando |
@@ -208,6 +208,71 @@ Poi **una consegna vera su un alloggio vero, controfirmata da un ospite
 vero.** Quel giorno è anche il primo CONTATTO ai sensi di §7, e
 `output/contatti.jsonl` è ancora vuoto: è il ramo (b) su cui H2 resta
 falsificata, verificato di nuovo stanotte.
+
+## 1-quinquies. La console (05/09): il prodotto, non la sua presentazione
+
+**RECUPERATO.** `python -m occhio --serve --pianta pianta.json`, poi
+`/console`. Una schermata sola con la casa, il registro, la consegna
+controfirmata e il mercato. Cliccando una zona della pianta il registro si
+filtra su quella stanza; `Esc` toglie il filtro.
+
+Tutto viene da **una** lettura, `/api/quadro`: cinque letture separate
+disegnerebbero cinque schermate incoerenti mentre arrivano, e per qualche
+secondo mostrerebbero una casa mai esistita.
+
+Per vederla senza avere una casa fotografata:
+
+```bash
+# dalla radice del repository: `python3 -m occhio` non si trova da altrove
+python3 esempi/dimostrazione.py --qui
+OCCHIO_INVENTARIO=dimostrazione/inventario.jsonl \
+OCCHIO_CONSEGNE=dimostrazione/consegne.jsonl \
+OCCHIO_PORTAVIA=dimostrazione/portavia.jsonl \
+OCCHIO_CREDITI=dimostrazione/crediti.jsonl \
+python3 -m occhio --serve --senza-visione --pianta dimostrazione/pianta.json
+# poi apri http://127.0.0.1:8777/console
+```
+
+**Quattro difetti li ha trovati il fatto di guardarla**, non di ragionarci —
+è il motivo per cui valeva la pena disegnarla:
+
+1. **L'incasso sommava euro e CHIARI** in un totale unico, e ci metteva
+   accanto l'unità dell'ultima vendita. `incasso()` adesso tiene le valute
+   separate (`per_valuta`); i campi piatti valgono `None` quando ce n'è più
+   d'una. Un `None` che rompe una stampa è meglio di un numero che non esiste
+   in nessuna delle due valute.
+2. **`el.hidden = true` non nascondeva niente** dove il foglio dava
+   all'elemento un `display` esplicito: la legenda spiegava tre colori assenti
+   dallo schermo. Era già successo col pannello sopra il video ed era stato
+   chiuso con un elenco di eccezioni, che è invecchiato. Adesso la regola vale
+   per tutti, in tutti e due i fogli, e un test lo verifica.
+3. Il **contorno bianco del browser** sulla zona scelta col mouse sembrava un
+   errore: resta solo a chi naviga da tastiera.
+4. **I CHIARI a zero non sono una notizia:** la riga compare quando qualcosa è
+   stato emesso, o quando il libro è rotto o aperto — le due cose che nessuno
+   deve poter non vedere.
+
+E due che non c'entravano con la grafica ma stavano lì sotto:
+
+- **`h5_tracce` usciva con 1 su un import fallito**, e 1 in questo contratto
+  significa **REGGE**. `esperimenti.tracce` importa `dotenv`, che qui non c'è:
+  H5 «reggeva» senza che una sola domanda fosse mai partita. `main_protetto`
+  proteggeva il corpo, non gli import in testa al file — il difetto di §4
+  dentro lo strumento costruito per impedirlo, per la seconda volta. Adesso
+  esce **2**, e un test verifica che ogni falsificatore almeno si importi.
+- **La suite costruiva `Consegne()` senza argomenti:** sulla tua macchina
+  avrebbe letto — e potuto scrivere — le firme vere di un ospite vero. I
+  quattro registri stanno nella sandbox dei test. E la prova che li vuole
+  fuori dal repository pubblico adesso li chiede in un processo **senza**
+  quelle variabili: se no interrogherebbe la propria configurazione invece
+  della realtà che deve proteggere.
+
+**Previsione dichiarata adesso (IPOTESI), per non poterla aggiustare dopo:**
+la prima volta che apri la console su dati veri, il difetto che salterà fuori
+non sarà nel codice ma nella **pianta scritta a mano** — nomi di zona che non
+combaciano con le cartelle delle foto, quindi zone grigie e oggetti senza
+casa. Cade se la prima pianta vera filtra correttamente tutte le sue zone al
+primo tentativo.
 
 ## 2. Cosa fare appena il secret è al posto giusto
 
