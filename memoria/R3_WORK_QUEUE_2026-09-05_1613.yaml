@@ -1,0 +1,80 @@
+# R3_WORK_QUEUE_2026-09-05_1613.yaml
+# Ciclo SYNC-2026-09-05-1613 — coda operativa datata. Non sovrascrive gli snapshot precedenti.
+
+cycle: SYNC-2026-09-05-1613
+previous: SYNC-2026-09-05-1312
+measured_at: 2026-09-05T16:13:00+02:00
+github_official: raffaellocantatelli/Rosso-rosso-rosso
+default_branch: claude/riconnetti-protocollo-rosso-in93dj
+head_pre_push: 4d8a761adb5e3f63b1010cc64b4628374358a7df
+
+delta_vs_1312:
+  - default_avanzato_solo_cronaca_1312: a612e79d + 4d8a761a
+  - commit_applicativi_13_16_16_13: 0
+  - drive_titolo_R3_dopo_11_17_01Z: 2  # solo code 1312
+  - sdq1_total_count: 38
+  - run_39: assente
+  - rami_laterali: invariati
+  - r3_019_new_run: false
+  - cancellazioni: 0
+  - merge: 0
+
+conflitti_aperti:
+  - CONF-01
+  - CONF-05
+  - CONF-06
+  - CONF-08
+  - CONF-09
+  - CONF-13
+  - CONF-27
+  - CONF-33
+  - CONF-38
+  - CONF-43
+  - CONF-44
+  - CONF-45
+  - CONF-47
+  - CONF-48
+  - CONF-49
+  - CONF-50
+  - CONF-51
+  - CONF-52
+  - CONF-53
+  - CONF-54
+  - CONF-55
+  - CONF-56
+
+priorita:
+  - id: R3-019
+    stato: BASELINE_26_08_NO_NEW_RUN
+    nota: nessuna misura longitudinale nuova alle 16:13 del 05/09
+  - id: R3-011
+    stato: BACKLOG
+  - id: R3-012
+    stato: BACKLOG
+  - id: R3-013
+    stato: BACKLOG
+  - id: R3-016
+    stato: BACKLOG
+  - id: R3-017
+    stato: BACKLOG
+  - id: R3-014
+    stato: BACKLOG
+  - id: R3-015
+    stato: BACKLOG
+  - id: R3-018
+    stato: BACKLOG
+  - id: R3-020
+    stato: BACKLOG
+
+core:
+  stato: SPENTO
+  evidenza:
+    - daily_05_stub_sha: 0d96dd784f1ac32b84ec4a0aefd69fc3add9230c
+    - provider_disponibili_ora: []
+    - contatti_jsonl_size: 0
+    - ultimo_sdq1_success: run_33
+    - run_38: FAILURE_STEP_PENSATO
+
+regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
+never_delete_historical: true
+official_only_if_verified: true

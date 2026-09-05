@@ -1,12 +1,12 @@
 # R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-05-1312
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-05_1312.yaml
-# Snapshot 0912, 1515, 0912-04, 1801, 1415, 1300, 1209, 1100, 1018 e 1011 conservati. Non cancellare gli storici.
+# Ciclo: SYNC-2026-09-05-1613
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-05_1613.yaml
+# Snapshot 1312, 0912, 1515, 0912-04, 1801, 1415, 1300, 1209, 1100, 1018 e 1011 conservati. Non cancellare gli storici.
 
 meta:
-  cycle_id: SYNC-2026-09-05-1312
-  previous_cycle: SYNC-2026-09-05-0912
-  github_default_sha_pre_push: 9abd7d868d3fbc5f1c1704a7871e54a2c0487c5b
+  cycle_id: SYNC-2026-09-05-1613
+  previous_cycle: SYNC-2026-09-05-1312
+  github_default_sha_pre_push: 4d8a761adb5e3f63b1010cc64b4628374358a7df
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
@@ -27,8 +27,9 @@ stato:
   sdq1_run_34_35_36_37_38: FAILURE
   sdq1_04_09: RUN_37_SCHEDULE_FAILURE_STEP_PENSATO
   sdq1_05_09: RUN_38_SCHEDULE_FAILURE_STEP_PENSATO
+  sdq1_run_39: ASSENTE_ATTESO_06_09
   sdq1_total_count: 38
-  drive_delta_post_0912: ZERO_FILE_R3
+  drive_delta_post_1312: DUE_FILE_SOLO_CODE_1312
   camera_branch: PRESENTE_NON_UNITO_9d3dfe0e
   protocollo_rosso_bot: PRESENTE_NON_CANONE_bb3bd9d7
   default_equals_new_session: false
