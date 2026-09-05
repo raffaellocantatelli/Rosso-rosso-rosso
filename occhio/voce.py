@@ -62,8 +62,8 @@ def parte_privata_presente() -> bool:
 # capire la domanda
 # --------------------------------------------------------------------------
 
-ELENCA, DOVE, CUCINA, VENDITA, QUANTI, IGNOTO = (
-    "elenca", "dove", "cucina", "vendita", "quanti", "ignoto")
+ELENCA, DOVE, CUCINA, VENDITA, QUANTI, CE, IGNOTO = (
+    "elenca", "dove", "cucina", "vendita", "quanti", "ce", "ignoto")
 
 #: Famiglie di parole -> tipo dell'inventario. Deliberatamente esplicite:
 #: indovinare il tipo con un modello costerebbe una chiamata per ogni frase
@@ -94,6 +94,16 @@ VERBI_DOVE = ("dov", "trovo", "sta", "stanno", "cerco", "cercare")
 VERBI_VENDITA = ("vendita", "vendere", "comprare", "compro", "prezzo",
                  "quanto costa", "vetrina", "portavia")
 VERBI_QUANTI = ("quanti", "quante", "quanto", "numero", "totale")
+#: «C'e' Cinema Paradiso?» — la domanda piu' semplice che una persona fa a
+#: un inventario, e per giorni e' stata l'unica a cui non sapeva rispondere.
+#: E' la meta' utile del prodotto: sapere che una cosa c'e', senza cercarla.
+VERBI_CE = ("c e ", "ci sono ", "avete ", "hai ", "abbiamo ", "esiste ",
+            "avete il ", "c e il ", "c e la ", "c e lo ")
+#: «Cosa c'e' in cantina» contiene «c'e'» ma non chiede se una cosa c'e':
+#: chiede l'elenco di un posto, e li' la risposta buona esiste gia' («non
+#: conosco nessun luogo che si chiami cantina»). Una domanda che comincia
+#: cosi' non e' mai un si'/no.
+APRE_UN_ELENCO = ("cosa", "che cosa", "quali", "quanti", "quante", "quanto")
 
 
 def _piatto(frase: str) -> str:
@@ -123,6 +133,10 @@ def interpreta(frase: str, luoghi_noti=()) -> dict:
 
     if any(v in t for v in VERBI_CUCINA):
         intento = CUCINA
+    elif (not any(t.startswith(v) for v in APRE_UN_ELENCO)
+          and any(t.startswith(v.strip()) or f" {v}" in f" {t} " for v in VERBI_CE)):
+        # prima di DOVE: «c'e' il phon» contiene anche «e'», e finirebbe li'
+        intento = CE
     elif any(t.startswith(v) or f" {v}" in t for v in VERBI_DOVE):
         intento = DOVE
     elif any(v in t for v in VERBI_VENDITA):
@@ -246,6 +260,29 @@ def rispondi(registro, frase: str, portavia=None, regole=None) -> dict:
         return {**d, "oggetti": oggetti,
                 "testo_risposta": f"{len(oggetti)}{dove}." if oggetti
                 else f"Non risulta niente{dove}."}
+
+    if d["intento"] == CE:
+        # La risposta piu' utile a «c'e'?» non e' si'/no: e' si', ed e' li'.
+        # E quando non c'e', dirlo com'e': non e' scritto qui, che non e'
+        # la stessa cosa di non e' in casa.
+        # Il ripiego sull'elenco vale SOLO se la domanda portava un filtro
+        # vero («che film ci sono»). Senza, «avete Il Padrino» rispondeva
+        # «si'» e sfilava cinque oggetti che non c'entravano: la peggiore
+        # risposta possibile, perche' e' sbagliata e sembra completa.
+        trovati = _cerca_titolo(registro, frase)
+        if not trovati and (d["tipo"] or d["luogo"]):
+            trovati = oggetti
+        if not trovati:
+            return {**d, "oggetti": [], "testo_risposta":
+                    "No, non e' scritto nel registro. Se c'e', non e' ancora "
+                    "stato letto: non e' la stessa cosa."}
+        posti = []
+        for o in trovati[:5]:
+            luoghi_o = o.get("luoghi") or []
+            posti.append(f"{o.get('titolo','')}"
+                         + (f": {_etichetta(luoghi_o[0])}" if luoghi_o else ""))
+        return {**d, "oggetti": trovati,
+                "testo_risposta": f"Si'. {'; '.join(posti)}."}
 
     if d["intento"] == DOVE:
         # cercare e' diverso da elencare: prima il titolo, poi la famiglia.

@@ -62,6 +62,50 @@ def check() -> int:
     return 0
 
 
+def qualita(json_out=False) -> int:
+    """Quanto ci si puo' fidare di cio' che e' scritto nel registro.
+
+    E' la domanda che conta piu' di tutte le altre — «e' questione di
+    qualita' dell'informazione, non di controllo», Claudio Terzi, 5
+    settembre 2026 — e questa e' la meta' che si puo' rispondere senza una
+    chiave: quanto e' solido il registro. L'altra meta', quanti oggetti
+    veri finiscono scritti, la dice solo qualcuno che conta a mano.
+    """
+    registro = inv.Inventario()
+    q = registro.qualita()
+    if json_out:
+        print(json.dumps(q, ensure_ascii=False, indent=2))
+        return 0
+    if not q["totale"]:
+        print(f"{registro.percorso}: vuoto. Non c'e' ancora niente di cui fidarsi.")
+        return 0
+
+    print(f"QUALITA' DEL REGISTRO — {registro.percorso}\n")
+    solide, tot = q["solide"], q["totale"]
+    print(f"  {solide} voci su {tot} non hanno nessuna debolezza "
+          f"({solide / tot:.0%}).")
+    if q["confermate_a_mano"]:
+        print(f"  {q['confermate_a_mano']} confermate a mano da una persona.")
+    if q["righe_illeggibili"]:
+        print(f"  {q['righe_illeggibili']} righe illeggibili nel file.")
+
+    deboli = [d for d in q["debolezze"] if d["voci"]]
+    if deboli:
+        print("\n  cosa manca, e a quante voci:")
+        for d in sorted(deboli, key=lambda x: -x["voci"]):
+            print(f"\n  {d['voci']:>4} ({d['quota']:.0%})  {d['cosa']}")
+            print(f"        esempi: {', '.join(x for x in d['esempi'] if x)}")
+            print(f"        → {d['azione']}")
+
+    print("\n  Questa misura guarda il registro e basta: puo' migliorare")
+    print("  senza che nulla sia entrato dall'esterno. Dice di quali righe")
+    print("  fidarsi, NON che l'inventario somigli alla casa.")
+    print("\n  Il numero che manca, e che nessun comando puo' dare da solo:")
+    print("  quanti oggetti VERI finiscono scritti. Si ottiene fotografando")
+    print("  uno scaffale e contando a mano quanti oggetti ci sono dentro.")
+    return 0
+
+
 def mostra_inventario(json_out=False) -> int:
     registro = inv.Inventario()
     if json_out:
@@ -453,6 +497,9 @@ def costruisci_parser() -> argparse.ArgumentParser:
     ap.add_argument("--voce", metavar="FRASE",
                     help="una domanda alla casa, come la diresti a voce")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
+    ap.add_argument("--qualita", action="store_true",
+                    help="quanto ci si puo' fidare di cio' che e' scritto: "
+                         "quali voci hanno una debolezza, e cosa si fa per toglierla")
     ap.add_argument("--esporta", metavar="FILE.csv", help="esporta il registro in CSV")
     ap.add_argument("--costo", action="store_true",
                     help="quanto costa una passata, ricalcolato dai listini dichiarati")
@@ -486,6 +533,8 @@ def main(argv=None) -> int:
         return check()
     if a.inventario:
         return mostra_inventario(a.json)
+    if a.qualita:
+        return qualita(a.json)
     if a.esporta:
         Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
         print(f"scritto {a.esporta}")

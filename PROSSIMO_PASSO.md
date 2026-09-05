@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-09-05, 18:20 UTC
+# Prossimo passo — consegna del 2026-09-05, 20:10 UTC
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -10,6 +10,50 @@ Se sei un nodo che apre questo repository: leggi `CLAUDE.md`, poi questo.
 Ogni riga qui sotto è verificabile con un comando. Non credere a nessuna.
 
 ---
+
+## 0. Che cos'è il prodotto, e cosa gli sta intorno (05/09)
+
+**Detto dall'autore, e va rispettato:** *«Il prodotto serve per fare
+inventario. Al limite può servire a una persona che, se vuole vedere un film,
+sa che c'è. È questione di qualità dell'informazione, non di controllo.»*
+
+Ha ragione, e costa dirlo: **tre giorni di costruzione stanno sopra un numero
+che nessuno ha mai misurato.** Il mercato, i crediti, i tre generi, la
+consegna controfirmata — tutto assume che la lettura funzioni. Se la lettura è
+mediocre, niente di tutto quello conta.
+
+Quindi, per chiunque apra questo repository dopo:
+
+| | |
+|---|---|
+| **Il centro** | leggere bene, scrivere bene, e rispondere bene a «cosa c'è» e «c'è X?». `occhio/inventario.py`, `occhio/visione.py`, `occhio/voce.py` |
+| **Il contorno utile** | dove sta una cosa: `luogo.py`, `planimetria.py`, la console |
+| **Il contorno che serve solo agli affitti brevi** | `consegna.py` (controfirma), `portavia.py` (i tre banchi), `crediti.py` |
+
+Il contorno **non va cancellato**: è scritto, provato e non costa niente
+lasciarlo lì. Va tolto dal centro. Se il tempo è poco, si lavora sulla prima
+riga e basta.
+
+**La differenza che regge tutto:** un inventario è *controllo* quando serve a
+dimostrare che manca qualcosa; è *informazione* quando serve a sapere cosa
+c'è. La seconda è più utile e più difficile — e la controfirma esiste solo
+perché senza di essa nessuno crederebbe alla prima.
+
+**Da oggi c'è un comando che misura la metà rispondibile senza chiave:**
+
+```bash
+python -m occhio --qualita
+```
+
+Dice quante voci non hanno nessuna debolezza, quali debolezze hanno le altre
+(senza luogo, lette una volta sola, confidenza bassa, titolo troppo corto,
+fuse, senza fotografia) e **cosa si fa per togliere ciascuna**. Guarda il
+registro e basta — lo dichiara stampandolo, perché un numero che sale senza
+che nulla entri dall'esterno è §4.
+
+**L'altra metà — quanti oggetti VERI finiscono scritti — resta il numero che
+manca a tutto il progetto.** Non lo dà nessun comando: si fotografa uno
+scaffale e si contano a mano gli oggetti che ci sono. Serve la chiave di §1.
 
 ## 1. L'unica cosa che blocca tutto
 

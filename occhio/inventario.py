@@ -302,6 +302,77 @@ class Inventario:
         """
         return [v for v in self.voci if len(v.get("titoli_visti", [])) > 1]
 
+    #: Le debolezze che una voce puo' avere. Ognuna dice cosa manca e cosa
+    #: si fa per toglierla: un difetto senza rimedio e' un rimprovero.
+    DEBOLEZZE = (
+        ("senza_luogo", "non si sa dove sta",
+         "fotografa per cartelle: una cartella per stanza o per mobile"),
+        ("vista_una_volta", "letta una volta sola, mai riconfermata",
+         "ripassa: la seconda lettura conferma o smentisce la prima"),
+        ("confidenza_bassa", "il modello stesso non era sicuro",
+         "riavvicinati e rifotografa, o conferma a mano con --conferma"),
+        ("titolo_debole", "il titolo e' troppo corto per ritrovarla",
+         "correggila a mano: un titolo che non distingue non serve a niente"),
+        ("fusa", "titoli diversi finiti sulla stessa voce",
+         "dai a uno un titolo che lo distingua"),
+        ("senza_foto", "nessuna fotografia la sostiene",
+         "rifotografala: senza impronta non c'e' niente da mostrare a nessuno"),
+    )
+
+    def debolezze(self, voce: dict, soglia_confidenza: float = 0.7) -> list[str]:
+        """Le debolezze di UNA voce. Sono fatti sul dato, non giudizi."""
+        d = []
+        if not (voce.get("luoghi") or voce.get("luogo")):
+            d.append("senza_luogo")
+        if voce.get("avvistamenti", 1) < 2:
+            d.append("vista_una_volta")
+        c = voce.get("confidenza")
+        if isinstance(c, (int, float)) and c < soglia_confidenza:
+            d.append("confidenza_bassa")
+        if len(normalizza(voce.get("titolo", "")).replace(" ", "")) < 6:
+            d.append("titolo_debole")
+        if len(voce.get("titoli_visti", [])) > 1:
+            d.append("fusa")
+        if not voce.get("foto_sha"):
+            d.append("senza_foto")
+        return d
+
+    def qualita(self, soglia_confidenza: float = 0.7) -> dict:
+        """Quanto e' affidabile CIO' CHE E' SCRITTO qui dentro.
+
+        **Non** quanto somiglia alla casa: quello lo dice solo qualcuno che
+        conta a mano, ed e' il numero che manca a tutto il progetto. Questa
+        misura guarda il registro e basta, quindi puo' migliorare senza che
+        nulla sia entrato dall'esterno — e' il difetto di CLAUDE.md §4, qui
+        dichiarato invece che nascosto. Serve a sapere di quali righe ci si
+        puo' fidare, non a dire che il sistema va bene.
+        """
+        conteggio = {nome: 0 for nome, _, _ in self.DEBOLEZZE}
+        esempi: dict[str, list[str]] = {nome: [] for nome, _, _ in self.DEBOLEZZE}
+        solide = 0
+        for v in self.voci:
+            d = self.debolezze(v, soglia_confidenza)
+            if not d:
+                solide += 1
+            for nome in d:
+                conteggio[nome] += 1
+                if len(esempi[nome]) < 3:
+                    esempi[nome].append(v.get("titolo", ""))
+        totale = len(self.voci)
+        return {
+            "totale": totale,
+            "solide": solide,
+            "righe_illeggibili": self.righe_illeggibili,
+            "confermate_a_mano": sum(1 for v in self.voci if v.get("fonte") == "umano"),
+            "debolezze": [
+                {"nome": nome, "cosa": cosa, "azione": azione,
+                 "voci": conteggio[nome],
+                 "quota": round(conteggio[nome] / totale, 3) if totale else 0.0,
+                 "esempi": esempi[nome]}
+                for nome, cosa, azione in self.DEBOLEZZE
+            ],
+        }
+
     def per_tipo(self) -> dict[str, int]:
         conteggio: dict[str, int] = {}
         for v in self.voci:

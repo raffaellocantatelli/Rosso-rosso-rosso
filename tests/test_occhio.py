@@ -1629,3 +1629,131 @@ def test_la_pianta_non_disegna_niente_che_non_sia_stato_misurato():
         codice = "\n".join(r for r in js.split("\n") if not r.strip().startswith(("//", "*", "/*")))
         assert f'"{inventato}"' not in codice.lower(), (
             f"la pianta disegna un {inventato} che nessuno ha misurato")
+
+
+# --------------------------------------------------------------------------
+# la qualità del registro — «è questione di qualità dell'informazione,
+# non di controllo» (Claudio Terzi, 5 settembre 2026)
+# --------------------------------------------------------------------------
+
+def _voce_solida(r, titolo="Cinema Paradiso"):
+    for _ in range(2):
+        r.registra("dvd", titolo, fonte="foto", confidenza=0.94,
+                   luogo={"stanza": "soggiorno"}, foto_sha="a" * 64)
+    return r._per_chiave[inv.chiave("dvd", titolo)]
+
+
+def test_una_voce_completa_non_ha_debolezze(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    assert r.debolezze(_voce_solida(r)) == []
+    assert r.qualita()["solide"] == 1
+
+
+@pytest.mark.parametrize("debolezza,fai", [
+    ("senza_luogo", dict(luogo=None)),
+    ("confidenza_bassa", dict(confidenza=0.4)),
+    ("senza_foto", dict(foto_sha=None)),
+])
+def test_ogni_debolezza_si_vede_da_sola(tmp_path, debolezza, fai):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    base = dict(fonte="foto", confidenza=0.94,
+                luogo={"stanza": "soggiorno"}, foto_sha="a" * 64)
+    base.update(fai)
+    for _ in range(2):
+        r.registra("dvd", "Cinema Paradiso", **base)
+    v = r.voci[0]
+    assert debolezza in r.debolezze(v), r.debolezze(v)
+    assert r.qualita()["solide"] == 0
+
+
+def test_una_lettura_sola_e_una_debolezza(tmp_path):
+    """Una voce letta una volta non è confermata da niente. Non è un errore:
+    è una riga di cui fidarsi meno, e il registro deve dirlo."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("dvd", "Cinema Paradiso", fonte="foto", confidenza=0.94,
+               luogo={"stanza": "soggiorno"}, foto_sha="a" * 64)
+    assert "vista_una_volta" in r.debolezze(r.voci[0])
+    r.registra("dvd", "Cinema Paradiso", fonte="foto", confidenza=0.94,
+               luogo={"stanza": "soggiorno"}, foto_sha="b" * 64)
+    assert "vista_una_volta" not in r.debolezze(r.voci[0])
+
+
+def test_un_titolo_troppo_corto_e_una_debolezza(tmp_path):
+    """Un titolo che non distingue è una voce che nessuno ritroverà."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("altro", "Vaso", fonte="umano", luogo={"stanza": "cucina"},
+               foto_sha="a" * 64)
+    assert "titolo_debole" in r.debolezze(r.voci[0])
+
+
+def test_una_fusione_e_una_debolezza(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    for titolo in ("Heat", "The Heat"):
+        r.registra("dvd", titolo, fonte="foto", confidenza=0.9,
+                   luogo={"stanza": "soggiorno"}, foto_sha="a" * 64)
+    assert "fusa" in r.debolezze(r.voci[0])
+
+
+def test_ogni_debolezza_dichiara_come_si_toglie(tmp_path):
+    """Un difetto senza rimedio è un rimprovero, non una misura."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    for d in r.qualita()["debolezze"]:
+        assert d["cosa"] and d["azione"], d
+    nomi = {d["nome"] for d in r.qualita()["debolezze"]}
+    assert nomi == {n for n, _, _ in inv.Inventario.DEBOLEZZE}
+
+
+def test_la_qualita_di_un_registro_vuoto_non_esplode(tmp_path):
+    q = inv.Inventario(tmp_path / "i.jsonl").qualita()
+    assert q["totale"] == 0 and q["solide"] == 0
+    assert all(d["quota"] == 0.0 for d in q["debolezze"])
+
+
+def test_la_qualita_dice_che_non_misura_la_casa():
+    """La misura guarda il registro e basta: se non lo dicesse, sarebbe il
+    difetto di §4 — un numero che sale senza che nulla entri dall'esterno."""
+    import inspect
+    testo = inspect.getdoc(inv.Inventario.qualita).lower()
+    assert "non" in testo and "casa" in testo
+    sorgente = pathlib.Path(inv.__file__).parent.joinpath("__main__.py").read_text(encoding="utf-8")
+    assert "NON che l'inventario somigli alla casa" in sorgente
+
+
+# --------------------------------------------------------------------------
+# «c'è Cinema Paradiso?» — la domanda più semplice, e la peggiore risposta
+# --------------------------------------------------------------------------
+
+def test_ce_risponde_si_e_dice_dove(casa):
+    e = vc.rispondi(casa, "c'è Cinema Paradiso")
+    assert e["intento"] == vc.CE
+    assert e["testo_risposta"].startswith("Si'.")
+    assert "Cinema Paradiso" in e["testo_risposta"]
+
+
+def test_ce_non_dice_mai_si_per_una_cosa_che_non_c_e(casa):
+    """«Avete Il Padrino» rispondeva «sì» e sfilava cinque oggetti che non
+    c'entravano: sbagliata E che sembra completa, la peggiore combinazione
+    per un prodotto che serve a sapere cosa c'è."""
+    e = vc.rispondi(casa, "avete Il Padrino")
+    assert e["oggetti"] == []
+    assert e["testo_risposta"].startswith("No,")
+
+
+def test_ce_distingue_non_scritto_da_non_in_casa(casa):
+    """Il registro non sa cosa c'è in casa: sa cosa è stato letto. Dire
+    «non c'è» sarebbe affermare una cosa che nessuno ha verificato."""
+    e = vc.rispondi(casa, "avete Il Padrino")
+    assert "non e' ancora stato letto" in e["testo_risposta"]
+
+
+def test_ce_con_un_filtro_vero_puo_elencare(casa):
+    """«Che film ci sono» porta un filtro dichiarato: lì l'elenco è la
+    risposta giusta, e non è un ripiego."""
+    e = vc.rispondi(casa, "che film ci sono")
+    assert e["tipo"] == "dvd" and e["oggetti"]
+    assert all(o["tipo"] == "dvd" for o in e["oggetti"])
+
+
+def test_ce_non_ruba_le_domande_a_dove(casa):
+    e = vc.rispondi(casa, "dov'è il phon")
+    assert e["intento"] == vc.DOVE

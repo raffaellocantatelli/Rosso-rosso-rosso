@@ -22,7 +22,7 @@
   ],
   "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
   "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
-  "generato": "2026-09-05T19:49:14Z",
+  "generato": "2026-09-05T19:59:45Z",
   "generato_da": "python -m occhio --capacita",
   "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
   "moduli": {
@@ -46,6 +46,11 @@
               "descrizione": ""
             },
             {
+              "nome": "debolezze",
+              "firma": "(self, voce: 'dict', soglia_confidenza: 'float' = 0.7) -> 'list[str]'",
+              "descrizione": "Le debolezze di UNA voce. Sono fatti sul dato, non giudizi."
+            },
+            {
               "nome": "fusioni",
               "firma": "(self) -> 'list[dict]'",
               "descrizione": "Voci su cui sono finiti titoli originali diversi."
@@ -59,6 +64,11 @@
               "nome": "per_tipo",
               "firma": "(self) -> 'dict[str, int]'",
               "descrizione": ""
+            },
+            {
+              "nome": "qualita",
+              "firma": "(self, soglia_confidenza: 'float' = 0.7) -> 'dict'",
+              "descrizione": "Quanto e' affidabile CIO' CHE E' SCRITTO qui dentro."
             },
             {
               "nome": "registra",
@@ -997,6 +1007,13 @@
       "argomenti": [],
       "predefinito": false,
       "aiuto": "stampa il registro"
+    },
+    {
+      "opzione": "--qualita",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "quanto ci si puo' fidare di cio' che e' scritto: quali voci hanno una debolezza, e cosa si fa per toglierla"
     },
     {
       "opzione": "--esporta",
