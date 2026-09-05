@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>occhio — inventario dal vivo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230c0e12'/%3E%3Cellipse cx='16' cy='16' rx='12' ry='7' fill='none' stroke='%232ee06a' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.6' fill='%232ee06a'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="stile.css">
+</head>
+<body>
+
+<div id="fascia-stub" hidden>
+  MODO STUB — nessun modello sta guardando. Gli oggetti qui sotto sono finti e non vengono scritti.
+</div>
+
+<main>
+  <section id="scena">
+    <video id="video" playsinline muted autoplay></video>
+    <canvas id="sovrimpressione"></canvas>
+
+    <div id="spento">
+      <h1>occhio</h1>
+      <p>Inventario di oggetti reali attraverso la telecamera.<br>
+         Inquadra uno scaffale e cammina piano.</p>
+      <button id="accendi" class="grosso">Accendi la telecamera</button>
+      <p class="minuto">Il browser chiedera' il permesso. I fotogrammi non vengono
+         salvati: sul disco finiscono solo tipo, titolo e orario.</p>
+      <p class="minuto" id="avviso-https" hidden>
+         Questa pagina non e' su <code>localhost</code> ne' su <code>https</code>:
+         il browser non dara' accesso alla telecamera.</p>
+    </div>
+
+    <div id="hud">
+      <span class="pillola" id="p-totale">0 oggetti</span>
+      <span class="pillola" id="p-provider">—</span>
+      <span class="pillola" id="p-ritmo">—</span>
+      <span class="pillola verde" id="p-nuovi">0 nuovi in questa passata</span>
+    </div>
+
+    <div id="comandi">
+      <button id="spegni" hidden>Ferma</button>
+      <button id="cambia" hidden>Gira camera</button>
+      <label id="lab-ritmo" hidden>ritmo
+        <input type="range" id="ritmo" min="1000" max="8000" step="500" value="2500">
+        <span id="ritmo-val">2,5 s</span>
+      </label>
+    </div>
+
+    <div id="legenda">
+      <span><i class="q verde"></i> gia' nel registro</span>
+      <span><i class="q ciano"></i> scritto adesso</span>
+      <span><i class="q ambra"></i> incerto — serve conferma</span>
+    </div>
+  </section>
+
+  <aside id="pannello">
+    <nav class="schede">
+      <button class="scheda attiva" data-vista="inventario">Inventario <b id="conta">0</b></button>
+      <button class="scheda" data-vista="chat">Conversazione</button>
+    </nav>
+
+    <div class="vista attiva" id="vista-inventario">
+      <div id="incerti"></div>
+      <ul id="elenco"></ul>
+      <div id="vuoto" class="minuto">
+        Il registro e' vuoto. Ogni riga che comparira' qui e' verificabile
+        aprendo un cassetto.
+      </div>
+      <footer>
+        <a href="/api/esporta.csv" download>scarica CSV</a>
+        <span id="file-inv" class="minuto"></span>
+      </footer>
+    </div>
+
+    <div class="vista" id="vista-chat">
+      <div id="messaggi">
+        <div class="msg sistema">La conversazione legge l'inventario ma non puo'
+          scriverci. Per aggiungere un oggetto serve la telecamera o il tasto
+          <b>conferma</b>: e' la regola che impedisce al sistema di dettarsi da solo
+          il proprio inventario.</div>
+      </div>
+      <form id="modulo-chat">
+        <button type="button" id="microfono" title="parla alla casa"
+                aria-label="parla alla casa">&#127908;</button>
+        <input id="campo-chat" placeholder="Che vini ho in cucina?" autocomplete="off">
+        <button>Invia</button>
+      </form>
+    </div>
+  </aside>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
