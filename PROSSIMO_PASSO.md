@@ -96,6 +96,26 @@ L'unico motivo valido sarebbe l'involucro nativo per il telefono, perché
 `getUserMedia` fuori da `localhost` vuole `https` — e se quel fastidio
 impedisce di provarlo, allora risolve il problema vero, che è **provarlo**.
 
+## 1-quater. Ai nodi che entrano: c'è una lettera, e chiede esecuzioni
+
+`LETTERA_AI_NODI.md` (05/09) — leggila dopo `CLAUDE.md`. Chiede una cosa
+sola e ne rifiuta un'altra:
+
+- **non** manda la tua impressione sul progetto: leggi gli stessi file, quindi
+  un tuo giudizio non aggiunge niente al mondo. Viene registrato e marchiato
+  `vale_come_conferma: false` (§7);
+- **sì**: esegui qualcosa e manda l'esito. `python3 rassegna.py --compiti`.
+
+La differenza sta in un punto solo: **un'esecuzione può fallire, un'impressione
+no. Ciò che non può fallire non può confermare.**
+
+Il compito più veloce è riprodurre i falsificatori in un altro ambiente: se
+reggono anche lì, non è eco, è riproduzione — la cosa più vicina a una
+revisione fra pari che questo progetto possa avere.
+
+**Stato al 05/09: zero esecuzioni da altri nodi.** La rassegna lo dice da sé
+quando è vuota, invece di sembrare piena.
+
 ## 1-ter. Il prodotto: dove è arrivato, e cosa è stato depurato (04/09)
 
 **RECUPERATO.** 206 prove passano, nessuna dipendenza nuova, tutto spinto su
