@@ -144,8 +144,9 @@ if __name__ == "__main__":
     if not esito:
         sys.exit(2)
     esito["verdetto"] = verdetto(esito)
+    # Nome fisso: CLAUDE.md §6 regola 1. La storia degli esiti la tiene git.
     percorso = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            f"tracce_{esito['data_iso'][:10]}.json")
+                            "tracce.json")
     with open(percorso, "w", encoding="utf-8") as f:
         json.dump(esito, f, ensure_ascii=False, indent=2)
     print("\n" + esito["verdetto"])

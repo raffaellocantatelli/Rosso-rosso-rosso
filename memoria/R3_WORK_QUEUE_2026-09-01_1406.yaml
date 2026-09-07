@@ -1,0 +1,194 @@
+# R3_WORK_QUEUE.yaml
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Ciclo: SYNC-2026-09-01-1406
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Questo file non è un esecutore. È un registro di lavoro verificato.
+# Regola: non dichiarare mai che R³∞ è una superintelligenza.
+# Snapshot datato. Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-09-01-1406
+  created: "2026-09-01T14:06:00+02:00"
+  created_by: Grok-4.6 (Drive + GitHub connessi)
+  previous_cycle: SYNC-2026-09-01-1319
+  official_until: verified_items_only
+  never_delete_historical: true
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+
+layer_map:
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    public_default_sha: 5794cda18eb535fcb90410d1f2e19ad412427169
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    telegram_branch: claude/r3-autonomous-telegram-0goqsv
+    telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
+    photo_branch: claude/photo-analysis-reverse-search-850pyv
+    photo_sha: e57cac060215bca52841e5b072424ed6ba76fcef
+    photo_merged_on_default: true
+    photo_merge_commit: 884cd51f53fa8aebdba3c7385271e520c9e631a8
+    instagram_branch: claude/instagram-reel-analysis-vnq4iv
+    instagram_sha: d717c81c5b31c0aef28238f92a20be49fad05831
+    private_archive: raffaellocantatelli/R3-privato
+    private_archive_last_push: "2026-08-10T16:40:03Z"
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    private_oro_sha: 410784b26905b70dbfde661c405ce2e74708aa9f
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_bot_head: 78643535663d83015cde8cdb58e4135e5c732fbd
+    public_site: raffaellocantatelli/Claudioterzi
+    adjacent_not_official:
+      - raffaellocantatelli/UmbraTheater
+      - raffaellocantatelli/qween-raffaello-
+
+fatto:
+  - id: SYNC-2026-09-01-1406-A
+    item: "Account GitHub autenticato = raffaellocantatelli."
+  - id: SYNC-2026-09-01-1406-B
+    item: "Default Layer 2 a 5794cda1 (commit 1319 8ea85d4c + 5794cda1). Misura 1319 aveva 441fb86a."
+  - id: SYNC-2026-09-01-1406-C
+    item: "daily_2026-09-01.txt assente sul default alle 14:06. Stub 28-31 SHA 410c80f8 presenti. daily_2026-08-27 assente."
+  - id: SYNC-2026-09-01-1406-D
+    item: "Bot HEAD fermo 78643535 (fix corpo 31/08 05:07+02). Nessun commit dopo quella data."
+  - id: SYNC-2026-09-01-1406-E
+    item: "Drive: nessun file R3 nuovo dopo 2026-09-01T11:22:55Z oltre artefatti 1319, fino a questa misura."
+  - id: SYNC-2026-09-01-1406-F
+    item: "Oro-Rosso tree SHA 410784b2 invariato (6 file, senza log). R3-privato last_push 2026-08-10."
+  - id: SYNC-2026-09-01-1406-G
+    item: "PROGETTO_R3.md exact_name Drive = 0."
+  - id: SYNC-2026-09-01-1406-H
+    item: "R3-019 Baseline_0 26/08 esiste su Drive (duplicati). Non rieseguito alle 14:06. GitHub memoria spec 1298. L2/L3 N/A."
+  - id: SYNC-2026-09-01-1406-I
+    item: "H2 intermedio scaduto 2026-08-30. output/contatti.jsonl default size 0 (blob e69de29b)."
+  - id: SYNC-2026-09-01-1406-J
+    item: "PR #5 già unita (884cd51f). Questo nodo non revert e non promuove photo-analysis a ticket 011-020."
+  - id: SYNC-2026-09-01-1406-K
+    item: "Telegram 0goqsv fermo a add51ca6. Non unito."
+  - id: SYNC-2026-09-01-1406-L
+    item: "Nove rami claude/*; instagram vnq4iv fermo a d717c81c. Non esiste main su Rosso-rosso-rosso."
+  - id: SYNC-2026-09-01-1406-M
+    item: "Nessun file storico cancellato. Nessun ramo unito da questo nodo. Pytest non eseguito."
+  - id: SYNC-2026-09-01-1406-N
+    item: "Cartella Drive protocollo-rosso-bot riletta: solo zip 17EG5Qfp 28487 e SNAPSHOT 1gzwpigm 496."
+  - id: SYNC-2026-09-01-1406-O
+    item: "Report Drive 1319 = 11967 byte. Report GH memoria 1319 = 399 byte."
+  - id: SYNC-2026-09-01-1406-P
+    item: "health_log.jsonl default 13005 SHA 7b9fc7d7 invariato rispetto a 1319."
+  - id: SYNC-2026-09-01-1406-Q
+    item: "Root GH R3_WORK_QUEUE.yaml ancora etichettato 1209 (1142, daaf3ab7). memoria/R3_WORK_QUEUE.yaml = 1319 (1202)."
+
+inferenza:
+  - id: INF-01-1406-01
+    item: "Attività GitHub default 13:19→14:06 = solo i due commit del ciclo 1319."
+  - id: INF-01-1406-02
+    item: "Nessun aumento di capacità R3-019 misurato il 01/09 14:06."
+  - id: INF-01-1406-03
+    item: "Stato ufficiale 014/016/017 resta BACKLOG. CONF-09 aperto."
+  - id: INF-01-1406-04
+    item: "I daily 28/29/30/31 esistono come file, non come misura di pensiero. Daily 01/09 assente."
+  - id: INF-01-1406-05
+    item: "Bot fermo. Superficie /palestra /corpo già registrata. Non ticket 011-020."
+  - id: INF-01-1406-06
+    item: "H2 intermedio scaduto. Assenza di evidenza su contatti.jsonl, non FALSIFICAZIONE eseguita qui."
+  - id: INF-01-1406-07
+    item: "Merge PR #5 è fatto di repository, non promozione ticket strategici."
+  - id: INF-01-1406-08
+    item: "add51ca6 resta un revert su ramo telegram, non una promozione di sito o di ticket 011-020."
+  - id: INF-01-1406-09
+    item: "Il lag root 1209 vs memoria 1319 è un fatto di etichetta, non un delta applicativo."
+
+ipotesi:
+  - {id: H-SYNC-02, status: APERTA}
+  - {id: H-SYNC-08, status: FATTO_COMMIT_ESISTE_LIVE_NON_VERIFICATO}
+  - {id: H-CLAIM-016-017-014, status: APERTA_NON_VERIFICABILE_QUI}
+  - {id: H-SYNC-10, status: EREDITATA}
+  - {id: H-SCACCHIERA-01, status: APERTA}
+  - {id: H-LIBRO-01, status: APERTA}
+  - {id: H-DOCS-BOT-01, status: APERTA}
+  - {id: H-TERZO-01, status: APERTA}
+  - {id: H-TERZO-02, status: EREDITATA}
+  - {id: H-BOT-CORPO-01, status: APERTA_CON_EVIDENZA_COMMIT}
+  - {id: H-BOT-METODO-01, status: APERTA}
+  - {id: H-DAILY-STUB-01, status: APERTA_CON_EVIDENZA_SHA}
+  - {id: H-UMBRA-01, status: APERTA}
+  - {id: H-CONDENSE-01, status: APERTA_CON_EVIDENZA_SIZE}
+  - {id: H-POSTA-01, status: APERTA_CON_EVIDENZA_FILE}
+  - {id: H-RENDER-01, status: PARZIALMENTE_MISURATA_HTTP_SUCCESS_X2_UPTIME_NON_MISURATO}
+  - {id: H-KEEPALIVE-01, status: APERTA_DUE_RUN_SUCCESS_EREDITATE}
+  - {id: H2-INTERMEDIO-01, status: APERTA_CON_EVIDENZA_SIZE_0_SCADENZA_PASSATA}
+  - {id: H-PHOTO-01, status: APERTA_CON_EVIDENZA_MERGE_PR5}
+  - {id: H-DAILY-31-01, status: CHIUSA_COME_STUB_NON_COME_CORE}
+  - {id: H-QWEEN-01, status: APERTA}
+  - {id: H-INSTAGRAM-01, status: APERTA_CON_EVIDENZA_SHA}
+  - {id: H-DAILY-01-09-01, status: APERTA_CON_EVIDENZA_ASSENZA}
+  - {id: H-VERCEL-01, status: APERTA_CON_EVIDENZA_COMMIT_TELEGRAM}
+  - {id: H-ROOT-LAG-01, status: APERTA_CON_EVIDENZA_SIZE_E_ETICHETTA}
+
+simulazione:
+  - {id: SIM-00, item: "Nessuna. Nessun claim di superintelligenza. Nessun punteggio inventato."}
+
+conflitti_aperti:
+  - {id: CONF-01, file: 00_INDICE_CANONICO_R3.md, keep_both: true}
+  - {id: CONF-02, file: R3_DECISIONI, status: DIVERGENZA_VOLUTA}
+  - {id: CONF-04, missing: PROGETTO_R3.md}
+  - {id: CONF-05, file: R3-019, keep_both: true}
+  - {id: CONF-06, file: R3_WORK_QUEUE.yaml, keep_both: true}
+  - {id: CONF-07, file: Oro-Rosso_repo_vs_Drive_log, keep_both: true}
+  - {id: CONF-08, file: default_vs_telegram, keep_both: true}
+  - {id: CONF-09, item: "claim EXECUTED 016/017 vs misura BACKLOG", official: BACKLOG, keep_both: true}
+  - {id: CONF-10, item: "bot scacchiera vs Drive solo PANAJEDREZ 20/08", keep_both: true}
+  - {id: CONF-11, item: "bot /libro vs Drive senza mirror", keep_both: true}
+  - {id: CONF-12, item: "bot comandi nuovi vs BotFather e Drive 28/08 09:40Z", keep_both: true}
+  - {id: CONF-13, item: "daily 28/29/30/31 SHA-identici allo stub 24-26; daily 01/09 assente", keep_both: true}
+  - {id: CONF-14, item: "output/ default stub vs telegram daily26 1476 + verifiche.jsonl", keep_both: true}
+  - {id: CONF-18, item: "POSTA_GROK su bot GH vs Drive bot fermo 28/08", keep_both: true}
+  - {id: CONF-21, item: "keepalive ereditato vs Drive zip 28/08 e Telegram live non verificato", keep_both: true}
+  - {id: CONF-22, item: "report 1707 Drive 11281 vs GH memoria 1736", keep_both: true}
+  - {id: CONF-23, item: "report 0909 Drive 10238 vs GH memoria 1260", keep_both: true}
+  - {id: CONF-24, item: "bot HEAD 78643535 vs Drive zip 28/08", keep_both: true}
+  - {id: CONF-25, item: "ramo photo-analysis e57cac06 + merge PR #5 sul default; non ticket 011-020", keep_both: true}
+  - {id: CONF-26, item: "report 0905 Drive 12218 vs GH memoria 1082", keep_both: true}
+  - {id: CONF-27, item: "ramo instagram d717c81c con osservatorio fuori canone", keep_both: true}
+  - {id: CONF-28, item: "report 1612 Drive 12759 vs GH memoria 745", keep_both: true}
+  - {id: CONF-29, item: "report 0900 Drive 13434 vs GH memoria 613", keep_both: true}
+  - {id: CONF-30, item: "report 1003 Drive 10993 vs GH memoria 670", keep_both: true}
+  - {id: CONF-31, item: "report 1109 Drive 11258 vs GH memoria 876", keep_both: true}
+  - {id: CONF-32, item: "report 1209 Drive 11235 vs GH memoria 592", keep_both: true}
+  - {id: CONF-33, item: "telegram add51ca6 revert vercel vs default 5794cda1", keep_both: true}
+  - {id: CONF-34, item: "report 1319 Drive 11967 vs GH memoria 399", keep_both: true}
+  - {id: CONF-35, item: "root GH R3_WORK_QUEUE.yaml ciclo 1209 vs memoria condensato 1319", keep_both: true}
+
+priorita_strategiche:
+  - {id: R3-019, status: BASELINE_0_ESISTE, class: FATTO_su_L0_L1__N_A_su_L2_L3}
+  - {id: R3-011, status: BACKLOG, class: IPOTESI}
+  - {id: R3-012, status: BACKLOG_CON_CODICE_BOT_NON_TESTATO_QUI, class: INFERENZA}
+  - {id: R3-013, status: BACKLOG, class: IPOTESI}
+  - {id: R3-016, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-017, status: BACKLOG, class: IPOTESI, incoming_claim: EXECUTED_NON_VERIFICATO}
+  - {id: R3-014, status: BACKLOG, class: IPOTESI, incoming_claim: IN_PROGRESS_NON_VERIFICATO}
+  - {id: R3-015, status: BACKLOG, class: IPOTESI}
+  - {id: R3-018, status: BACKLOG, class: IPOTESI}
+  - {id: R3-020, status: BACKLOG, class: IPOTESI}
+
+azioni_di_questo_ciclo:
+  - snapshot coda e report datati 1406
+  - non cancellare omonimi senza data
+  - non unire rami
+  - non revertire PR #5
+  - non creare PROGETTO_R3.md
+  - non promuovere 014/016/017
+  - non promuovere R3-012 a FATTO
+  - non promuovere comandi bot a FATTO live Telegram
+  - non contare i daily stub come accensione del Core
+  - non rieseguire R3-019 fingendo un punteggio
+  - non copiare indice Drive 10696 sul default pubblico
+  - non copiare il codice bot su Drive in assenza di verifica live
+  - non assorbire UmbraTheater, qween-raffaello- o instagram/osservatorio nel canone R³∞
+  - non promuovere photo-analysis a ticket 011-020
+  - non sostituire i report Drive con i condensati GH
+  - non promuovere POSTA_GROK a casella ufficiale
+  - non dichiarare H2 chiusa oltre l'assenza di evidenza su contatti.jsonl
+  - non unire add51ca6 sul default
+  - non promuovere claudio-ebon.vercel.app a proprietà verificata

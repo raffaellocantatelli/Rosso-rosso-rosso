@@ -1,0 +1,96 @@
+# R3_WORK_QUEUE.yaml
+# Origine protetta: Claudio Terzi [CT-LGAI-001]
+# Ciclo: SYNC-2026-09-02-1006
+# Regime: FATTO | INFERENZA | IPOTESI | SIMULAZIONE
+# Questo file non è un esecutore. È un registro di lavoro verificato.
+# Regola: non dichiarare mai che R³∞ è una superintelligenza.
+# Snapshot datato. Gli omonimi precedenti NON sono cancellati.
+
+meta:
+  protocol: R3∞_DRIVE_SYNC_v1
+  cycle_id: SYNC-2026-09-02-1006
+  created: "2026-09-02T10:06:00+02:00"
+  created_by: Grok-4.6 (Drive + GitHub connessi)
+  previous_cycle: SYNC-2026-09-02-0902
+  official_until: verified_items_only
+  never_delete_historical: true
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+
+layer_map:
+  github:
+    public_canonical: raffaellocantatelli/Rosso-rosso-rosso
+    public_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+    public_default_sha: 2af84d590bed056734564f62e603856da98300dd
+    claimed_reconciled_branch: claude/new-session-n1tzrh
+    claimed_reconciled_sha: 71597d45020df7c4aa39c7f2a5c7fe3a52879c12
+    telegram_branch: claude/r3-autonomous-telegram-0goqsv
+    telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
+    photo_branch: claude/photo-analysis-reverse-search-850pyv
+    photo_sha: e57cac060215bca52841e5b072424ed6ba76fcef
+    instagram_branch: claude/instagram-reel-analysis-vnq4iv
+    instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+    private_archive: raffaellocantatelli/R3-privato
+    private_archive_last_push: "2026-08-10T16:40:14Z"
+    private_oro: raffaellocantatelli/R3-Protocollo-Oro-Rosso
+    public_bot: raffaellocantatelli/protocollo-rosso-bot
+    public_bot_head: 78643535663d83015cde8cdb58e4135e5c732fbd
+    public_site: raffaellocantatelli/Claudioterzi
+    adjacent_not_official:
+      - raffaellocantatelli/UmbraTheater
+      - raffaellocantatelli/qween-raffaello-
+  drive:
+    memoria: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+    oro: 1GKRw0qvBCYo-oqVOsfL08BJgfkG8OEU_
+    bot_folder: 19kMbYTcaSqPVj_cmKSPr11VpftO7pBAq
+
+fatto:
+  - default avanzato a 2af84d59 (solo commit SYNC 0902 dopo 5019c8f9)
+  - daily_2026-09-02.txt ASSENTE sull albero default alle 10:06
+  - daily_2026-09-01.txt presente, SHA stub 410c80f8
+  - health_log.jsonl 13411 / 0e728b3f; ultima riga 2026-09-01T12:12:38Z solo stub
+  - Actions SDQ-1 ultimo run 2026-09-01T12:12:26Z (run 32 success); nessun run 02/09 listato
+  - telegram fermo a add51ca6 (non unito)
+  - instagram fermo a 357e0ca1 fuori canone (non unito)
+  - bot fermo a 78643535
+  - Drive memoria fermo dopo 0902; zip bot timestamp 2026-09-02T05:44:46Z
+  - H2 intermedio scaduto; contatti.jsonl size 0
+  - R3-019 non rieseguito
+  - PROGETTO_R3 assente su Drive
+  - nessuna cancellazione, nessun merge da questo nodo
+
+priorita:
+  R3-019: BASELINE_0
+  R3-011: BACKLOG
+  R3-012: BACKLOG_CODICE_BOT
+  R3-013: BACKLOG
+  R3-016: BACKLOG
+  R3-017: BACKLOG
+  R3-014: BACKLOG
+  R3-015: BACKLOG
+  R3-018: BACKLOG
+  R3-020: BACKLOG
+
+conflitti_aperti:
+  CONF-01: indice Drive 10696 vs GH 2784
+  CONF-05: R3-019 senza nuova misura
+  CONF-06: omonimi WORK_QUEUE su Drive
+  CONF-08: default 2af84d59 vs telegram add51ca6
+  CONF-13: daily stub SHA 410c80f8 non e Core
+  CONF-24: bot GH 31/08 vs Drive zip 28/08 timestamp 02/09
+  CONF-27: instagram 357e0ca1 vs default 2af84d59
+  CONF-37: daily 01/09 stub
+  CONF-39: daily 02/09 assente
+
+ipotes_attive:
+  H-DAILY-02-09-01: APERTA_CON_EVIDENZA_ALBERO
+  H-DAILY-01-09-01: CHIUSA_COME_STUB_NON_COME_CORE
+  H2-INTERMEDIO-01: APERTA_CON_EVIDENZA_SIZE_0_SCADENZA_PASSATA
+  H-HEALTH-01: APERTA_CON_EVIDENZA_ULTIMA_RIGA_STUB
+  H-INSTAGRAM-02: APERTA_CON_EVIDENZA_COMMIT_LIST
+  H-GAP-1006-01: APERTA_CON_EVIDENZA_COMMIT_LIST
+  H-BOT-ZIP-02: APERTA_NON_VERIFICATA_SUL_CONTENUTO
+  H-ACTION-02-09-01: APERTA_CON_EVIDENZA_ACTIONS
+
+regola: non dichiarare superintelligenza
+misura: nessun aumento di capacita dimostrato vs baseline 2026-08-26

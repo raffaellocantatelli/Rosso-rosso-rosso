@@ -1,0 +1,109 @@
+# R3_WORK_QUEUE.yaml — canone pieno ciclo SYNC-2026-09-03-0911
+# Snapshot datato. Non cancellare. Lo stato condensato sta in R3_WORK_QUEUE.yaml ROOT.
+# Regime: FATTO / INFERENZA / IPOTESI / SIMULAZIONE distinti.
+
+meta:
+  cycle_id: SYNC-2026-09-03-0911
+  previous_cycle: SYNC-2026-09-02-1839
+  protocol: R3∞_DRIVE_SYNC_v1
+  measured_at: "2026-09-03T09:11:00+02:00"
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+  official_repo: raffaellocantatelli/Rosso-rosso-rosso
+  official_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  never_delete_historical: true
+  no_superintelligence_claim: true
+
+github:
+  default_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  default_sha_previous_cycle: 1a70c6113591446a662f6044a43e141bb7eec0b5
+  new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  photo_sha: e57cac060215bca52841e5b072424ed6ba76fcef
+  portfolio_sha: 8c39a4128ae90053f05b35dca9f298c916be3594
+  impara_tutto_sha: 01757a714aefcdf93d51bf29599be6e7ff031979
+  cyclic_sha: a57bf7171a9608674e22b48a557d6a3d56f2035c
+  todo_sha: fb1dedfb8ceaf290f86be905cdbba08695ee0b3c
+  bot_repo: raffaellocantatelli/protocollo-rosso-bot
+  bot_last_push: "2026-08-31T03:07:50Z"
+  bot_sha: 78643535663d83015cde8cdb58e4135e5c732fbd
+
+stato:
+  daily_2026-09-01: PRESENTE_STUB_CORTO_410c80f8
+  daily_2026-09-02: PRESENTE_STUB_LUNGO_88efb429_CORE_SPENTO
+  daily_2026-09-03: ASSENTE
+  health_log: "15034 / 5d4ac599 / last 2026-09-02T23:19:58Z gemini=false"
+  r3_019: BASELINE_0_NO_NEW_RUN_9e95aebc
+  contatti_jsonl: SIZE_0_e69de29b
+  progetto_r3_md: ASSENTE_NON_CREATO
+  prossimo_passo_md: PRESENTE_5571_f7c16ea1
+  work_queue_root_pre_push: CICLO_1839_af25fdb8
+  sdq1_run_33: SUCCESS_2026-09-02T11:49:53Z
+  sdq1_run_34: FAILURE_2026-09-02T23:17:29Z
+  sdq1_run_35: FAILURE_2026-09-02T23:19:42Z
+  sdq1_run_03_09: NON_OSSERVATO_alle_09:11_CEST
+  default_equals_new_session: true
+
+priorita:
+  - id: R3-019
+    titolo: Longitudinal Capability Benchmark
+    official: BASELINE_ONLY
+    note: nessuna nuova misura in questo ciclo
+  - id: R3-011
+    titolo: Evidence Graph
+    official: BACKLOG
+  - id: R3-012
+    titolo: Meta-Scacchiera
+    official: BACKLOG
+  - id: R3-013
+    titolo: Evolution Lab
+    official: BACKLOG
+  - id: R3-016
+    titolo: Synthetic Data Firewall
+    official: BACKLOG
+  - id: R3-017
+    titolo: Red/Blue/Purple Harness
+    official: BACKLOG
+  - id: R3-014
+    titolo: Curriculum Engine
+    official: BACKLOG
+  - id: R3-015
+    titolo: Research Loop
+    official: BACKLOG
+  - id: R3-018
+    titolo: Sim2Real Audit
+    official: BACKLOG
+  - id: R3-020
+    titolo: Self-Improvement Safety Gate
+    official: BACKLOG
+
+conflitti_aperti:
+  - CONF-01
+  - CONF-04
+  - CONF-05
+  - CONF-06
+  - CONF-08
+  - CONF-09
+  - CONF-13
+  - CONF-24
+  - CONF-27
+  - CONF-33
+  - CONF-38
+  - CONF-42
+  - CONF-43
+  - CONF-44
+  - CONF-45
+
+azioni_questo_nodo:
+  - tipo: FATTO
+    descrizione: misurato perimetro Drive e GitHub
+  - tipo: FATTO
+    descrizione: scritto report e coda datati senza cancellare storici
+  - tipo: FATTO
+    descrizione: nessun merge, nessuna cancellazione, nessun PROGETTO_R3.md
+  - tipo: NON_FATTO
+    descrizione: non eseguito R3-019 runner, pytest, Core, contraddittore
+
+regola: non dichiarare superintelligenza
+never_delete_historical: true

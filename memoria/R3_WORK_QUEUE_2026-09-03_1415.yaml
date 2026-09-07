@@ -1,0 +1,56 @@
+# R3_WORK_QUEUE_2026-09-03_1415.yaml
+# Cronaca operativa del ciclo SYNC-2026-09-03-1415. Non è fonte.
+
+meta:
+  cycle_id: SYNC-2026-09-03-1415
+  previous_cycle: SYNC-2026-09-03-1300
+  measured_at: "2026-09-03T14:15:00+02:00"
+  github_account: raffaellocantatelli
+  official_repo: raffaellocantatelli/Rosso-rosso-rosso
+  default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha_pre_push: 594f7614f1f6ac3225bcd8239ff30e3f6da78e8b
+  drive_memoria_id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+  drive_trasmissione_id: 1GKRw0qvBCYo-oqVOsfL08BJgfkG8OEU_
+
+delta_vs_1300:
+  - FATTO: HEAD default 594f7614 (bot SDQ-1 11:49:31Z)
+  - FATTO: run 36 schedule FAILURE step "Il daily di oggi e' stato pensato?"
+  - FATTO: daily_2026-09-03.txt presente SHA f0e36639 banner CORE SPENTO
+  - FATTO: health_log.jsonl +1 riga nel commit 594f7614
+  - FATTO: ramo umbratheater-artefatto 6873f3a1 -> d5f133a2 (Sentinella, non unito)
+  - FATTO: R3-019 non rieseguito
+  - FATTO: nessun merge, nessuna cancellazione
+
+ticket_ufficiali:
+  R3-019:
+    stato: BASELINE_ONLY
+    misura_nuova: false
+  R3-011:
+    stato: BACKLOG
+  R3-012:
+    stato: BACKLOG
+  R3-013:
+    stato: BACKLOG
+  R3-016:
+    stato: BACKLOG
+  R3-017:
+    stato: BACKLOG
+  R3-014:
+    stato: BACKLOG
+  R3-015:
+    stato: BACKLOG
+  R3-018:
+    stato: BACKLOG
+  R3-020:
+    stato: BACKLOG
+
+conflitti_keep_both:
+  - CONF-01 indice Drive 10696 vs GH 6615
+  - CONF-05 baseline R3-019 copie divergenti
+  - CONF-06 omonimi WORK_QUEUE senza data
+  - CONF-08 telegram vs default
+  - CONF-13 daily stub vs pensiero
+  - CONF-47 sentinella su ramo laterale
+
+regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
+never_delete_historical: true

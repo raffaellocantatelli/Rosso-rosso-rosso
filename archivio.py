@@ -61,9 +61,20 @@ FILE_SINGOLI = ["CLAUDE.md", "README.md", "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.
 #: "CONTRADDITTORIO_". La lezione di questa sessione e' che una protezione
 #: che funziona per fortuna non e' una protezione: qui e' scritta apposta.
 GENERATI = re.compile(
-    r"CONTRADDITTORIO_"      # rapporti del contraddittorio e il suo progetto
+    r"CONTRADDITTORIO"       # rapporti del contraddittorio e il suo progetto
+                             # (senza underscore: il 02/09 il file e' passato a
+                             # nome fisso per la regola 1 di §6, e lo schema con
+                             # l'underscore avrebbe smesso di riconoscerlo)
     r"|^daily_"              # riflessioni giornaliere
     r"|store\.json|state\.json|verifiche\.jsonl"  # stato interno
+    # --- cronache di altri nodi. Aggiunte il 02/09, quando unendo il ramo di
+    # default sono comparsi in memoria/ 46 R3_DRIVE_SYNC_REPORT prodotti da
+    # Grok-4.6 a cadenza oraria. Erano finiti fra le "fonti": il Contraddittore
+    # avrebbe letto la cronaca di un altro modello come se fosse l'archivio
+    # dell'autore. E' il difetto §4 con la faccia dell'erudizione.
+    r"|R3_DRIVE_SYNC_REPORT|R3_WORK_QUEUE|SYNC_DRIVE_GITHUB"
+    r"|^SESSIONE_"           # verbali di sessione, scritti da nodi
+    r"|^ZZ_SUPERATO"         # copie dichiarate superate: storia, non fonte
 )
 
 #: Cartelle private da indicizzare senza committarle (es. una copia locale del

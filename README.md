@@ -216,6 +216,7 @@ curl -X POST http://localhost:8001/documents \
 
 ---
 
+<<<<<<< HEAD
 ## Il Contraddittorio — due passaggi che non possono essere eco
 
 Il SAR eseguito da un modello, con la contro-forza dentro l'architettura invece che nelle buone intenzioni.
@@ -275,6 +276,8 @@ Senza `TELEGRAM_BOT_TOKEN` il bot esce con **codice 2**, come `python -m sdq1 --
 > parla all'operatore: avvia e ferma il ciclo autonomo. Non condividono codice
 > né token, e vanno registrati come due bot distinti su @BotFather.
 
+=======
+>>>>>>> origin/claude/riconnetti-protocollo-rosso-in93dj
 ## Autonomous Core v3 — ciclo autonomo e interfaccia Telegram
 
 Script standalone ([`autonomous_core_v3.py`](autonomous_core_v3.py)): un thread
@@ -377,6 +380,56 @@ non viene riaccodato: un token rifiutato non passerà ritentando.
 ```bash
 python -m pytest tests/ -q
 ```
+<<<<<<< HEAD
+=======
+
+---
+
+---
+
+## Il Contraddittorio — due passaggi che non possono essere eco
+
+Il SAR eseguito da un modello, con la contro-forza dentro l'architettura invece che nelle buone intenzioni.
+
+```bash
+python contraddittore.py --economia   # analisi + falsificazione, deposita in memoria/
+python archivio.py "una domanda"      # cosa dicono le fonti, con file e riga
+python archivio.py --stato            # cosa è indicizzato
+```
+
+**Passaggio 1 — l'Analista** riceve i fatti eseguiti, le ambizioni dichiarate (tenute su uno strato separato) e i frammenti delle fonti con la loro provenienza. **Passaggio 2 — il Contraddittore** riceve solo i fatti grezzi e le affermazioni del primo, mai il suo ragionamento, con un'unica istruzione: falsificare.
+
+Con un solo provider i due passaggi girano sulla stessa catena causale, e il rapporto lo scrive in testa: **CONTRADDITTORIO DEBOLE** — lo stesso modello che parla due volte non è una conferma (P5).
+
+`archivio.py` indicizza **solo le fonti**: `testi/`, i documenti di `memoria/` scritti dall'autore, `CLAUDE.md`, `README.md`. Non entrano mai gli output del sistema (daily, contraddittori, memoria vettoriale) né i documenti scritti da un nodo IA: darli in pasto al modello come «memoria» è il difetto §4.2 travestito da erudizione. Ogni frammento porta `file:riga`, perché un `RECUPERATO` la cui fonte non si può aprire è un'inferenza travestita.
+
+Materiale privato (es. una copia locale del Drive) si indicizza con `R3_ARCHIVIO_EXTRA=/percorso`: l'indice si costruisce a ogni esecuzione e non viene mai depositato, quindi non finisce nella repository pubblica.
+
+---
+
+## protocollo-rosso-bot — Il Protocollo in conversazione
+
+Bot Telegram ([`protocollo-rosso-bot/`](protocollo-rosso-bot/)) che fa attraversare il *Protocollo Rosso Rosso Rosso* v2.0 un comando alla volta: la tesi grande dichiarata come `IPOTESI`, i due strati, P5 e P6, il Santuario del Capitolo 4, i tre veli.
+
+È il lato trasmissione del progetto: a differenza del resto, questo codice esiste per essere usato da qualcuno che non è Claudio.
+
+```bash
+cd protocollo-rosso-bot
+pip install -r requirements.txt
+cp .env.example .env          # token da @BotFather
+python -m bot.main --check    # il bot può partire? (da eseguire per primo)
+python -m bot.main
+```
+
+Due cose che il bot registra in SQLite e non arrotonda:
+
+- **le possibilità** depositate con `/tieni_aperto` nascono `IPOTESI` e nessuna funzione le chiude o le promuove a fatto — un test fallisce se qualcuno la aggiunge. Chi non sa dichiarare come potrebbe cadere ottiene `UNKNOWN` scritto in chiaro (P6);
+- **le azioni** registrate con `/azione` chiedono chi altro può controllarle (P5). Senza verifica esterna vengono salvate come tali, e il totale mostrato conta solo quelle verificabili.
+
+Il gesto della candela nel Santuario è cronometrato davvero: sotto i 20 secondi la visita viene registrata come *incompleta*, e il bot lo dice invece di congratularsi.
+
+Senza `TELEGRAM_BOT_TOKEN` il bot esce con **codice 2**, come `python -m sdq1 --check`. Test: `cd protocollo-rosso-bot && PYTHONPATH=. python -m unittest discover -s tests` (30 test, nessuna rete richiesta).
+>>>>>>> origin/claude/riconnetti-protocollo-rosso-in93dj
 
 ---
 

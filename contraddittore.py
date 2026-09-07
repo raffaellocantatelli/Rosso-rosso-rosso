@@ -234,7 +234,11 @@ def esegui(profilo="economia"):
 def deposita(esito):
     os.makedirs(DESTINAZIONE, exist_ok=True)
     data = esito["data_iso"][:10]
-    percorso = os.path.join(DESTINAZIONE, f"CONTRADDITTORIO_{data}.md")
+    # Nome fisso, non datato: CLAUDE.md §6 regola 1. Git conserva ogni
+    # versione con hash e cronologia; un secondo sistema di versionamento nel
+    # nome dei file non aggiunge sicurezza, aggiunge ambiguita'. La data resta
+    # dentro il documento, dove serve a leggerlo.
+    percorso = os.path.join(DESTINAZIONE, "CONTRADDITTORIO.md")
     intestazione = (
         f"# Contraddittorio del {data}\n\n"
         f"**Origine protetta:** Claudio Terzi [CT-LGAI-001] — R³∞ Network\n"

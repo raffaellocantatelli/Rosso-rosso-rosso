@@ -1,0 +1,99 @@
+# R3_WORK_QUEUE.yaml — canone datato SYNC-2026-09-03-1209
+# Snapshot 1100/1018/1011 e omonimi senza data conservati. Non cancellare gli storici.
+# Questo file è stato operativo, non fonte (§7).
+
+meta:
+  cycle_id: SYNC-2026-09-03-1209
+  previous_cycle: SYNC-2026-09-03-1100
+  protocol: R3∞_DRIVE_SYNC_v1
+  github_account: raffaellocantatelli
+  official_repo: raffaellocantatelli/Rosso-rosso-rosso
+  official_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha_pre_push: 7f7cd2f71c50ff632869183890906c0a042d3b3e
+  github_default_sha_1100_pre_push: 8e6480013dda154b824d1fa2a6fa6b2cdd695662
+  new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  photo_sha: e57cac060215bca52841e5b072424ed6ba76fcef
+  umbratheater_branch_sha: 6873f3a1e692569675a0357cdc04c839eafcb95f
+  bot_updated_at: "2026-08-31T03:08:00Z"
+  regola_aggiornata: R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md
+  drive_memoria_id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+  drive_trasmissione_id: 1GKRw0qvBCYo-oqVOsfL08BJgfkG8OEU_
+
+stato:
+  daily_2026-09-02: PRESENTE_STUB_LUNGO_88efb429_CORE_SPENTO
+  daily_2026-09-03: ASSENTE
+  health_log_last: "5d4ac599 / 2026-09-02T23:19:58Z"
+  r3_019: BASELINE_0_NO_NEW_RUN
+  r3_019_gh_baseline_sha: 9e95aebcfa480b29a58c1760e3d0729ef9187c5d
+  contatti_jsonl: SIZE_0_e69de29b
+  progetto_r3_md: ASSENTE
+  sdq1_total_count: 40
+  sdq1_run_33: SUCCESS_ULTIMO_VERDE
+  sdq1_run_34_35: FAILURE
+  sdq1_03_09: NON_OSSERVATO
+  default_equals_new_session: false
+  capacita_vs_baseline_26_08: NON_DIMOSTRATA
+  possibilita_avanzamento: APERTA
+
+priorita:
+  - id: R3-019
+    titolo: Longitudinal Capability Benchmark
+    stato_ufficiale: BASELINE_26_08_NO_NEW_MEASURE
+    note: Drive due copie divergenti + GH 1557 byte. Keep both. Non rieseguito in questo ciclo.
+  - id: R3-011
+    titolo: Evidence Graph
+    stato_ufficiale: BACKLOG
+  - id: R3-012
+    titolo: Meta-Scacchiera
+    stato_ufficiale: BACKLOG
+  - id: R3-013
+    titolo: Evolution Lab
+    stato_ufficiale: BACKLOG
+  - id: R3-016
+    titolo: Synthetic Data Firewall
+    stato_ufficiale: BACKLOG
+  - id: R3-017
+    titolo: Red/Blue/Purple Harness
+    stato_ufficiale: BACKLOG
+  - id: R3-014
+    titolo: Curriculum Engine
+    stato_ufficiale: BACKLOG
+  - id: R3-015
+    titolo: Research Loop
+    stato_ufficiale: BACKLOG
+  - id: R3-018
+    titolo: Sim2Real Audit
+    stato_ufficiale: BACKLOG
+  - id: R3-020
+    titolo: Self-Improvement Safety Gate
+    stato_ufficiale: BACKLOG
+
+conflitti_aperti:
+  - CONF-01
+  - CONF-05
+  - CONF-06
+  - CONF-08
+  - CONF-09
+  - CONF-13
+  - CONF-27
+  - CONF-33
+  - CONF-38
+  - CONF-43
+  - CONF-44
+  - CONF-45
+  - CONF-47
+  - CONF-48
+
+azioni_questo_ciclo:
+  - tipo: CRONACA
+    azione: depositare report e coda datati 1209 su Drive e GitHub
+    cancellazioni: 0
+    merge: 0
+    esecuzioni_core: 0
+    esecuzioni_r3_019: 0
+
+regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
+never_delete_historical: true
+Distinzione_obbligatoria: [FATTO, INFERENZA, IPOTESI, SIMULAZIONE]

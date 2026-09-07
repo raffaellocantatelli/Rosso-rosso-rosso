@@ -52,6 +52,19 @@ jobs:
           alterazioni non sta guardando quei file. Rigenera con \
           'python manifesto_integrita.py' e committa."
 
+      # Diagnostica: dice SE un secret esiste, mai il suo valore. Un booleano
+      # non e' una chiave. Serve perche' il 02/09 la run e' risultata rossa con
+      # il Core spento benche' il secret fosse stato aggiunto: senza questo
+      # passo si puo' solo indovinare quale nome o quale tipo sia sbagliato.
+      - name: Quali secret vede questa Action?
+        run: |
+          echo "GOOGLE_API_KEY presente:    ${{ secrets.GOOGLE_API_KEY != '' }}"
+          echo "GEMINI_API_KEY presente:    ${{ secrets.GEMINI_API_KEY != '' }}"
+          echo "ANTHROPIC_API_KEY presente: ${{ secrets.ANTHROPIC_API_KEY != '' }}"
+          echo "DEEPSEEK_API_KEY presente:  ${{ secrets.DEEPSEEK_API_KEY != '' }}"
+          echo "GOOGLE_APIKEY presente:     ${{ secrets.GOOGLE_APIKEY != '' }}"
+          echo "GOOGLE_KEY presente:        ${{ secrets.GOOGLE_KEY != '' }}"
+
       - name: Esegui SDQ-1 con cascata a fallback
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

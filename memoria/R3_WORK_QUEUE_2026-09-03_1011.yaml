@@ -1,0 +1,100 @@
+# R3_WORK_QUEUE.yaml — snapshot datato
+# Ciclo: SYNC-2026-09-03-1011
+# Non cancellare questo file né gli snapshot precedenti.
+
+meta:
+  cycle_id: SYNC-2026-09-03-1011
+  previous_cycle: SYNC-2026-09-03-0911
+  measured_at: "2026-09-03T10:11:00+02:00"
+  protocol: R3∞_DRIVE_SYNC_v1
+  github_account: raffaellocantatelli
+  drive_owner_osservato: Claudio Terzi
+  official_repo: raffaellocantatelli/Rosso-rosso-rosso
+  official_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha: 635e73ba31fceba22869686b0ac8747c2f9a8faf
+  new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  photo_sha: e57cac060215bca52841e5b072424ed6ba76fcef
+  bot_repo: raffaellocantatelli/protocollo-rosso-bot
+  bot_sha: 78643535663d83015cde8cdb58e4135e5c732fbd
+  bot_last_push: "2026-08-31T03:07:50Z"
+  never_delete_historical: true
+  this_file_is: cronaca
+  not_an_archive_source: true
+
+stato:
+  daily_2026-09-02: PRESENTE_STUB_LUNGO_88efb429_CORE_SPENTO
+  daily_2026-09-03: ASSENTE
+  health_log: "15034 / 5d4ac599"
+  r3_019: BASELINE_0_NO_NEW_RUN
+  r3_019_baseline_sha: 9e95aebcfa480b29a58c1760e3d0729ef9187c5d
+  contatti_jsonl: SIZE_0
+  progetto_r3_md: ASSENTE_DRIVE
+  indice_gh_sha: fd9d33327e1e55f6bb842f553e05f2d5f4a54adb
+  indice_drive_bytes: 10696
+  sdq1_total_count: 40
+  sdq1_run_33: SUCCESS_ULTIMO_VERDE
+  sdq1_run_34_35: FAILURE
+  sdq1_03_09: NON_OSSERVATO_10:11_CEST
+  default_equals_new_session: false
+  core: SPENTO
+
+priorita:
+  - id: R3-019
+    titolo: Longitudinal Capability Benchmark
+    official: BASELINE_ONLY
+    last_measure: "2026-08-26T18:58:04Z"
+    new_run_this_cycle: false
+  - id: R3-011
+    titolo: Evidence Graph
+    official: BACKLOG
+  - id: R3-012
+    titolo: Meta-Scacchiera
+    official: BACKLOG
+  - id: R3-013
+    titolo: Evolution Lab
+    official: BACKLOG
+  - id: R3-016
+    titolo: Synthetic Data Firewall
+    official: BACKLOG
+  - id: R3-017
+    titolo: Red/Blue/Purple Harness
+    official: BACKLOG
+  - id: R3-014
+    titolo: Curriculum Engine
+    official: BACKLOG
+  - id: R3-015
+    titolo: Research Loop
+    official: BACKLOG
+  - id: R3-018
+    titolo: Sim2Real Audit
+    official: BACKLOG
+  - id: R3-020
+    titolo: Self-Improvement Safety Gate
+    official: BACKLOG
+
+conflitti_aperti:
+  - CONF-01
+  - CONF-04
+  - CONF-05
+  - CONF-06
+  - CONF-08
+  - CONF-09
+  - CONF-13
+  - CONF-24
+  - CONF-27
+  - CONF-33
+  - CONF-38
+  - CONF-42
+  - CONF-43
+  - CONF-44
+  - CONF-45
+  - CONF-46
+
+regole:
+  - non dichiarare superintelligenza
+  - non cancellare materiale storico
+  - keep both su conflitti non risolvibili
+  - FATTO / INFERENZA / IPOTESI / SIMULAZIONE distinti
+  - ufficiali soltanto i contenuti verificati

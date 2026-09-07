@@ -1,0 +1,64 @@
+# R3_WORK_QUEUE.yaml — canone datato
+# Ciclo: SYNC-2026-09-06-1621
+# Non cancellare gli storici.
+
+meta:
+  cycle_id: SYNC-2026-09-06-1621
+  previous_cycle: SYNC-2026-09-06-1304
+  measured_at: 2026-09-06T16:21:00+02:00
+  github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha_pre_push: 1c5f795bca510a9f129c8bdcb8b7dc4a8e78f0a2
+  github_1304_align_sha: af6c3c2d306b4f9c62e5e4dcde46414bf0f045cc
+  github_sdq1_daily_0606_sha: 1c5f795bca510a9f129c8bdcb8b7dc4a8e78f0a2
+  new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  telegram_sha: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  umbratheater_branch_sha: d5f133a249540747feff2bd7aca425bf1aa6ba73
+  camera_inventory_sha: 468c9e3c620fd9a6b756d35068c5c1292cdf0ca2
+  protocollo_rosso_bot_updated_at: 2026-09-04T10:16:18Z
+  regola_aggiornata: R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md
+
+stato:
+  daily_2026-09-05: PRESENTE_STUB_0d96dd78_CORE_SPENTO
+  daily_2026-09-06: PRESENTE_STUB_b47bf239_CORE_SPENTO
+  r3_019: BASELINE_0_NO_NEW_RUN
+  contatti_jsonl: SIZE_0
+  progetto_r3_md: ASSENTE_NON_CREATO
+  prodotto_idee_ct_drive: PRESENTE_NON_PUBBLICARE
+  sdq1_run_33: SUCCESS_ULTIMO_VERDE
+  sdq1_run_34_35_36_37_38_39: FAILURE
+  sdq1_run_39: PRESENTE_34030179612_FAILURE_2026-09-06T11:24:50Z
+  sdq1_daily_total_count: 39
+  drive_delta_post_1304: SOLO_FILE_1304_GIA_REGISTRATI
+  camera_branch: INVARIATO_NON_UNITO_468c9e3c
+  default_equals_new_session: false
+  h_sync_0606_1: CADUTA_MISURA_1304_STORICA
+  h_sync_0606_2: APERTA
+  h_sync_0606_3: CADUTA
+  h_sync_0606_4: APERTA
+  capacita_vs_baseline_26_08: NON_DIMOSTRATA
+  possibilita_avanzamento: APERTA
+
+priorita:
+  - R3-019 Longitudinal Capability Benchmark
+  - R3-011 Evidence Graph
+  - R3-012 Meta-Scacchiera
+  - R3-013 Evolution Lab
+  - R3-016 Synthetic Data Firewall
+  - R3-017 Red/Blue/Purple Harness
+  - R3-014 Curriculum Engine
+  - R3-015 Research Loop
+  - R3-018 Sim2Real Audit
+  - R3-020 Self-Improvement Safety Gate
+
+conflitti_aperti:
+  - default_branch_diverso_da_new_session
+  - camera_branch_avanzato_non_unito
+  - duplicati_drive_report_1613
+  - duplicati_drive_work_queue_senza_data
+  - duplicati_drive_r3_019_26_08
+  - prodotto_idee_solo_drive_per_tutela_ip
+  - report_1304_e_0911_drive_integrale_vs_gh_condensato
+
+regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
+never_delete_historical: true
