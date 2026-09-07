@@ -1,18 +1,21 @@
-# R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-07-0917
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-07_0917.yaml
-# Snapshot 1621, 1304, 0911, 1613 e precedenti conservati. Non cancellare gli storici.
+# R3_WORK_QUEUE.yaml — canone pieno ciclo SYNC-2026-09-07-0917
+# Snapshot 1621, 1304, 0911 e precedenti conservati. Non cancellare gli storici.
 
 meta:
   cycle_id: SYNC-2026-09-07-0917
   previous_cycle: SYNC-2026-09-06-1621
+  measured_at: 2026-09-07T07:17:00Z
+  github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
   github_default_sha_pre_push: 420c92a00d8ac64831e1ce0e114391c6d59bcbce
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: ebd7cb417e04a76755af6447521caaa63bb36979
+  telegram_sha_previous: add51ca6dc08b408d8abae414fe5b713fe0d0b9d
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
   umbratheater_branch_sha: d5f133a249540747feff2bd7aca425bf1aa6ba73
   camera_inventory_sha: 2b96150a08dee8978fb636acb6bada9fdbc4ac2d
+  camera_inventory_sha_previous: 468c9e3c620fd9a6b756d35068c5c1292cdf0ca2
   regola_aggiornata: R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md
+  drive_memoria_id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
 
 stato:
   daily_2026-09-06: PRESENTE_STUB_b47bf239_CORE_SPENTO
@@ -23,16 +26,20 @@ stato:
   prodotto_idee_ct_drive: PRESENTE_NON_PUBBLICARE
   sdq1_run_33: SUCCESS_ULTIMO_VERDE
   sdq1_run_34_39: FAILURE
-  sdq1_run_39: PRESENTE_34030179612_FAILURE
+  sdq1_run_39: PRESENTE_34030179612_FAILURE_2026-09-06T11:24:50Z
   sdq1_daily_total_count: 39
+  sdq1_schedule_total_count: 36
   sdq1_run_2026-09-07: ASSENTE_ALLE_07:17Z
   drive_delta_post_1621: NESSUN_FILE_NUOVO_MISURATO
   camera_branch: MOSSO_NON_UNITO_2b96150a
   telegram_branch: MOSSO_NON_UNITO_ebd7cb41
   default_equals_new_session: false
+  h_sync_0606_2: APERTA
+  h_sync_0606_3: CADUTA
   h_sync_0606_4: APERTA
   h_sync_0607_1: APERTA
   h_sync_0607_2: APERTA
+  h_sync_0607_3: APERTA
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
 
@@ -48,5 +55,16 @@ priorita:
   - R3-018 Sim2Real Audit
   - R3-020 Self-Improvement Safety Gate
 
+conflitti_conservati:
+  - default_neq_new_session
+  - camera_tip_not_merged
+  - telegram_tip_not_merged
+  - drive_duplicate_reports_1613
+  - drive_duplicate_r3_019
+  - prodotto_idee_ct_drive_only
+  - drive_full_vs_github_condensed_reports
+
 regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
 never_delete_historical: true
+do_not_merge_branches: true
+do_not_publish_prodotto_idee_ct: true
