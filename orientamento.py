@@ -222,12 +222,20 @@ def rami(fetch: bool) -> None:
         print(f"  {VERDE}nessun ramo remoto ha commit che questo non ha{FINE}")
         return
 
-    print(f"  {ROSSO}commit che questo ramo NON ha:{FINE}")
-    for ramo, n, ultimo in sorted(dietro, key=lambda t: -t[1]):
-        g = giorni_fa(ultimo) if ultimo else 999
-        print(f"    {ramo:52.52s} +{n:3d}  ultimo {ultimo} ({g}g fa)")
-        if n >= 5:
-            allarmi.append(f"{ramo} ha {n} commit che questo ramo non ha")
+    # Solo i rami vivi. Gli altri in una riga: un elenco di otto voci non
+    # aiuta nessuno a decidere.
+    vivi = [(r, n, u) for r, n, u in dietro if u and giorni_fa(u) <= 7]
+    fermi = [(r, n, u) for r, n, u in dietro if (r, n, u) not in vivi]
+
+    if vivi:
+        print(f"  {ROSSO}rami vivi con commit che questo non ha:{FINE}")
+        for ramo, n, ultimo in sorted(vivi, key=lambda t: -t[1]):
+            corto = ramo.replace("origin/claude/", "")
+            print(f"    {corto:40.40s} +{n:3d}  ultimo {ultimo}")
+        allarmi.append(f"{len(vivi)} rami vivi non uniti (il piu' avanti: +{max(n for _, n, _ in vivi)} commit)")
+    if fermi:
+        print(f"  {GRIGIO}fermi da oltre una settimana: {len(fermi)} "
+              f"({', '.join(r.replace('origin/claude/', '')[:22] for _, (r, _, _) in enumerate(fermi))}){FINE}")
     if not fetch:
         print(f"  {GRIGIO}(riferimenti locali — riesegui con --fetch per essere sicuro){FINE}")
 
@@ -245,6 +253,63 @@ def deposito() -> None:
     if g >= 2:
         print(f"  {GIALLO}Il Drive può essere cambiato da allora: elenca la cartella,{FINE}")
         print(f"  {GIALLO}non fidarti di questo file per sapere cosa c'è adesso.{FINE}")
+
+
+def serve_te() -> None:
+    """Solo cio' che un nodo NON puo' fare: chiavi, decisioni, mondo esterno.
+
+    Esiste perche' su questo progetto lavorano sei intelligenze e l'autore non
+    riesce piu' a distinguere cosa aspetta lui da cosa aspetta noi. Tutto il
+    resto lo fanno i nodi: qui restano solo le righe che hanno bisogno di una
+    persona con le credenziali, o di una decisione.
+    """
+    sezione("COSA SERVE DA TE — e nessun nodo puo' farlo al posto tuo")
+    voci: list[tuple[str, str]] = []
+
+    # 1. Il Core spento e' una chiave mancante, non un guasto.
+    daily = sorted(glob.glob(os.path.join("output", "daily_*.txt")))
+    if daily:
+        try:
+            testo = open(daily[-1], encoding="utf-8", errors="replace").read()
+        except OSError:
+            testo = ""
+        if "IL CORE È SPENTO" in testo or "CORE E' SPENTO" in testo:
+            voci.append((
+                "Incolla UNA chiave API nei secrets del repository",
+                "Settings > Secrets and variables > Actions > New secret\n"
+                "     nome GOOGLE_API_KEY (gratis su aistudio.google.com/apikey)\n"
+                "     Da domani il daily lo pensa un modello, e la run smette di essere rossa.",
+            ))
+
+    # 2. Contatti: la sola metrica che un nodo non puo' alimentare (§7).
+    p = os.path.join("output", "contatti.jsonl")
+    n = sum(1 for r in open(p, encoding="utf-8") if r.strip()) if os.path.exists(p) else 0
+    if n == 0:
+        voci.append((
+            "Guarda se qualcuno e' gia' passato",
+            "github.com/raffaellocantatelli/Rosso-rosso-rosso > Insights > Traffic\n"
+            "     GitHub conta visite e cloni da solo, retroattivo 14 giorni.\n"
+            "     E' un contatore esterno: se c'e' un numero, vale per H2.",
+        ))
+
+    # 3. I rami: quali vivono e quali muoiono e' una decisione, non un calcolo.
+    rami = [r for r in git("for-each-ref", "--format=%(refname:short)",
+                           "refs/remotes/origin").splitlines()
+            if r and not r.endswith("/HEAD")]
+    if len(rami) >= 5:
+        voci.append((
+            f"Decidi quali dei {len(rami)} rami tenere",
+            "Nessun nodo puo' deciderlo: due rami che dicono cose diverse\n"
+            "     restano ambigui finche' una persona non sceglie.",
+        ))
+
+    if not voci:
+        print(f"  {VERDE}niente. Il resto lo fanno i nodi.{FINE}\n")
+        return
+    for i, (titolo, come) in enumerate(voci, 1):
+        print(f"  {GIALLO}{i}.{FINE} {titolo}")
+        print(f"     {GRIGIO}{come}{FINE}")
+    print()
 
 
 def main() -> int:
@@ -265,10 +330,11 @@ def main() -> int:
     if allarmi:
         for a in allarmi:
             print(f"  {ROSSO}▸{FINE} {a}")
-        print()
-        return 1
-    print(f"  {VERDE}niente di scaduto o divergente.{FINE}\n")
-    return 0
+    else:
+        print(f"  {VERDE}niente di scaduto o divergente.{FINE}")
+
+    serve_te()
+    return 1 if allarmi else 0
 
 
 if __name__ == "__main__":
