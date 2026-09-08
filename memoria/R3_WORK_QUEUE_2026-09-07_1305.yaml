@@ -1,12 +1,12 @@
-# R3_WORK_QUEUE.yaml — canone pieno ciclo SYNC-2026-09-07-1610
-# Snapshot 1305, 0917, 1621, 1304, 0911 e precedenti conservati. Non cancellare gli storici.
+# R3_WORK_QUEUE.yaml — canone pieno ciclo SYNC-2026-09-07-1305
+# Snapshot 0917, 1621, 1304, 0911 e precedenti conservati. Non cancellare gli storici.
 
 meta:
-  cycle_id: SYNC-2026-09-07-1610
-  previous_cycle: SYNC-2026-09-07-1305
-  measured_at: 2026-09-07T14:10:00Z
+  cycle_id: SYNC-2026-09-07-1305
+  previous_cycle: SYNC-2026-09-07-0917
+  measured_at: 2026-09-07T11:05:00Z
   github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
-  github_default_sha_pre_push: 041b6b70f265a61efe239d90fff1acabef04749d
+  github_default_sha_pre_push: 8abcc4a71964bb705480b2c3ddc024150819f7e8
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: ebd7cb417e04a76755af6447521caaa63bb36979
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
@@ -17,27 +17,28 @@ meta:
 
 stato:
   daily_2026-09-06: PRESENTE_STUB_b47bf239_CORE_SPENTO
-  daily_2026-09-07: PRESENTE_STUB_95939038_CORE_SPENTO
+  daily_2026-09-07: ASSENTE_SUL_DEFAULT
   r3_019: BASELINE_0_NO_NEW_RUN
   contatti_jsonl: SIZE_0
   progetto_r3_md: ASSENTE_NON_CREATO
   prodotto_idee_ct_drive: PRESENTE_NON_PUBBLICARE
   sdq1_run_33: SUCCESS_ULTIMO_VERDE
-  sdq1_run_34_40: FAILURE
-  sdq1_run_40: PRESENTE_34125523230_FAILURE_2026-09-07T13:06:32Z
-  sdq1_daily_total_count: 40
-  sdq1_run_2026-09-07: PRESENTE_SCHEDULE_13:06:32Z
-  drive_delta_post_1305: NESSUN_FILE_NUOVO_MISURATO
+  sdq1_run_34_39: FAILURE
+  sdq1_run_39: PRESENTE_34030179612_FAILURE_2026-09-06T11:24:50Z
+  sdq1_daily_total_count: 39
+  sdq1_schedule_total_count: 36
+  sdq1_run_2026-09-07: ASSENTE_ALLE_11:05Z
+  drive_delta_post_0917: NESSUN_FILE_NUOVO_MISURATO
   camera_branch: INVARIATO_NON_UNITO_2b96150a
   telegram_branch: INVARIATO_NON_UNITO_ebd7cb41
   default_equals_new_session: false
   h_sync_0606_2: APERTA
+  h_sync_0606_3: CADUTA
   h_sync_0606_4: APERTA
-  h_sync_0607_1: CADUTA
-  h_sync_0607_2: CADUTA
+  h_sync_0607_1: APERTA
+  h_sync_0607_2: APERTA
   h_sync_0607_3: APERTA
-  h_sync_0707_1: CADUTA_SLITTAMENTO_CONFERMATO
-  h_sync_0707_2: APERTA
+  h_sync_0707_1: APERTA
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
 

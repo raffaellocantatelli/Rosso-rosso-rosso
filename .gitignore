@@ -22,3 +22,38 @@ creazioni/
 backup_sistema_rosso.json
 output/rlaif_decisioni.jsonl
 .pytest_cache/
+
+# occhio — l'inventario è materiale personale: cosa c'è dentro casa.
+# Questo repository è PUBBLICO (CLAUDE.md §2.5) e la decisione di pubblicare
+# è sempre e solo dell'autore. Il registro resta locale finché non è lui a
+# dire il contrario: nessun nodo estenda la scelta del 23/08 da solo.
+# Tutti i registri del prodotto, non solo l'inventario: le consegne portano
+# le firme dell'ospite, portavia i prezzi e chi ha comprato cosa, crediti i
+# saldi delle persone. Era ignorato solo inventario.jsonl — gli altri tre
+# sarebbero finiti in un repository PUBBLICO alla prima esecuzione vera.
+# Trovato durante una depurazione, non da un incidente.
+output/inventario*.jsonl
+output/consegne*.jsonl
+output/portavia*.jsonl
+output/crediti*.jsonl
+inventario*.csv
+capacita_privato*.json
+
+# occhio/privato — la parte che completa, e che non è pubblica.
+# Decisione dell'autore, 03/09/2026: pubblico ciò che il sistema SA FARE,
+# privato ciò che lo rende BRAVO (taratura della trattativa, prezzi, dati
+# d'uso, creatività del suggerimento). Non è una seconda copia del
+# programma (§6 regola 2): è un punto d'innesto dichiarato in occhio/voce.py.
+# Se manca, tutto funziona e il sistema dichiara che manca — non finge.
+occhio/privato/
+
+# La rassegna è append-only e va versionata: è la traccia delle risposte
+# arrivate dagli altri nodi, e serve proprio che sopravviva alla sessione.
+# (nessuna esclusione: elencata qui per dire che l'omissione è voluta)
+
+# `esempi/dimostrazione.py --qui` scrive qui: dati inventati, ma sono
+# comunque registri (inventario, consegne, vendite, saldi) e in questo
+# repository i registri non entrano — vedi sopra. Rigenerarli costa un
+# comando; averli versionati significherebbe che possono divergere dal
+# codice che li produce.
+dimostrazione/

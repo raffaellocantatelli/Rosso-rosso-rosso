@@ -1,0 +1,622 @@
+#!/usr/bin/env python3
+"""Riga di comando di `occhio`. Ogni riga stampata e' rieseguibile.
+
+Origine protetta: Claudio Terzi [CT-LGAI-001].
+
+    python -m occhio --check              # dice se l'occhio e' acceso e cosa manca
+    python -m occhio --serve              # apre l'interfaccia con la telecamera
+    python -m occhio --serve --senza-visione   # solo per provare la grafica
+    python -m occhio --foto scaffale.jpg  # legge un'immagine gia' scattata
+    python -m occhio --inventario         # cosa c'e' nel registro
+    python -m occhio --esporta out.csv
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+from . import inventario as inv
+from . import visione as vis
+
+
+def carica_env():
+    """Legge .env se c'e', senza sovrascrivere l'ambiente gia' impostato."""
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        f = Path(".env")
+        if f.exists():
+            import os
+            for riga in f.read_text(encoding="utf-8").splitlines():
+                riga = riga.strip()
+                if riga and not riga.startswith("#") and "=" in riga:
+                    k, _, v = riga.partition("=")
+                    os.environ.setdefault(k.strip(), v.strip())
+
+
+def check() -> int:
+    """Diagnostica. Codice 0 se un modello puo' davvero guardare, 2 se no."""
+    s = vis.stato()
+    print("occhio — stato\n")
+    for nome, ok in s["provider"].items():
+        print(f"  {nome:<12} {'disponibile' if ok else 'assente'}"
+              f"{'' if ok else '   -> ' + s['come_attivare'][nome]}")
+    registro = inv.Inventario()
+    print(f"\n  inventario: {registro.percorso} — {len(registro.voci)} oggetti")
+    if registro.voci:
+        for tipo, n in registro.per_tipo().items():
+            print(f"      {tipo:<12} {n}")
+    if registro.righe_illeggibili:
+        print(f"  ATTENZIONE: {registro.righe_illeggibili} righe illeggibili nel file")
+    if not s["attivo"]:
+        print("\n  L'OCCHIO E' CHIUSO: nessun modello di visione disponibile.")
+        print("  Senza provider `--serve` rifiuta di partire, invece di produrre")
+        print("  un inventario che sembra letto. Per provare solo la grafica:")
+        print("      python -m occhio --serve --senza-visione")
+        return 2
+    print(f"\n  L'OCCHIO E' APERTO — provider attivo: {s['attivo']}")
+    return 0
+
+
+def qualita(json_out=False) -> int:
+    """Quanto ci si puo' fidare di cio' che e' scritto nel registro.
+
+    E' la domanda che conta piu' di tutte le altre — «e' questione di
+    qualita' dell'informazione, non di controllo», Claudio Terzi, 5
+    settembre 2026 — e questa e' la meta' che si puo' rispondere senza una
+    chiave: quanto e' solido il registro. L'altra meta', quanti oggetti
+    veri finiscono scritti, la dice solo qualcuno che conta a mano.
+    """
+    registro = inv.Inventario()
+    q = registro.qualita()
+    if json_out:
+        print(json.dumps(q, ensure_ascii=False, indent=2))
+        return 0
+    if not q["totale"]:
+        print(f"{registro.percorso}: vuoto. Non c'e' ancora niente di cui fidarsi.")
+        return 0
+
+    print(f"QUALITA' DEL REGISTRO — {registro.percorso}\n")
+    solide, tot = q["solide"], q["totale"]
+    print(f"  {solide} voci su {tot} non hanno nessuna debolezza "
+          f"({solide / tot:.0%}).")
+    if q["confermate_a_mano"]:
+        print(f"  {q['confermate_a_mano']} confermate a mano da una persona.")
+    if q["righe_illeggibili"]:
+        print(f"  {q['righe_illeggibili']} righe illeggibili nel file.")
+
+    deboli = [d for d in q["debolezze"] if d["voci"]]
+    if deboli:
+        print("\n  cosa manca, e a quante voci:")
+        for d in sorted(deboli, key=lambda x: -x["voci"]):
+            print(f"\n  {d['voci']:>4} ({d['quota']:.0%})  {d['cosa']}")
+            print(f"        esempi: {', '.join(x for x in d['esempi'] if x)}")
+            print(f"        → {d['azione']}")
+
+    print("\n  Questa misura guarda il registro e basta: puo' migliorare")
+    print("  senza che nulla sia entrato dall'esterno. Dice di quali righe")
+    print("  fidarsi, NON che l'inventario somigli alla casa.")
+    print("\n  Il numero che manca, e che nessun comando puo' dare da solo:")
+    print("  quanti oggetti VERI finiscono scritti. Si ottiene fotografando")
+    print("  uno scaffale e contando a mano quanti oggetti ci sono dentro.")
+    return 0
+
+
+def mostra_inventario(json_out=False) -> int:
+    registro = inv.Inventario()
+    if json_out:
+        print(json.dumps({"oggetti": registro.voci, "totale": len(registro.voci)},
+                         ensure_ascii=False, indent=2))
+        return 0
+    if not registro.voci:
+        print(f"{registro.percorso}: vuoto. Nessun oggetto e' ancora stato letto.")
+        return 0
+    print(f"{registro.percorso} — {len(registro.voci)} oggetti\n")
+    for v in sorted(registro.voci, key=lambda x: (x.get("tipo", ""), x.get("titolo", ""))):
+        vis_n = v.get("avvistamenti", 1)
+        marchio = "  [umano]" if v.get("fonte") == "umano" else ""
+        print(f"  {v.get('tipo','altro'):<10} {v.get('titolo','')[:56]:<58}"
+              f" visto {vis_n}x{marchio}")
+    print()
+    for tipo, n in registro.per_tipo().items():
+        print(f"  {tipo:<12} {n}")
+    fusioni = registro.fusioni()
+    if fusioni:
+        print(f"\n  {len(fusioni)} voci su cui sono finiti titoli diversi:")
+        for v in fusioni:
+            print(f"    {v['chiave']:<28} {' / '.join(v['titoli_visti'])}")
+        print("  Se sono oggetti diversi, dai a uno un titolo che li distingua.")
+    return 0
+
+
+def leggi_foto(percorso: str, cascata, scrivi: bool, soglia: float) -> int:
+    """Legge un'immagine gia' scattata. E' la prova piu' economica che il
+    riconoscimento funziona, prima ancora di accendere la telecamera."""
+    p = Path(percorso)
+    if not p.is_file():
+        print(f"file non trovato: {p}", file=sys.stderr)
+        return 1
+    b64, mime = vis.da_file(p)
+    try:
+        esito = vis.leggi(b64, mime, cascata=cascata)
+    except vis.VisioneNonDisponibile as e:
+        print(f"L'OCCHIO E' CHIUSO: {e}", file=sys.stderr)
+        return 2
+    registro = inv.Inventario()
+    if esito["stub"]:
+        print("=" * 62)
+        print("  MODO STUB — nessun modello ha guardato. Oggetti finti.")
+        print("=" * 62)
+    print(f"provider: {esito['provider']} — {len(esito['oggetti'])} oggetti letti\n")
+    for o in esito["oggetti"]:
+        stato, _ = registro.riconosci(o["tipo"], o["titolo"])
+        segno = {"CATALOGATO": "verde", "RIVISTO": "verde", "NUOVO": "nuovo",
+                 "INCERTO": "ambra"}[stato]
+        print(f"  [{segno:<5}] {o['tipo']:<9} {o['titolo'][:48]:<50} conf {o['confidenza']:.2f}")
+        if scrivi and stato == "NUOVO" and o["confidenza"] >= soglia and not esito["stub"]:
+            registro.registra(o["tipo"], o["titolo"], testo_letto=o["testo_letto"],
+                              confidenza=o["confidenza"], fonte="foto")
+            print(f"           -> scritto in {registro.percorso}")
+    print(f"\ninventario: {len(registro.voci)} oggetti")
+    return 0
+
+
+def leggi_cartella(percorso, cascata, scrivi, soglia, limite) -> int:
+    """Il modo a fotografie: meno spesa, foto migliori, e niente https."""
+    from .cartella import percorri
+    try:
+        conti, registro = percorri(percorso, cascata=cascata, soglia=soglia,
+                                   scrivi=scrivi, limite=limite)
+    except NotADirectoryError as e:
+        print(f"non è una cartella: {e}", file=sys.stderr)
+        return 1
+    except vis.VisioneNonDisponibile as e:
+        print(f"L'OCCHIO È CHIUSO: {e}", file=sys.stderr)
+        return 2
+    print(f"\n  fotografie lette:  {conti['foto']}"
+          f"   (saltate perché già lette: {conti['saltate']})")
+    print(f"  oggetti letti:     {conti['letti']}")
+    print(f"  nuovi nel registro:{conti['nuovi']:>4}")
+    print(f"  già noti:          {conti['gia_noti']:>4}")
+    print(f"  incerti, scartati: {conti['incerti']:>4}   <- questi li perdi finché "
+          "non li confermi a mano")
+    if conti["errori"]:
+        print(f"  errori:            {conti['errori']:>4}")
+    print(f"\n  inventario: {len(registro.voci)} oggetti in "
+          f"{len(registro.per_luogo())} luoghi")
+    print("  la mappa:   python -m occhio --mappa mappa.html")
+    if conti["letti"]:
+        print(f"\n  Il numero che decide tutto è letti/presenti, e questo NON è "
+              "quello:\n  conta a mano gli oggetti in una di quelle foto e "
+              "confronta.")
+    return 0
+
+
+def _regole(a):
+    """Le regole del proprietario. Senza file, nulla e' in vendita."""
+    from .portavia import Regole
+    if not a.prezzi:
+        return Regole()
+    d = json.loads(Path(a.prezzi).read_text(encoding="utf-8"))
+    return Regole(prezzo_minimo=d.get("prezzo_minimo", {}),
+                  sconto_massimo=d.get("sconto_massimo", 0.15),
+                  commissione=d.get("commissione", 0.12),
+                  margine=d.get("margine", 0.25),
+                  mai=tuple(d.get("mai", ())),
+                  valuta=d.get("valuta", "EUR"),
+                  generi=d.get("generi", {}))
+
+
+def chiari(a) -> int:
+    """I CHIARI — idea di Claudio Terzi, 3 settembre 2026."""
+    from . import crediti as cd
+    c = cd.Crediti()
+
+    if a.accredita:
+        conto, quanti, riferimento = a.accredita
+        # La conversione sta qui e non nel libro: `Crediti` rifiuta le
+        # stringhe di proposito — un libro contabile che indovina il tipo di
+        # ciò che gli arriva è un libro che prima o poi indovina male.
+        try:
+            quanti = int(quanti)
+        except ValueError:
+            print(f"quantità non valida: {quanti!r} — serve un numero intero",
+                  file=sys.stderr)
+            return 1
+        try:
+            v = c.emetti(conto, quanti, a.causale, riferimento=riferimento)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            return 1
+        print(f"{v['quanti']} {cd.UNITA_PLURALE} a {conto} "
+              f"({cd.CAUSALI_EMISSIONE[a.causale]})")
+        print(f"  saldo: {c.saldo(conto)}")
+        return 0
+
+    if a.saldo:
+        n = c.saldo(a.saldo)
+        print(f"{a.saldo}: {n} {cd.UNITA_PLURALE if n != 1 else cd.UNITA}")
+        for m_ in c.estratto(a.saldo)[-8:]:
+            segno = "+" if m_.get("a") == a.saldo else "−"
+            print(f"  {m_['momento']}  {segno}{m_['quanti']:<4} {m_['causale']}"
+                  f"  {m_.get('riferimento','')[:40]}")
+        return 0
+
+    v = c.verifica()
+    print(f"libro dei chiari: {c.percorso}")
+    print(f"  conti: {v['conti']}   emessi: {v['emessi']}   spesi: {v['spesi']}"
+          f"   in circolo: {v['in_circolo']}")
+    print(f"  conservati: {'sì' if v['conservati'] else 'NO'}"
+          f"   saldi negativi: {len(v['saldi_negativi'])}")
+    if v["trasferibile"]:
+        print("\n  ATTENZIONE: il trasferimento fra persone è ACCESO.")
+        print("  Il circuito non è più chiuso: sei nel perimetro di moneta")
+        print("  elettronica e servizi di pagamento. Non è un interruttore")
+        print("  tecnico, è un'azienda diversa.")
+    else:
+        print("\n  circuito chiuso: i chiari non si trasferiscono fra persone")
+        print("  e non si convertono in denaro. È ciò che li tiene un buono")
+        print("  commerciale invece che moneta.")
+    if not v["conservati"] or v["saldi_negativi"]:
+        return 1
+    return 0
+
+
+def portavia(a) -> int:
+    """PORTAVIA — idea di Claudio Terzi, 3 settembre 2026."""
+    from .portavia import ACCETTA, Portavia, parole_del_mediatore, valuta_offerta
+    regole = _regole(a)
+    pv = Portavia(regole=regole)
+    registro = inv.Inventario()
+    per_chiave = {v["chiave"]: v for v in registro.voci}
+
+    if a.vetrina:
+        in_vendita = [(k, v) for k, v in per_chiave.items()
+                      if regole.vendibile(k, v.get("titolo", ""))[0]]
+        if not in_vendita:
+            print("Niente in vendita. Le regole si danno con --prezzi FILE.json:")
+            print('  {"prezzo_minimo": {"dvd:heat": 8.0}, "commissione": 0.12}')
+            print("Il minimo e' quello che incassi TU, netto.")
+            return 0
+        from .portavia import GENERI, NOMI_DEI_GENERI
+        print(f"VETRINA — {len(in_vendita)} voci, prezzi in {regole.valuta}\n")
+        # Tre banchi, non un elenco: cio' che esce di casa, cio' che si
+        # consuma e cio' che resta si comprano con la testa in tre modi
+        # diversi, e a fine soggiorno si leggono in tre modi diversi.
+        for genere in GENERI:
+            righe = [(k, v) for k, v in in_vendita if regole.genere(k) == genere]
+            if not righe:
+                continue
+            print(f"  {NOMI_DEI_GENERI[genere]} — {genere}")
+            print(f"  {'voce':<38} {'vedi':>8} {'minimo':>8} {'incassi':>8}")
+            print("  " + "-" * 66)
+            for k, v in sorted(righe, key=lambda x: x[1].get("titolo", "")):
+                e = regole.esposto(k)
+                print(f"  {v.get('titolo','')[:36]:<38} {e:>8.2f}"
+                      f" {regole.limite(k):>8.2f} {regole.incasso_proprietario(e):>8.2f}")
+            print()
+        print(f"  «vedi» e' il prezzo esposto all'ospite, «minimo» la piu' bassa")
+        print(f"  offerta accettabile. La commissione ({regole.commissione:.0%}) e' una")
+        print("  sola e va dichiarata a entrambe le parti.")
+        return 0
+
+    chiave, prezzo = (a.offerta or a.vendi)
+    titolo = per_chiave.get(chiave, {}).get("titolo", chiave)
+    try:
+        prezzo = float(prezzo)
+    except ValueError:
+        print("il prezzo dev'essere un numero", file=sys.stderr)
+        return 1
+
+    if a.offerta:
+        d = valuta_offerta(chiave, titolo, prezzo, regole)
+        print(parole_del_mediatore(d, titolo, regole))
+        if d["esito"] == ACCETTA:
+            print(f"\n  incasseresti {regole.incasso_proprietario(d['prezzo']):.2f} "
+                  f"{regole.valuta}. Per chiudere:")
+            print(f"    python -m occhio --vendi {chiave} {d['prezzo']}"
+                  + (f" --prezzi {a.prezzi}" if a.prezzi else ""))
+        return 0
+
+    d = valuta_offerta(chiave, titolo, prezzo, regole)
+    if d["esito"] != ACCETTA:
+        print(f"non si puo' vendere a questo prezzo: "
+              f"{d.get('motivo') or 'sotto il limite'}", file=sys.stderr)
+        return 1
+    from .portavia import ESPERIENZA, SPIEGA_ASSENZA
+    v = pv.vendita(chiave, titolo, prezzo, soggiorno=a.soggiorno,
+                   genere=a.genere)
+    print(f"venduto «{titolo}» a {v['prezzo']:.2f} {v['valuta']} "
+          f"({v['genere']})")
+    print(f"  commissione {v['commissione']:.2f} — a te {v['al_proprietario']:.2f}")
+    if SPIEGA_ASSENZA[v["genere"]]:
+        print("\n  Da adesso non risultera' piu' sparito: risultera' comprato.")
+    else:
+        print("\n  E' un'esperienza: l'oggetto resta in casa, quindi questa")
+        print("  vendita NON spieghera' nessuna assenza a fine soggiorno.")
+    return 0
+
+
+def consegne(a) -> int:
+    """Lo stato controfirmato di un alloggio: consegna, riconsegna, differenza."""
+    from .consegna import Consegne, differenza, stampa_differenza
+    c = Consegne()
+
+    if a.verifica_consegne:
+        v = c.verifica(a.codice)
+        print(f"catena: {c.percorso}")
+        print(f"  stati: {v['stati']}   controfirme: {v['controfirme']}")
+        print(f"  integra: {'sì' if v['catena_integra'] else 'NO'}")
+        for r in v["rotture"]:
+            print(f"    ROTTURA {r}")
+        if v["firme_non_valide"]:
+            print(f"  FIRME NON VALIDE con questo codice: {v['firme_non_valide']}")
+        if v["senza_controfirma"]:
+            print(f"\n  {len(v['senza_controfirma'])} stati SENZA controfirma:")
+            for x in v["senza_controfirma"]:
+                print(f"    {x['momento']}  {x['tipo']}  {x['alloggio']}")
+            print("\n  Una catena che una parte sola può rigenerare dimostra solo")
+            print("  di essere coerente con sé stessa. È la controfirma dell'altra")
+            print("  parte a renderla opponibile — non l'impronta.")
+        return 0 if v["catena_integra"] else 1
+
+    if a.controfirma:
+        if not a.codice:
+            print("serve --codice: la controfirma senza il codice del soggiorno "
+                  "non prova niente", file=sys.stderr)
+            return 1
+        try:
+            v = c.controfirma(a.controfirma, a.codice)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            return 1
+        print(f"controfirmato {a.controfirma[:16]}… il {v['momento']}")
+        return 0
+
+    if a.differenza:
+        prima = c.ultimo(a.differenza, "consegna")
+        dopo = c.ultimo(a.differenza, "riconsegna")
+        if not prima or not dopo:
+            print(f"servono una consegna e una riconsegna per {a.differenza}: "
+                  f"trovate {'consegna' if prima else '—'} / "
+                  f"{'riconsegna' if dopo else '—'}", file=sys.stderr)
+            return 1
+        d = differenza(prima, dopo)
+        print(stampa_differenza(d))
+        # PORTAVIA: cio' che e' stato comprato non e' sparito. E' il punto.
+        from .portavia import Portavia, spiega_mancanti
+        pv = Portavia(regole=_regole(a))
+        if pv.movimenti:
+            s = spiega_mancanti(d, pv, a.soggiorno or None)
+            print("\n— PORTAVIA —")
+            if s["comprati"]:
+                print(f"COMPRATI ({len(s['comprati'])}), non spariti:")
+                for o in s["comprati"]:
+                    print(f"    {o['titolo']}  →  {o['vendita']['prezzo']:.2f} "
+                          f"{o['vendita']['valuta']}")
+            if s["non_spiegati"]:
+                print(f"\nRESTANO NON SPIEGATI ({len(s['non_spiegati'])}):")
+                for o in s["non_spiegati"]:
+                    print(f"    {o['titolo']}")
+            i = s["incasso"]
+            print("\nincasso del soggiorno:")
+            for valuta, c in sorted(i["per_valuta"].items()):
+                print(f"    {c['lordo']:.2f} {valuta} lordi, "
+                      f"{c['al_proprietario']:.2f} a te")
+            if len(i.get("per_genere", {})) > 1:
+                from .portavia import NOMI_DEI_GENERI
+                print("  di cui, per genere:")
+                for genere, c in sorted(i["per_genere"].items()):
+                    print(f"    {NOMI_DEI_GENERI.get(genere, genere):<9} "
+                          f"{c['vendite']:>2} vendite, {c['lordo']:>8.2f} lordi")
+        return 0
+
+    alloggio = a.consegna or a.riconsegna
+    tipo = "consegna" if a.consegna else "riconsegna"
+    registro = inv.Inventario()
+    if not registro.voci:
+        print("l'inventario è vuoto: non c'è nessuno stato da consegnare.\n"
+              "  python -m occhio --cartella ~/foto", file=sys.stderr)
+        return 1
+    s = c.deposita(alloggio, tipo, registro.voci, soggiorno=a.soggiorno)
+    print(f"{tipo} di {alloggio}: {len(s['oggetti'])} oggetti")
+    print(f"  momento:  {s['momento']}")
+    print(f"  impronta: {s['impronta']}")
+    print(f"\n  NON è ancora controfirmato. Falla controfirmare all'ospite:")
+    print(f"    python -m occhio --controfirma {s['impronta']} --codice <codice>")
+    print("  Finché non lo è, questo stato dimostra solo che tu sei coerente")
+    print("  con te stesso — in una lite non basta.")
+    return 0
+
+
+def costruisci_parser() -> argparse.ArgumentParser:
+    """Il parser, separato da main() perche' `occhio.capacita` possa leggerlo.
+
+    Un elenco dei comandi scritto a mano diverge dal codice al primo comando
+    nuovo, e nessuno se ne accorge finche' non serve. Qui l'elenco si ricava
+    dal parser vero.
+    """
+    ap = argparse.ArgumentParser(
+        prog="python -m occhio",
+        description="Inventario di oggetti reali attraverso la telecamera. "
+                    "Origine protetta: Claudio Terzi [CT-LGAI-001].")
+    ap.add_argument("--check", action="store_true", help="dice se un modello puo' guardare")
+    ap.add_argument("--serve", action="store_true", help="apre l'interfaccia con la telecamera")
+    ap.add_argument("--foto", metavar="FILE", help="legge un'immagine gia' scattata")
+    ap.add_argument("--cartella", metavar="DIR",
+                    help="legge una cartella di fotografie; le sottocartelle "
+                         "dichiarano stanza/mobile/ripiano")
+    ap.add_argument("--mappa", metavar="FILE.html", nargs="?", const="-",
+                    help="dove sta cosa: a schermo, o in una pagina HTML se dai un file")
+    ap.add_argument("--limite", type=int, help="quante fotografie al massimo (per provare)")
+    ap.add_argument("--pianta", metavar="FILE.json",
+                    help="pianta stilizzata delle zone, da mostrare in cima alla mappa")
+    ap.add_argument("--pianta-modello", metavar="FILE.json",
+                    help="scrive una pianta di partenza dalle stanze dell inventario")
+    g = ap.add_argument_group("affitto breve — lo stato controfirmato")
+    g.add_argument("--consegna", metavar="ALLOGGIO",
+                   help="deposita lo stato attuale come consegna all ospite")
+    g.add_argument("--riconsegna", metavar="ALLOGGIO",
+                   help="deposita lo stato attuale come riconsegna")
+    g.add_argument("--controfirma", metavar="IMPRONTA",
+                   help="l altra parte dichiara di aver visto lo stesso stato")
+    g.add_argument("--codice", help="codice del soggiorno, noto a entrambe le parti")
+    g.add_argument("--soggiorno", default="", help="riferimento della prenotazione")
+    g.add_argument("--differenza", metavar="ALLOGGIO",
+                   help="cosa manca fra l ultima consegna e l ultima riconsegna")
+    g.add_argument("--verifica-consegne", action="store_true",
+                   help="ricalcola la catena e dice cosa non e controfirmato")
+    v = ap.add_argument_group("PORTAVIA — quello che ti piace, portalo via")
+    v.add_argument("--prezzi", metavar="FILE.json",
+                   help="regole del proprietario: minimi, sconto massimo, commissione")
+    v.add_argument("--vetrina", action="store_true",
+                   help="cosa e in vendita e a che prezzo lo vede l ospite")
+    v.add_argument("--offerta", nargs=2, metavar=("CHIAVE", "PREZZO"),
+                   help="l ospite offre: il Mediatore risponde secondo le regole")
+    v.add_argument("--genere", choices=("merce", "consumo", "esperienza"),
+                   help="che cosa stai vendendo: merce esce di casa (PORTAVIA), "
+                        "consumo finisce in casa (APRILA), esperienza resta "
+                        "dov'e' (RESTACI) e non spiega nessuna assenza. "
+                        "Senza, vale quello dichiarato in --prezzi, o merce.")
+    v.add_argument("--vendi", nargs=2, metavar=("CHIAVE", "PREZZO"),
+                   help="registra una vendita conclusa")
+    k = ap.add_argument_group("I CHIARI — pagare senza denaro, dentro il circuito")
+    k.add_argument("--saldo", metavar="CONTO", help="quanti chiari ha un conto")
+    k.add_argument("--libro", action="store_true",
+                   help="stato del libro dei chiari: emessi, spesi, in circolo")
+    k.add_argument("--accredita", nargs=3, metavar=("CONTO", "QUANTI", "RIFERIMENTO"),
+                   help="emette chiari contro un fatto avvenuto")
+    k.add_argument("--causale", default="vendita",
+                   help="causale dell emissione (vendita, soggiorno, lasciato, rimborso)")
+    ap.add_argument("--capacita", metavar="FILE.json", nargs="?", const="-",
+                    help="tutto cio che il sistema sa fare, generato dal codice")
+    ap.add_argument("--voce", metavar="FRASE",
+                    help="una domanda alla casa, come la diresti a voce")
+    ap.add_argument("--inventario", action="store_true", help="stampa il registro")
+    ap.add_argument("--qualita", action="store_true",
+                    help="quanto ci si puo' fidare di cio' che e' scritto: "
+                         "quali voci hanno una debolezza, e cosa si fa per toglierla")
+    ap.add_argument("--esporta", metavar="FILE.csv", help="esporta il registro in CSV")
+    ap.add_argument("--costo", action="store_true",
+                    help="quanto costa una passata, ricalcolato dai listini dichiarati")
+    ap.add_argument("--minuti", type=float, default=10.0, help="minuti di cammino per --costo")
+    ap.add_argument("--ritmo", type=float, default=2.5, help="secondi fra un fotogramma e l altro")
+    ap.add_argument("--modello", help="un solo modello per --costo (es. haiku-4.5)")
+    ap.add_argument("--json", action="store_true", help="uscita in JSON")
+    ap.add_argument("--senza-visione", action="store_true",
+                    help="usa lo stub: nessun modello guarda, oggetti finti, banner visibile")
+    ap.add_argument("--host", default="127.0.0.1")
+    ap.add_argument("--porta", type=int, default=8777)
+    ap.add_argument("--soglia", type=float, default=0.75,
+                    help="confidenza minima per scrivere senza conferma umana (default 0.75)")
+    ap.add_argument("--solo-lettura", action="store_true",
+                    help="non scrive niente: mostra soltanto cosa verrebbe scritto")
+    return ap
+
+
+def main(argv=None) -> int:
+    ap = costruisci_parser()
+    a = ap.parse_args(argv)
+
+    carica_env()
+    cascata = ("stub",) if a.senza_visione else vis.CASCATA
+
+    if a.costo:
+        from .costo import stampa
+        stampa(a.minuti, a.ritmo, a.modello)
+        return 0
+    if a.check:
+        return check()
+    if a.inventario:
+        return mostra_inventario(a.json)
+    if a.qualita:
+        return qualita(a.json)
+    if a.esporta:
+        Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
+        print(f"scritto {a.esporta}")
+        return 0
+    if a.capacita:
+        from .capacita import conta, genera
+        manifesto = genera()
+        testo = json.dumps(manifesto, ensure_ascii=False, indent=2)
+        if a.capacita == "-":
+            print(testo)
+        else:
+            Path(a.capacita).write_text(testo + "\n", encoding="utf-8")
+            c = conta(manifesto)
+            print(f"scritto {a.capacita}")
+            for k, v in c.items():
+                print(f"  {k:<16} {v}")
+            print("\n  Generato per introspezione: non modificarlo a mano.")
+        return 0
+    if a.saldo or a.libro or a.accredita:
+        return chiari(a)
+    if a.voce:
+        from . import voce as vc
+        regole = _regole(a) if a.prezzi else None
+        e = vc.rispondi(inv.Inventario(), a.voce, regole=regole)
+        print(f"[{e['intento']}] {e['testo_risposta']}")
+        if e["intento"] == vc.CUCINA and not vc.parte_privata_presente():
+            print("\n  (la parte creativa sta in occhio/privato/ — vedi "
+                  "INNESTO_PRIVATO.md)")
+        return 0
+    if a.vetrina or a.offerta or a.vendi:
+        return portavia(a)
+    if (a.consegna or a.riconsegna or a.controfirma or a.differenza
+            or a.verifica_consegne):
+        return consegne(a)
+    if a.pianta_modello:
+        from .planimetria import modello_da_inventario
+        modello = modello_da_inventario(inv.Inventario())
+        Path(a.pianta_modello).write_text(
+            json.dumps(modello, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"scritto {a.pianta_modello} — {len(modello['zone'])} zone.")
+        print("Aprilo e sposta i rettangoli finché somigliano alla casa:")
+        print("bastano le proporzioni, non serve la misura vera, non serve il LiDAR.")
+        return 0
+    if a.mappa:
+        from .cartella import mappa_html, mappa_testo
+        registro = inv.Inventario()
+        if a.mappa == "-":
+            print(mappa_testo(registro))
+        else:
+            pianta = None
+            if a.pianta:
+                from .planimetria import carica
+                pianta = carica(a.pianta)
+            Path(a.mappa).write_text(mappa_html(registro, pianta), encoding="utf-8")
+            print(f"scritto {a.mappa} — {len(registro.voci)} oggetti in "
+                  f"{len(registro.per_luogo())} luoghi")
+        return 0
+    if a.cartella:
+        return leggi_cartella(a.cartella, cascata, not a.solo_lettura,
+                              a.soglia, a.limite)
+    if a.foto:
+        return leggi_foto(a.foto, cascata, not a.solo_lettura, a.soglia)
+    if a.serve:
+        if not a.senza_visione and not vis.scegli():
+            print("L'OCCHIO E' CHIUSO: nessun provider di visione disponibile.\n"
+                  "Il server non parte, invece di mostrare un inventario che sembra letto.\n"
+                  "  chiavi:  " + "; ".join(f"{k} -> {v}" for k, v in vis.COME_ATTIVARE.items())
+                  + "\n  solo grafica:  python -m occhio --serve --senza-visione",
+                  file=sys.stderr)
+            return 2
+        from .server import avvia
+        pianta = None
+        if a.pianta:
+            from .planimetria import carica
+            pianta = carica(a.pianta)
+        avvia(a.host, a.porta, cascata=cascata,
+              autoscrittura=not a.solo_lettura, soglia=a.soglia, pianta=pianta)
+        return 0
+
+    ap.print_help()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

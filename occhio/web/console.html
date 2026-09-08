@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>console</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cg stroke='%232ee06a' stroke-width='54' stroke-linecap='round'%3E%3Cpath d='M96 200H222'/%3E%3Cpath d='M290 200H416'/%3E%3Cpath d='M96 312H222'/%3E%3Cpath d='M290 312H416'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="console.css">
+</head>
+<body>
+
+<div id="fascia" hidden></div>
+
+<header>
+  <a class="segno" href="/" title="apri la telecamera" aria-label="telecamera">
+    <svg viewBox="0 0 512 512" aria-hidden="true">
+      <path d="M96 200H222"/><path d="M290 200H416"/>
+      <path class="v" d="M96 312H222"/><path class="v" d="M290 312H416"/>
+    </svg>
+  </a>
+  <div class="chi">
+    <h1 id="alloggio">—</h1>
+    <p id="sottotitolo">console</p>
+  </div>
+  <div class="numeri">
+    <div class="n"><b id="n-oggetti">0</b><span>oggetti</span></div>
+    <div class="n"><b id="n-zone">0</b><span>zone</span></div>
+    <div class="n" id="box-manca"><b id="n-manca">0</b><span>non spiegati</span></div>
+    <div class="n" id="box-incasso"><b id="n-incasso">—</b><span>incasso</span></div>
+  </div>
+</header>
+
+<main>
+ <div class="colonna casa">
+  <section class="carta pianta">
+    <h2>La casa <em id="zona-scelta"></em></h2>
+    <div id="disegno"></div>
+    <p class="legenda">
+      <span><i class="q v"></i>verificata</span>
+      <span><i class="q a"></i>da fare</span>
+      <span><i class="q r"></i>qui manca</span>
+    </p>
+  </section>
+ </div>
+
+ <div class="colonna">
+  <section class="carta registro">
+    <h2>Il registro <em id="filtro-attivo"></em></h2>
+    <ul id="elenco"></ul>
+    <div id="fusioni" class="avviso ambra" hidden></div>
+  </section>
+ </div>
+
+ <div class="colonna">
+  <section class="carta">
+    <h2>La consegna</h2>
+    <ol class="linea" id="linea"></ol>
+    <div id="avviso-firma" class="avviso" hidden></div>
+    <div id="differenza"></div>
+  </section>
+
+  <section class="carta mercato">
+    <h2>Il mercato</h2>
+    <ul id="vendite"></ul>
+    <div id="chiari" class="chiari" hidden></div>
+  </section>
+ </div>
+</main>
+
+<footer>
+  <span id="stato-lettura">—</span>
+  <span class="sep">·</span>
+  <span>Origine protetta: Claudio Terzi [CT-LGAI-001]</span>
+</footer>
+
+<script src="console.js"></script>
+</body>
+</html>
