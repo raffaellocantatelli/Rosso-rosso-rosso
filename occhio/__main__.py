@@ -62,6 +62,55 @@ def check() -> int:
     return 0
 
 
+def decidi(a) -> int:
+    """Le decisioni che solo una persona puo' prendere sull'identita'.
+
+    Gli oggetti senza un titolo scritto sopra — un quadro, un orologio, un
+    candelabro — prendono il titolo che chi legge si inventa, e due letture
+    se lo inventano diverso. Qui una persona lo decide una volta, e da li'
+    in poi le altre descrizioni ci ricascano sopra invece di diventare
+    oggetti nuovi.
+    """
+    registro = inv.Inventario()
+    if a.da_confermare:
+        fuori = registro.da_ancorare()
+        if not fuori:
+            print("Niente da decidere: nessuna voce ambigua nel registro.")
+            return 0
+        print(f"{len(fuori)} voci vogliono una decisione tua:\n")
+        for v in fuori:
+            print(f"  {v['chiave']}")
+            print(f"      «{v.get('titolo','')}»"
+                  + (f"  (visti anche: {', '.join(v['titoli_visti'][1:])})"
+                     if len(v.get("titoli_visti", [])) > 1 else ""))
+            if v.get("simile_a"):
+                print(f"      somiglia a: {v['simile_a']}")
+        print("\n  --conferma CHIAVE \"Titolo definitivo\"   fissa il titolo")
+        print("  --uguale CHIAVE [ALTRA]                  sono la stessa cosa")
+        print("  --diversa CHIAVE                         sono due cose diverse")
+        return 0
+
+    try:
+        if a.conferma:
+            k, titolo = a.conferma
+            v = registro.ancora(k, titolo)
+            print(f"ancorato: «{v['titolo']}»"
+                  + (f"  alias: {', '.join(v['alias'])}" if v["alias"] else ""))
+        elif a.uguale:
+            k = a.uguale[0]
+            altra = a.uguale[1] if len(a.uguale) > 1 else ""
+            v = registro.uguale(k, altra)
+            print(f"unita: {k} → {v['ancora_a']}")
+            print(f"  ora il registro ha {len(registro.voci)} voci")
+        elif a.diversa:
+            registro.diversa(a.diversa)
+            print(f"segnata come oggetto a se': {a.diversa}")
+    except (KeyError, ValueError) as e:
+        print(str(e), file=sys.stderr)
+        return 1
+    return 0
+
+
 def qualita(json_out=False) -> int:
     """Quanto ci si puo' fidare di cio' che e' scritto nel registro.
 
@@ -497,6 +546,17 @@ def costruisci_parser() -> argparse.ArgumentParser:
     ap.add_argument("--voce", metavar="FRASE",
                     help="una domanda alla casa, come la diresti a voce")
     ap.add_argument("--inventario", action="store_true", help="stampa il registro")
+    ap.add_argument("--da-confermare", action="store_true",
+                    help="le voci che vogliono una decisione tua sull'identita'")
+    ap.add_argument("--conferma", nargs=2, metavar=("CHIAVE", "TITOLO"),
+                    help="fissa il titolo definitivo di un oggetto: da li' in "
+                         "poi le altre descrizioni gli ricascano sopra")
+    ap.add_argument("--uguale", nargs="+", metavar="CHIAVE",
+                    help="«sono la stessa cosa»: unisce una voce doppia "
+                         "all'oggetto ancorato (la seconda chiave e' opzionale)")
+    ap.add_argument("--diversa", metavar="CHIAVE",
+                    help="«sono due cose diverse»: la voce resta e non lo "
+                         "chiede piu'")
     ap.add_argument("--qualita", action="store_true",
                     help="quanto ci si puo' fidare di cio' che e' scritto: "
                          "quali voci hanno una debolezza, e cosa si fa per toglierla")
@@ -535,6 +595,8 @@ def main(argv=None) -> int:
         return mostra_inventario(a.json)
     if a.qualita:
         return qualita(a.json)
+    if a.da_confermare or a.conferma or a.uguale or a.diversa:
+        return decidi(a)
     if a.esporta:
         Path(a.esporta).write_text(inv.Inventario().csv(), encoding="utf-8")
         print(f"scritto {a.esporta}")

@@ -1757,3 +1757,103 @@ def test_ce_con_un_filtro_vero_puo_elencare(casa):
 def test_ce_non_ruba_le_domande_a_dove(casa):
     e = vc.rispondi(casa, "dov'è il phon")
     assert e["intento"] == vc.DOVE
+
+
+# --------------------------------------------------------------------------
+# gli oggetti senza titolo: l'ancora e la rete di sicurezza (08/09)
+# --------------------------------------------------------------------------
+
+def _salotto(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("orologio", "Orologio da mensola scuro", fonte="foto",
+               confidenza=0.6, luogo={"stanza": "salotto"}, foto_sha="a" * 64)
+    return r
+
+
+def test_una_descrizione_diversa_creava_un_oggetto_fantasma(tmp_path):
+    """Il difetto, prima del rimedio: su una fotografia vera 18 oggetti
+    diventavano 19 riscrivendo «orologio da mensola» come «da tavolo».
+    Senza ancora la rete non scatta, ed è giusto: nessuno ha ancora detto
+    quale sia l'oggetto vero."""
+    r = _salotto(tmp_path)
+    r.registra("orologio", "Orologio da tavolo scuro", fonte="foto",
+               confidenza=0.6, luogo={"stanza": "salotto"}, foto_sha="b" * 64)
+    assert len(r.voci) == 2
+
+
+def test_dopo_l_ancora_la_seconda_descrizione_non_e_piu_automatica(tmp_path):
+    """La rete non fonde da sola: dichiara INCERTO e indica a chi somiglia.
+    Non fondere in silenzio e non separare in silenzio sono la stessa regola."""
+    r = _salotto(tmp_path)
+    r.ancora("orologio:orologio da mensola scuro", "Orologio a pendolo del nonno")
+    stato, simile = r.riconosci("orologio", "Orologio da tavolo scuro",
+                                luogo={"stanza": "salotto"})
+    assert stato == "INCERTO"
+    assert simile["titolo"] == "Orologio a pendolo del nonno"
+
+
+def test_uguale_riporta_il_registro_al_numero_giusto(tmp_path):
+    r = _salotto(tmp_path)
+    r.ancora("orologio:orologio da mensola scuro", "Orologio a pendolo del nonno")
+    r.registra("orologio", "Orologio da tavolo scuro", fonte="foto",
+               confidenza=0.6, luogo={"stanza": "salotto"}, foto_sha="b" * 64)
+    assert len(r.voci) == 2
+    r.uguale("orologio:orologio da tavolo scuro")
+    assert len(r.voci) == 1
+    assert "Orologio da tavolo scuro" in r.voci[0]["alias"]
+
+
+def test_la_decisione_sopravvive_alla_rilettura(tmp_path):
+    """Se la decisione vivesse solo in memoria non sarebbe una decisione."""
+    p = tmp_path / "i.jsonl"
+    r = inv.Inventario(p)
+    r.registra("orologio", "Orologio da mensola scuro", fonte="foto",
+               confidenza=0.6, luogo={"stanza": "salotto"}, foto_sha="a" * 64)
+    r.ancora("orologio:orologio da mensola scuro", "Orologio a pendolo del nonno")
+    r.registra("orologio", "Orologio da tavolo scuro", fonte="foto",
+               confidenza=0.6, luogo={"stanza": "salotto"}, foto_sha="b" * 64)
+    r.uguale("orologio:orologio da tavolo scuro")
+    riletto = inv.Inventario(p)
+    assert len(riletto.voci) == 1
+    assert riletto.voci[0]["titolo"] == "Orologio a pendolo del nonno"
+
+
+def test_un_alias_ritrova_l_oggetto_senza_chiedere_niente(tmp_path):
+    """Il punto di tutto: dopo la decisione, la stessa descrizione ricasca
+    da sola sull'ancora invece di ridiventare un oggetto nuovo."""
+    r = _salotto(tmp_path)
+    r.ancora("orologio:orologio da mensola scuro", "Orologio a pendolo del nonno")
+    stato, voce = r.riconosci("orologio", "Orologio da mensola scuro")
+    assert stato == "CATALOGATO" and voce["titolo"] == "Orologio a pendolo del nonno"
+
+
+def test_diversa_smette_di_chiederlo(tmp_path):
+    """Due quadri diversi nella stessa stanza esistono davvero: la rete non
+    deve trasformarli in un fastidio permanente."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    L = {"stanza": "salotto"}
+    r.registra("quadro", "Ritratto donna anziana", fonte="foto",
+               confidenza=0.6, luogo=L, foto_sha="a" * 64)
+    r.ancora("quadro:ritratto donna anziana", "Vecchia con la candela")
+    r.registra("quadro", "Natura morta con frutta", fonte="foto",
+               confidenza=0.6, luogo=L, foto_sha="b" * 64)
+    doppia = r._per_chiave["quadro:natura morta con frutta"]
+    assert "da_decidere" in r.debolezze(doppia)
+    r.diversa("quadro:natura morta con frutta")
+    assert "da_decidere" not in r.debolezze(r._per_chiave["quadro:natura morta con frutta"])
+    assert len(r.voci) == 2
+
+
+def test_la_rete_non_scatta_fra_zone_diverse(tmp_path):
+    """Un orologio in cucina non è l'orologio del salotto."""
+    r = _salotto(tmp_path)
+    r.ancora("orologio:orologio da mensola scuro", "Orologio a pendolo del nonno")
+    stato, _ = r.riconosci("orologio", "Orologio da tavolo scuro",
+                           luogo={"stanza": "cucina"})
+    assert stato == "NUOVO"
+
+
+def test_ancorare_una_chiave_che_non_esiste_fallisce(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    with pytest.raises(KeyError):
+        r.ancora("orologio:mai visto", "Qualcosa")

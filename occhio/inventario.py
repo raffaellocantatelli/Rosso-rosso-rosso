@@ -194,6 +194,52 @@ class Inventario:
                 if titolo not in visti:
                     visti.append(titolo)
             return
+        # ANCORA — una persona dichiara qual e' il titolo definitivo di un
+        # oggetto e quali descrizioni sono la stessa cosa. Serve agli oggetti
+        # SENZA titolo scritto sopra: un quadro, un orologio, un candelabro.
+        # Li' il titolo lo inventa chi legge, e due letture lo inventano
+        # diverso — un oggetto fantasma che a fine soggiorno risulta mancante.
+        # Verificato il 07/09 su una fotografia vera: 18 oggetti diventavano
+        # 19 riscrivendo «orologio da mensola» come «orologio da tavolo».
+        if voce.get("evento") == "ancora":
+            bersaglio = self._per_chiave.get(voce.get("ancora_a"))
+            if bersaglio is not None:
+                if voce.get("titolo"):
+                    bersaglio["titolo"] = voce["titolo"]
+                bersaglio["confermato"] = True
+                bersaglio["fonte"] = "umano"
+                for a in voce.get("alias", []):
+                    if a and a not in bersaglio.setdefault("alias", []):
+                        bersaglio["alias"].append(a)
+                self._indicizza(bersaglio)
+            return
+        # DECISIONE su un «da decidere»: la stessa cosa (l'alias va
+        # sull'ancora e la voce doppia sparisce dalla vista) o due cose
+        # diverse (la voce resta, e non lo chiede piu').
+        if voce.get("evento") in ("uguale", "diversa"):
+            doppia = self._per_chiave.get(voce.get("su"))
+            if doppia is None:
+                return
+            if voce["evento"] == "diversa":
+                doppia["deciso"] = True
+                return
+            ancora = self._per_chiave.get(voce.get("ancora_a")) or \
+                self._per_chiave.get(doppia.get("simile_a"))
+            if ancora is None or ancora is doppia:
+                return
+            for t in doppia.get("titoli_visti", []) or [doppia.get("titolo")]:
+                if t and t not in ancora.setdefault("alias", []):
+                    ancora["alias"].append(t)
+            for l in doppia.get("luoghi", []):
+                if l not in ancora.setdefault("luoghi", []):
+                    ancora["luoghi"].append(l)
+            ancora["avvistamenti"] = ancora.get("avvistamenti", 1) + \
+                doppia.get("avvistamenti", 1)
+            self.voci = [v for v in self.voci if v is not doppia]
+            self._per_chiave = {k: v for k, v in self._per_chiave.items()
+                                if v is not doppia}
+            self._indicizza(ancora)
+            return
         if voce.get("foto_sha"):
             self.foto_lette.add(voce["foto_sha"])
         voce.setdefault("avvistamenti", 1)
@@ -202,19 +248,34 @@ class Inventario:
         voce.setdefault("titoli_visti",
                         [voce["titolo"]] if voce.get("titolo") else [])
         self.voci.append(voce)
-        if k:
-            self._per_chiave[k] = voce
+        self._indicizza(voce)
+
+    def _indicizza(self, voce: dict) -> None:
+        """La voce sotto la sua chiave e sotto quelle dei suoi alias.
+
+        E' cosi' che una descrizione diversa dello stesso oggetto ci
+        ricasca sopra invece di diventare una voce nuova.
+        """
+        if voce.get("chiave"):
+            self._per_chiave[voce["chiave"]] = voce
+        for a in voce.get("alias", []):
+            ka = chiave(voce.get("tipo", ""), a)
+            if ka:
+                self._per_chiave.setdefault(ka, voce)
 
     # -- riconoscimento ---------------------------------------------------
 
-    def riconosci(self, tipo: str, titolo: str, impronta: str | None = None) -> tuple[str, dict | None]:
+    def riconosci(self, tipo: str, titolo: str, impronta: str | None = None,
+                  luogo: dict | None = None) -> tuple[str, dict | None]:
         """Dice se un oggetto letto adesso e' gia' nel registro.
 
         Ritorna `(stato, voce)` dove stato e':
           - `CATALOGATO`  la chiave testuale coincide  -> verde
           - `RIVISTO`     l'impronta coincide, il titolo no -> verde chiaro
           - `NUOVO`       ha una chiave e non e' nel registro -> da scrivere
-          - `INCERTO`     nessuna chiave utilizzabile -> ambra, mai automatico
+          - `INCERTO`     nessuna chiave utilizzabile, **oppure** un oggetto
+                          ancorato dello stesso tipo sta gia' in quella zona
+                          -> ambra, mai automatico
 
         Nessuno di questi stati dipende da cosa e' successo nella sessione
         corrente: dipende solo dal contenuto del file. Riavviando il server
@@ -229,9 +290,35 @@ class Inventario:
                 for imp in voce.get("impronte", []):
                     if distanza_impronta(impronta, imp) <= SOGLIA_IMPRONTA:
                         return ("CATALOGATO" if k and voce.get("chiave") == k else "RIVISTO"), voce
+        # RETE DI SICUREZZA (05-08/09). Un oggetto ancorato da una persona
+        # dello stesso tipo, nella stessa zona, e' quasi sempre lo stesso
+        # oggetto descritto in un altro modo. «Quasi» non basta per fondere
+        # da solo: si dichiara INCERTO e decide qualcuno. Non fondere in
+        # silenzio e non separare in silenzio sono la stessa regola.
+        vicino = self._ancorato_nella_zona(tipo, luogo)
+        if vicino is not None:
+            return "INCERTO", vicino
         if k:
             return "NUOVO", None
         return "INCERTO", None
+
+    @staticmethod
+    def _zona(luogo) -> str | None:
+        if not luogo:
+            return None
+        return (_etichetta(luogo).split(" › ") or [None])[0] or None
+
+    def _ancorato_nella_zona(self, tipo: str, luogo) -> dict | None:
+        zona = self._zona(luogo)
+        if not zona:
+            return None
+        t = normalizza(tipo) or "altro"
+        for voce in self.voci:
+            if not voce.get("confermato") or (voce.get("tipo") or "altro") != t:
+                continue
+            if any(self._zona(l) == zona for l in (voce.get("luoghi") or [])):
+                return voce
+        return None
 
     # -- scrittura --------------------------------------------------------
 
@@ -252,7 +339,7 @@ class Inventario:
                 f"titolo non identificante: {titolo!r}. "
                 "Serve una conferma umana (--conferma) o una lettura migliore."
             )
-        stato, esistente = self.riconosci(tipo, titolo, impronta)
+        stato, esistente = self.riconosci(tipo, titolo, impronta, luogo)
         ora = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
         voce = {
             "chiave": k,
@@ -266,6 +353,10 @@ class Inventario:
             "visto_primo": ora if stato == "NUOVO" else (esistente or {}).get("visto_primo", ora),
             "visto_ultimo": ora,
             "evento": "nuovo" if stato == "NUOVO" else "avvistamento",
+            # Somiglia a un oggetto che una persona ha gia' ancorato qui:
+            # si scrive lo stesso — non si perde mai un dato — ma resta
+            # marchiato finche' qualcuno non dice se sono la stessa cosa.
+            "simile_a": (esistente or {}).get("chiave") if stato == "INCERTO" else None,
             # Il luogo e' DICHIARATO, mai dedotto da una coordinata: dentro
             # casa il GPS ha un errore piu' grande della casa (H7). Vedi
             # occhio/luogo.py e falsificatori/h7_gps_stanze.py.
@@ -317,6 +408,8 @@ class Inventario:
          "dai a uno un titolo che lo distingua"),
         ("senza_foto", "nessuna fotografia la sostiene",
          "rifotografala: senza impronta non c'e' niente da mostrare a nessuno"),
+        ("da_decidere", "somiglia a un oggetto gia' ancorato nella stessa zona",
+         "python -m occhio --uguale CHIAVE ALTRA-CHIAVE, oppure --diversa CHIAVE"),
     )
 
     def debolezze(self, voce: dict, soglia_confidenza: float = 0.7) -> list[str]:
@@ -335,6 +428,8 @@ class Inventario:
             d.append("fusa")
         if not voce.get("foto_sha"):
             d.append("senza_foto")
+        if voce.get("simile_a") and not voce.get("deciso"):
+            d.append("da_decidere")
         return d
 
     def qualita(self, soglia_confidenza: float = 0.7) -> dict:
@@ -372,6 +467,76 @@ class Inventario:
                 for nome, cosa, azione in self.DEBOLEZZE
             ],
         }
+
+    # -- le decisioni di una persona --------------------------------------
+
+    def _evento(self, voce: dict) -> dict:
+        self.percorso.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.percorso, "a", encoding="utf-8") as f:
+            f.write(json.dumps(voce, ensure_ascii=False) + "\n")
+        self._assorbi(dict(voce))
+        return voce
+
+    def ancora(self, chiave_voce: str, titolo: str = "") -> dict:
+        """Una persona dichiara il titolo definitivo di un oggetto.
+
+        Da qui in poi quella voce e' un'ancora: le descrizioni che le
+        finiscono sopra diventano alias invece di oggetti nuovi.
+        """
+        voce = self._per_chiave.get(chiave_voce)
+        if voce is None:
+            raise KeyError(f"nessuna voce con chiave {chiave_voce!r}")
+        alias = [t for t in voce.get("titoli_visti", []) if t != titolo]
+        if voce.get("titolo") and voce["titolo"] != titolo:
+            alias.append(voce["titolo"])
+        return self._evento({
+            "evento": "ancora", "ancora_a": chiave_voce,
+            "titolo": (titolo or voce.get("titolo", "")).strip(),
+            "alias": sorted(set(a for a in alias if a)),
+            "fonte": "umano",
+            "visto_ultimo": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        })
+
+    def uguale(self, chiave_doppia: str, chiave_ancora: str = "") -> dict:
+        """«Sono la stessa cosa»: la doppia diventa un alias dell'ancora."""
+        doppia = self._per_chiave.get(chiave_doppia)
+        if doppia is None:
+            raise KeyError(f"nessuna voce con chiave {chiave_doppia!r}")
+        bersaglio = chiave_ancora or doppia.get("simile_a")
+        if not bersaglio:
+            raise ValueError("non so a quale oggetto unirla: indica la chiave")
+        return self._evento({
+            "evento": "uguale", "su": chiave_doppia, "ancora_a": bersaglio,
+            "fonte": "umano",
+            "visto_ultimo": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        })
+
+    def diversa(self, chiave_voce: str) -> dict:
+        """«Sono due cose diverse»: la voce resta e non lo chiede piu'."""
+        if chiave_voce not in self._per_chiave:
+            raise KeyError(f"nessuna voce con chiave {chiave_voce!r}")
+        return self._evento({
+            "evento": "diversa", "su": chiave_voce, "fonte": "umano",
+            "visto_ultimo": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        })
+
+    def da_ancorare(self) -> list[dict]:
+        """Le voci che meritano un titolo deciso da una persona.
+
+        Non tutte: quelle senza un titolo stabile per natura — nessuna
+        scritta sopra da leggere — riconosciute dal fatto che il modello non
+        era sicuro o che la voce non e' ancora ancorata e ha gia' preso piu'
+        di un titolo.
+        """
+        fuori = []
+        for v in self.voci:
+            if v.get("confermato"):
+                continue
+            c = v.get("confidenza")
+            incerta = isinstance(c, (int, float)) and c < 0.7
+            if incerta or len(v.get("titoli_visti", [])) > 1 or v.get("simile_a"):
+                fuori.append(v)
+        return fuori
 
     def per_tipo(self) -> dict[str, int]:
         conteggio: dict[str, int] = {}

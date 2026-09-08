@@ -22,7 +22,7 @@
   ],
   "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
   "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
-  "generato": "2026-09-05T19:59:45Z",
+  "generato": "2026-09-08T17:17:34Z",
   "generato_da": "python -m occhio --capacita",
   "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
   "moduli": {
@@ -36,6 +36,11 @@
           "descrizione": "Vista in memoria di un file append-only. Si ricostruisce rileggendolo.",
           "metodi": [
             {
+              "nome": "ancora",
+              "firma": "(self, chiave_voce: 'str', titolo: 'str' = '') -> 'dict'",
+              "descrizione": "Una persona dichiara il titolo definitivo di un oggetto."
+            },
+            {
               "nome": "carica",
               "firma": "(self) -> 'int'",
               "descrizione": "Rilegge il file da zero. Righe illeggibili contate, non silenziate."
@@ -46,9 +51,19 @@
               "descrizione": ""
             },
             {
+              "nome": "da_ancorare",
+              "firma": "(self) -> 'list[dict]'",
+              "descrizione": "Le voci che meritano un titolo deciso da una persona."
+            },
+            {
               "nome": "debolezze",
               "firma": "(self, voce: 'dict', soglia_confidenza: 'float' = 0.7) -> 'list[str]'",
               "descrizione": "Le debolezze di UNA voce. Sono fatti sul dato, non giudizi."
+            },
+            {
+              "nome": "diversa",
+              "firma": "(self, chiave_voce: 'str') -> 'dict'",
+              "descrizione": "«Sono due cose diverse»: la voce resta e non lo chiede piu'."
             },
             {
               "nome": "fusioni",
@@ -77,8 +92,13 @@
             },
             {
               "nome": "riconosci",
-              "firma": "(self, tipo: 'str', titolo: 'str', impronta: 'str | None' = None) -> 'tuple[str, dict | None]'",
+              "firma": "(self, tipo: 'str', titolo: 'str', impronta: 'str | None' = None, luogo: 'dict | None' = None) -> 'tuple[str, dict | None]'",
               "descrizione": "Dice se un oggetto letto adesso e' gia' nel registro."
+            },
+            {
+              "nome": "uguale",
+              "firma": "(self, chiave_doppia: 'str', chiave_ancora: 'str' = '') -> 'dict'",
+              "descrizione": "«Sono la stessa cosa»: la doppia diventa un alias dell'ancora."
             }
           ]
         },
@@ -1009,6 +1029,41 @@
       "aiuto": "stampa il registro"
     },
     {
+      "opzione": "--da-confermare",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": false,
+      "aiuto": "le voci che vogliono una decisione tua sull'identita'"
+    },
+    {
+      "opzione": "--conferma",
+      "gruppo": "options",
+      "argomenti": [
+        "CHIAVE",
+        "TITOLO"
+      ],
+      "predefinito": null,
+      "aiuto": "fissa il titolo definitivo di un oggetto: da li' in poi le altre descrizioni gli ricascano sopra"
+    },
+    {
+      "opzione": "--uguale",
+      "gruppo": "options",
+      "argomenti": [
+        "CHIAVE"
+      ],
+      "predefinito": null,
+      "aiuto": "«sono la stessa cosa»: unisce una voce doppia all'oggetto ancorato (la seconda chiave e' opzionale)"
+    },
+    {
+      "opzione": "--diversa",
+      "gruppo": "options",
+      "argomenti": [
+        "CHIAVE"
+      ],
+      "predefinito": null,
+      "aiuto": "«sono due cose diverse»: la voce resta e non lo chiede piu'"
+    },
+    {
       "opzione": "--qualita",
       "gruppo": "options",
       "argomenti": [],
@@ -1106,6 +1161,7 @@
         "impronta",
         "luogo",
         "note",
+        "simile_a",
         "stato",
         "testo_letto",
         "tipo",
