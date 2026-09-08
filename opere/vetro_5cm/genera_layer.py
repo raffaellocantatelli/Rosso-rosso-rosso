@@ -10,6 +10,8 @@ USCITE
   uscita/*.png               anteprime e sequenza di movimento
 
 DECISIONE DI MONTAGGIO (e' la piu' importante del progetto)
+  Il plexi e' sovradimensionato di 18 mm per lato: TRE PASSI ESATTI, non un
+  numero tondo in millimetri (vedi MARGINE piu' sotto).
   I due file hanno lo STESSO passo e nessuna rotazione impressa. L'angolo
   alpha si da' RUOTANDO LA LASTRA DI PLEXI dietro, non il vetro:
     - il vetro resta a squadro, e i suoi bordi restano paralleli al muro;
@@ -41,6 +43,15 @@ import numpy as np
 from ottica import Progetto
 import viso as viso_mod
 
+# Margine del pannello di plexi, per lato. NON e' un numero tondo scelto a
+# caso: e' 3 passi esatti (3 x 6,00 mm). Il reticolo della lastra dietro sta
+# a (i+0.5)*passo - margine; se il margine non e' un multiplo intero del
+# passo, quel reticolo cade sfasato rispetto a quello del vetro di
+# (margine mod passo). Con 15 mm lo sfasamento vale mezza cella, e mezza
+# cella INVERTE il moire'. Qui il margine e' commensurabile e il problema
+# non esiste - ne' nei file, ne' al montaggio.
+MARGINE = 18.0
+
 QUI = os.path.dirname(os.path.abspath(__file__))
 USCITA = os.path.join(QUI, "uscita")
 
@@ -62,7 +73,7 @@ def centri(larghezza, altezza, passo, margine=0.0):
 
 
 # ------------------------------------------------------------- retino AM
-def retino_viso(prog, densita_fn=None, margine=15.0, seed=11,
+def retino_viso(prog, densita_fn=None, margine=MARGINE, seed=11,
                 dissolvenza=True, precompensa=True):
     """Retino AM del viso sulla lastra di plexi (che al montaggio sara'
     ruotata di alpha). Restituisce (X, Y, DIAM) come array 2D (ny, nx) nelle
@@ -101,7 +112,7 @@ def retino_viso(prog, densita_fn=None, margine=15.0, seed=11,
         rng = np.random.default_rng(seed)
         p_viva = viso_mod.rampa_identita(w_px, h_px)[0][ix]
         d_fondo = 2.0 * prog.passo * math.sqrt(fondo / math.pi)
-        diam = np.where(rng.random(diam.shape) < (0.22 + 0.78 * p_viva),
+        diam = np.where(rng.random(diam.shape) < (0.42 + 0.58 * p_viva),
                         diam, d_fondo)
 
     return X, Y, diam
@@ -133,7 +144,7 @@ def _crocini(larghezza, altezza, margine, passo_tacche=None):
     return "\n".join(p)
 
 
-def svg_vetro(prog, path=None, margine=15.0):
+def svg_vetro(prog, path=None, margine=MARGINE):
     """Faccia 2 del vetro: reticolo regolare di punti neri opachi.
     Il pannello e' a misura esatta: e' il vetro a definire l'area visibile."""
     path = path or os.path.join(USCITA, "vetro_griglia.svg")
@@ -150,7 +161,7 @@ def svg_vetro(prog, path=None, margine=15.0):
                 f"R3 vetro - reticolo p={prog.passo}mm d={prog.diam_griglia}mm")
 
 
-def svg_plexi(prog, path=None, margine=15.0, **kw):
+def svg_plexi(prog, path=None, margine=MARGINE, **kw):
     """Seconda superficie del plexi: il viso a retino, su pannello
     sovradimensionato di `margine` per lato (serve alla rotazione)."""
     path = path or os.path.join(USCITA, "plexi_viso.svg")
@@ -228,7 +239,7 @@ def _copertura_viso(shape, res, prog, diam, margine, off_x=0.0):
 class Scena:
     """Il composito dei due strati, simulato in coordinate del piano dietro."""
 
-    def __init__(self, prog, res=4.0, margine=15.0, **kw_retino):
+    def __init__(self, prog, res=4.0, margine=MARGINE, **kw_retino):
         self.prog = prog
         self.res = res
         self.margine = margine

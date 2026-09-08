@@ -23,26 +23,35 @@ da uno sbagliato.
 
 | | |
 |---|---|
-| `SPECIFICA_TECNICA.md` | **quello che va allo stampatore e al montatore.** Materiali, tolleranze, angolo, luce, collaudo |
+|  `PROGETTO_DEFINITIVO.md` | **quello che va allo stampatore e al montatore.** Materiali, tolleranze, angolo, luce, collaudo |
 | `ottica.py` | la fisica: parallasse con rifrazione, moiré da vettore d'onda esatto, Fresnel. Nessun numero del progetto nasce altrove |
 | `viso.py` | il viso come superficie 3D illuminata, non come disegno. Accetta anche una fotografia |
 | `genera_layer.py` | i due file di stampa in SVG 1:1 e il compositore fisico |
 | `verifica_ottica.py` | **il falsificatore.** Rende i due strati pixel per pixel e misura il moiré |
+| `video.py` | il video dell'effetto + la verifica incrociata fra i due renderer |
 | `simulatore.html` | il banco interattivo: muovi il puntatore, o inclina il telefono |
 | `uscita/vetro_griglia.svg` | 600 × 800 mm — 13.400 punti Ø 4,20 mm |
-| `uscita/plexi_viso.svg` | 630 × 830 mm — 14.595 punti, Ø 0,47–5,91 mm |
+| `uscita/plexi_viso.svg` | 636 × 836 mm — 14.840 punti, Ø 0,47–5,92 mm |
+| `uscita/effetto.mp4` | 23 s: la macchia che attraversa il viso, poi i punti da vicino |
 
 ## I comandi
 
 ```bash
 python3 ottica.py                     # la tavola completa dei numeri
 python3 verifica_ottica.py --suite    # i 4 casi, incluso quello di controllo
+python3 video.py --verifica           # renderer veloce contro renderer falsificato
 python3 genera_layer.py               # i due SVG + le anteprime del movimento
-python3 genera_layer.py --foto ritratto.jpg   # con una fotografia vera
-python3 viso.py                       # solo il campo continuo del viso
+python3 video.py                      # il video dell'effetto
+python3 viso.py --foto ritratto.png   # collaudo di un'immagine: frazione utile >= 70%
+python3 genera_layer.py --foto ritratto.png   # i file di stampa con l'immagine vera
 ```
 
-Serve `numpy` e `pillow`. Il simulatore non serve niente: è un file solo.
+Serve `numpy` e `pillow`; per il video anche `imageio-ffmpeg`. Il simulatore
+non serve niente: è un file solo.
+
+Il viso procedurale di `viso.py` è un **segnaposto verificabile**: serve a
+provare l'ottica, non a reggere un'opera. Va sostituito — `BRIEF_GEMINI.md`
+dice con cosa, e come accorgersi se l'immagine nuova non va bene.
 
 ## Cosa è verificato e cosa no
 
@@ -56,6 +65,9 @@ Serve `numpy` e `pillow`. Il simulatore non serve niente: è un file solo.
 | contrasto Michelson | — | 0,38 |
 | **controllo** α=0, ε=0 | nessuna banda | contrasto **0,0000** |
 
+E `video.py --verifica`, renderer veloce contro quello falsificato:
+correlazione **0,9996**, scarto d'ampiezza ≤ 1,5%.
+
 L'ultima riga è la più importante: senza scarto fra i due reticoli non compare
 nessuna banda. **La banda non la produce il renderer.**
 
@@ -64,7 +76,7 @@ una misura su questi materiali.
 
 **UNKNOWN** — la resa del nero ceramico sul vetro; se 0,86° sia giusto *per
 l'occhio* (il contrasto è misurato, il giudizio no); il comportamento con luce
-mista; se il viso procedurale regga come opera o serva una fotografia.
+mista; se l'immagine definitiva regga il retino.
 
 **Prima di ordinare 600 × 800: un provino da 300 × 400 mm**, con la stessa
 intercapedine di 50 mm e lo stesso passo. Costa una frazione e risponde a

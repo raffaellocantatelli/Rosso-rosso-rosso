@@ -208,19 +208,48 @@ def rampa_identita(w, h, inizio=0.42, larghezza=0.60):
     return np.repeat(r * r * (3 - 2 * r), h, axis=0)
 
 
-def da_foto(percorso, w, h, contrasto=1.15, dissolvenza=False):
-    """Alternativa al procedurale: una fotografia vera."""
+def da_foto(percorso, w, h, fondo=0.3848, ampiezza=0.38, contrasto=1.0,
+            dissolvenza=False, percentili=(2.0, 98.0), seed=7):
+    """Una fotografia al posto della superficie procedurale.
+
+    NON restituisce la foto: la RIMAPPA. Una foto normale ha neri a 1.0 e
+    bianchi a 0.0, e su quei due estremi il moire' non esiste - il punto
+    davanti non ha niente da coprire, oppure sparisce dentro un punto piu'
+    grande di lui. Passare una foto cosi' al retino spegne l'opera nelle
+    ombre e nelle luci e la lascia viva solo nei mezzitoni.
+
+    Qui i toni vengono normalizzati sui percentili e riportati nella finestra
+    [fondo-ampiezza, fondo+ampiezza], la stessa in cui lavora `campo()`.
+    E' la ragione per cui il brief a chi fa l'immagine chiede un ritratto
+    SENZA neri chiusi e SENZA bianchi bruciati: quello che si perde in
+    stampa non si recupera qui.
+    """
     from PIL import Image, ImageOps
-    im = Image.open(percorso).convert("L")
-    im = ImageOps.fit(im, (w, h), Image.LANCZOS)
+    im = ImageOps.fit(Image.open(percorso).convert("L"), (w, h), Image.LANCZOS)
     d = 1.0 - np.asarray(im, dtype=np.float64) / 255.0
-    d = np.clip((d - 0.5) * contrasto + 0.5, 0.0, 1.0)
+    if contrasto != 1.0:
+        d = np.clip((d - 0.5) * contrasto + 0.5, 0.0, 1.0)
+    lo, hi = np.percentile(d, percentili)
+    n = np.clip((d - lo) / max(hi - lo, 1e-6), 0.0, 1.0)
+    out = fondo + ampiezza * (2.0 * n - 1.0)
     if dissolvenza:
-        xs = np.linspace(-1.0, 1.0, w)
-        rampa = np.clip((0.58 - xs) / 0.78, 0.0, 1.0)
-        rampa = (rampa * rampa * (3 - 2 * rampa))[None, :]
-        d = d * (0.20 + 0.80 * rampa)
-    return d
+        out = fondo + (out - fondo) * (0.28 + 0.72 * rampa_identita(w, h))
+    return np.clip(out, 0.0, 0.95)
+
+
+def diagnostica(d, fondo=0.3848):
+    """Quanto di un'immagine cade nella finestra in cui il moire' esiste.
+
+    Il moire' vive dove il punto dietro ha diametro confrontabile con quello
+    davanti, cioe' dove la densita' sta vicino a `fondo`. Fuori da +/- 0.30
+    l'effetto e' gia' meta'; oltre non c'e' piu'. Questo numero e' il
+    criterio di accettazione di un'immagine: sotto il 70% si rifa'.
+    """
+    dentro = float(np.mean(np.abs(d - fondo) <= 0.30))
+    return {"densita_media": float(d.mean()),
+            "densita_min": float(d.min()), "densita_max": float(d.max()),
+            "frazione_utile": dentro,
+            "verdetto": "ok" if dentro >= 0.70 else "da rifare"}
 
 
 def main():
@@ -232,10 +261,15 @@ def main():
     ap.add_argument("--senza-dissolvenza", action="store_true")
     a = ap.parse_args()
     from PIL import Image
-    d = (da_foto(a.foto, a.w, a.h) if a.foto
+    d = (da_foto(a.foto, a.w, a.h, dissolvenza=not a.senza_dissolvenza) if a.foto
          else campo(a.w, a.h, dissolvenza=not a.senza_dissolvenza))
     Image.fromarray(((1 - d) * 255).astype(np.uint8)).save(a.out)
-    print(f"scritto {a.out}  densita' media {d.mean():.3f}  max {d.max():.3f}")
+    dg = diagnostica(d)
+    print(f"scritto {a.out}")
+    print(f"  densita' {dg['densita_min']:.3f} .. {dg['densita_max']:.3f} "
+          f"(media {dg['densita_media']:.3f})")
+    print(f"  frazione nella finestra utile del moire': "
+          f"{dg['frazione_utile']*100:.0f}%  ->  {dg['verdetto']}")
 
 
 if __name__ == "__main__":
