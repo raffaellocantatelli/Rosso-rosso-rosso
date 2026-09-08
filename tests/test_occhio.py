@@ -1879,3 +1879,33 @@ def test_ancorare_non_nasconde_i_buchi_veri(tmp_path):
     r.registra("orologio", "Orologio da mensola scuro", fonte="foto")
     r.ancora("orologio:orologio da mensola scuro", "Orologio del nonno")
     assert set(r.debolezze(r.voci[0])) == {"senza_luogo", "senza_foto"}
+
+
+def test_i_tipi_li_chiede_al_registro_non_alla_tabella(tmp_path):
+    """«Quanti quadri ho» rispondeva 13 su 6 quadri: «quadro» non era nella
+    tabella scritta a mano, la domanda restava senza filtro e il totale
+    veniva dato per risposta. Un numero sbagliato detto con sicurezza è
+    peggio di «non ho capito». Ogni casa ha i suoi tipi: si chiedono al
+    registro invece di indovinarli."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    for t, titolo in [("quadro", "Vecchia con la candela"),
+                      ("quadro", "Natura morta con frutta"),
+                      ("orologio", "Orologio da mensola nero")]:
+        r.registra(t, titolo, luogo={"stanza": "salotto"})
+    assert vc.rispondi(r, "quanti quadri ho")["testo_risposta"] == "2."
+    assert vc.rispondi(r, "quanti orologi ci sono")["testo_risposta"] == "1."
+
+
+def test_il_tipo_generico_non_filtra_niente(tmp_path):
+    """«altro» sta dentro «cos'altro c'è» e filtrerebbe una domanda che non
+    sta filtrando."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("altro", "Candelabro a cinque bracci", luogo={"stanza": "salotto"})
+    assert vc.interpreta("cos altro c e", tipi_noti=["altro"])["tipo"] is None
+
+
+def test_un_tipo_sconosciuto_non_inventa_un_filtro(tmp_path):
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("quadro", "Vecchia con la candela", luogo={"stanza": "salotto"})
+    e = vc.rispondi(r, "quanti tappeti ho")
+    assert e["tipo"] is None

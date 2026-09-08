@@ -112,9 +112,31 @@ def _piatto(frase: str) -> str:
     return re.sub(r"[^a-z0-9 ]+", " ", t)
 
 
-def interpreta(frase: str, luoghi_noti=()) -> dict:
+#: Il tipo generico non entra nel riconoscimento automatico: «altro» sta
+#: dentro «cos'altro c'e'» e filtrerebbe una domanda che non filtra niente.
+TIPO_GENERICO = "altro"
+
+
+def _tipo_dal_registro(parole, tipi_noti) -> str | None:
+    """Il tipo cercato fra quelli che il registro CONTIENE davvero.
+
+    FAMIGLIE e' scritta a mano e mancherà sempre qualcosa: «quanti quadri
+    ho» rispondeva 13 su 6 quadri, perche' «quadro» non era in tabella e la
+    domanda finiva senza filtro — un numero sbagliato detto con sicurezza.
+    Ogni casa ha i suoi tipi: si chiedono al registro invece di indovinarli.
+    """
+    for t in tipi_noti:
+        if not t or t == TIPO_GENERICO or len(t) < 5:
+            continue
+        radice = t[:-1]            # quadro -> quadr, orologio -> orologi
+        if any(pa.startswith(radice) for pa in parole):
+            return t
+    return None
+
+
+def interpreta(frase: str, luoghi_noti=(), tipi_noti=()) -> dict:
     """Che cosa sta chiedendo, e con che filtri. Nessun modello: e' una
-    tabella, e una tabella si puo' rileggere quando sbaglia."""
+    tabella piu' i tipi che il registro contiene davvero."""
     t = _piatto(frase)
     parole = set(t.split())
 
@@ -123,6 +145,8 @@ def interpreta(frase: str, luoghi_noti=()) -> dict:
         if parole & set(sinonimi) or any(s in t for s in sinonimi if " " in s):
             tipo = nome
             break
+    if tipo is None:
+        tipo = _tipo_dal_registro(parole, tipi_noti)
 
     luogo = None
     for l in luoghi_noti:
@@ -252,7 +276,7 @@ def rispondi(registro, frase: str, portavia=None, regole=None) -> dict:
     c'e' si dice, invece di improvvisare una ricetta con quello che capita.
     """
     luoghi = list(registro.per_luogo())
-    d = interpreta(frase, luoghi)
+    d = interpreta(frase, luoghi, list(registro.per_tipo()))
     oggetti = _filtra(registro, d["tipo"], d["luogo"])
     dove = f" in {d['luogo']}" if d["luogo"] else ""
 
