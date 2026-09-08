@@ -22,7 +22,7 @@
   ],
   "significato": "inventarium, dal latino invenire: l'elenco delle cose trovate — non di quelle inventate",
   "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
-  "generato": "2026-09-05T19:59:45Z",
+  "generato": "2026-09-08T04:30:44Z",
   "generato_da": "python -m occhio --capacita",
   "avvertenza": "generato per introspezione dal codice. Non modificarlo a mano: rigeneralo, altrimenti diverge in silenzio.",
   "moduli": {
@@ -118,7 +118,7 @@
             },
             {
               "nome": "leggi",
-              "firma": "(self, immagine_b64, mime='image/jpeg')",
+              "firma": "(self, immagine_b64, mime='image/jpeg', modo='media')",
               "descrizione": ""
             }
           ]
@@ -135,7 +135,7 @@
             },
             {
               "nome": "leggi",
-              "firma": "(self, immagine_b64, mime='image/jpeg')",
+              "firma": "(self, immagine_b64, mime='image/jpeg', modo='media')",
               "descrizione": ""
             }
           ]
@@ -152,7 +152,7 @@
             },
             {
               "nome": "leggi",
-              "firma": "(self, immagine_b64: 'str', mime: 'str' = 'image/jpeg') -> 'list[dict]'",
+              "firma": "(self, immagine_b64: 'str', mime: 'str' = 'image/jpeg', modo: 'str' = 'media') -> 'list[dict]'",
               "descrizione": ""
             }
           ]
@@ -169,7 +169,7 @@
             },
             {
               "nome": "leggi",
-              "firma": "(self, immagine_b64, mime='image/jpeg')",
+              "firma": "(self, immagine_b64, mime='image/jpeg', modo='media')",
               "descrizione": ""
             }
           ]
@@ -189,14 +189,20 @@
         {
           "tipo": "funzione",
           "nome": "estrai_oggetti",
-          "firma": "(testo: 'str') -> 'list[dict]'",
+          "firma": "(testo: 'str', modo: 'str' = 'media') -> 'list[dict]'",
           "descrizione": "Legge la risposta del modello senza fidarsene."
         },
         {
           "tipo": "funzione",
           "nome": "leggi",
-          "firma": "(immagine_b64: 'str', mime: 'str' = 'image/jpeg', cascata=('anthropic', 'gemini')) -> 'dict'",
+          "firma": "(immagine_b64: 'str', mime: 'str' = 'image/jpeg', cascata=('anthropic', 'gemini'), modo: 'str | None' = None) -> 'dict'",
           "descrizione": "Legge un fotogramma. Nessun parametro per l'inventario: e' voluto."
+        },
+        {
+          "tipo": "funzione",
+          "nome": "normalizza",
+          "firma": "(o: 'dict', modo: 'str' = 'media') -> 'dict'",
+          "descrizione": "Porta un record alla forma unica, da qualunque provider arrivi."
         },
         {
           "tipo": "funzione",
@@ -1088,6 +1094,13 @@
       "aiuto": "confidenza minima per scrivere senza conferma umana (default 0.75)"
     },
     {
+      "opzione": "--oggetti",
+      "gruppo": "options",
+      "argomenti": [],
+      "predefinito": "media",
+      "aiuto": "nomina oggetti SENZA scritte (vasi, piatti, sottopiatti): e' l'inventario di una casa. Senza questa opzione legge titoli di libri, DVD e CD"
+    },
+    {
       "opzione": "--solo-lettura",
       "gruppo": "options",
       "argomenti": [],
@@ -1239,7 +1252,7 @@
     },
     {
       "id": "H6",
-      "stato": "APERTA",
+      "stato": "RETTA",
       "testo": "Ripassare con la telecamera sugli stessi oggetti non gonfia l inventario: il conteggio misura gli oggetti, non le passate.",
       "falsificatore": "python3 falsificatori/h6_occhio_ripasso.py"
     },
@@ -1251,25 +1264,25 @@
     },
     {
       "id": "H8",
-      "stato": "APERTA",
+      "stato": "RETTA",
       "testo": "Lo stato di consegna di un alloggio rileva cio che manca fra un ospite e l altro e non si puo riscrivere senza accorgersene.",
       "falsificatore": "python3 falsificatori/h8_consegna.py"
     },
     {
       "id": "H9",
-      "stato": "APERTA",
+      "stato": "RETTA",
       "testo": "PORTAVIA converte una sparizione in una vendita senza mai far incassare al proprietario meno del minimo che ha dichiarato. Idea di Claudio Terzi, 3 settembre 2026.",
       "falsificatore": "python3 falsificatori/h9_portavia.py"
     },
     {
       "id": "H10",
-      "stato": "APERTA",
+      "stato": "RETTA",
       "testo": "I CHIARI restano un buono di circuito chiuso: si conservano, non diventano mai denaro, e nessun saldo va sotto zero. Idea dei crediti interni: Claudio Terzi, 3 settembre 2026.",
       "falsificatore": "python3 falsificatori/h10_crediti.py"
     },
     {
       "id": "H11",
-      "stato": "APERTA",
+      "stato": "RETTA",
       "testo": "Vendere un'esperienza non fa sparire niente: solo cio' che puo' uscire di casa (merce) o finire (consumo) spiega un'assenza nella differenza di fine soggiorno. Idea della divisione in tre generi — mercato, ristorazione, esperienze: Claudio Terzi, 5 settembre 2026.",
       "falsificatore": "python3 falsificatori/h11_generi.py"
     }

@@ -142,10 +142,22 @@ def test_risposta_non_json_da_lista_vuota():
 
 
 def test_lettura_non_accetta_l_inventario():
-    """La garanzia anti-eco e' nella firma: non c'e' dove infilarlo (§4)."""
+    """La garanzia anti-eco e' nella firma: non c'e' dove infilarlo (§4).
+
+    Vieta per NOME cio' che non deve entrare, invece di bloccare la firma
+    esatta: cosi' un parametro legittimo (il modo di lettura) puo' essere
+    aggiunto, mentre uno che porterebbe dentro il gia'-catalogato fa fallire
+    il test. La garanzia e' su cosa NON entra, non su quanti parametri ci sono.
+    """
     import inspect
     parametri = set(inspect.signature(vis.leggi).parameters)
-    assert parametri == {"immagine_b64", "mime", "cascata"}
+    vietati = {"inventario", "registro", "voci", "gia_visti", "gia_letti",
+               "contesto", "memoria", "storico", "precedenti", "gia_noti"}
+    assert not (parametri & vietati), (
+        f"leggi() accetta {parametri & vietati}: il modello potrebbe essere "
+        "innescato da cio' che e' gia' stato catalogato (§4)"
+    )
+    assert "immagine_b64" in parametri
 
 
 def test_senza_provider_si_solleva_invece_di_restituire_vuoto(monkeypatch):
@@ -1757,3 +1769,60 @@ def test_ce_con_un_filtro_vero_puo_elencare(casa):
 def test_ce_non_ruba_le_domande_a_dove(casa):
     e = vc.rispondi(casa, "dov'è il phon")
     assert e["intento"] == vc.DOVE
+
+
+# --------------------------------------------------------------------------
+# modo `oggetti` — le cose senza scritte (08/09)
+# --------------------------------------------------------------------------
+
+def test_esistono_due_modi_e_sono_prompt_diversi():
+    """Un inventario di casa non e' uno scaffale di DVD.
+
+    Il 08/09 la prima fotografia vera dell'autore conteneva quattro oggetti
+    senza una lettera sopra: vasi, una scatola, un sottopiatto. Il prompt
+    `media` avrebbe restituito lista vuota, correttamente. Da qui il secondo.
+    """
+    assert set(vis.MODI) == {"media", "oggetti"}
+    assert vis.MODI["media"] != vis.MODI["oggetti"]
+    assert "DVD" in vis.MODI["media"]
+    assert "sottopiatto" in vis.MODI["oggetti"]
+
+
+def test_il_modo_oggetti_non_chiede_testo_letto():
+    """`testo_letto` significa «questo c'era scritto sopra». Su un vaso non
+    c'e' scritto niente, e riempirlo col nome sarebbe una piccola bugia."""
+    risposta = '''{"oggetti": [{"tipo": "vaso", "nome": "Vaso bianco a rami",
+                   "materiale": "ceramica", "colore": "bianco",
+                   "riquadro": [0.1, 0.2, 0.3, 0.4], "confidenza": 0.8}]}'''
+    o = vis.estrai_oggetti(risposta, modo="oggetti")[0]
+    assert o["nome"] == "Vaso bianco a rami"
+    assert o["testo_letto"] == ""
+    assert o["materiale"] == "ceramica"
+    assert o["letto_come"] == "oggetto"
+    # `titolo` resta popolato: inventario, deduplicazione e console leggono quello.
+    assert o["titolo"] == "Vaso bianco a rami"
+
+
+def test_il_modo_media_resta_com_era():
+    risposta = '''{"oggetti": [{"tipo": "dvd", "titolo": "Heat",
+                   "testo_letto": "HEAT", "riquadro": [0.1, 0.2, 0.05, 0.3],
+                   "confidenza": 0.9}]}'''
+    o = vis.estrai_oggetti(risposta)[0]
+    assert o["titolo"] == "Heat" and o["testo_letto"] == "HEAT"
+    assert o["letto_come"] == "media"
+    assert "materiale" not in o
+
+
+def test_ogni_provider_emette_la_stessa_forma():
+    """Lo Stub non passa dal parser: il 08/09 il modo `oggetti` e' esploso
+    con KeyError 'titolo' proprio li'. La forma la decide `normalizza`."""
+    campi = {"tipo", "titolo", "testo_letto", "riquadro", "confidenza", "letto_come"}
+    for modo in ("media", "oggetti"):
+        for o in vis.PROVIDER["stub"].leggi("x", modo=modo):
+            assert campi <= set(o), f"modo {modo}: mancano {campi - set(o)}"
+
+
+def test_un_modo_sconosciuto_si_rifiuta(monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "finta")
+    with pytest.raises(ValueError, match="modo sconosciuto"):
+        vis.leggi("x", modo="fantasia")

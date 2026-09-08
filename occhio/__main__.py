@@ -133,7 +133,8 @@ def mostra_inventario(json_out=False) -> int:
     return 0
 
 
-def leggi_foto(percorso: str, cascata, scrivi: bool, soglia: float) -> int:
+def leggi_foto(percorso: str, cascata, scrivi: bool, soglia: float,
+               modo: str = "media") -> int:
     """Legge un'immagine gia' scattata. E' la prova piu' economica che il
     riconoscimento funziona, prima ancora di accendere la telecamera."""
     p = Path(percorso)
@@ -142,7 +143,7 @@ def leggi_foto(percorso: str, cascata, scrivi: bool, soglia: float) -> int:
         return 1
     b64, mime = vis.da_file(p)
     try:
-        esito = vis.leggi(b64, mime, cascata=cascata)
+        esito = vis.leggi(b64, mime, cascata=cascata, modo=modo)
     except vis.VisioneNonDisponibile as e:
         print(f"L'OCCHIO E' CHIUSO: {e}", file=sys.stderr)
         return 2
@@ -165,7 +166,7 @@ def leggi_foto(percorso: str, cascata, scrivi: bool, soglia: float) -> int:
     return 0
 
 
-def leggi_cartella(percorso, cascata, scrivi, soglia, limite) -> int:
+def leggi_cartella(percorso, cascata, scrivi, soglia, limite, modo: str = "media") -> int:
     """Il modo a fotografie: meno spesa, foto migliori, e niente https."""
     from .cartella import percorri
     try:
@@ -513,6 +514,11 @@ def costruisci_parser() -> argparse.ArgumentParser:
     ap.add_argument("--porta", type=int, default=8777)
     ap.add_argument("--soglia", type=float, default=0.75,
                     help="confidenza minima per scrivere senza conferma umana (default 0.75)")
+    ap.add_argument("--oggetti", dest="modo", action="store_const",
+                    const="oggetti", default="media",
+                    help="nomina oggetti SENZA scritte (vasi, piatti, sottopiatti): "
+                         "e' l'inventario di una casa. Senza questa opzione legge "
+                         "titoli di libri, DVD e CD")
     ap.add_argument("--solo-lettura", action="store_true",
                     help="non scrive niente: mostra soltanto cosa verrebbe scritto")
     return ap
@@ -596,7 +602,7 @@ def main(argv=None) -> int:
         return leggi_cartella(a.cartella, cascata, not a.solo_lettura,
                               a.soglia, a.limite)
     if a.foto:
-        return leggi_foto(a.foto, cascata, not a.solo_lettura, a.soglia)
+        return leggi_foto(a.foto, cascata, not a.solo_lettura, a.soglia, a.modo)
     if a.serve:
         if not a.senza_visione and not vis.scegli():
             print("L'OCCHIO E' CHIUSO: nessun provider di visione disponibile.\n"

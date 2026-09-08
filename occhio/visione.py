@@ -61,6 +61,43 @@ Rispondi SOLO con JSON valido, senza testo attorno:
               "riquadro": [0.1, 0.2, 0.05, 0.3], "confidenza": 0.9}]}"""
 
 
+ISTRUZIONE_OGGETTI = """Sei un lettore di oggetti. Guarda l'immagine ed elenca gli oggetti
+distinti che vedi in primo piano, ANCHE SE non hanno nessuna scritta sopra.
+
+Questo e' l'inventario di una casa: vasi, piatti, sottopiatti, posacenere, scatole,
+lampade, cuscini, asciugamani, soprammobili. Quasi nessuno ha un'etichetta, e non
+importa: un oggetto si nomina per categoria, materiale, colore e forma.
+
+Regole non negoziabili:
+- Nomina solo cio' che vedi in QUESTA immagine. Non dedurre marca, prezzo, epoca
+  o provenienza: se non e' scritto sull'oggetto, non lo sai.
+- Un oggetto per voce. Un vaso col suo coperchio e' UN oggetto se il coperchio e'
+  appoggiato sopra; sono DUE se il coperchio sta separato.
+- Includi anche gli oggetti piatti o poco vistosi: un sottopiatto, una tovaglietta,
+  un vassoio contano quanto un vaso.
+- Se non distingui niente, restituisci una lista vuota. Una lista vuota e' una
+  risposta corretta e utile.
+- nome: come lo direbbe una persona, breve. Es. "Vaso di porcellana bianco e rosso".
+- materiale e colore: solo se li vedi. Stringa vuota se incerto.
+- riquadro e' [x, y, larghezza, altezza] in frazioni della larghezza/altezza
+  dell'immagine, tra 0 e 1, attorno al SINGOLO oggetto.
+- confidenza: 0.0-1.0, quanto sei sicuro che sia un oggetto distinto e ben nominato.
+  NON e' la sicurezza di aver letto un testo: qui non c'e' testo da leggere.
+
+Rispondi SOLO con JSON valido, senza testo attorno:
+
+{"oggetti": [{"tipo": "vaso", "nome": "Vaso di porcellana bianco e rosso con coperchio",
+              "materiale": "porcellana", "colore": "bianco e rosso",
+              "riquadro": [0.1, 0.2, 0.05, 0.3], "confidenza": 0.8}]}
+"""
+
+# `media` legge i titoli, `oggetti` nomina le cose senza scritte. Sono due
+# prodotti diversi e vanno tenuti separati: la confidenza significa cose
+# diverse nei due modi, e H6 misura solo il primo.
+MODI = {"media": ISTRUZIONE, "oggetti": ISTRUZIONE_OGGETTI}
+MODO_PREDEFINITO = os.environ.get("OCCHIO_MODO", "media")
+
+
 class VisioneNonDisponibile(RuntimeError):
     """Nessun provider di visione e' raggiungibile. Non e' un risultato vuoto."""
 
@@ -75,7 +112,8 @@ class ProviderVisione:
     def disponibile(self) -> bool:
         raise NotImplementedError
 
-    def leggi(self, immagine_b64: str, mime: str = "image/jpeg") -> list[dict]:
+    def leggi(self, immagine_b64: str, mime: str = "image/jpeg",
+              modo: str = "media") -> list[dict]:
         raise NotImplementedError
 
 
@@ -87,7 +125,7 @@ class AnthropicVisione(ProviderVisione):
     def disponibile(self):
         return bool(os.environ.get("ANTHROPIC_API_KEY"))
 
-    def leggi(self, immagine_b64, mime="image/jpeg"):
+    def leggi(self, immagine_b64, mime="image/jpeg", modo="media"):
         key = os.environ["ANTHROPIC_API_KEY"]
         r = requests.post(
             self.URL,
@@ -100,14 +138,14 @@ class AnthropicVisione(ProviderVisione):
                     {"type": "image", "source": {"type": "base64",
                                                  "media_type": mime,
                                                  "data": immagine_b64}},
-                    {"type": "text", "text": ISTRUZIONE},
+                    {"type": "text", "text": MODI.get(modo, ISTRUZIONE)},
                 ]}],
             },
             timeout=TIMEOUT,
         )
         r.raise_for_status()
         testo = "".join(b.get("text", "") for b in r.json().get("content", []))
-        return estrai_oggetti(testo)
+        return estrai_oggetti(testo, modo)
 
 
 class GeminiVisione(ProviderVisione):
@@ -117,7 +155,7 @@ class GeminiVisione(ProviderVisione):
     def disponibile(self):
         return bool(os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY"))
 
-    def leggi(self, immagine_b64, mime="image/jpeg"):
+    def leggi(self, immagine_b64, mime="image/jpeg", modo="media"):
         key = os.environ.get("GOOGLE_API_KEY") or os.environ["GEMINI_API_KEY"]
         modello = os.environ.get("OCCHIO_MODELLO_GEMINI", self.MODELLO)
         # Chiave in header, mai nella query string: il 26/08/2026 un 429 ha
@@ -128,14 +166,14 @@ class GeminiVisione(ProviderVisione):
             headers={"x-goog-api-key": key},
             json={"contents": [{"parts": [
                 {"inline_data": {"mime_type": mime, "data": immagine_b64}},
-                {"text": ISTRUZIONE},
+                {"text": MODI.get(modo, ISTRUZIONE)},
             ]}]},
             timeout=TIMEOUT,
         )
         r.raise_for_status()
         d = r.json()
         testo = d["candidates"][0]["content"]["parts"][0]["text"]
-        return estrai_oggetti(testo)
+        return estrai_oggetti(testo, modo)
 
 
 class StubVisione(ProviderVisione):
@@ -150,7 +188,28 @@ class StubVisione(ProviderVisione):
     def disponibile(self):
         return True
 
-    def leggi(self, immagine_b64, mime="image/jpeg"):
+    def leggi(self, immagine_b64, mime="image/jpeg", modo="media"):
+        return [normalizza(o, modo) for o in self._finti(modo)]
+
+    def _finti(self, modo):
+        if modo == "oggetti":
+            # Oggetti senza scritte, come quelli veri: nessun testo_letto.
+            return [
+                {"tipo": "vaso", "nome": "ESEMPIO FINTO — Vaso di porcellana con coperchio",
+                 "materiale": "porcellana", "colore": "bianco e rosso",
+                 "riquadro": [0.30, 0.15, 0.22, 0.35], "confidenza": 0.0},
+                {"tipo": "vaso", "nome": "ESEMPIO FINTO — Vaso bianco a rami",
+                 "materiale": "ceramica", "colore": "bianco",
+                 "riquadro": [0.28, 0.55, 0.30, 0.38], "confidenza": 0.0},
+                {"tipo": "sottopiatto", "nome": "ESEMPIO FINTO — Sottopiatto in fibra intrecciata",
+                 "materiale": "fibra vegetale", "colore": "naturale",
+                 "riquadro": [0.62, 0.28, 0.20, 0.26], "confidenza": 0.0},
+                # il quarto e' incerto apposta, come nel modo media: senza un
+                # caso dubbio non si vede mai la parte in cui il sistema ammette
+                # di non sapere.
+                {"tipo": "altro", "nome": "", "materiale": "", "colore": "",
+                 "riquadro": [0.70, 0.05, 0.18, 0.20], "confidenza": 0.0},
+            ]
         return [
             {"tipo": "dvd", "titolo": "ESEMPIO FINTO — Il Padrino",
              "testo_letto": "IL PADRINO", "riquadro": [0.12, 0.18, 0.08, 0.55],
@@ -182,7 +241,7 @@ COME_ATTIVARE = {
 # lettura del JSON prodotto dal modello
 # --------------------------------------------------------------------------
 
-def estrai_oggetti(testo: str) -> list[dict]:
+def estrai_oggetti(testo: str, modo: str = "media") -> list[dict]:
     """Legge la risposta del modello senza fidarsene.
 
     Un modello di visione risponde spesso con il JSON dentro un blocco
@@ -214,6 +273,19 @@ def estrai_oggetti(testo: str) -> list[dict]:
     for o in grezzi:
         if not isinstance(o, dict):
             continue
+        puliti.append(normalizza(o, modo))
+    return puliti
+
+
+def normalizza(o: dict, modo: str = "media") -> dict:
+    """Porta un record alla forma unica, da qualunque provider arrivi.
+
+    Esiste perche' lo Stub non passa dal parser: il 08/09 il modo `oggetti`
+    e' esploso con KeyError 'titolo' proprio li'. Un provider che emette un
+    record parziale rompe tutto a valle — quindi la forma la decide una
+    funzione sola.
+    """
+    if True:
         riq = o.get("riquadro") or o.get("box") or [0, 0, 0, 0]
         try:
             x, y, w, h = (float(v) for v in list(riq)[:4])
@@ -225,14 +297,30 @@ def estrai_oggetti(testo: str) -> list[dict]:
             conf = float(o.get("confidenza", o.get("confidence", 0.0)))
         except (TypeError, ValueError):
             conf = 0.0
-        puliti.append({
+        voce = {
             "tipo": str(o.get("tipo", "altro"))[:40],
             "titolo": str(o.get("titolo", ""))[:200].strip(),
             "testo_letto": str(o.get("testo_letto", ""))[:300].strip(),
             "riquadro": [x, y, w, h],
             "confidenza": min(max(conf, 0.0), 1.0),
-        })
-    return puliti
+        }
+        if modo == "oggetti":
+            # Un oggetto senza scritte non ha un testo letto, e dirlo vuoto e'
+            # piu' onesto che riempirlo col nome: `testo_letto` significa
+            # «questo c'era scritto sopra», e qui non c'era scritto niente.
+            voce["nome"] = str(o.get("nome", o.get("titolo", "")))[:200].strip()
+            voce["materiale"] = str(o.get("materiale", ""))[:60].strip()
+            voce["colore"] = str(o.get("colore", ""))[:60].strip()
+            voce["testo_letto"] = ""
+            voce["letto_come"] = "oggetto"
+            # `titolo` resta popolato col nome perche' l'inventario, la
+            # deduplicazione e la console leggono quel campo: cambiarlo qui
+            # spezzerebbe tutto a valle senza aggiungere niente.
+            if not voce["titolo"]:
+                voce["titolo"] = voce["nome"]
+        else:
+            voce["letto_come"] = "media"
+        return voce
 
 
 # --------------------------------------------------------------------------
@@ -248,21 +336,25 @@ def scegli(cascata=CASCATA) -> ProviderVisione | None:
 
 
 def leggi(immagine_b64: str, mime: str = "image/jpeg",
-          cascata=CASCATA) -> dict:
+          cascata=CASCATA, modo: str | None = None) -> dict:
     """Legge un fotogramma. Nessun parametro per l'inventario: e' voluto.
 
     Solleva VisioneNonDisponibile se nessun provider risponde, invece di
     restituire una lista vuota: una lista vuota significa «ho guardato e non
     c'era niente», ed e' un'affermazione diversa da «non ho guardato».
     """
+    modo = modo or MODO_PREDEFINITO
+    if modo not in MODI:
+        raise ValueError(f"modo sconosciuto: {modo!r}. Sono {sorted(MODI)}")
     errori = []
     for nome in cascata:
         p = PROVIDER.get(nome)
         if not p or not p.disponibile():
             continue
         try:
-            return {"oggetti": p.leggi(immagine_b64, mime),
+            return {"oggetti": p.leggi(immagine_b64, mime, modo),
                     "provider": p.nome,
+                    "modo": modo,
                     "stub": p.nome == "stub"}
         except Exception as e:  # rete, quota, 5xx: si prova il prossimo
             errori.append(f"{nome}: {oscura_segreti(e)}")
