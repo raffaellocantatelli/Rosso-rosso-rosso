@@ -9,7 +9,7 @@
     "verifiche": {
       "eseguite": 0,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:40:07+00:00",
       "ultimo_esito": "non_verificabile"
     }
   },
@@ -27,9 +27,9 @@
       "descrizione": "battito: daily recenti in output/ — contatto: righe valide in contatti.jsonl"
     },
     "verifiche": {
-      "eseguite": 7,
-      "cadute": 7,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "eseguite": 8,
+      "cadute": 8,
+      "ultima": "2026-09-08T04:40:07+00:00",
       "ultimo_esito": "caduta"
     }
   },
@@ -47,9 +47,9 @@
       "descrizione": "controlla la lingua di tutti i daily in output/"
     },
     "verifiche": {
-      "eseguite": 7,
+      "eseguite": 8,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:40:07+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -67,9 +67,9 @@
     },
     "scadenza": "2026-09-30",
     "verifiche": {
-      "eseguite": 6,
+      "eseguite": 7,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:40:07+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -89,7 +89,7 @@
     "verifiche": {
       "eseguite": 1,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:41:08+00:00",
       "ultimo_esito": "verifica_fallita"
     }
   },
@@ -107,9 +107,9 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 1,
+      "eseguite": 2,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:41:08+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -130,7 +130,7 @@
     "verifiche": {
       "eseguite": 0,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:41:08+00:00",
       "ultimo_esito": "verifica_fallita"
     }
   },
@@ -148,9 +148,9 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 1,
+      "eseguite": 2,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:41:08+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -168,9 +168,9 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 1,
+      "eseguite": 2,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:41:08+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -188,9 +188,9 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 1,
+      "eseguite": 2,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:41:08+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -208,9 +208,9 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 1,
+      "eseguite": 2,
       "cadute": 0,
-      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultima": "2026-09-08T04:41:08+00:00",
       "ultimo_esito": "regge"
     }
   }

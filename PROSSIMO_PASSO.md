@@ -34,6 +34,48 @@ corretta.** Il prompt di `occhio/visione.py` chiede:
 e lo schema pretende `titolo` e `testo_letto`. **Non esiste un percorso per un
 oggetto senza testo.**
 
+### MISURATO l'08/09: la chiave è arrivata e l'occhio ha guardato
+
+**RECUPERATO, eseguendo.** `python3 -m occhio --check` → *L'OCCHIO È APERTO —
+provider attivo: gemini*. Prima volta da quando esiste il modulo.
+
+Stessa fotografia, due modi, stessa chiave:
+
+| modo | letti |
+|---|---|
+| `media` (titoli) | **0** |
+| `oggetti` (senza scritte) | **5**, confidenza 0,90–0,95 |
+
+Quello che il modo `oggetti` ha nominato:
+
+1. Vaso in ceramica bianca a forma di corallo — 0,95
+2. Vaso di porcellana con coperchio decorato — 0,95
+3. Sottopiatto rotondo in fibra naturale intrecciata — 0,90
+4. Accendino a torcia metallico con leva rossa — 0,90
+5. Posacenere di vetro sfaccettato — 0,92
+
+**La previsione del modo `media` era esatta e si è avverata: zero.** Non un
+difetto: il prompt chiede titoli e su quella foto non ce n'erano.
+
+### «Presenti» non è un numero oggettivo, ed è il primo dato che lo dimostra
+
+Tre conteggi della stessa fotografia, tutti in buona fede:
+
+| chi | quanti | cosa ha visto in più o in meno |
+|---|---|---|
+| l'autore | 4 | non aveva contato il sottopiatto |
+| un modello in chat | 5 | ha chiamato l'accendino «gasatore»: sbagliato |
+| `occhio` (gemini) | 5 | non ha elencato la scatola abbinata al vaso |
+
+Nessuno dei tre insiemi coincide con gli altri. **Quindi `letti/presenti` non
+è ancora calcolabile**, non perché manchi la lettura, ma perché manca la
+definizione di «presente».
+
+Per la consegna controfirmata questo non è accademico: **se l'ospite e il
+proprietario contano diversamente, la controfirma non vale niente.** Prima del
+rapporto serve una regola scritta su cosa è un oggetto — e la scelta è
+dell'autore, non di un nodo.
+
 ### Perché conta più del rapporto letti/presenti
 
 La previsione depositata il 03/09 — *letti/presenti fra 0,5 e 0,9* — era
