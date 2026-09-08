@@ -1,22 +1,23 @@
 # R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-07-1610
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-07_1610.yaml
-# Snapshot 1305, 0917, 1621, 1304, 0911, 1613 e precedenti conservati. Non cancellare gli storici.
+# Ciclo: SYNC-2026-09-08-0909
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-08_0909.yaml
+# Snapshot 1610, 1305, 0917, 1621, 1304, 0911, 1613 e precedenti conservati. Non cancellare gli storici.
 
 meta:
-  cycle_id: SYNC-2026-09-07-1610
-  previous_cycle: SYNC-2026-09-07-1305
-  github_default_sha_pre_push: 041b6b70f265a61efe239d90fff1acabef04749d
+  cycle_id: SYNC-2026-09-08-0909
+  previous_cycle: SYNC-2026-09-07-1610
+  github_default_sha: 375beff1a533bb7556c40d2406b51abaf94563c8
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
-  telegram_sha: ebd7cb417e04a76755af6447521caaa63bb36979
+  telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
   instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
   umbratheater_branch_sha: d5f133a249540747feff2bd7aca425bf1aa6ba73
   camera_inventory_sha: 2b96150a08dee8978fb636acb6bada9fdbc4ac2d
+  pr6_merge_commit: 375beff1a533bb7556c40d2406b51abaf94563c8
   regola_aggiornata: R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md
 
 stato:
-  daily_2026-09-06: PRESENTE_STUB_b47bf239_CORE_SPENTO
   daily_2026-09-07: PRESENTE_STUB_95939038_CORE_SPENTO
+  daily_2026-09-08: ASSENTE
   r3_019: BASELINE_0_NO_NEW_RUN
   contatti_jsonl: SIZE_0
   progetto_r3_md: ASSENTE_NON_CREATO
@@ -25,15 +26,15 @@ stato:
   sdq1_run_34_40: FAILURE
   sdq1_run_40: PRESENTE_34125523230_FAILURE
   sdq1_daily_total_count: 40
-  sdq1_run_2026-09-07: PRESENTE_SCHEDULE_13:06:32Z
-  drive_delta_post_1305: NESSUN_FILE_NUOVO_MISURATO
-  camera_branch: INVARIATO_NON_UNITO_2b96150a
-  telegram_branch: INVARIATO_NON_UNITO_ebd7cb41
+  sdq1_run_2026-09-08: ASSENTE_ALLE_07:09Z
+  drive_delta_post_1610: NESSUN_FILE_NUOVO_MISURATO
+  camera_branch: TIP_INVARIATO_UNITO_VIA_PR6
+  telegram_branch: MOSSO_NON_UNITO_46817fdd
   default_equals_new_session: false
   h_sync_0606_4: APERTA
-  h_sync_0607_1: CADUTA
-  h_sync_0607_2: CADUTA
-  h_sync_0707_1: CADUTA_SLITTAMENTO_CONFERMATO
+  h_sync_0607_3: PARZIALMENTE_CADUTA_CAMERA_UNITA_TELEGRAM_NO
+  h_sync_0808_1: APERTA_DAILY_08_ASSENTE
+  h_sync_0808_2: APERTA_RUN_08_ASSENTE
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
 
