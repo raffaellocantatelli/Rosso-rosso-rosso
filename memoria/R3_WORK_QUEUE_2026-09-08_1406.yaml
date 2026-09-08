@@ -1,0 +1,31 @@
+# R3_WORK_QUEUE.yaml — canone datato SYNC-2026-09-08-1406
+# Snapshot precedenti conservati. Non cancellare gli storici.
+
+meta:
+  cycle_id: SYNC-2026-09-08-1406
+  previous_cycle: SYNC-2026-09-08-1301
+  measured_at_cest: "2026-09-08T14:06:00+02:00"
+  measured_at_utc: "2026-09-08T12:06:00Z"
+  github_default_sha_precommit: 7d453e41ec70ba56c5fa491770aa16df4deaeef5
+  github_default_sha_1301: 062bdc1a88ae705daaf2f852b17a511210d63557
+  telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
+  new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+
+fatto:
+  daily_2026-09-08: PRESENTE_STUB_1d42e934_CORE_SPENTO
+  sdq1_run_41: PRESENTE_34222971374_FAILURE_2026-09-08T11:52:20Z
+  sdq1_daily_total_count: 41
+  r3_019: BASELINE_0_NO_NEW_RUN
+  telegram_branch: INVARIATO_NON_UNITO_46817fdd
+  default_equals_new_session: false
+
+ipotesi:
+  h_sync_0808_1: CADUTA_DAILY_08_PRESENTE_1d42e934
+  h_sync_0808_2: CADUTA_RUN_41_34222971374
+  h_sync_0808_3: APERTA_TELEGRAM_NON_UNITO
+  h_sync_0606_4: APERTA
+  capacita_vs_baseline_26_08: NON_DIMOSTRATA
+
+never_delete_historical: true
+non_unire_rami_da_questo_nodo: true
+non_pubblicare_prodotto_idee_ct: true
