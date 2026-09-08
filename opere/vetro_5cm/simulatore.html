@@ -1,0 +1,652 @@
+<title>Il viso cerca l'identità</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;1,300&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --nero:#0B0C0C; --inchiostro:#141817;
+  --carta:#F1F3F1; --carta-2:#E4E8E6; --linea:#C9D0CD;
+  --testo:#181D1C; --testo-2:#5C6764; --testo-3:#8A9491;
+  --rosso:#A82A1E; --rosso-tenue:#A82A1E1a;
+  --bordo-focus:#A82A1E;
+  --ombra:0 1px 0 #0000000d;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --carta:#0E1211; --carta-2:#161B1A; --linea:#2A3231;
+    --testo:#E6EAE8; --testo-2:#9AA5A2; --testo-3:#6B7674;
+    --rosso:#E4665A; --rosso-tenue:#E4665A22;
+    --bordo-focus:#E4665A;
+    --ombra:0 1px 0 #ffffff08;
+  }
+}
+:root[data-theme="dark"]{
+  --carta:#0E1211; --carta-2:#161B1A; --linea:#2A3231;
+  --testo:#E6EAE8; --testo-2:#9AA5A2; --testo-3:#6B7674;
+  --rosso:#E4665A; --rosso-tenue:#E4665A22;
+  --bordo-focus:#E4665A;
+  --ombra:0 1px 0 #ffffff08;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--carta); color:var(--testo);
+  font-family:"Spectral",Georgia,"Times New Roman",serif;
+  font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace}
+
+/* ---------- intestazione ---------- */
+header{
+  max-width:1440px; margin:0 auto; padding:34px 28px 20px;
+  display:flex; flex-wrap:wrap; align-items:flex-end; gap:20px 40px;
+  border-bottom:1px solid var(--linea);
+}
+h1{
+  margin:0; font-weight:300; font-size:clamp(28px,4.2vw,44px);
+  letter-spacing:-.015em; text-wrap:balance; line-height:1.1;
+}
+h1 em{font-style:italic; color:var(--testo-2)}
+.sottotitolo{
+  margin:0; max-width:56ch; color:var(--testo-2);
+  font-size:15px; line-height:1.55;
+}
+.origine{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--testo-3);
+  margin:0 0 10px;
+}
+
+/* ---------- banco ---------- */
+.banco{
+  max-width:1440px; margin:0 auto; padding:24px 28px 8px;
+  display:grid; grid-template-columns:minmax(0,1fr) 332px; gap:28px;
+  align-items:start;
+}
+@media(max-width:1000px){ .banco{grid-template-columns:minmax(0,1fr)} }
+
+.telaio{position:relative; display:flex; flex-direction:column; align-items:center}
+canvas{
+  display:block; height:min(78vh,940px); width:auto; max-width:100%;
+  aspect-ratio:600/800; background:var(--carta-2);
+  border:1px solid var(--linea); touch-action:none; cursor:ew-resize;
+}
+.didascalia{
+  width:100%; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  margin-top:10px; font-family:"IBM Plex Mono",monospace;
+  font-size:11px; letter-spacing:.06em; color:var(--testo-3);
+}
+
+/* righello della posizione della testa */
+.righello{margin-top:14px; width:100%}
+.traccia{
+  position:relative; height:30px; border-top:1px solid var(--linea);
+}
+.traccia .tacca{
+  position:absolute; top:0; width:1px; height:6px; background:var(--linea);
+}
+.traccia .tacca.zero{height:11px; background:var(--testo-3)}
+.traccia .etichetta{
+  position:absolute; top:12px; transform:translateX(-50%);
+  font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--testo-3);
+}
+.cursore{
+  position:absolute; top:-6px; width:2px; height:20px; background:var(--rosso);
+  transform:translateX(-1px); transition:none;
+}
+.cursore::after{
+  content:""; position:absolute; top:-5px; left:-3px;
+  width:8px; height:8px; background:var(--rosso); border-radius:50%;
+}
+
+/* ---------- rail strumenti ---------- */
+.rail{
+  display:flex; flex-direction:column; gap:22px;
+  border:1px solid var(--linea); background:var(--carta-2);
+  padding:20px 18px; box-shadow:var(--ombra);
+}
+.rail h2{
+  margin:0; font-family:"IBM Plex Mono",monospace; font-weight:600;
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--testo-3);
+}
+.gruppo{display:flex; flex-direction:column; gap:13px}
+
+.cursoreriga{display:flex; flex-direction:column; gap:5px}
+.cursoreriga .capo{
+  display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+}
+.cursoreriga .capo span:first-child{color:var(--testo-2); letter-spacing:.03em}
+.cursoreriga .capo output{
+  color:var(--testo); font-variant-numeric:tabular-nums; font-weight:500;
+}
+input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:18px;
+  background:transparent; margin:0;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:2px; background:var(--linea);
+}
+input[type=range]::-moz-range-track{height:2px; background:var(--linea)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; width:13px; height:13px; margin-top:-5.5px;
+  border-radius:50%; background:var(--testo); border:0; cursor:grab;
+}
+input[type=range]::-moz-range-thumb{
+  width:13px; height:13px; border-radius:50%; background:var(--testo);
+  border:0; cursor:grab;
+}
+input[type=range]:focus-visible::-webkit-slider-thumb{
+  outline:2px solid var(--bordo-focus); outline-offset:2px;
+}
+
+.segmenti{display:flex; border:1px solid var(--linea); background:var(--carta)}
+.segmenti button{
+  flex:1; padding:7px 4px; border:0; background:transparent; cursor:pointer;
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.07em;
+  text-transform:uppercase; color:var(--testo-2);
+}
+.segmenti button[aria-pressed=true]{background:var(--testo); color:var(--carta)}
+.segmenti button:focus-visible{outline:2px solid var(--bordo-focus); outline-offset:-2px}
+
+/* lettura strumentale */
+.lettura{display:flex; flex-direction:column; gap:0}
+.lettura .riga{
+  display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  padding:6px 0; border-bottom:1px dotted var(--linea);
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+}
+.lettura .riga:last-child{border-bottom:0}
+.lettura .riga span{color:var(--testo-2)}
+.lettura .riga b{
+  font-weight:500; font-variant-numeric:tabular-nums; color:var(--testo);
+}
+.lettura .riga.vivo b{color:var(--rosso)}
+.nota{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; line-height:1.5;
+  color:var(--testo-3); border-left:2px solid var(--linea); padding-left:10px;
+}
+.avviso{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; line-height:1.5;
+  color:var(--rosso); background:var(--rosso-tenue); padding:8px 10px;
+}
+button.azione{
+  width:100%; padding:9px; cursor:pointer; background:var(--testo);
+  color:var(--carta); border:0;
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.1em; text-transform:uppercase;
+}
+button.azione:focus-visible{outline:2px solid var(--bordo-focus); outline-offset:2px}
+
+/* ---------- testo ---------- */
+.corpo{
+  max-width:1440px; margin:0 auto; padding:36px 28px 64px;
+  border-top:1px solid var(--linea);
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:34px 44px;
+}
+.corpo section{max-width:62ch}
+.corpo h3{
+  margin:0 0 10px; font-family:"IBM Plex Mono",monospace; font-weight:600;
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--testo-3);
+}
+.corpo p{margin:0 0 12px; font-size:15.5px; color:var(--testo-2)}
+.corpo p strong{color:var(--testo); font-weight:600}
+.corpo table{
+  width:100%; border-collapse:collapse; font-family:"IBM Plex Mono",monospace;
+  font-size:11.5px; margin-top:4px;
+}
+.corpo td{padding:5px 0; border-bottom:1px dotted var(--linea); color:var(--testo-2)}
+.corpo td:last-child{text-align:right; color:var(--testo); font-variant-numeric:tabular-nums}
+.corpo td.ok{color:var(--testo)}
+footer{
+  max-width:1440px; margin:0 auto; padding:0 28px 48px;
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.06em; color:var(--testo-3);
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<header>
+  <div>
+    <p class="origine">R³ · origine protetta: Claudio Terzi [CT-LGAI-001]</p>
+    <h1>Il viso cerca <em>l'identità</em></h1>
+  </div>
+  <p class="sottotitolo">
+    Vetro stampato, 50&nbsp;mm d'aria, plexiglas stampato. Due reticoli di punti
+    con lo stesso passo, ruotati di 0,86°. <strong>Muovi il puntatore sull'opera</strong>
+    — o inclina il telefono: è l'unico modo di vederla.
+  </p>
+</header>
+
+<div class="banco">
+  <div class="telaio">
+    <canvas id="tela" width="600" height="800"
+            aria-label="Simulazione dell'opera: reticolo di punti sul vetro sovrapposto al viso retinato sul plexiglas"></canvas>
+    <div class="righello">
+      <div class="traccia" id="traccia"><div class="cursore" id="cursore" style="left:50%"></div></div>
+    </div>
+    <p class="didascalia">
+      <span>posizione della testa, mm dall'asse</span>
+      <span id="did-angolo">θ 0,00°</span>
+    </p>
+  </div>
+
+  <div class="rail">
+    <div class="gruppo">
+      <h2>Movimento</h2>
+      <div class="segmenti" role="group" aria-label="Sorgente del movimento">
+        <button id="m-mano" aria-pressed="true">puntatore</button>
+        <button id="m-auto" aria-pressed="false">passeggiata</button>
+        <button id="m-giro" aria-pressed="false">telefono</button>
+      </div>
+      <p class="avviso" id="avviso" hidden></p>
+    </div>
+
+    <div class="gruppo">
+      <h2>Lettura</h2>
+      <div class="segmenti" role="group" aria-label="Distanza di osservazione">
+        <button id="v-vicino" aria-pressed="false">a 1,5 m · i punti</button>
+        <button id="v-lontano" aria-pressed="true">a 6 m · il viso</button>
+      </div>
+      <p class="nota">A 6&nbsp;m i punti fondono: la copertura media di ogni
+      cella è calcolata in forma chiusa, non sfocata. La luce è trattata come
+      diffusa, perché anche l'ombra della griglia si media sulla cella.</p>
+    </div>
+
+    <div class="gruppo">
+      <h2>Opera</h2>
+      <div class="cursoreriga">
+        <div class="capo"><span>passo del reticolo</span><output id="o-passo">6,00 mm</output></div>
+        <input type="range" id="s-passo" min="3" max="12" step="0.25" value="6">
+      </div>
+      <div class="cursoreriga">
+        <div class="capo"><span>rotazione α</span><output id="o-alpha">0,86°</output></div>
+        <input type="range" id="s-alpha" min="0" max="2.5" step="0.02" value="0.86">
+      </div>
+      <div class="cursoreriga">
+        <div class="capo"><span>intercapedine</span><output id="o-gap">50 mm</output></div>
+        <input type="range" id="s-gap" min="5" max="120" step="1" value="50">
+      </div>
+      <div class="cursoreriga">
+        <div class="capo"><span>punto sul vetro</span><output id="o-diam">4,20 mm</output></div>
+        <input type="range" id="s-diam" min="1.5" max="5.5" step="0.05" value="4.2">
+      </div>
+      <div class="cursoreriga">
+        <div class="capo"><span>scarto di scala fra le stampe</span><output id="o-eps">0,00 %</output></div>
+        <input type="range" id="s-eps" min="0" max="1.2" step="0.01" value="0">
+      </div>
+      <div class="cursoreriga">
+        <div class="capo"><span>luce · 0° = diffusa</span><output id="o-luce">diffusa</output></div>
+        <input type="range" id="s-luce" min="0" max="60" step="1" value="0">
+      </div>
+    </div>
+
+    <div class="gruppo">
+      <h2>Strumento</h2>
+      <div class="lettura">
+        <div class="riga"><span>distanza efficace</span><b id="r-deff">50,00 mm</b></div>
+        <div class="riga"><span>periodo della banda</span><b id="r-periodo">400 mm</b></div>
+        <div class="riga"><span>magnificazione</span><b id="r-magn">66,6 ×</b></div>
+        <div class="riga"><span>guadagno banda/testa</span><b id="r-guad">1,33 ×</b></div>
+        <div class="riga"><span>un ciclo ogni</span><b id="r-ciclo">300 mm</b></div>
+        <div class="riga vivo"><span>scorrimento s</span><b id="r-esse">0,00 mm</b></div>
+        <div class="riga vivo"><span>banda spostata di</span><b id="r-banda">0 mm</b></div>
+        <div class="riga"><span>velo speculare</span><b id="r-velo">11,9 %</b></div>
+      </div>
+      <p class="nota" id="nota-dir">Le bande scorrono in <b>verticale</b> mentre ti muovi in orizzontale: è la firma della rotazione pura.</p>
+    </div>
+  </div>
+</div>
+
+<div class="corpo">
+  <section>
+    <h3>Perché il fondo non è bianco</h3>
+    <p>Il moiré nasce dal punto davanti che copre il punto dietro. Dove dietro
+    non c'è niente non c'è niente da coprire; dove c'è nero pieno il punto
+    davanti sparisce dentro. <strong>L'effetto è massimo dove i due punti hanno
+    lo stesso diametro.</strong></p>
+    <p>Perciò il campo attorno al viso è stampato alla stessa copertura del
+    reticolo del vetro — 38,5% — e il viso modula intorno a quel valore. Nelle
+    bande allineate i toni chiari del viso scendono fino al fondo e
+    <strong>si confondono con esso</strong>: non svaniscono in un vuoto,
+    rientrano nel campo. Restano occhi, narici, taglio della bocca. Una maschera.</p>
+  </section>
+
+  <section>
+    <h3>Perché la rotazione e non la scala</h3>
+    <p>Lo scarto fra i due reticoli si può ottenere stampandoli a scale diverse
+    oppure ruotandone uno. Le due strade non danno lo stesso effetto:
+    con la <strong>scala</strong> la banda segue la testa; con la
+    <strong>rotazione</strong> ti muovi in orizzontale e la banda scorre in
+    <strong>verticale</strong>. La seconda è perturbante, e si regola in
+    cinque minuti a spessori davanti all'opera — mentre una scala sbagliata
+    resta stampata per sempre.</p>
+    <p>Muovi il cursore «scarto di scala» e guarda la direzione cambiare:
+    è la stessa cosa che dirà il collaudo in sala.</p>
+  </section>
+
+  <section>
+    <h3>Le due distanze</h3>
+    <table>
+      <tr><td>1,0 – 1,5 m</td><td>i punti, uno per uno. Nessun viso</td></tr>
+      <tr><td>2,5 m</td><td>il punto sottende 8,3′ · <span class="ok">la soglia</span></td></tr>
+      <tr><td>oltre 5,2 m</td><td>i punti fondono, resta la banda che attraversa</td></tr>
+    </table>
+    <p style="margin-top:14px">La soglia di fusione non è una scelta a parte:
+    è una conseguenza del passo di 6&nbsp;mm. Passo più fine significa viso
+    leggibile più da vicino e movimento più nervoso.</p>
+  </section>
+
+  <section>
+    <h3>Cosa è stato misurato</h3>
+    <p>Il modello è stato reso pixel per pixel e il moiré <strong>misurato</strong>,
+    non descritto, su campo piatto.</p>
+    <table>
+      <tr><td>periodo previsto / misurato</td><td>399,7 / 400,1 mm</td></tr>
+      <tr><td>direzione prevista / misurata</td><td>89,6° / 89,6°</td></tr>
+      <tr><td>magnificazione prevista / misurata</td><td>66,6 / 67,0 ×</td></tr>
+      <tr><td>contrasto Michelson</td><td>0,38</td></tr>
+      <tr><td>controllo: α = 0, ε = 0</td><td>contrasto 0,0000</td></tr>
+    </table>
+    <p style="margin-top:14px">L'ultima riga è la più importante: senza scarto
+    fra i due reticoli non compare nessuna banda. <strong>La banda non la
+    produce il simulatore.</strong></p>
+  </section>
+</div>
+
+<footer>
+  Simulazione fisica: parallasse con rifrazione, moiré da vettore d'onda esatto,
+  Fresnel non polarizzato su tre interfacce. La curva di resa a schermo è una
+  mappatura, non una misura: i rapporti fra le zone sono quelli calcolati, il
+  livello assoluto no. Il viso è procedurale — segnaposto verificabile, non
+  l'opera finita. Non sostituisce il provino da 300 × 400 mm.
+</footer>
+
+<script>
+const FACE_B64 = "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";
+const W = 600, H = 800, PI = Math.PI;
+const N_PLEXI = 1.49, N_VETRO = 1.52;
+
+const st = {
+  passo: 6, alpha: 0.86, gap: 50, diam: 4.2, eps: 0,
+  luce: 0, distanza: 2500, dx: 0, lontano: true, modo: "mano"
+};
+
+/* ---------------- ottica (le stesse formule di ottica.py) ---------------- */
+const rad = g => g * PI / 180;
+const dEff = () => st.gap;                        // stampa in prima superficie
+const parallasse = th => st.gap * Math.tan(th);
+const p2 = () => st.passo * (1 + st.eps);
+function vettoreK(){
+  const a = rad(st.alpha);
+  return [1 / st.passo - Math.cos(a) / p2(), -Math.sin(a) / p2()];
+}
+function periodo(){ const [x,y] = vettoreK(); const k = Math.hypot(x,y); return k ? 1/k : Infinity; }
+function magnif(){ const P = periodo(); return isFinite(P) ? P * Math.cos(rad(st.alpha)) / p2() : Infinity; }
+function fresnel(th, n2){
+  const st_ = Math.sin(th), sn = st_ / n2;
+  if (Math.abs(sn) >= 1) return 1;
+  const tt = Math.asin(sn);
+  if (th === 0) return ((n2-1)/(n2+1))**2;
+  const rs = (Math.cos(th) - n2*Math.cos(tt)) / (Math.cos(th) + n2*Math.cos(tt));
+  const rp = (Math.cos(tt) - n2*Math.cos(th)) / (Math.cos(tt) + n2*Math.cos(th));
+  return (rs*rs + rp*rp) / 2;
+}
+function velo(th){
+  let r = 0, res = 1;
+  for (const n of [N_VETRO, N_VETRO, N_PLEXI]) { const f = fresnel(th, n); r += res*f; res *= (1-f); }
+  return r;
+}
+
+/* ---------------- WebGL ---------------- */
+const tela = document.getElementById("tela");
+const gl = tela.getContext("webgl", {antialias:false, preserveDrawingBuffer:false});
+const VS = `attribute vec2 a; varying vec2 v;
+void main(){ v = a*0.5+0.5; gl_Position = vec4(a,0.,1.); }`;
+const FS = `precision highp float;
+varying vec2 v;
+uniform sampler2D uViso;
+uniform vec2 uDim;          // 600 x 800 mm
+uniform float uPasso, uR1, uAlpha, uEps, uS, uSLuce, uFondo, uPxMm;
+uniform bool uLontano, uDiffusa;
+const float PI = 3.14159265;
+
+vec2 rot(vec2 q, float a){ float c=cos(a), s=sin(a); return vec2(c*q.x - s*q.y, s*q.x + c*q.y); }
+
+float disco(vec2 pos, vec2 centro, float r, float e){
+  return 1.0 - smoothstep(r-e, r+e, length(pos-centro));
+}
+vec2 cella(vec2 q, float p){ return floor(q/p)*p + 0.5*p; }
+
+// area di intersezione di due dischi: serve alla vista da lontano, dove
+// conta la copertura MEDIA della cella e non il singolo pixel
+float lente(float d, float r1, float r2){
+  if (d >= r1+r2) return 0.0;
+  if (d <= abs(r1-r2)) return PI*min(r1,r2)*min(r1,r2);
+  float a1 = acos(clamp((d*d + r1*r1 - r2*r2)/(2.0*d*r1), -1.0, 1.0));
+  float a2 = acos(clamp((d*d + r2*r2 - r1*r1)/(2.0*d*r2), -1.0, 1.0));
+  float t = 0.5*sqrt(max(0.0,(-d+r1+r2)*(d+r1-r2)*(d-r1+r2)*(d+r1+r2)));
+  return r1*r1*a1 + r2*r2*a2 - t;
+}
+
+float densitaViso(vec2 qPanel){
+  vec2 c = uDim*0.5;
+  vec2 fp = rot(qPanel - c, -uAlpha) + c;      // pre-compensazione della rotazione
+  return texture2D(uViso, vec2(fp.x/uDim.x, fp.y/uDim.y)).r;
+}
+
+void main(){
+  vec2 uv = vec2(v.x, 1.0-v.y) * uDim;         // mm, origine in alto a sinistra
+  vec2 c = uDim*0.5;
+  float e = 0.7/uPxMm;                          // antialiasing su ~un pixel
+
+  // dal mondo alle coordinate della lastra dietro: ruotata di alpha, scala 1+eps
+  vec2 q = rot(uv - c - vec2(uS,0.0), -uAlpha) / (1.0+uEps) + c;
+  vec2 cellaB = cella(q, uPasso);
+  float dens = clamp(densitaViso(cellaB), 0.0, 0.95);
+  float r2 = uPasso*sqrt(dens/PI);
+
+  vec2 cellaF = cella(uv, uPasso);
+  float copLuce = uDiffusa ? PI*uR1*uR1/(uPasso*uPasso)
+                           : disco(uv + vec2(uSLuce-uS,0.0), cella(uv + vec2(uSLuce-uS,0.0), uPasso), uR1, e);
+
+  float L;
+  if (uLontano){
+    // copertura media della cella: unione dei due dischi, in forma chiusa
+    float sovr = 0.0;
+    for (int i=-1;i<=1;i++) for (int j=-1;j<=1;j++){
+      vec2 cb = cellaB + vec2(float(i),float(j))*uPasso;
+      float dn = clamp(densitaViso(cb), 0.0, 0.95);
+      float rr = uPasso*sqrt(dn/PI);
+      vec2 mondoB = rot((cb - c)*(1.0+uEps), uAlpha) + c + vec2(uS,0.0);
+      sovr += lente(length(cellaF - mondoB), uR1, rr);
+    }
+    float unione = PI*uR1*uR1 + PI*r2*r2 - sovr;
+    float nero = clamp(unione/(uPasso*uPasso), 0.0, 1.0);
+    // da lontano l'ombra della griglia è comunque mediata sulla cella,
+    // quindi vale la sua copertura anche col faretto
+    L = (1.0-nero) * (1.0 - PI*uR1*uR1/(uPasso*uPasso));
+  } else {
+    float cf = disco(uv, cellaF, uR1, e);
+    float cb = disco(q, cellaB, r2, e);
+    L = (1.0-cf)*(1.0-cb)*(1.0-copLuce);
+  }
+  // Curva di resa a schermo: MAPPATURA, non fisica. L e' la luminanza
+  // calcolata; un monitor non ha la dinamica di una sala, e l'occhio in sala
+  // si adatta. Il rapporto fra le zone resta quello, il livello no.
+  float g = pow(clamp(L*1.55, 0.0, 1.0), 1.0/1.5);
+  gl_FragColor = vec4(g, g, g, 1.0);
+}`;
+
+function shader(tipo, src){
+  const s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s);
+  if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+  return s;
+}
+const prog = gl.createProgram();
+gl.attachShader(prog, shader(gl.VERTEX_SHADER, VS));
+gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FS));
+gl.linkProgram(prog); gl.useProgram(prog);
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog, "a");
+gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+const U = n => gl.getUniformLocation(prog, n);
+
+const tex = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, tex);
+gl.texImage2D(gl.TEXTURE_2D,0,gl.LUMINANCE,1,1,0,gl.LUMINANCE,gl.UNSIGNED_BYTE,new Uint8Array([98]));
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+const img = new Image();
+img.onload = () => {
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.LUMINANCE,gl.LUMINANCE,gl.UNSIGNED_BYTE,img);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  disegna();
+};
+img.src = "data:image/png;base64," + FACE_B64;
+
+function dimensiona(){
+  const r = Math.min(window.devicePixelRatio || 1, 2);
+  const w = Math.round(tela.clientWidth * r), h = Math.round(tela.clientHeight * r);
+  if (w && h && (tela.width !== w || tela.height !== h)) { tela.width = w; tela.height = h; }
+}
+
+function disegna(){
+  dimensiona();
+  gl.viewport(0,0,tela.width,tela.height);
+  const th = Math.atan2(st.dx, st.distanza);
+  const s = parallasse(th);
+  const sL = st.luce ? parallasse(rad(st.luce)) : 0;
+  gl.uniform2f(U("uDim"), W, H);
+  gl.uniform1f(U("uPasso"), st.passo);
+  gl.uniform1f(U("uR1"), st.diam/2);
+  gl.uniform1f(U("uAlpha"), rad(st.alpha));
+  gl.uniform1f(U("uEps"), st.eps);
+  gl.uniform1f(U("uS"), s);
+  gl.uniform1f(U("uSLuce"), sL);
+  gl.uniform1f(U("uFondo"), 0.3848);
+  gl.uniform1f(U("uPxMm"), tela.width / W);
+  gl.uniform1i(U("uLontano"), st.lontano ? 1 : 0);
+  gl.uniform1i(U("uDiffusa"), st.luce === 0 ? 1 : 0);
+  gl.uniform1i(U("uViso"), 0);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  leggi(th, s);
+}
+
+/* ---------------- lettura strumentale ---------------- */
+const nf = (x,d=0) => x.toLocaleString("it-IT",{minimumFractionDigits:d,maximumFractionDigits:d});
+function leggi(th, s){
+  const P = periodo(), M = magnif();
+  document.getElementById("r-deff").textContent = nf(dEff(),2)+" mm";
+  document.getElementById("r-periodo").textContent = isFinite(P) ? nf(P)+" mm" : "∞";
+  document.getElementById("r-magn").textContent = isFinite(M) ? nf(M,1)+" ×" : "∞";
+  document.getElementById("r-guad").textContent = isFinite(M) ? nf(M*dEff()/st.distanza,2)+" ×" : "∞";
+  document.getElementById("r-ciclo").textContent = nf(st.passo*st.distanza/dEff())+" mm";
+  document.getElementById("r-esse").textContent = nf(s,2)+" mm";
+  document.getElementById("r-banda").textContent = isFinite(M) ? nf(M*s)+" mm" : "—";
+  document.getElementById("r-velo").textContent = nf(velo(Math.abs(th))*100,1)+" %";
+  document.getElementById("did-angolo").textContent = "θ "+nf(th*180/PI,2)+"°";
+  const [kx,ky] = vettoreK();
+  const dir = Math.atan2(Math.abs(ky), Math.abs(kx))*180/PI;
+  const nota = document.getElementById("nota-dir");
+  if (!isFinite(P) || P > 4000) nota.innerHTML = "Nessuno scarto fra i reticoli: <b>nessuna banda</b>. È il caso di controllo.";
+  else if (dir > 80) nota.innerHTML = "Le bande scorrono in <b>verticale</b> mentre ti muovi in orizzontale: è la firma della rotazione pura.";
+  else if (dir < 10) nota.innerHTML = "Le bande <b>seguono la testa</b>: sta lavorando lo scarto di scala, non la rotazione.";
+  else nota.innerHTML = "Bande in <b>diagonale a "+nf(90-dir)+"°</b> dalla verticale: in sala questo significherebbe una stampa fuori scala.";
+  document.getElementById("cursore").style.left = (50 + st.dx/24) + "%";
+}
+
+/* ---------------- controlli ---------------- */
+const lega = (id, campo, fmt, scala=1) => {
+  const el = document.getElementById("s-"+id), out = document.getElementById("o-"+id);
+  const agg = () => { st[campo] = parseFloat(el.value)*scala; out.textContent = fmt(parseFloat(el.value)); disegna(); };
+  el.addEventListener("input", agg); agg();
+};
+lega("passo","passo", v => nf(v,2)+" mm");
+lega("alpha","alpha", v => nf(v,2)+"°");
+lega("gap","gap",     v => nf(v)+" mm");
+lega("diam","diam",   v => nf(v,2)+" mm");
+lega("eps","eps",     v => nf(v,2)+" %", 0.01);
+lega("luce","luce",   v => v === 0 ? "diffusa" : "faretto "+nf(v)+"°");
+
+function segmenti(ids, alcambio){
+  ids.forEach((id,i) => document.getElementById(id).addEventListener("click", () => {
+    ids.forEach(j => document.getElementById(j).setAttribute("aria-pressed", j===id));
+    alcambio(i); disegna();
+  }));
+}
+segmenti(["v-vicino","v-lontano"], i => { st.lontano = i === 1; });
+
+let sweep = null, giro = null;
+function fermaTutto(){ if (sweep) cancelAnimationFrame(sweep); sweep = null;
+  if (giro) { window.removeEventListener("deviceorientation", giro); giro = null; } }
+segmenti(["m-mano","m-auto","m-giro"], async i => {
+  fermaTutto(); st.modo = ["mano","auto","giro"][i];
+  const av = document.getElementById("avviso"); av.hidden = true;
+  if (st.modo === "auto"){
+    const t0 = performance.now();
+    const passo = t => { st.dx = 900*Math.sin((t-t0)/4200); disegna(); sweep = requestAnimationFrame(passo); };
+    sweep = requestAnimationFrame(passo);
+  }
+  if (st.modo === "giro"){
+    try{
+      if (typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission){
+        const ok = await DeviceOrientationEvent.requestPermission();
+        if (ok !== "granted") throw new Error("permesso negato");
+      }
+      giro = ev => { if (ev.gamma == null) return; st.dx = Math.max(-1200, Math.min(1200, ev.gamma*40)); disegna(); };
+      window.addEventListener("deviceorientation", giro);
+      av.hidden = false; av.textContent = "Inclina il telefono a destra e a sinistra.";
+    }catch(e){
+      av.hidden = false;
+      av.textContent = "Il sensore di orientamento non è disponibile qui: usa il puntatore o la passeggiata.";
+      document.getElementById("m-giro").setAttribute("aria-pressed","false");
+      document.getElementById("m-mano").setAttribute("aria-pressed","true");
+      st.modo = "mano";
+    }
+  }
+});
+
+function daPuntatore(ev){
+  if (st.modo !== "mano") return;
+  const r = tela.getBoundingClientRect();
+  const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - r.left;
+  st.dx = Math.max(-1200, Math.min(1200, (x/r.width - 0.5) * 2400));
+  disegna();
+}
+tela.addEventListener("pointermove", daPuntatore);
+tela.addEventListener("touchmove", ev => { ev.preventDefault(); daPuntatore(ev); }, {passive:false});
+tela.addEventListener("keydown", ev => {
+  if (ev.key === "ArrowLeft")  { st.dx = Math.max(-1200, st.dx-40); disegna(); ev.preventDefault(); }
+  if (ev.key === "ArrowRight") { st.dx = Math.min( 1200, st.dx+40); disegna(); ev.preventDefault(); }
+});
+tela.tabIndex = 0;
+window.addEventListener("resize", disegna);
+
+/* righello */
+const tr = document.getElementById("traccia");
+for (const mm of [-1200,-900,-600,-300,0,300,600,900,1200]){
+  const t = document.createElement("div");
+  t.className = "tacca" + (mm===0 ? " zero" : "");
+  t.style.left = (50 + mm/24) + "%"; tr.appendChild(t);
+  if (mm % 600 === 0){
+    const e = document.createElement("div");
+    e.className = "etichetta"; e.style.left = (50 + mm/24) + "%";
+    e.textContent = mm === 0 ? "0" : (mm>0?"+":"") + mm; tr.appendChild(e);
+  }
+}
+disegna();
+</script>
