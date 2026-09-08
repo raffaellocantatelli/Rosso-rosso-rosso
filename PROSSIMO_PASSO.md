@@ -1,4 +1,7 @@
-# Prossimo passo — consegna del 2026-09-05, 20:10 UTC
+# Prossimo passo — consegna del 2026-09-08, 04:25 UTC
+
+*(la consegna del 05/09 resta sotto, invariata: qui sopra c'è solo ciò che ha
+cambiato il quadro)*
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -8,6 +11,71 @@ uno stato si sovrascrive, una cronaca si accumula. Qui c'è lo stato.
 
 Se sei un nodo che apre questo repository: leggi `CLAUDE.md`, poi questo.
 Ogni riga qui sotto è verificabile con un comando. Non credere a nessuna.
+
+---
+
+## 0-PRIMA. La prima fotografia vera ha rotto la previsione (08/09)
+
+**RECUPERATO.** L'autore ha mandato una fotografia di uno scaffale di casa e
+ha dichiarato la verità a mano: **4 oggetti.** Sono un vaso di porcellana con
+coperchio a decoro rosso-arancio, una scatola rettangolare dello stesso
+servizio, un vaso bianco a rami di corallo, un sottopiatto tondo in fibra
+intrecciata.
+
+**Nessuno dei quattro ha una scritta.**
+
+`occhio` su quella foto restituirebbe **lista vuota, e sarebbe la risposta
+corretta.** Il prompt di `occhio/visione.py` chiede:
+
+> «elenca SOLO gli oggetti di cui riesci a leggere o riconoscere l'identità:
+> dorsi e copertine di DVD, Blu-ray, VHS, CD, vinili, libri, riviste, scatole
+> con etichetta, apparecchi con marca e modello visibili»
+
+e lo schema pretende `titolo` e `testo_letto`. **Non esiste un percorso per un
+oggetto senza testo.**
+
+### Perché conta più del rapporto letti/presenti
+
+La previsione depositata il 03/09 — *letti/presenti fra 0,5 e 0,9* — era
+dichiarata «su uno scaffale di DVD». Su questa foto il risultato atteso è
+**0 su 4**, e non sarebbe un difetto del modello: sarebbe il prodotto che
+risponde bene a una domanda che nessuno gli ha fatto.
+
+C'è uno scarto fra ciò che il prodotto **è per** e ciò che il prompt **chiede**:
+
+| | |
+|---|---|
+| A cosa serve (§0) | inventario di un alloggio: vasi, piatti, posacenere, asciugamani — **oggetti senza scritte** |
+| Cosa chiede il prompt | media identificabili per testo — **DVD, libri, CD** |
+
+Un ospite non controfirma un elenco di DVD. Controfirma *«due vasi, un
+sottopiatto, una scatola»*.
+
+### La decisione è dell'autore, non di un nodo
+
+Sono due prodotti diversi e vanno separati prima di scrivere altro codice:
+
+1. **Lettore di media** — legge titoli. È ciò che esiste oggi, funziona,
+   e il rapporto letti/presenti ha senso solo qui.
+2. **Riconoscitore di oggetti** — nomina cose senza scritte per categoria,
+   materiale, colore e forma. Non ha `testo_letto`, ha una descrizione, e la
+   sua confidenza significa un'altra cosa. **Non esiste.**
+
+Il secondo è quello che serve alla consegna controfirmata. Il primo è quello
+che è stato costruito.
+
+**Nessun nodo lo cambi da solo:** toccare il prompt significa cambiare cosa
+misura H6 e cosa promette il prodotto.
+
+### Il numero resta non misurato, e adesso si sa perché
+
+`python3 -m occhio --foto <foto> --solo-lettura` sulla foto reale, 08/09:
+
+    L'OCCHIO E' CHIUSO: nessun provider di visione ha risposto.
+
+Manca ancora la chiave di §1. Ma anche con la chiave, su **questa** foto il
+rapporto non si può misurare: prima va deciso quale dei due prodotti si sta
+misurando. **La chiave sblocca la misura; la decisione la rende sensata.**
 
 ---
 
