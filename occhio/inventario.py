@@ -415,17 +415,23 @@ class Inventario:
     def debolezze(self, voce: dict, soglia_confidenza: float = 0.7) -> list[str]:
         """Le debolezze di UNA voce. Sono fatti sul dato, non giudizi."""
         d = []
+        # Una voce ancorata da una persona non ha piu' i dubbi che nascono
+        # dalla lettura: il titolo l'ha scelto qualcuno, e la conferma vale
+        # piu' di una seconda passata. Restano i buchi veri — dove sta,
+        # e se c'e' una fotografia che la sostiene.
+        confermata = bool(voce.get("confermato"))
         if not (voce.get("luoghi") or voce.get("luogo")):
             d.append("senza_luogo")
-        if voce.get("avvistamenti", 1) < 2:
-            d.append("vista_una_volta")
-        c = voce.get("confidenza")
-        if isinstance(c, (int, float)) and c < soglia_confidenza:
-            d.append("confidenza_bassa")
-        if len(normalizza(voce.get("titolo", "")).replace(" ", "")) < 6:
-            d.append("titolo_debole")
-        if len(voce.get("titoli_visti", [])) > 1:
-            d.append("fusa")
+        if not confermata:
+            if voce.get("avvistamenti", 1) < 2:
+                d.append("vista_una_volta")
+            c = voce.get("confidenza")
+            if isinstance(c, (int, float)) and c < soglia_confidenza:
+                d.append("confidenza_bassa")
+            if len(normalizza(voce.get("titolo", "")).replace(" ", "")) < 6:
+                d.append("titolo_debole")
+            if len(voce.get("titoli_visti", [])) > 1:
+                d.append("fusa")
         if not voce.get("foto_sha"):
             d.append("senza_foto")
         if voce.get("simile_a") and not voce.get("deciso"):

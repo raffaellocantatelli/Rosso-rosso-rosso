@@ -1857,3 +1857,25 @@ def test_ancorare_una_chiave_che_non_esiste_fallisce(tmp_path):
     r = inv.Inventario(tmp_path / "i.jsonl")
     with pytest.raises(KeyError):
         r.ancora("orologio:mai visto", "Qualcosa")
+
+
+def test_una_voce_ancorata_non_porta_piu_i_dubbi_della_lettura(tmp_path):
+    """La conferma di una persona vale più di una seconda passata: se non
+    togliesse quei dubbi, la misura non premierebbe mai la cosa che chiede
+    di fare. Restano i buchi veri: dove sta, e se una foto la sostiene."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("orologio", "Orologio da mensola scuro", fonte="foto",
+               confidenza=0.5, luogo={"stanza": "salotto"}, foto_sha="a" * 64)
+    prima = r.debolezze(r.voci[0])
+    assert {"vista_una_volta", "confidenza_bassa"} <= set(prima)
+    r.ancora("orologio:orologio da mensola scuro", "Orologio del nonno")
+    assert r.debolezze(r.voci[0]) == []
+
+
+def test_ancorare_non_nasconde_i_buchi_veri(tmp_path):
+    """Una voce ancorata ma senza luogo e senza fotografia resta debole:
+    la conferma riguarda l'identità, non l'esistenza di una prova."""
+    r = inv.Inventario(tmp_path / "i.jsonl")
+    r.registra("orologio", "Orologio da mensola scuro", fonte="foto")
+    r.ancora("orologio:orologio da mensola scuro", "Orologio del nonno")
+    assert set(r.debolezze(r.voci[0])) == {"senza_luogo", "senza_foto"}
