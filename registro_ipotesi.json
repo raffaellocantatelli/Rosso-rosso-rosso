@@ -9,7 +9,7 @@
     "verifiche": {
       "eseguite": 0,
       "cadute": 0,
-      "ultima": "2026-09-01T10:15:10+00:00",
+      "ultima": "2026-09-08T04:17:13+00:00",
       "ultimo_esito": "non_verificabile"
     }
   },
@@ -27,9 +27,9 @@
       "descrizione": "battito: daily recenti in output/ — contatto: righe valide in contatti.jsonl"
     },
     "verifiche": {
-      "eseguite": 6,
-      "cadute": 6,
-      "ultima": "2026-09-01T10:15:10+00:00",
+      "eseguite": 7,
+      "cadute": 7,
+      "ultima": "2026-09-08T04:17:13+00:00",
       "ultimo_esito": "caduta"
     }
   },
@@ -47,9 +47,9 @@
       "descrizione": "controlla la lingua di tutti i daily in output/"
     },
     "verifiche": {
-      "eseguite": 6,
+      "eseguite": 7,
       "cadute": 0,
-      "ultima": "2026-09-01T10:15:10+00:00",
+      "ultima": "2026-09-08T04:17:13+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -67,9 +67,9 @@
     },
     "scadenza": "2026-09-30",
     "verifiche": {
-      "eseguite": 5,
+      "eseguite": 6,
       "cadute": 0,
-      "ultima": "2026-09-01T10:15:10+00:00",
+      "ultima": "2026-09-08T04:17:13+00:00",
       "ultimo_esito": "regge"
     }
   },
@@ -89,14 +89,14 @@
     "verifiche": {
       "eseguite": 1,
       "cadute": 0,
-      "ultima": "2026-09-01T10:15:10+00:00",
+      "ultima": "2026-09-08T04:17:13+00:00",
       "ultimo_esito": "verifica_fallita"
     }
   },
   {
     "id": "H6",
     "testo": "Ripassare con la telecamera sugli stessi oggetti non gonfia l inventario: il conteggio misura gli oggetti, non le passate.",
-    "stato": "APERTA",
+    "stato": "RETTA",
     "criterio_falsificazione": "Falsificata se, data due volte la stessa lettura, il totale dell inventario cresce; o se il riconoscimento non sopravvive al riavvio (dipende dalla sessione invece che dal file); o se due oggetti diversi vengono fusi in una voce sola.",
     "falsificatore": {
       "comando": [
@@ -107,10 +107,10 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 0,
+      "eseguite": 1,
       "cadute": 0,
-      "ultima": null,
-      "ultimo_esito": null
+      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultimo_esito": "regge"
     }
   },
   {
@@ -130,14 +130,14 @@
     "verifiche": {
       "eseguite": 0,
       "cadute": 0,
-      "ultima": null,
-      "ultimo_esito": null
+      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultimo_esito": "verifica_fallita"
     }
   },
   {
     "id": "H8",
     "testo": "Lo stato di consegna di un alloggio rileva cio che manca fra un ospite e l altro e non si puo riscrivere senza accorgersene.",
-    "stato": "APERTA",
+    "stato": "RETTA",
     "criterio_falsificazione": "Falsificata se: la differenza fra due stati non trova un oggetto rimosso o spostato; oppure una riga riscritta a mano non rompe la verifica della catena; oppure una catena rigenerata da capo dal solo proprietario non viene marcata come priva di controfirma — in quel caso il sistema offrirebbe come prova la propria coerenza con se stesso.",
     "falsificatore": {
       "comando": [
@@ -148,16 +148,16 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 0,
+      "eseguite": 1,
       "cadute": 0,
-      "ultima": null,
-      "ultimo_esito": null
+      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultimo_esito": "regge"
     }
   },
   {
     "id": "H9",
     "testo": "PORTAVIA converte una sparizione in una vendita senza mai far incassare al proprietario meno del minimo che ha dichiarato. Idea di Claudio Terzi, 3 settembre 2026.",
-    "stato": "APERTA",
+    "stato": "RETTA",
     "criterio_falsificazione": "Falsificata se: un oggetto venduto compare ancora fra i mancanti non spiegati; o un oggetto non venduto viene classificato come comprato; o esiste una sola offerta accettabile che lasci il proprietario sotto il minimo dichiarato; o un oggetto escluso dalla vendita viene venduto a qualunque prezzo; o un immagine generata puo entrare nella catena delle prove.",
     "falsificatore": {
       "comando": [
@@ -168,16 +168,16 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 0,
+      "eseguite": 1,
       "cadute": 0,
-      "ultima": null,
-      "ultimo_esito": null
+      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultimo_esito": "regge"
     }
   },
   {
     "id": "H10",
     "testo": "I CHIARI restano un buono di circuito chiuso: si conservano, non diventano mai denaro, e nessun saldo va sotto zero. Idea dei crediti interni: Claudio Terzi, 3 settembre 2026.",
-    "stato": "APERTA",
+    "stato": "RETTA",
     "criterio_falsificazione": "Falsificata se: i chiari non si conservano (emessi diversi da spesi piu in circolo); o un saldo diventa negativo; o si emettono chiari senza un riferimento a un fatto avvenuto; o esiste una via per riconvertirli in denaro; o il trasferimento fra persone e attivo per difetto, o quando acceso non viene marchiato; o una vendita in chiari paga il venditore quando il compratore non ha il saldo; o l arrotondamento va contro il venditore.",
     "falsificatore": {
       "comando": [
@@ -188,16 +188,16 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 0,
+      "eseguite": 1,
       "cadute": 0,
-      "ultima": null,
-      "ultimo_esito": null
+      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultimo_esito": "regge"
     }
   },
   {
     "id": "H11",
     "testo": "Vendere un'esperienza non fa sparire niente: solo cio' che puo' uscire di casa (merce) o finire (consumo) spiega un'assenza nella differenza di fine soggiorno. Idea della divisione in tre generi — mercato, ristorazione, esperienze: Claudio Terzi, 5 settembre 2026.",
-    "stato": "APERTA",
+    "stato": "RETTA",
     "criterio_falsificazione": "Falsificata se: la vendita di un'esperienza fa comparire un oggetto fra i comprati invece che fra i non spiegati; o un oggetto esce dal conto (comprati piu non spiegati diverso dai mancanti); o merce e consumo smettono di spiegare un'assenza; o l incasso non tiene i tre generi separati; o una vendita scritta prima dei generi smette di spiegare un'assenza.",
     "falsificatore": {
       "comando": [
@@ -208,10 +208,10 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 0,
+      "eseguite": 1,
       "cadute": 0,
-      "ultima": null,
-      "ultimo_esito": null
+      "ultima": "2026-09-08T04:17:13+00:00",
+      "ultimo_esito": "regge"
     }
   }
 ]

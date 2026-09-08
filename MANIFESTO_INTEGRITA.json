@@ -642,8 +642,8 @@
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
     "registro_ipotesi.json": {
-      "byte": 10247,
-      "sha256": "56b505594811299b9dcb8329454aeff9274ea9e07cf9eb5331674a157c4ca0e7"
+      "byte": 10408,
+      "sha256": "158550bf12dd4bde5cbda085025ea3283fe7d1ade5e6ca7f19f847c4cb4e2ed9"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
@@ -850,6 +850,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-08T04:16:14.144341+00:00",
+  "generato": "2026-09-08T04:17:37.857854+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
