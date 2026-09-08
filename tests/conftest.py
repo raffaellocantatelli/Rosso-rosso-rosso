@@ -21,6 +21,13 @@ os.environ.update({
     "R3_QUEUE_FILE": os.path.join(SANDBOX, "queue.json"),
     "R3_RLAIF_LOG": os.path.join(SANDBOX, "rlaif.jsonl"),
     "R3_CONTATTI_FILE": os.path.join(SANDBOX, "contatti.jsonl"),
+    # I registri del prodotto: senza queste, un test che costruisce
+    # `Consegne()` senza argomenti leggerebbe le firme vere di un ospite vero
+    # sulla macchina dell'autore, e potrebbe scriverci dentro.
+    "OCCHIO_INVENTARIO": os.path.join(SANDBOX, "inventario.jsonl"),
+    "OCCHIO_CONSEGNE": os.path.join(SANDBOX, "consegne.jsonl"),
+    "OCCHIO_PORTAVIA": os.path.join(SANDBOX, "portavia.jsonl"),
+    "OCCHIO_CREDITI": os.path.join(SANDBOX, "crediti.jsonl"),
     "R3_BACKUP_FILE": os.path.join(RADICE, "esempi", "backup_sistema_rosso.esempio.json"),
     # Porta chiusa: il ledger deve fallire e accodare, non contattare nulla di reale.
     "R3_NODE_URL": "http://127.0.0.1:9",

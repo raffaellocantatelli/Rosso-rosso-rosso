@@ -25,11 +25,17 @@ RADICE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, RADICE)
 sys.path.insert(0, os.path.join(RADICE, "esperimenti"))
 
-from esperimenti import tracce  # noqa: E402
 from falsificatori import main_protetto  # noqa: E402
 
 
 def main():
+    # L'import sta QUI e non in testa apposta: in testa avviene prima che
+    # `main_protetto` esista attorno al codice, e un import che fallisce fa
+    # uscire Python con 1 — che in questo contratto significa REGGE. E'
+    # successo davvero: `esperimenti.tracce` importa `dotenv`, che qui non
+    # c'e', e H5 risultava «regge» senza che una sola domanda fosse partita.
+    from esperimenti import tracce
+
     esito = tracce.esegui("economia")
     if esito is None:
         print("Core spento: H5 non e' verificabile adesso.", file=sys.stderr)

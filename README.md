@@ -373,6 +373,45 @@ Ogni trasmissione aggiorna `trasmissione_state.json` (contatori, timestamp, hash
 
 Chiusura pulita con `Ctrl+C` o `SIGTERM`: i thread si fermano entro un secondo e lo stato viene salvato.
 
+## occhio — inventario e consegna controfirmata
+
+*Il nome commerciale non è ancora scelto: due sono caduti il 04/09/2026, il
+secondo perché esisteva già sull'App Store nella stessa categoria. Il solo
+nome stabile è `occhio`, il motore; la storia e i criteri per il prossimo
+stanno in [`OCCHIO.md`](OCCHIO.md) e in `occhio/capacita.py`.*
+
+Cammini per casa con il telefono in mano. Ciò che è già nel registro si
+illumina di **verde** e puoi ripassarci sopra senza che il conteggio cambi;
+ciò che è nuovo compare in **azzurro** e viene scritto; ciò che il modello non
+è sicuro di aver letto lampeggia in **ambra** e ti viene chiesto. Di fianco,
+una conversazione che può interrogare l'inventario ma **non può scriverci**.
+
+```bash
+python -m occhio --check                    # dice se l'occhio è aperto e cosa manca
+python -m occhio --serve                    # interfaccia su 127.0.0.1:8777
+python -m occhio --serve --senza-visione    # solo la grafica: oggetti finti, banner a strisce
+python -m occhio --foto scaffale.jpg        # legge una foto già scattata
+python -m occhio --inventario
+python3 falsificatori/h6_occhio_ripasso.py  # prova a smentire ciò che il sistema promette
+```
+
+Nessuna dipendenza nuova: `requests` e la libreria standard.
+
+La regola che regge il disegno: **la lettura è cieca al registro.**
+`visione.leggi()` non ha un parametro dove infilare l'inventario, ed è voluto.
+Dare al modello la lista dei DVD già catalogati «per aiutarlo» produce un
+sistema che li rilegge tutti con altissima confidenza anche inquadrando un
+muro: il conteggio sale, l'accuratezza apparente pure, e non è entrato niente.
+È il difetto di §4 con la faccia gentile di un'ottimizzazione. Il colore nasce
+dopo, sul server, confrontando con il file — non dal modello.
+
+L'ipotesi che questo modulo mette in gioco è **H6**: *ripassare non gonfia
+l'inventario*. Ha un falsificatore eseguibile, e regge. Ciò che invece resta
+**UNKNOWN** è il numero che conta davvero: quanti dorsi un modello legge
+davvero, in penombra, di traverso. Serve una chiave di visione e una passata
+vera. Tutto il resto — costi, taratura, verdetto su Emergent — sta in
+[`OCCHIO.md`](OCCHIO.md).
+
 ## Licenza
 
 _Da definire._

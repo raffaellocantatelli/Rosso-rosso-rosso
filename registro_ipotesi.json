@@ -92,5 +92,126 @@
       "ultima": "2026-08-26T00:27:36+00:00",
       "ultimo_esito": "regge"
     }
+  },
+  {
+    "id": "H6",
+    "testo": "Ripassare con la telecamera sugli stessi oggetti non gonfia l inventario: il conteggio misura gli oggetti, non le passate.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se, data due volte la stessa lettura, il totale dell inventario cresce; o se il riconoscimento non sopravvive al riavvio (dipende dalla sessione invece che dal file); o se due oggetti diversi vengono fusi in una voce sola.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h6_occhio_ripasso.py"
+      ],
+      "descrizione": "due passate identiche su un inventario temporaneo: il totale deve restare invariato, e restare tale dopo un riavvio"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
+  },
+  {
+    "id": "H7",
+    "testo": "La geolocalizzazione delle fotografie distingue le stanze di una casa: da quelle coordinate si puo costruire una mappa degli oggetti.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se, su fotografie scattate in stanze diverse della stessa casa, la distanza fra i centri delle stanze e piu piccola dell errore di posizione che il telefono stesso dichiara nel campo EXIF GPSHPositioningError (o, se non lo dichiara, della dispersione misurata fra foto della stessa stanza).",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h7_gps_stanze.py",
+        "~/prova-gps"
+      ],
+      "descrizione": "confronta la distanza fra le stanze con l errore dichiarato dal telefono; richiede fotografie reali dell autore, una sottocartella per stanza"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
+  },
+  {
+    "id": "H8",
+    "testo": "Lo stato di consegna di un alloggio rileva cio che manca fra un ospite e l altro e non si puo riscrivere senza accorgersene.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se: la differenza fra due stati non trova un oggetto rimosso o spostato; oppure una riga riscritta a mano non rompe la verifica della catena; oppure una catena rigenerata da capo dal solo proprietario non viene marcata come priva di controfirma — in quel caso il sistema offrirebbe come prova la propria coerenza con se stesso.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h8_consegna.py"
+      ],
+      "descrizione": "quattro prove su una catena temporanea: differenza, integrita, manomissione, e la catena rifatta da capo che risulta integra e non prova niente"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
+  },
+  {
+    "id": "H9",
+    "testo": "PORTAVIA converte una sparizione in una vendita senza mai far incassare al proprietario meno del minimo che ha dichiarato. Idea di Claudio Terzi, 3 settembre 2026.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se: un oggetto venduto compare ancora fra i mancanti non spiegati; o un oggetto non venduto viene classificato come comprato; o esiste una sola offerta accettabile che lasci il proprietario sotto il minimo dichiarato; o un oggetto escluso dalla vendita viene venduto a qualunque prezzo; o un immagine generata puo entrare nella catena delle prove.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h9_portavia.py"
+      ],
+      "descrizione": "cinque prove, fra cui una a forza bruta su tutte le offerte possibili per ogni oggetto a listino"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
+  },
+  {
+    "id": "H10",
+    "testo": "I CHIARI restano un buono di circuito chiuso: si conservano, non diventano mai denaro, e nessun saldo va sotto zero. Idea dei crediti interni: Claudio Terzi, 3 settembre 2026.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se: i chiari non si conservano (emessi diversi da spesi piu in circolo); o un saldo diventa negativo; o si emettono chiari senza un riferimento a un fatto avvenuto; o esiste una via per riconvertirli in denaro; o il trasferimento fra persone e attivo per difetto, o quando acceso non viene marchiato; o una vendita in chiari paga il venditore quando il compratore non ha il saldo; o l arrotondamento va contro il venditore.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h10_crediti.py"
+      ],
+      "descrizione": "sette prove su un libro temporaneo: conservazione, saldo non negativo, emissione senza causale, il muro del denaro, il muro del trasferimento, atomicita della vendita, arrotondamento"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
+  },
+  {
+    "id": "H11",
+    "testo": "Vendere un'esperienza non fa sparire niente: solo cio' che puo' uscire di casa (merce) o finire (consumo) spiega un'assenza nella differenza di fine soggiorno. Idea della divisione in tre generi — mercato, ristorazione, esperienze: Claudio Terzi, 5 settembre 2026.",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se: la vendita di un'esperienza fa comparire un oggetto fra i comprati invece che fra i non spiegati; o un oggetto esce dal conto (comprati piu non spiegati diverso dai mancanti); o merce e consumo smettono di spiegare un'assenza; o l incasso non tiene i tre generi separati; o una vendita scritta prima dei generi smette di spiegare un'assenza.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h11_generi.py"
+      ],
+      "descrizione": "ogni genere su ogni oggetto mancante a forza bruta, i tre generi insieme, l incasso separato per genere, e un movimento senza genere che deve valere merce"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
   }
 ]
