@@ -3,8 +3,36 @@
     "nome": "progetto.json",
     "opera": "Il viso cerca l'identita'",
     "generato_da": "progetto.py",
-    "generato_il": "2026-09-09T06:31:29+00:00",
+    "generato_il": "2026-09-09T07:16:49+00:00",
     "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
+    "dove_sta": {
+      "repository": "raffaellocantatelli/Rosso-rosso-rosso",
+      "ramo": "claude/glass-plexiglas-art-movement-m9w0fd",
+      "cartella": "opere/vetro_5cm",
+      "NON_e": "claudioterzi/Claudio - quello e' il repository citato nel master su Drive per il codice della scacchiera quantica, non e' questo lavoro. Spingere qui sparpaglierebbe l'opera su due repository",
+      "versionato": "codice, documenti, progetto.json, simulatore con il volto scelto, e i file di stampa del SEGNAPOSTO procedurale",
+      "non_versionato": "le matrici di produzione 1:1 con il volto vero (uscita/*finale*), il contatto del collaudo e i video derivati da un ritratto. Vedi .gitignore: mostrare l'opera non e' distribuirne le matrici"
+    },
+    "gia_fatto_non_rifare": [
+      {
+        "cosa": "ancoraggio deterministico 0,10 / 0,50 / 0,90",
+        "dove": "viso.da_foto(ancoraggio=...), default in collaudo.esamina",
+        "commit": "68c4ec7",
+        "verifica": "un grigio 50% cade a 0,3986 contro un picco a 0,3999"
+      },
+      {
+        "cosa": "collaudo isolato del soggetto",
+        "dove": "collaudo.separa_fondo + campo resa_sul_soggetto",
+        "commit": "68c4ec7",
+        "verifica": "sul finto: resa complessiva 0,936, sul SOGGETTO 0,808. Sono due numeri diversi e la distinzione e' il motivo per cui esiste la funzione"
+      },
+      {
+        "cosa": "demarcazione pubblico / matrici",
+        "dove": ".gitignore in opere/vetro_5cm",
+        "commit": "10962ea",
+        "verifica": "git check-ignore uscita/p45_finale_plexi_viso.svg"
+      }
+    ],
     "come_va_letto": "Ogni numero qui e' calcolato da ottica.py o letto dai file veri, mai trascritto. Per rigenerarlo: python3 progetto.py. Per controllare che non sia invecchiato: python3 progetto.py --verifica.",
     "etichette": {
       "RECUPERATO": "letto nella fonte o osservato eseguendola",
@@ -403,7 +431,7 @@
     },
     "prompt": {
       "principale": "Hyper-realistic black-and-white photographic portrait of a 25-year-old man,\nthe WHOLE HEAD inside the frame with clear space around it: the full hairline\nand top of the hair, the whole forehead, both ears, the jaw and the chin, all\ncompletely visible. Head fills about 60% of the frame height, centred, with\neven margin on all four sides. Cropped at the base of the neck: no shoulders,\nno collar, no clothing.\n\nBACKGROUND. A perfectly flat, even, seamless mid-grey field, exactly 50%\ngrey. No gradient, no vignette, no shadow cast on it, no texture, no edges,\nno floor line. The head sits on a uniform grey wall lit as evenly as the face.\n\nSUBJECT. Light olive skin. Dark brown wavy hair about 4.5 cm long, the whole\nshape of it visible. Light-coloured eyes, pale iris clearly brighter than the\nsurrounding eye socket. Head straight on, facing the camera. Calm, elegant,\nself-possessed. Beautiful without being decorative: the beauty is in the bone\nstructure, not in styling.\n\nCAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,\ntripod, subject 1.5 m away. Full skin realism: real subsurface scattering,\nreal pore structure, fine vellus hair on the cheek, moisture on the lower lip,\nindividual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.\n\nLIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a\nlarge white bounce on the right at half power, and the same light falling on\nthe background so it stays even. Broad simple modelling: the lit cheek and\nforehead read as one continuous mass, the shadow side as another. No hard\nshadow edges, no rim light, no hair light, no catchlight in the eyes.\n\nGRADE. Deliberately FLAT, like an ungraded log capture. THE TONAL SCALE IS\nFIXED, not a matter of taste - these three values are the specification:\n  - the background is exactly 50% grey\n  - nothing anywhere is brighter than 90% grey\n  - nothing anywhere is darker than 10% grey\nThe darkest point is the pupil at about 15% grey; the brightest is the lit\ncheekbone at about 85%. Expose the face about half a stop DARK of the\nbackground, so the head reads a shade heavier than the field it sits on.\n\nEXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no\ntension in the jaw. The gaze is almost - but not quite - directed at the\nviewer: the left eye looks straight out, the right eye about one degree past\nthe viewer's shoulder. The right side of the face is very slightly softer and\nless defined than the left, as if the light there were one stop less certain.\n\nFORMAT. Vertical 3:4, at least 2400 x 3200 pixels, PNG, 16-bit if available.\nSharp everywhere, no depth-of-field blur, no vignette, no film grain, no\nborder, no text, no watermark, no colour.",
-      "negativo": "high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,\nfilm grain, beauty retouching, smoothed skin, plastic skin, airbrushed,\ncropped head, cropped forehead, cropped chin, cropped ears, extreme close-up,\ngradient background, vignetted background, shadow on background, textured wall,\ndramatic lighting, rim light, hair light, catchlight, specular highlight,\nlens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,\nmakeup, background, shoulders, neck, hands, text, watermark, border, colour,\ntilted head, three-quarter view, profile, smile, teeth",
+      "negativo": "high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,\nfilm grain, beauty retouching, smoothed skin, plastic skin, airbrushed,\ncropped head, cropped forehead, cropped chin, cropped ears, extreme close-up,\ngradient background, vignetted background, shadow on background, textured wall,\ndramatic lighting, rim light, hair light, catchlight, specular highlight,\nlens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,\nmakeup, shoulders, collar, clothing, hands, text, watermark, border, colour,\ntilted head, three-quarter view, profile, smile, teeth",
       "varianti": [
         {
           "nome": "a - piu' scultoreo",

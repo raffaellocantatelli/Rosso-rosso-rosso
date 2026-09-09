@@ -103,7 +103,7 @@ cropped head, cropped forehead, cropped chin, cropped ears, extreme close-up,
 gradient background, vignetted background, shadow on background, textured wall,
 dramatic lighting, rim light, hair light, catchlight, specular highlight,
 lens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,
-makeup, background, shoulders, neck, hands, text, watermark, border, colour,
+makeup, shoulders, collar, clothing, hands, text, watermark, border, colour,
 tilted head, three-quarter view, profile, smile, teeth
 ```
 

@@ -137,7 +137,7 @@ cropped head, cropped forehead, cropped chin, cropped ears, extreme close-up,
 gradient background, vignetted background, shadow on background, textured wall,
 dramatic lighting, rim light, hair light, catchlight, specular highlight,
 lens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,
-makeup, background, shoulders, neck, hands, text, watermark, border, colour,
+makeup, shoulders, collar, clothing, hands, text, watermark, border, colour,
 tilted head, three-quarter view, profile, smile, teeth\
 """
 
@@ -304,6 +304,39 @@ def costruisci(prog, misure):
             "generato_da": "progetto.py",
             "generato_il": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
+            "dove_sta": {
+                "repository": "raffaellocantatelli/Rosso-rosso-rosso",
+                "ramo": "claude/glass-plexiglas-art-movement-m9w0fd",
+                "cartella": "opere/vetro_5cm",
+                "NON_e": ("claudioterzi/Claudio - quello e' il repository citato "
+                          "nel master su Drive per il codice della scacchiera "
+                          "quantica, non e' questo lavoro. Spingere qui "
+                          "sparpaglierebbe l'opera su due repository"),
+                "versionato": ("codice, documenti, progetto.json, simulatore con "
+                               "il volto scelto, e i file di stampa del "
+                               "SEGNAPOSTO procedurale"),
+                "non_versionato": ("le matrici di produzione 1:1 con il volto "
+                                   "vero (uscita/*finale*), il contatto del "
+                                   "collaudo e i video derivati da un ritratto. "
+                                   "Vedi .gitignore: mostrare l'opera non e' "
+                                   "distribuirne le matrici"),
+            },
+            "gia_fatto_non_rifare": [
+                {"cosa": "ancoraggio deterministico 0,10 / 0,50 / 0,90",
+                 "dove": "viso.da_foto(ancoraggio=...), default in collaudo.esamina",
+                 "commit": "68c4ec7",
+                 "verifica": "un grigio 50% cade a 0,3986 contro un picco a 0,3999"},
+                {"cosa": "collaudo isolato del soggetto",
+                 "dove": "collaudo.separa_fondo + campo resa_sul_soggetto",
+                 "commit": "68c4ec7",
+                 "verifica": ("sul finto: resa complessiva 0,936, sul SOGGETTO "
+                              "0,808. Sono due numeri diversi e la distinzione "
+                              "e' il motivo per cui esiste la funzione")},
+                {"cosa": "demarcazione pubblico / matrici",
+                 "dove": ".gitignore in opere/vetro_5cm",
+                 "commit": "10962ea",
+                 "verifica": "git check-ignore uscita/p45_finale_plexi_viso.svg"},
+            ],
             "come_va_letto": (
                 "Ogni numero qui e' calcolato da ottica.py o letto dai file veri, "
                 "mai trascritto. Per rigenerarlo: python3 progetto.py. Per "
