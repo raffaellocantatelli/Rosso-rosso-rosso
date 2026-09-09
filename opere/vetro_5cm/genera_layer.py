@@ -43,14 +43,36 @@ import numpy as np
 from ottica import Progetto
 import viso as viso_mod
 
-# Margine del pannello di plexi, per lato. NON e' un numero tondo scelto a
-# caso: e' 3 passi esatti (3 x 6,00 mm). Il reticolo della lastra dietro sta
-# a (i+0.5)*passo - margine; se il margine non e' un multiplo intero del
-# passo, quel reticolo cade sfasato rispetto a quello del vetro di
-# (margine mod passo). Con 15 mm lo sfasamento vale mezza cella, e mezza
-# cella INVERTE il moire'. Qui il margine e' commensurabile e il problema
-# non esiste - ne' nei file, ne' al montaggio.
-MARGINE = 18.0
+# ---------------------------------------------------------------- il margine
+# Il plexi e' piu' grande dell'area visibile. Quanto, non e' un numero tondo
+# scelto a caso: e' la somma di due cose, arrotondata a un numero INTERO di
+# passi.
+#
+#   1. lo scorrimento di parallasse all'angolo di vista massimo:
+#      s = d_eff * tan(theta_max)   -> 23,3 mm a 25 gradi con 50 mm d'aria
+#   2. lo spostamento dovuto alla rotazione di montaggio, agli angoli:
+#      tan(alpha) * meta' diagonale  -> 5,6 mm a 0,64 gradi
+#
+# Sotto quella somma, agli angoli del quadro il reticolo dietro FINISCE, e
+# quello che si vede al suo posto e' l'ultima fila ripetuta: una striscia
+# guasta lungo il bordo. Si vedeva nel video prima di questa correzione.
+#
+# L'arrotondamento a un numero intero di passi non e' cosmesi: il reticolo
+# dietro sta a (i+0,5)*passo - margine, e un margine non commensurabile lo
+# sfasa. Con mezza cella di sfasamento il moire' si INVERTE.
+THETA_MAX_GRADI = 25.0
+
+
+def margine(prog, theta_max_gradi=THETA_MAX_GRADI):
+    """Margine per lato del pannello di plexi, in mm. Multiplo intero del passo."""
+    s = prog.parallasse(math.radians(theta_max_gradi))
+    rot = math.tan(prog.alpha) * math.hypot(prog.larghezza, prog.altezza) / 2.0
+    return math.ceil((s + rot) / prog.passo) * prog.passo
+
+
+MARGINE = 36.0        # valore di riferimento a passo 6,00 mm e 25 gradi.
+                      # Il codice usa `margine(prog)`: questo serve solo a chi
+                      # legge, e ai casi in cui il progetto non e' disponibile.
 
 QUI = os.path.dirname(os.path.abspath(__file__))
 USCITA = os.path.join(QUI, "uscita")
@@ -63,6 +85,10 @@ def _ruota(x, y, cx, cy, ang):
     return cx + c * dx - s * dy, cy + s * dx + c * dy
 
 
+def margine_o_default(prog, m):
+    return margine(prog) if m is None else m
+
+
 def centri(larghezza, altezza, passo, margine=0.0):
     """Centri del reticolo su un pannello, come due array (x, y)."""
     nx = int(math.ceil((larghezza + 2 * margine) / passo))
@@ -73,7 +99,7 @@ def centri(larghezza, altezza, passo, margine=0.0):
 
 
 # ------------------------------------------------------------- retino AM
-def retino_viso(prog, densita_fn=None, margine=MARGINE, seed=11,
+def retino_viso(prog, densita_fn=None, margine=None, seed=11,
                 dissolvenza=True, precompensa=True):
     """Retino AM del viso sulla lastra di plexi (che al montaggio sara'
     ruotata di alpha). Restituisce (X, Y, DIAM) come array 2D (ny, nx) nelle
@@ -84,6 +110,7 @@ def retino_viso(prog, densita_fn=None, margine=MARGINE, seed=11,
     una lista di cerchi e poi ricostruire le celle dalle posizioni ruotate e'
     l'errore che aveva fatto sparire la rotazione, e con essa il moire'.
     """
+    margine = margine_o_default(prog, margine)
     W, H = prog.larghezza, prog.altezza
     cx, cy = W / 2.0, H / 2.0
     X, Y = centri(W, H, prog.passo, margine)
@@ -144,7 +171,7 @@ def _crocini(larghezza, altezza, margine, passo_tacche=None):
     return "\n".join(p)
 
 
-def svg_vetro(prog, path=None, margine=MARGINE, prefisso=""):
+def svg_vetro(prog, path=None, margine=None, prefisso=""):
     """Faccia 2 del vetro: reticolo regolare di punti neri opachi.
     Il pannello e' a misura esatta: e' il vetro a definire l'area visibile."""
     path = path or os.path.join(USCITA, f"{prefisso}vetro_griglia.svg")
@@ -161,9 +188,10 @@ def svg_vetro(prog, path=None, margine=MARGINE, prefisso=""):
                 f"R3 vetro - reticolo p={prog.passo}mm d={prog.diam_griglia}mm")
 
 
-def svg_plexi(prog, path=None, margine=MARGINE, prefisso="", **kw):
+def svg_plexi(prog, path=None, margine=None, prefisso="", **kw):
     """Seconda superficie del plexi: il viso a retino, su pannello
     sovradimensionato di `margine` per lato (serve alla rotazione)."""
+    margine = margine_o_default(prog, margine)
     path = path or os.path.join(USCITA, f"{prefisso}plexi_viso.svg")
     W, H = prog.larghezza + 2 * margine, prog.altezza + 2 * margine
     X, Y, D = retino_viso(prog, margine=margine, **kw)
@@ -239,9 +267,10 @@ def _copertura_viso(shape, res, prog, diam, margine, off_x=0.0):
 class Scena:
     """Il composito dei due strati, simulato in coordinate del piano dietro."""
 
-    def __init__(self, prog, res=4.0, margine=MARGINE, **kw_retino):
+    def __init__(self, prog, res=4.0, margine=None, **kw_retino):
         self.prog = prog
         self.res = res
+        margine = margine_o_default(prog, margine)
         self.margine = margine
         W = int(prog.larghezza * res)
         H = int(prog.altezza * res)
@@ -340,19 +369,25 @@ def main():
     ap.add_argument("--passo", type=float, default=6.0)
     ap.add_argument("--alpha", type=float, default=0.86)
     ap.add_argument("--gap", type=float, default=50.0)
-    ap.add_argument("--diam", type=float, default=4.2)
+    ap.add_argument("--diam", type=float, default=None,
+                    help="diametro del punto sul vetro. Per difetto quello che "
+                         "da' copertura 38,48%% AL PASSO SCELTO: un diametro "
+                         "fisso a un passo diverso cambia la copertura, e con "
+                         "essa tutto il resto")
     ap.add_argument("--distanza", type=float, default=2500.0)
     ap.add_argument("--foto", help="usa una fotografia al posto del viso procedurale")
-    ap.add_argument("--ampiezza", type=float, default=0.38,
-                    help="escursione tonale concessa al viso intorno al fondo. "
-                         "Con --foto usare quella che ha determinato collaudo.py: "
-                         "il default non e' la taratura di quell'immagine")
+    ap.add_argument("--resa-min", type=float, default=0.35, dest="resa_min",
+                    help="con --foto: quanto deve muoversi la cella peggiore. "
+                         "Da qui si RICAVA la finestra tonale (squilibrata verso "
+                         "le ombre). Vedi collaudo.py")
     ap.add_argument("--res", type=float, default=4.0, help="px/mm della simulazione")
     ap.add_argument("--solo-svg", action="store_true")
     ap.add_argument("--prefisso", default="",
                     help="prefisso dei file di stampa, per tenere piu' "
                          "configurazioni affiancate (es. p45_)")
     a = ap.parse_args()
+    if getattr(a, "diam", None) is None:
+        a.diam = a.passo * math.sqrt(4 * 0.3848 / math.pi)
 
     os.makedirs(USCITA, exist_ok=True)
     prog = Progetto(passo=a.passo, alpha_gradi=a.alpha, gap=a.gap,
@@ -360,8 +395,11 @@ def main():
 
     kw = {}
     if a.foto:
-        kw["densita_fn"] = lambda w, h: viso_mod.da_foto(a.foto, w, h,
-                                                         ampiezza=a.ampiezza)
+        import collaudo
+        fin = collaudo.finestra_tonale(a.resa_min, prog.passo, prog.diam_griglia / 2)
+        print(f"  finestra tonale (resa minima {a.resa_min:.2f}): "
+              f"{fin[0]:.3f} .. {fin[1]:.3f}")
+        kw["densita_fn"] = lambda w, h: viso_mod.da_foto(a.foto, w, h, finestra=fin)
 
     print(svg_vetro(prog, prefisso=a.prefisso))
     print(svg_plexi(prog, prefisso=a.prefisso, **kw))

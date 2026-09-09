@@ -1,0 +1,13 @@
+# Uscite derivate da un'immagine dell'autore.
+#
+# Il repository e' PUBBLICO. Un file di stampa, un contatto o un video fatti
+# a partire dal ritratto contengono il ritratto - retinato, ma riconoscibile.
+# Pubblicarlo e' una decisione dell'autore, non di un nodo che passa di qui
+# (CLAUDE.md §2.5): finche' non la prende lui, questi file restano fuori.
+#
+# Il codice che li produce e' versionato. I file no.
+uscita/*finale*
+uscita/effetto_raffaello.mp4
+uscita/collaudo*
+collaudo.json
+collaudo_contatto.png

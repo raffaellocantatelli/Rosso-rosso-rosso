@@ -152,16 +152,31 @@ python3 collaudo.py cartella_ritratti/ --passo 4.5
 
 Rende ogni cella del reticolo nei DUE stati estremi - punto davanti sopra quello dietro, e punto davanti nel mezzo dei quattro dietro - e misura quanta luce quella cella muove. La RESA e' quella differenza divisa per il massimo ottenibile.
 
-**Non la resa: l'AMPIEZZA tonale a cui l'immagine passa. Abbassando l'ampiezza qualunque immagine supera la soglia, perche' un viso schiacciato sul fondo muove tantissimo e non si vede. Un'immagine e' buona quando regge il movimento SENZA farsi appiattire.**
+### La finestra tonale non si sceglie: si ricava
+
+Fissato quanto deve muoversi la cella PEGGIORE (--resa-min, 0,35 per difetto), i due estremi di densita' fra cui mappare l'immagine sono determinati: sono i punti in cui la curva della resa vale quel valore. A passo 4,5 mm vengono 0,135 .. 0,865, SQUILIBRATI 1,92x verso le ombre. Non e' una preferenza: e' la curva.
+
+> **Errore corretto.** La prima versione mappava simmetrica intorno al fondo. Su un ritratto vero il 20% delle celle risultava ferma - TUTTE dal lato chiaro, tutte sulla guancia illuminata - perche' sotto il fondo la resa crolla molto piu' in fretta. Con la finestra derivata scendono a zero.
+
+### Le soglie
 
 | soglia | valore |
 |---|---|
-| ampiezza minima | 0.3 |
-| resa media | 0.55 |
-| frazione celle vive | 0.8 |
+| resa media | 0.65 |
+| resa min per cella | 0.35 |
 | escursione sorgente minima | 0.12 |
 
-> Su tre casi costruiti apposta - campo piatto ideale, il segnaposto procedurale, e lo stesso volutamente contrastato - non su ritratti veri. Sono un filtro, non un giudizio: scartano cio' che di sicuro non funziona. La scelta fra le immagini che passano resta dell'autore.
+Il numero 0,65 non e' messo a occhio — sta fra due riferimenti calcolabili:
+
+| istogramma | resa media |
+|---|---|
+| campo piatto sul fondo | 1.0 |
+| gaussiano centrato sul fondo | 0.768 |
+| istogramma uniforme sulla finestra | 0.724 |
+| soglia | 0.65 |
+| bimodale tutto agli estremi | 0.35 |
+
+> I riferimenti sopra sono calcolati, non stimati. Restano un filtro, non un giudizio: scartano cio' che di sicuro non funziona. La scelta fra le immagini che passano resta dell'autore.
 
 *La 'frazione utile entro +/-0,30 dal fondo, soglia 70%' era una soglia messa a occhio. `viso.py --foto` la stampa ancora, ma quella che decide e' collaudo.py.*
 
@@ -171,7 +186,7 @@ Poi:
 
 ```bash
 python3 collaudo.py cartella/ --passo 4.5 --stampa
-python3 video.py --foto scelta.png --ampiezza <quella del collaudo>
+python3 video.py --foto scelta.png --passo 4.5 --alpha 0.6446 --resa-min 0.35
 ```
 
 **Uscite:**

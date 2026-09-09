@@ -209,7 +209,7 @@ def rampa_identita(w, h, inizio=0.42, larghezza=0.60):
 
 
 def da_foto(percorso, w, h, fondo=0.3848, ampiezza=0.38, contrasto=1.0,
-            dissolvenza=False, percentili=(2.0, 98.0), seed=7):
+            dissolvenza=False, percentili=(2.0, 98.0), seed=7, finestra=None):
     """Una fotografia al posto della superficie procedurale.
 
     NON restituisce la foto: la RIMAPPA. Una foto normale ha neri a 1.0 e
@@ -237,7 +237,14 @@ def da_foto(percorso, w, h, fondo=0.3848, ampiezza=0.38, contrasto=1.0,
         n = np.full_like(d, 0.5)
     else:
         n = np.clip((d - lo) / (hi - lo), 0.0, 1.0)
-    out = fondo + ampiezza * (2.0 * n - 1.0)
+    if finestra is not None:
+        # Finestra ESPLICITA, in genere squilibrata verso le ombre: e' quella
+        # che `collaudo.finestra_tonale` ricava dalla curva della resa.
+        # Mappare simmetrici intorno al fondo spegne le luci - vedi li'.
+        dl, dh = finestra
+        out = dl + (dh - dl) * n
+    else:
+        out = fondo + ampiezza * (2.0 * n - 1.0)
     if dissolvenza:
         out = fondo + (out - fondo) * (0.28 + 0.72 * rampa_identita(w, h))
     return np.clip(out, 0.0, 0.95)

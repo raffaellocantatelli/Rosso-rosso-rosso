@@ -32,8 +32,9 @@ da uno sbagliato.
 | `video.py` | il video dell'effetto + la verifica incrociata fra i due renderer |
 | `simulatore.html` | il banco interattivo: muovi il puntatore, o inclina il telefono |
 | `uscita/vetro_griglia.svg` | 600 × 800 mm — 13.400 punti Ø 4,20 mm |
-| `uscita/plexi_viso.svg` | 636 × 836 mm — 14.840 punti, Ø 0,47–5,92 mm |
+| `uscita/plexi_viso.svg` | 672 × 872 mm — 16.352 punti, Ø 0,47–5,92 mm |
 | `uscita/p45_*.svg` | la stessa opera a passo 4,50 mm: 23.674 valori di tono invece di 13.300 |
+| `uscita/p45_finale_*.svg` | i file con l'immagine collaudata |
 | `uscita/effetto.mp4` | 23 s: la macchia che attraversa il viso, poi i punti da vicino |
 
 ## I comandi

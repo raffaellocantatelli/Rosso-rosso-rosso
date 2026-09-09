@@ -58,14 +58,21 @@ Il plexi sta dietro ed è sovradimensionato: la sua rotazione non si vede, e si
 regola a spessori in cinque minuti davanti all'opera con la luce definitiva.
 Un angolo impresso nella stampa non si corregge più.
 
-**3. Il margine del plexi è 18 mm: tre passi esatti.**
-Non è un numero tondo scelto a caso. Il reticolo della lastra dietro sta a
-`(i+0,5)·passo − margine`; se il margine non è multiplo intero del passo, quel
-reticolo cade sfasato rispetto a quello del vetro. Con 15 mm lo sfasamento
-valeva **mezza cella**, e mezza cella **inverte** il moiré: dove dovrebbe
-esserci allineamento c'è disallineamento. Trovato confrontando due renderer
-(correlazione −0,96: stessa ampiezza, stessa periodicità, fase opposta).
-*Un'ampiezza giusta non dimostra niente.*
+**3. Il margine del plexi si calcola, e obbedisce a due vincoli insieme.**
+`margine(prog)` in `genera_layer.py`. A 6,00 mm viene **36 mm** (plexi
+672 × 872); a 4,50 mm viene **31,5 mm** (plexi 663 × 863).
+
+- **Deve coprire lo scorrimento.** Parallasse al massimo angolo di vista
+  (25°) più lo spostamento dovuto alla rotazione agli angoli del quadro:
+  23,3 + 5,6 = 28,9 mm. Sotto quella soglia il reticolo dietro *finisce*, e
+  lungo il bordo compare l'ultima fila ripetuta — una striscia guasta.
+  Vista nel video, non nei calcoli.
+- **Deve essere un numero intero di passi.** Il reticolo dietro sta a
+  `(i+0,5)·passo − margine`: se il margine non è multiplo del passo, quel
+  reticolo cade sfasato. Con 15 mm lo sfasamento valeva **mezza cella**, e
+  mezza cella **inverte** il moiré. Trovato confrontando due renderer
+  (correlazione −0,96: stessa ampiezza, stessa periodicità, fase opposta).
+  *Un'ampiezza giusta non dimostra niente.*
 
 **4. Il viso a pieno campo, e il soggetto è Raffaello Cantarelli.**
 Il pieno campo raddoppia i punti che lavorano (100 × 133 invece di ~55 × 103)
@@ -96,7 +103,7 @@ seconda diventa 53,36 (il PMMA rifrange) e compare un fantasma della griglia
 |---|---|
 | **Vetro** | float extra-chiaro (basso ferro), **6 mm**, ricotto, bordi lucidati a filo piatto. Non temprato: distorsione a onda e iridescenze competono con l'effetto. Se serve vetro di sicurezza: stratificato 3+3 extra-chiaro, PVB trasparente (+0,76 mm, ininfluente) |
 | **Stampa sul vetro** | **faccia 2** (interna). Smalto ceramico nero cotto, o UV con primer. Densità ottica ≥ 2,0, doppia passata se serve. Nessun bianco: il vetro resta trasparente fra i punti |
-| **Plexiglas** | PMMA **colato** (non estruso), 5 mm, **bianco opaco**, **636 × 836 mm** |
+| **Plexiglas** | PMMA **colato** (non estruso), 5 mm, **bianco opaco**. **672 × 872 mm** a passo 6,00; **663 × 863 mm** a passo 4,50 |
 | **Stampa sul plexi** | **prima superficie**, verso l'intercapedine. Nero UV opaco e **matt** (gloss ≤ 15 GU) |
 | **Distanziali** | 4 colonne tornite, **50,0 mm ± 0,2**, forate sul plexi (non sul vetro) |
 | **Peso** | vetro 7,2 + plexi 3,3 + ferramenta ≈ **11 kg**. Fissaggi per 60 kg |
@@ -106,9 +113,9 @@ seconda diventa 53,36 (il PMMA rifrange) e compare un fantasma della griglia
 | File | Formato 1:1 | Contenuto |
 |---|---|---|
 | `uscita/vetro_griglia.svg` | 600 × 800 mm | 13.400 punti Ø 4,20 mm, passo 6,00, copertura 38,5% |
-| `uscita/plexi_viso.svg` | 636 × 836 mm | 14.840 punti, Ø 0,47–5,92 mm, stesso passo |
+| `uscita/plexi_viso.svg` | 672 × 872 mm | 16.352 punti, Ø 0,47–5,92 mm, stesso passo |
 
-I 18 mm di margine per lato servono alla rotazione e restano coperti. Il viso
+Il margine per lato serve allo scorrimento e alla rotazione, e resta coperto. Il viso
 nel file è **pre-ruotato di −0,86°**: dopo il montaggio torna dritto mentre il
 suo reticolo è ruotato. Il moiré nasce dai punti, non dal viso.
 
@@ -123,11 +130,11 @@ riproducibile.
 Il vetro va **a squadro**. L'angolo si dà ruotando il plexi:
 
 ```
-alpha = 0,86°  ->  12,55 mm di sfalsamento fra i due angoli del lato lungo
-                    9,55 mm sul lato corto
+alpha = 0,86°  ->  13,09 mm di sfalsamento fra i due angoli del lato lungo
+                   10,09 mm sul lato corto        (su plexi 672 x 872)
 ```
 
-Si monta il plexi su asole, si porta lo sfalsamento a 12,55 mm con spessori
+Si monta il plexi su asole, si porta lo sfalsamento a 13,09 mm con spessori
 calibrati, si guarda da 2,5 m e **si regola a vista**:
 
 | alpha | periodo | macchie sull'altezza |

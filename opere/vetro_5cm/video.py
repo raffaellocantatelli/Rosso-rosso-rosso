@@ -77,7 +77,7 @@ class Opera:
 
     def __init__(self, prog, densita_fn=None, margine=None, dissolvenza=True):
         self.prog = prog
-        margine = gl.MARGINE if margine is None else margine
+        margine = gl.margine_o_default(prog, margine)
         self.margine = margine
         _, _, self.diam = gl.retino_viso(prog, margine=margine,
                                          densita_fn=densita_fn,
@@ -138,7 +138,7 @@ class Opera:
         nero = np.clip(nero, 0.0, 1.0)
         return (1.0 - nero) * (1.0 - math.pi * r1 ** 2 / p.passo ** 2)
 
-    def lontano(self, s, dim, regione=None):
+    def lontano(self, s, dim, regione=None, riferimento=0.62):
         """Vista da lontano, ingrandita a `dim`.
 
         `regione` = (x0, y0, larghezza, altezza) in mm sul pannello. Serve a
@@ -154,8 +154,9 @@ class Opera:
             i1 = max(i0 + 1, int(round((x0 + w) / pp)))
             j1 = max(j0 + 1, int(round((y0 + h) / pp)))
             c = c[j0:j1, i0:i1]
-        im = Image.fromarray(np.clip(c * 255 / 0.62, 0, 255).astype(np.uint8))
-        return np.asarray(im.resize(dim, Image.BICUBIC), dtype=np.float64) / 255.0 * 0.62
+        im = Image.fromarray(np.clip(c * 255 / riferimento, 0, 255).astype(np.uint8))
+        return (np.asarray(im.resize(dim, Image.BICUBIC), dtype=np.float64)
+                / 255.0 * riferimento)
 
     # ---------------------------------------------------- vista ravvicinata
     def render_vicino(self, s, x0, y0, w_mm, h_mm, res):
@@ -231,7 +232,19 @@ def _testo(dr, xy, t, dim=22, grassetto=False, colore=(28, 30, 30), ancora="la")
     dr.text(xy, t, font=f, fill=colore, anchor=ancora)
 
 
-def fotogramma(op, prog, dx, modo, larghezza=1080, altezza=1560):
+def riferimento(op, percentile=99.0):
+    """Luminanza di riferimento del campo, misurata sull'opera vera.
+
+    Serve alla mappatura a schermo. Una costante non va bene: cambiando la
+    finestra tonale dell'immagine cambia il livello medio dell'opera, e un
+    fondoscala fisso restituisce un video quasi nero senza che sia cambiato
+    niente nell'ottica.
+    """
+    c = op.campo_cella(0.0)
+    return max(float(np.percentile(c, percentile)), 1e-6)
+
+
+def fotogramma(op, prog, dx, modo, larghezza=1080, altezza=1560, rif=0.62):
     """Un fotogramma completo: opera + righello + lettura."""
     th = math.atan2(dx, prog.distanza)
     s = prog.parallasse(th)
@@ -241,7 +254,7 @@ def fotogramma(op, prog, dx, modo, larghezza=1080, altezza=1560):
     AW, AH = larghezza - 60, int((larghezza - 60) * prog.altezza / prog.larghezza)
 
     if modo == "lontano":
-        img = op.lontano(s, (AW, AH))
+        img = op.lontano(s, (AW, AH), riferimento=rif)
         etichetta = "VISTA A 6 m   i punti fondono, resta la macchia che attraversa"
     else:
         # ritaglio centrato sull'occhio illuminato, non sul campo vuoto:
@@ -252,11 +265,11 @@ def fotogramma(op, prog, dx, modo, larghezza=1080, altezza=1560):
         y0 = 330.0 - h_mm / 2
         img = op.render_vicino(s, x0, y0, w_mm, h_mm, res=AW / w_mm)
         img = np.asarray(Image.fromarray(
-            np.clip(img * 255 / 0.62, 0, 255).astype(np.uint8)).resize((AW, AH),
-            Image.LANCZOS), dtype=np.float64) / 255.0 * 0.62
+            np.clip(img * 255 / rif, 0, 255).astype(np.uint8)).resize((AW, AH),
+            Image.LANCZOS), dtype=np.float64) / 255.0 * rif
         etichetta = f"VISTA A 1,2 m   ritaglio {w_mm:.0f} x {h_mm:.0f} mm   i punti, uno per uno"
 
-    g = np.clip(img / 0.62, 0, 1) ** (1 / 1.35)
+    g = np.clip(img / rif, 0, 1) ** (1 / 1.35)
     tela.paste(Image.fromarray((g * 255).astype(np.uint8)).convert("RGB"), (30, 30))
 
     dr = ImageDraw.Draw(tela)
@@ -299,7 +312,9 @@ def monta(op, prog, path, fps=25, sec_lontano=15, sec_vicino=8, ampiezza=900):
     import imageio_ffmpeg
     exe = imageio_ffmpeg.get_ffmpeg_exe()
     n_l, n_v = int(fps * sec_lontano), int(fps * sec_vicino)
-    prova = fotogramma(op, prog, 0, "lontano")
+    rif = riferimento(op)
+    print(f"  riferimento di luminanza misurato sul campo: {rif:.4f}")
+    prova = fotogramma(op, prog, 0, "lontano", rif=rif)
     cmd = [exe, "-y", "-f", "rawvideo", "-pix_fmt", "rgb24",
            "-s", f"{prova.width}x{prova.height}", "-r", str(fps), "-i", "-",
            "-an", "-c:v", "libx264", "-preset", "slow", "-crf", "20",
@@ -310,7 +325,7 @@ def monta(op, prog, path, fps=25, sec_lontano=15, sec_vicino=8, ampiezza=900):
         for k in range(n):
             # andata e ritorno con partenza e arrivo fermi (coseno)
             dx = -ampiezza * math.cos(2 * math.pi * k / n)
-            pr.stdin.write(fotogramma(op, prog, dx, modo).tobytes())
+            pr.stdin.write(fotogramma(op, prog, dx, modo, rif=rif).tobytes())
         print(f"  {modo}: {n} fotogrammi")
     pr.stdin.close()
     pr.wait()
@@ -323,8 +338,12 @@ def main():
     ap.add_argument("--alpha", type=float, default=0.86)
     ap.add_argument("--gap", type=float, default=50.0)
     ap.add_argument("--foto")
-    ap.add_argument("--ampiezza", type=float, default=0.38,
-                    help="con --foto: la taratura determinata da collaudo.py")
+    ap.add_argument("--diam", type=float, default=None,
+                    help="diametro del punto sul vetro. Per difetto quello che "
+                         "da' copertura 38,48%% AL PASSO SCELTO")
+    ap.add_argument("--resa-min", type=float, default=0.35, dest="resa_min",
+                    help="con --foto: quanto deve muoversi la cella peggiore. "
+                         "Da qui si ricava la finestra tonale. Vedi collaudo.py")
     ap.add_argument("--verifica", action="store_true")
     ap.add_argument("--dissolvenza", action="store_true",
                     help="con --foto: applica anche la dissolvenza del retino. "
@@ -332,15 +351,24 @@ def main():
                          "dissolvenza e' gia' dentro l'immagine")
     ap.add_argument("--out", default=os.path.join(USCITA, "effetto.mp4"))
     a = ap.parse_args()
-    prog = Progetto(passo=a.passo, alpha_gradi=a.alpha, gap=a.gap)
+    if getattr(a, "diam", None) is None:
+        a.diam = a.passo * math.sqrt(4 * 0.3848 / math.pi)
+    prog = Progetto(passo=a.passo, alpha_gradi=a.alpha, gap=a.gap,
+                    diam_griglia=a.diam)
 
     if a.verifica:
         print("VERIFICA INCROCIATA - renderer veloce contro renderer falsificato")
         raise SystemExit(0 if verifica(prog) else 2)
 
-    fn = ((lambda w, h: viso_mod.da_foto(a.foto, w, h, ampiezza=a.ampiezza,
-                                         dissolvenza=a.dissolvenza))
-          if a.foto else None)
+    if a.foto:
+        import collaudo
+        fin = collaudo.finestra_tonale(a.resa_min, prog.passo, prog.diam_griglia / 2)
+        print(f"  finestra tonale (resa minima {a.resa_min:.2f}): "
+              f"{fin[0]:.3f} .. {fin[1]:.3f}")
+        fn = lambda w, h: viso_mod.da_foto(a.foto, w, h, finestra=fin,
+                                           dissolvenza=a.dissolvenza)
+    else:
+        fn = None
     op = Opera(prog, densita_fn=fn, dissolvenza=not a.foto)
     print(monta(op, prog, a.out))
 

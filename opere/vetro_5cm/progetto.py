@@ -236,9 +236,12 @@ def configurazione(prog, nome, nota):
         "un_ciclo_ogni_mm_di_testa": round(prog.spostamento_per_ciclo()),
         "punto_a_distanza_nominale_arcmin": round(prog.angolo_punto_arcmin(), 1),
         "distanza_di_fusione_m": round(prog.distanza_fusione() / 1000, 1),
-        "margine_plexi_in_passi": round(gl.MARGINE / prog.passo, 3),
-        "margine_commensurabile": abs(gl.MARGINE / prog.passo
-                                      - round(gl.MARGINE / prog.passo)) < 1e-9,
+        "margine_plexi_mm": gl.margine(prog),
+        "margine_plexi_in_passi": round(gl.margine(prog) / prog.passo, 3),
+        "margine_commensurabile": abs(gl.margine(prog) / prog.passo
+                                      - round(gl.margine(prog) / prog.passo)) < 1e-9,
+        "plexi_mm": [prog.larghezza + 2 * gl.margine(prog),
+                     prog.altezza + 2 * gl.margine(prog)],
         "sfalsamento_di_montaggio_mm": {
             "lato_lungo": round(math.tan(prog.alpha) * (prog.altezza + 2 * gl.MARGINE), 2),
             "lato_corto": round(math.tan(prog.alpha) * (prog.larghezza + 2 * gl.MARGINE), 2),
@@ -330,8 +333,15 @@ def costruisci(prog, misure):
                                  "L'inchiostro resta anche protetto.")},
             "plexiglas": {"spessore_mm": prog.t_plexi,
                           "stampa_prima_superficie": prog.plexi_prima_superficie,
-                          "margine_per_lato_mm": gl.MARGINE,
-                          "margine_in_passi": round(gl.MARGINE / prog.passo, 3)},
+                          "margine_per_lato_mm": gl.margine(prog),
+                          "margine_in_passi": round(gl.margine(prog) / prog.passo, 3),
+                          "come_si_ricava_il_margine": (
+                              "parallasse al massimo angolo di vista "
+                              f"({gl.THETA_MAX_GRADI:.0f} gradi) piu' lo spostamento "
+                              "dovuto alla rotazione agli angoli del quadro, "
+                              "arrotondato in su a un numero INTERO di passi. "
+                              "Sotto quella somma il reticolo dietro finisce e "
+                              "lungo il bordo compare l'ultima fila ripetuta.")},
             "distanza_efficace_mm": round(prog.d_eff, 2),
             "indici_di_rifrazione": {"vetro": N_VETRO, "plexiglas": N_PLEXI},
             "distanza_nominale_di_osservazione_mm": prog.distanza,
@@ -350,15 +360,16 @@ def costruisci(prog, misure):
                  "compone in una stanza normale. Costo: il movimento diventa piu' "
                  "sensibile (un ciclo ogni 225 mm invece di 300) e i punti da "
                  "stampare passano da 13.400 a 23.852. "
-                 "File gia' generati: uscita/p45_*.svg. "
+                 "File gia' generati: uscita/p45_*.svg (col segnaposto). "
                  "Comando: python3 genera_layer.py --passo 4.5 --alpha 0.6446 "
                  "--diam 3.15 --prefisso p45_")),
-            "il_margine_vale_per_entrambe": (
-                f"{gl.MARGINE:.0f} mm sono 3 passi esatti a 6,00 mm e 4 passi "
-                "esatti a 4,50 mm. In tutti e due i casi il reticolo dietro cade "
-                "sullo stesso passo di quello davanti. Se si cambia il passo con "
-                "un valore che non divide il margine, `margine_commensurabile` "
-                "diventa falso e il moire' si sfasa - fino a invertirsi a mezza cella."
+            "il_margine_si_ricava": (
+                "Il margine del plexi non e' un numero fisso: e' calcolato dal "
+                "passo e dall'angolo di vista massimo, e arrotondato a un numero "
+                "intero di passi. Due vincoli insieme: deve coprire lo scorrimento "
+                "(altrimenti il bordo si guasta) e deve essere commensurabile con "
+                "il passo (altrimenti il moire' si sfasa, e a mezza cella si "
+                "inverte). A 6,00 mm vengono 36 mm; a 4,50 mm vengono 31,5 mm."
             ),
             "come_si_sceglie": (
                 "Il passo fissa insieme tre cose che non si possono separare: "
@@ -441,6 +452,11 @@ def costruisci(prog, misure):
             _conta_svg(os.path.join(USCITA, "plexi_viso.svg")),
             _conta_svg(os.path.join(USCITA, "p45_vetro_griglia.svg")),
             _conta_svg(os.path.join(USCITA, "p45_plexi_viso.svg"))) if x],
+        "file_derivati_da_un_immagine": (
+            "I file `*_finale_*`, il contatto del collaudo e i video fatti a "
+            "partire da un ritratto dell'autore NON sono versionati: il "
+            "repository e' pubblico e contengono il volto. Il codice che li "
+            "produce si'. Vedi .gitignore (CLAUDE.md §2.5)."),
 
         "montaggio": {
             "regola": "il vetro va a squadro; l'angolo si da' ruotando il plexi",
@@ -522,21 +538,36 @@ def costruisci(prog, misure):
                             "mezzo dei quattro dietro - e misura quanta luce quella "
                             "cella muove. La RESA e' quella differenza divisa per il "
                             "massimo ottenibile."),
-                "il_punteggio_vero": (
-                    "Non la resa: l'AMPIEZZA tonale a cui l'immagine passa. "
-                    "Abbassando l'ampiezza qualunque immagine supera la soglia, "
-                    "perche' un viso schiacciato sul fondo muove tantissimo e non "
-                    "si vede. Un'immagine e' buona quando regge il movimento SENZA "
-                    "farsi appiattire."),
-                "soglie": {"ampiezza_minima": 0.30, "resa_media": 0.55,
-                           "frazione_celle_vive": 0.80,
+                "la_finestra_tonale_si_ricava": (
+                    "Fissato quanto deve muoversi la cella PEGGIORE (--resa-min, "
+                    "0,35 per difetto), i due estremi di densita' fra cui mappare "
+                    "l'immagine sono determinati: sono i punti in cui la curva "
+                    "della resa vale quel valore. A passo 4,5 mm vengono "
+                    "0,135 .. 0,865, SQUILIBRATI 1,92x verso le ombre. Non e' una "
+                    "preferenza: e' la curva."),
+                "errore_corretto": (
+                    "La prima versione mappava simmetrica intorno al fondo. Su un "
+                    "ritratto vero il 20% delle celle risultava ferma - TUTTE dal "
+                    "lato chiaro, tutte sulla guancia illuminata - perche' sotto "
+                    "il fondo la resa crolla molto piu' in fretta. Con la finestra "
+                    "derivata scendono a zero."),
+                "soglie": {"resa_media": 0.65, "resa_min_per_cella": 0.35,
                            "escursione_sorgente_minima": 0.12},
+                "riferimenti_della_soglia": {
+                    "campo_piatto_sul_fondo": 1.0,
+                    "gaussiano_centrato_sul_fondo": 0.768,
+                    "istogramma_uniforme_sulla_finestra": 0.724,
+                    "soglia": 0.65,
+                    "bimodale_tutto_agli_estremi": 0.350,
+                    "nota": ("la soglia non e' messa a occhio: sta fra il "
+                             "riferimento naturale (una rampa lineare) e il caso "
+                             "peggiore"),
+                },
                 "taratura_delle_soglie": (
-                    "Su tre casi costruiti apposta - campo piatto ideale, il "
-                    "segnaposto procedurale, e lo stesso volutamente contrastato - "
-                    "non su ritratti veri. Sono un filtro, non un giudizio: "
-                    "scartano cio' che di sicuro non funziona. La scelta fra le "
-                    "immagini che passano resta dell'autore."),
+                    "I riferimenti sopra sono calcolati, non stimati. Restano un "
+                    "filtro, non un giudizio: scartano cio' che di sicuro non "
+                    "funziona. La scelta fra le immagini che passano resta "
+                    "dell'autore."),
                 "criterio_superato": (
                     "La 'frazione utile entro +/-0,30 dal fondo, soglia 70%' era "
                     "una soglia messa a occhio. `viso.py --foto` la stampa ancora, "
@@ -545,11 +576,11 @@ def costruisci(prog, misure):
                                     "post lascia bande di posterizzazione che il "
                                     "retino amplifica"),
                 "poi": ["python3 collaudo.py cartella/ --passo 4.5 --stampa",
-                        "python3 video.py --foto scelta.png --ampiezza <quella del collaudo>"],
-                "attenzione": ("l'ampiezza determinata dal collaudo va PASSATA a "
-                               "genera_layer.py e a video.py (--ampiezza). "
-                               "`--stampa` lo fa da se'; a mano ci si dimentica, e "
-                               "i file escono alla taratura di default"),
+                        "python3 video.py --foto scelta.png --passo 4.5 "
+                        "--alpha 0.6446 --resa-min 0.35"],
+                "attenzione": ("--resa-min va passata anche a genera_layer.py e a "
+                               "video.py: e' da li' che ricavano la finestra. "
+                               "`--stampa` lo fa da se'"),
                 "uscite": ["collaudo.json - tutti i numeri, anche delle scartate",
                            "collaudo_contatto.png - per ogni immagine i due stati "
                            "affiancati: a sinistra il viso che rientra nel campo, a "
@@ -660,9 +691,15 @@ def scrivi_brief(d):
           f"> {asm['conseguenza']}", "",
           "---", "", "## Il collaudo — un comando", "",
           "```bash", a["comando"], "```", "", a["cosa_fa"], "",
-          f"**{a['il_punteggio_vero']}**", "",
-          "| soglia | valore |", "|---|---|"]
+          "### La finestra tonale non si sceglie: si ricava", "",
+          a["la_finestra_tonale_si_ricava"], "",
+          f"> **Errore corretto.** {a['errore_corretto']}", "",
+          "### Le soglie", "", "| soglia | valore |", "|---|---|"]
     r += [f"| {k.replace('_', ' ')} | {v} |" for k, v in a["soglie"].items()]
+    r += ["", "Il numero 0,65 non e' messo a occhio — sta fra due riferimenti "
+          "calcolabili:", "", "| istogramma | resa media |", "|---|---|"]
+    r += [f"| {k.replace('_', ' ')} | {v} |"
+          for k, v in a["riferimenti_della_soglia"].items() if k != "nota"]
     r += ["", f"> {a['taratura_delle_soglie']}", "",
           f"*{a['criterio_superato']}*", "",
           f"Se nessuna passa: {a['se_sotto_soglia']}.", "",
