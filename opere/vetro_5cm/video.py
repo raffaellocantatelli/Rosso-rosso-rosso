@@ -323,6 +323,8 @@ def main():
     ap.add_argument("--alpha", type=float, default=0.86)
     ap.add_argument("--gap", type=float, default=50.0)
     ap.add_argument("--foto")
+    ap.add_argument("--ampiezza", type=float, default=0.38,
+                    help="con --foto: la taratura determinata da collaudo.py")
     ap.add_argument("--verifica", action="store_true")
     ap.add_argument("--dissolvenza", action="store_true",
                     help="con --foto: applica anche la dissolvenza del retino. "
@@ -336,7 +338,8 @@ def main():
         print("VERIFICA INCROCIATA - renderer veloce contro renderer falsificato")
         raise SystemExit(0 if verifica(prog) else 2)
 
-    fn = ((lambda w, h: viso_mod.da_foto(a.foto, w, h, dissolvenza=a.dissolvenza))
+    fn = ((lambda w, h: viso_mod.da_foto(a.foto, w, h, ampiezza=a.ampiezza,
+                                         dissolvenza=a.dissolvenza))
           if a.foto else None)
     op = Opera(prog, densita_fn=fn, dissolvenza=not a.foto)
     print(monta(op, prog, a.out))

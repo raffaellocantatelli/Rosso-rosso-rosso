@@ -68,8 +68,10 @@ No hard shadow edges, no rim light, no hair light, no catchlight in the eyes.
 
 GRADE. Deliberately FLAT, like an ungraded log capture. Mid-grey overall, low
 contrast. Absolutely no pure black and no pure white anywhere in the frame:
-every value between 10% and 90% grey. The darkest point is the pupil at about
-25% grey; the brightest is the lit cheekbone at about 85%.
+every value between 10% and 90% grey. Expose about half a stop DARK of middle
+grey: the overall impression should read a shade heavier than neutral, never
+airy. The darkest point is the pupil at about 25% grey; the brightest is the
+lit cheekbone at about 80%.
 
 EXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no
 tension in the jaw. The gaze is almost - but not quite - directed at the
@@ -132,22 +134,56 @@ LIGHT. Two 1.5 m octaboxes, one upper left at 40 degrees and one right at 60 deg
 
 ---
 
-## Il collaudo — un comando, un numero
+## Tienile mezzo stop scure
+
+**La resa del moire' e' massima sul fondo (0,3848) e cala da tutte e due le parti, ma NON in modo simmetrico: densita' 0,65 rende il 74% del massimo, densita' 0,10 solo il 26%.**
+
+Nello stato disallineato le aree nere si sommano. Con un punto dietro grande la somma satura in fretta, la luminanza crolla e l'escursione resta ampia; con un punto piccolo non c'e' quasi niente da sommare.
+
+> Le ombre lavorano quasi il triplo delle luci. Un ritratto per quest'opera va tenuto mezzo stop SOTTO il mezzo grigio: meglio sbagliare scuro che sbagliare chiaro.
+
+---
+
+## Il collaudo — un comando
 
 ```bash
-python3 viso.py --foto ritratto.png --senza-dissolvenza
+python3 collaudo.py cartella_ritratti/ --passo 4.5
 ```
 
-Stampa la **frazione dell'immagine che cade nella finestra utile del moire'**. Sotto **70%** l'immagine si rifa'.
+Rende ogni cella del reticolo nei DUE stati estremi - punto davanti sopra quello dietro, e punto davanti nel mezzo dei quattro dietro - e misura quanta luce quella cella muove. La RESA e' quella differenza divisa per il massimo ottenibile.
 
-> non ritoccare: rifare l'immagine PIU' PIATTA. Comprimere in post una foto contrastata lascia bande di posterizzazione che il retino amplifica
+**Non la resa: l'AMPIEZZA tonale a cui l'immagine passa. Abbassando l'ampiezza qualunque immagine supera la soglia, perche' un viso schiacciato sul fondo muove tantissimo e non si vede. Un'immagine e' buona quando regge il movimento SENZA farsi appiattire.**
+
+| soglia | valore |
+|---|---|
+| ampiezza minima | 0.3 |
+| resa media | 0.55 |
+| frazione celle vive | 0.8 |
+| escursione sorgente minima | 0.12 |
+
+> Su tre casi costruiti apposta - campo piatto ideale, il segnaposto procedurale, e lo stesso volutamente contrastato - non su ritratti veri. Sono un filtro, non un giudizio: scartano cio' che di sicuro non funziona. La scelta fra le immagini che passano resta dell'autore.
+
+*La 'frazione utile entro +/-0,30 dal fondo, soglia 70%' era una soglia messa a occhio. `viso.py --foto` la stampa ancora, ma quella che decide e' collaudo.py.*
+
+Se nessuna passa: rifarle PIU' PIATTE all'origine. Comprimerle in post lascia bande di posterizzazione che il retino amplifica.
 
 Poi:
 
 ```bash
-python3 genera_layer.py --foto ritratto.png
-python3 video.py --foto ritratto.png
+python3 collaudo.py cartella/ --passo 4.5 --stampa
+python3 video.py --foto scelta.png --ampiezza <quella del collaudo>
 ```
+
+**Uscite:**
+
+- collaudo.json - tutti i numeri, anche delle scartate
+- collaudo_contatto.png - per ogni immagine i due stati affiancati: a sinistra il viso che rientra nel campo, a destra il viso intero. Fra quelle due sta tutta l'opera
+
+---
+
+## Sull'identita' visiva
+
+I tratti canonici ORIENTANO il volto, non lo determinano: sei immagini che li rispettano tutte possono essere sei persone diverse. Il collaudo non risponde a 'e' il Raffaello giusto' - non e' una domanda decidibile da un filtro - ma a 'questa regge il retino'. La scelta e' dell'autore, fra quelle che passano; da quel momento l'immagine scelta diventa il riferimento canonico, e le generazioni successive partono da quella (image-to-image) invece che dal testo.
 
 ---
 

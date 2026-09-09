@@ -1,0 +1,11 @@
+# Opera a due strati - dipendenze
+#
+# Per il COLLAUDO delle immagini (collaudo.py, viso.py) bastano le prime due:
+numpy>=1.24
+pillow>=10.0
+#
+# Solo per il video (video.py):
+imageio-ffmpeg>=0.4.9
+#
+# Non serve altro. `simulatore.html` non ha dipendenze: e' un file solo.
+# Installazione:  python3 -m pip install -r requisiti.txt

@@ -25,6 +25,7 @@ da uno sbagliato.
 |---|---|
 |  `PROGETTO_DEFINITIVO.md` | **quello che va allo stampatore e al montatore.** Materiali, tolleranze, angolo, luce, collaudo |
 | `ottica.py` | la fisica: parallasse con rifrazione, moiré da vettore d'onda esatto, Fresnel. Nessun numero del progetto nasce altrove |
+| `collaudo.py` | **il filtro sulle immagini candidate.** Le misura tutte, le classifica, dice a che ampiezza tonale reggono e produce il contatto dei due stati |
 | `viso.py` | il viso come superficie 3D illuminata, non come disegno. Accetta anche una fotografia |
 | `genera_layer.py` | i due file di stampa in SVG 1:1 e il compositore fisico |
 | `verifica_ottica.py` | **il falsificatore.** Rende i due strati pixel per pixel e misura il moiré |
@@ -45,12 +46,17 @@ python3 verifica_ottica.py --suite    # i 4 casi, incluso quello di controllo
 python3 video.py --verifica           # renderer veloce contro renderer falsificato
 python3 genera_layer.py               # i due SVG + le anteprime del movimento
 python3 video.py                      # il video dell'effetto
-python3 viso.py --foto ritratto.png   # collaudo di un'immagine: frazione utile >= 70%
-python3 genera_layer.py --foto ritratto.png   # i file di stampa con l'immagine vera
+python3 collaudo.py ritratti/ --passo 4.5     # collauda tutte le candidate
+python3 collaudo.py ritratti/ --passo 4.5 --stampa   # e genera i file dalla migliore
 ```
 
-Serve `numpy` e `pillow`; per il video anche `imageio-ffmpeg`. Il simulatore
-non serve niente: è un file solo.
+```bash
+python3 -m pip install -r requisiti.txt
+```
+
+Per il **collaudo delle immagini** bastano `numpy` e `pillow`: `collaudo.py`
+importa solo `viso.py`. `imageio-ffmpeg` serve unicamente al video. Il
+simulatore non ha dipendenze: è un file solo.
 
 Il viso procedurale di `viso.py` è un **segnaposto verificabile**: serve a
 provare l'ottica, non a reggere un'opera. Va sostituito — `BRIEF_GEMINI.md`

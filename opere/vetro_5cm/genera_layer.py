@@ -343,6 +343,10 @@ def main():
     ap.add_argument("--diam", type=float, default=4.2)
     ap.add_argument("--distanza", type=float, default=2500.0)
     ap.add_argument("--foto", help="usa una fotografia al posto del viso procedurale")
+    ap.add_argument("--ampiezza", type=float, default=0.38,
+                    help="escursione tonale concessa al viso intorno al fondo. "
+                         "Con --foto usare quella che ha determinato collaudo.py: "
+                         "il default non e' la taratura di quell'immagine")
     ap.add_argument("--res", type=float, default=4.0, help="px/mm della simulazione")
     ap.add_argument("--solo-svg", action="store_true")
     ap.add_argument("--prefisso", default="",
@@ -356,7 +360,8 @@ def main():
 
     kw = {}
     if a.foto:
-        kw["densita_fn"] = lambda w, h: viso_mod.da_foto(a.foto, w, h)
+        kw["densita_fn"] = lambda w, h: viso_mod.da_foto(a.foto, w, h,
+                                                         ampiezza=a.ampiezza)
 
     print(svg_vetro(prog, prefisso=a.prefisso))
     print(svg_plexi(prog, prefisso=a.prefisso, **kw))

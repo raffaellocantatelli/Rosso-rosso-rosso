@@ -230,7 +230,13 @@ def da_foto(percorso, w, h, fondo=0.3848, ampiezza=0.38, contrasto=1.0,
     if contrasto != 1.0:
         d = np.clip((d - 0.5) * contrasto + 0.5, 0.0, 1.0)
     lo, hi = np.percentile(d, percentili)
-    n = np.clip((d - lo) / max(hi - lo, 1e-6), 0.0, 1.0)
+    if hi - lo < 0.02:
+        # immagine (quasi) uniforme: normalizzare su un intervallo nullo la
+        # spingerebbe tutta a un estremo. Il comportamento sensato e' il
+        # contrario: un'immagine senza toni sta tutta sul fondo.
+        n = np.full_like(d, 0.5)
+    else:
+        n = np.clip((d - lo) / (hi - lo), 0.0, 1.0)
     out = fondo + ampiezza * (2.0 * n - 1.0)
     if dissolvenza:
         out = fondo + (out - fondo) * (0.28 + 0.72 * rampa_identita(w, h))

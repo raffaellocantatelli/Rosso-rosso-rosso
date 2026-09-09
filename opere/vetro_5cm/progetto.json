@@ -3,7 +3,7 @@
     "nome": "progetto.json",
     "opera": "Il viso cerca l'identita'",
     "generato_da": "progetto.py",
-    "generato_il": "2026-09-09T05:21:46+00:00",
+    "generato_il": "2026-09-09T05:40:26+00:00",
     "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
     "come_va_letto": "Ogni numero qui e' calcolato da ottica.py o letto dai file veri, mai trascritto. Per rigenerarlo: python3 progetto.py. Per controllare che non sia invecchiato: python3 progetto.py --verifica.",
     "etichette": {
@@ -322,7 +322,7 @@
       }
     },
     "prompt": {
-      "principale": "Hyper-realistic black-and-white photographic portrait of a 25-year-old man,\nhead and face filling the entire frame edge to edge, cropped just above the\neyebrows and just below the chin. No background, no shoulders, no neck.\n\nSUBJECT. Light olive skin. Dark brown wavy hair, about 4.5 cm long, seen only\nat the very top edge of the frame. Light-coloured eyes, pale iris clearly\nbrighter than the surrounding eye socket. Harmonious athletic build. Calm,\nelegant, self-possessed. Beautiful without being decorative: the beauty is in\nthe bone structure, not in styling.\n\nCAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,\ntripod, subject 1.5 m away. Full skin realism: real subsurface scattering,\nreal pore structure, fine vellus hair on the cheek, moisture on the lower lip,\nindividual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.\n\nLIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a\nlarge white bounce on the right at half power. Broad simple modelling: the lit\ncheek and forehead read as one continuous mass, the shadow side as another.\nNo hard shadow edges, no rim light, no hair light, no catchlight in the eyes.\n\nGRADE. Deliberately FLAT, like an ungraded log capture. Mid-grey overall, low\ncontrast. Absolutely no pure black and no pure white anywhere in the frame:\nevery value between 10% and 90% grey. The darkest point is the pupil at about\n25% grey; the brightest is the lit cheekbone at about 85%.\n\nEXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no\ntension in the jaw. The gaze is almost - but not quite - directed at the\nviewer: the left eye looks straight out, the right eye about one degree past\nthe viewer's shoulder. The right side of the face is very slightly softer and\nless defined than the left, as if the light there were one stop less certain.\n\nFORMAT. Vertical 3:4, at least 2400 x 3200 pixels, PNG, 16-bit if available.\nSharp everywhere, no depth-of-field blur, no vignette, no film grain, no\nborder, no text, no watermark, no colour.",
+      "principale": "Hyper-realistic black-and-white photographic portrait of a 25-year-old man,\nhead and face filling the entire frame edge to edge, cropped just above the\neyebrows and just below the chin. No background, no shoulders, no neck.\n\nSUBJECT. Light olive skin. Dark brown wavy hair, about 4.5 cm long, seen only\nat the very top edge of the frame. Light-coloured eyes, pale iris clearly\nbrighter than the surrounding eye socket. Harmonious athletic build. Calm,\nelegant, self-possessed. Beautiful without being decorative: the beauty is in\nthe bone structure, not in styling.\n\nCAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,\ntripod, subject 1.5 m away. Full skin realism: real subsurface scattering,\nreal pore structure, fine vellus hair on the cheek, moisture on the lower lip,\nindividual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.\n\nLIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a\nlarge white bounce on the right at half power. Broad simple modelling: the lit\ncheek and forehead read as one continuous mass, the shadow side as another.\nNo hard shadow edges, no rim light, no hair light, no catchlight in the eyes.\n\nGRADE. Deliberately FLAT, like an ungraded log capture. Mid-grey overall, low\ncontrast. Absolutely no pure black and no pure white anywhere in the frame:\nevery value between 10% and 90% grey. Expose about half a stop DARK of middle\ngrey: the overall impression should read a shade heavier than neutral, never\nairy. The darkest point is the pupil at about 25% grey; the brightest is the\nlit cheekbone at about 80%.\n\nEXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no\ntension in the jaw. The gaze is almost - but not quite - directed at the\nviewer: the left eye looks straight out, the right eye about one degree past\nthe viewer's shoulder. The right side of the face is very slightly softer and\nless defined than the left, as if the light there were one stop less certain.\n\nFORMAT. Vertical 3:4, at least 2400 x 3200 pixels, PNG, 16-bit if available.\nSharp everywhere, no depth-of-field blur, no vignette, no film grain, no\nborder, no text, no watermark, no colour.",
       "negativo": "high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,\nfilm grain, beauty retouching, smoothed skin, plastic skin, airbrushed,\ndramatic lighting, rim light, hair light, catchlight, specular highlight,\nlens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,\nmakeup, background, shoulders, neck, hands, text, watermark, border, colour,\ntilted head, three-quarter view, profile, smile, teeth",
       "varianti": [
         {
@@ -361,16 +361,36 @@
         "Non usare upscaler generativi: inventano dettaglio sotto il passo del retino, che viene comunque cancellato, e intanto sporcano le masse tonali."
       ]
     },
+    "asimmetria_delle_ombre": {
+      "fatto": "La resa del moire' e' massima sul fondo (0,3848) e cala da tutte e due le parti, ma NON in modo simmetrico: densita' 0,65 rende il 74% del massimo, densita' 0,10 solo il 26%.",
+      "perche": "Nello stato disallineato le aree nere si sommano. Con un punto dietro grande la somma satura in fretta, la luminanza crolla e l'escursione resta ampia; con un punto piccolo non c'e' quasi niente da sommare.",
+      "conseguenza": "Le ombre lavorano quasi il triplo delle luci. Un ritratto per quest'opera va tenuto mezzo stop SOTTO il mezzo grigio: meglio sbagliare scuro che sbagliare chiaro.",
+      "etichetta": "RECUPERATO - curva calcolata da collaudo.py, riproducibile"
+    },
     "accettazione": {
-      "comando": "python3 viso.py --foto ritratto.png --senza-dissolvenza",
-      "misura": "frazione dell'immagine che cade nella finestra utile del moire'",
-      "soglia": 0.7,
-      "se_sotto_soglia": "non ritoccare: rifare l'immagine PIU' PIATTA. Comprimere in post una foto contrastata lascia bande di posterizzazione che il retino amplifica",
+      "comando": "python3 collaudo.py cartella_ritratti/ --passo 4.5",
+      "cosa_fa": "Rende ogni cella del reticolo nei DUE stati estremi - punto davanti sopra quello dietro, e punto davanti nel mezzo dei quattro dietro - e misura quanta luce quella cella muove. La RESA e' quella differenza divisa per il massimo ottenibile.",
+      "il_punteggio_vero": "Non la resa: l'AMPIEZZA tonale a cui l'immagine passa. Abbassando l'ampiezza qualunque immagine supera la soglia, perche' un viso schiacciato sul fondo muove tantissimo e non si vede. Un'immagine e' buona quando regge il movimento SENZA farsi appiattire.",
+      "soglie": {
+        "ampiezza_minima": 0.3,
+        "resa_media": 0.55,
+        "frazione_celle_vive": 0.8,
+        "escursione_sorgente_minima": 0.12
+      },
+      "taratura_delle_soglie": "Su tre casi costruiti apposta - campo piatto ideale, il segnaposto procedurale, e lo stesso volutamente contrastato - non su ritratti veri. Sono un filtro, non un giudizio: scartano cio' che di sicuro non funziona. La scelta fra le immagini che passano resta dell'autore.",
+      "criterio_superato": "La 'frazione utile entro +/-0,30 dal fondo, soglia 70%' era una soglia messa a occhio. `viso.py --foto` la stampa ancora, ma quella che decide e' collaudo.py.",
+      "se_sotto_soglia": "rifarle PIU' PIATTE all'origine. Comprimerle in post lascia bande di posterizzazione che il retino amplifica",
       "poi": [
-        "python3 genera_layer.py --foto ritratto.png",
-        "python3 video.py --foto ritratto.png"
+        "python3 collaudo.py cartella/ --passo 4.5 --stampa",
+        "python3 video.py --foto scelta.png --ampiezza <quella del collaudo>"
+      ],
+      "attenzione": "l'ampiezza determinata dal collaudo va PASSATA a genera_layer.py e a video.py (--ampiezza). `--stampa` lo fa da se'; a mano ci si dimentica, e i file escono alla taratura di default",
+      "uscite": [
+        "collaudo.json - tutti i numeri, anche delle scartate",
+        "collaudo_contatto.png - per ogni immagine i due stati affiancati: a sinistra il viso che rientra nel campo, a destra il viso intero. Fra quelle due sta tutta l'opera"
       ]
     },
+    "sull_identita_visiva": "I tratti canonici ORIENTANO il volto, non lo determinano: sei immagini che li rispettano tutte possono essere sei persone diverse. Il collaudo non risponde a 'e' il Raffaello giusto' - non e' una domanda decidibile da un filtro - ma a 'questa regge il retino'. La scelta e' dell'autore, fra quelle che passano; da quel momento l'immagine scelta diventa il riferimento canonico, e le generazioni successive partono da quella (image-to-image) invece che dal testo.",
     "tre_domande_all_immagine_finita": [
       "Rimpicciolita a 100 px si legge ancora un viso? Se sparisce li', sparisce anche nell'opera",
       "Le due meta' hanno grado di definizione diverso, non solo luminosita' diversa?",
@@ -381,12 +401,12 @@
     {
       "passo": 1,
       "cosa": "l'immagine",
-      "comando": "vedi immagine.prompt, poi viso.py --foto per il collaudo"
+      "comando": "vedi immagine.prompt, poi collaudo.py per il filtro"
     },
     {
       "passo": 2,
       "cosa": "i file di stampa",
-      "comando": "python3 genera_layer.py --foto ritratto.png"
+      "comando": "python3 collaudo.py cartella/ --passo 4.5 --stampa"
     },
     {
       "passo": 3,
@@ -610,7 +630,7 @@
     {
       "etichetta": "UNKNOWN",
       "voce": "se l'immagine definitiva regga il retino",
-      "si_chiude_con": "immagine.accettazione, che e' eseguibile"
+      "si_chiude_con": "collaudo.py, che e' eseguibile"
     }
   ]
 }
