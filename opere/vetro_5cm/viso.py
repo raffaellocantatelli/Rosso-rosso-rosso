@@ -209,7 +209,8 @@ def rampa_identita(w, h, inizio=0.42, larghezza=0.60):
 
 
 def da_foto(percorso, w, h, fondo=0.3848, ampiezza=0.38, contrasto=1.0,
-            dissolvenza=False, percentili=(2.0, 98.0), seed=7, finestra=None):
+            dissolvenza=False, percentili=(2.0, 98.0), seed=7, finestra=None,
+            ancoraggio=None):
     """Una fotografia al posto della superficie procedurale.
 
     NON restituisce la foto: la RIMAPPA. Una foto normale ha neri a 1.0 e
@@ -229,7 +230,23 @@ def da_foto(percorso, w, h, fondo=0.3848, ampiezza=0.38, contrasto=1.0,
     d = 1.0 - np.asarray(im, dtype=np.float64) / 255.0
     if contrasto != 1.0:
         d = np.clip((d - 0.5) * contrasto + 0.5, 0.0, 1.0)
-    lo, hi = np.percentile(d, percentili)
+    if ancoraggio is not None:
+        # ANCORAGGIO: la scala si aggancia a due valori FISSI della sorgente
+        # invece che ai suoi percentili.
+        #
+        # Serve appena l'immagine ha un fondo grande. Con una testa e un
+        # margine, il fondo e' il 62% dei pixel: i percentili cadono dentro
+        # il fondo (p2 = 0,231 e p98 = 0,690 su un finto misurato), la
+        # rimappatura stira il rumore del fondo su tutta la finestra e
+        # schiaccia il viso. Il taglio strettissimo nascondeva il problema
+        # perche' li' il viso era l'intera immagine.
+        #
+        # Con l'ancoraggio la corrispondenza e' deterministica: chi fa
+        # l'immagine sa esattamente dove finira' ogni tono, e un grigio 50%
+        # cade sul picco della resa.
+        lo, hi = ancoraggio
+    else:
+        lo, hi = np.percentile(d, percentili)
     if hi - lo < 0.02:
         # immagine (quasi) uniforme: normalizzare su un intervallo nullo la
         # spingerebbe tutta a un estremo. Il comportamento sensato e' il

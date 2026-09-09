@@ -3,7 +3,7 @@
     "nome": "progetto.json",
     "opera": "Il viso cerca l'identita'",
     "generato_da": "progetto.py",
-    "generato_il": "2026-09-09T06:25:54+00:00",
+    "generato_il": "2026-09-09T06:31:29+00:00",
     "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
     "come_va_letto": "Ogni numero qui e' calcolato da ottica.py o letto dai file veri, mai trascritto. Per rigenerarlo: python3 progetto.py. Per controllare che non sia invecchiato: python3 progetto.py --verifica.",
     "etichette": {
@@ -354,6 +354,43 @@
       "risposta": "No, ma vanno separati. L'iper-realismo serve alla STRUTTURA: ossa vere, luce che entra davvero sotto la pelle, masse tonali anatomicamente corrette. Quelle masse sopravvivono al retino e sono la ragione per cui un viso reale regge dove un viso disegnato crolla. Il DETTAGLIO sotto il passo del reticolo invece non sopravvive: pori, ciglia, singoli capelli vengono cancellati, non rimpiccioliti. La piattezza chiesta nel GRADE non e' meno realismo: e' la stessa cosa che si fa girando in log e correggendo dopo. Si cattura tutto, si consegna piatto, e la finestra tonale la decide chi stampa.",
       "conseguenza": "L'opera finita NON e' iper-realista: e' 100 x 133 valori di tono a passo 6,00 mm. Dirlo prima e' meglio che scoprirlo davanti alla stampa. Chi vuole avvicinarsi al ritratto scende di passo: vedi `configurazioni.dettaglio`."
     },
+    "inquadratura": {
+      "decisione": "testa intera dentro il quadro - capelli, fronte, orecchie, mento - con margine attorno, su fondo grigio uniforme anch'esso retinato",
+      "di_chi_e": "dell'autore, il 09/09/2026. Corregge il brief precedente, che chiedeva un taglio strettissimo: quella era una MIA scelta, fatta per massimizzare i punti sul viso",
+      "perche": "cosi' il moire' attraversa sia il volto sia lo spazio attorno. Il fondo uniforme, essendo lo stesso su tutte e due le lastre, sta per costruzione sul picco della resa: e' la zona che si muove di piu'",
+      "cosa_costa": "meno punti sul viso. Con la testa al 60% dell'altezza sono circa 70 x 110 a passo 4,50, contro 134 x 178 del taglio pieno. Restano sufficienti: un viso a 70 punti di larghezza si riconosce",
+      "non_si_recupera_ritagliando": "una foto gia' tagliata stretta non contiene orecchie e capelli. Va rigenerata",
+      "se_si_vuole_piu' definizione": {
+        "passo_4.00": {
+          "punti_sulla_testa": [
+            79,
+            124
+          ],
+          "alpha_gradi": 0.573,
+          "ciclo_mm": 200,
+          "fusione_m": 3.4,
+          "punti_per_lastra": 30000
+        },
+        "passo_3.50": {
+          "punti_sulla_testa": [
+            91,
+            142
+          ],
+          "alpha_gradi": 0.5013,
+          "ciclo_mm": 175,
+          "fusione_m": 3.0,
+          "punti_per_lastra": 39184
+        },
+        "nota": "scendere di passo alza la definizione e rende il movimento piu' nervoso. A 3,50 un ciclo ogni 175 mm di spostamento e' quasi un'oscillazione del corpo"
+      }
+    },
+    "scala_dei_toni_ancorata": {
+      "cos_e": "La corrispondenza fra i toni della fotografia e le densita' del retino e' agganciata a due valori FISSI della sorgente (0,10 e 0,90 di densita', cioe' luminanza dal 90% al 10%) invece che ai suoi percentili.",
+      "perche_e_diventato_necessario": "Con la testa e il margine il fondo e' il 62% dei pixel. I percentili ci cadono dentro - misurati su un finto: p2=0,231 e p98=0,690 invece di ~0,05 e ~0,95 - quindi la rimappatura stira il rumore del fondo su tutta la finestra e schiaccia il viso. Il taglio strettissimo nascondeva il difetto, perche' li' il viso ERA l'immagine.",
+      "conseguenza_utile": "Adesso la corrispondenza e' deterministica: un grigio 50% cade sul picco della resa (0,400 misurato su 0,400 previsto), e chi fa l'immagine sa esattamente dove finira' ogni tono.",
+      "verifica": "finto di composizione: resa media da 0,831 a 0,936, e il fondo dal 0,343 al 0,399",
+      "come_tornare_indietro": "collaudo.py --percentili (solo su immagini senza fondo)"
+    },
     "vincoli_che_vengono_dal_retino": {
       "valori_di_tono_disponibili": 13300,
       "dimensione_del_dettaglio_piu_piccolo_mm": 6.0,
@@ -365,8 +402,8 @@
       }
     },
     "prompt": {
-      "principale": "Hyper-realistic black-and-white photographic portrait of a 25-year-old man,\nhead and face filling the entire frame edge to edge, cropped just above the\neyebrows and just below the chin. No background, no shoulders, no neck.\n\nSUBJECT. Light olive skin. Dark brown wavy hair, about 4.5 cm long, seen only\nat the very top edge of the frame. Light-coloured eyes, pale iris clearly\nbrighter than the surrounding eye socket. Harmonious athletic build. Calm,\nelegant, self-possessed. Beautiful without being decorative: the beauty is in\nthe bone structure, not in styling.\n\nCAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,\ntripod, subject 1.5 m away. Full skin realism: real subsurface scattering,\nreal pore structure, fine vellus hair on the cheek, moisture on the lower lip,\nindividual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.\n\nLIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a\nlarge white bounce on the right at half power. Broad simple modelling: the lit\ncheek and forehead read as one continuous mass, the shadow side as another.\nNo hard shadow edges, no rim light, no hair light, no catchlight in the eyes.\n\nGRADE. Deliberately FLAT, like an ungraded log capture. Mid-grey overall, low\ncontrast. Absolutely no pure black and no pure white anywhere in the frame:\nevery value between 10% and 90% grey. Expose about half a stop DARK of middle\ngrey: the overall impression should read a shade heavier than neutral, never\nairy. The darkest point is the pupil at about 25% grey; the brightest is the\nlit cheekbone at about 80%.\n\nEXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no\ntension in the jaw. The gaze is almost - but not quite - directed at the\nviewer: the left eye looks straight out, the right eye about one degree past\nthe viewer's shoulder. The right side of the face is very slightly softer and\nless defined than the left, as if the light there were one stop less certain.\n\nFORMAT. Vertical 3:4, at least 2400 x 3200 pixels, PNG, 16-bit if available.\nSharp everywhere, no depth-of-field blur, no vignette, no film grain, no\nborder, no text, no watermark, no colour.",
-      "negativo": "high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,\nfilm grain, beauty retouching, smoothed skin, plastic skin, airbrushed,\ndramatic lighting, rim light, hair light, catchlight, specular highlight,\nlens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,\nmakeup, background, shoulders, neck, hands, text, watermark, border, colour,\ntilted head, three-quarter view, profile, smile, teeth",
+      "principale": "Hyper-realistic black-and-white photographic portrait of a 25-year-old man,\nthe WHOLE HEAD inside the frame with clear space around it: the full hairline\nand top of the hair, the whole forehead, both ears, the jaw and the chin, all\ncompletely visible. Head fills about 60% of the frame height, centred, with\neven margin on all four sides. Cropped at the base of the neck: no shoulders,\nno collar, no clothing.\n\nBACKGROUND. A perfectly flat, even, seamless mid-grey field, exactly 50%\ngrey. No gradient, no vignette, no shadow cast on it, no texture, no edges,\nno floor line. The head sits on a uniform grey wall lit as evenly as the face.\n\nSUBJECT. Light olive skin. Dark brown wavy hair about 4.5 cm long, the whole\nshape of it visible. Light-coloured eyes, pale iris clearly brighter than the\nsurrounding eye socket. Head straight on, facing the camera. Calm, elegant,\nself-possessed. Beautiful without being decorative: the beauty is in the bone\nstructure, not in styling.\n\nCAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,\ntripod, subject 1.5 m away. Full skin realism: real subsurface scattering,\nreal pore structure, fine vellus hair on the cheek, moisture on the lower lip,\nindividual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.\n\nLIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a\nlarge white bounce on the right at half power, and the same light falling on\nthe background so it stays even. Broad simple modelling: the lit cheek and\nforehead read as one continuous mass, the shadow side as another. No hard\nshadow edges, no rim light, no hair light, no catchlight in the eyes.\n\nGRADE. Deliberately FLAT, like an ungraded log capture. THE TONAL SCALE IS\nFIXED, not a matter of taste - these three values are the specification:\n  - the background is exactly 50% grey\n  - nothing anywhere is brighter than 90% grey\n  - nothing anywhere is darker than 10% grey\nThe darkest point is the pupil at about 15% grey; the brightest is the lit\ncheekbone at about 85%. Expose the face about half a stop DARK of the\nbackground, so the head reads a shade heavier than the field it sits on.\n\nEXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no\ntension in the jaw. The gaze is almost - but not quite - directed at the\nviewer: the left eye looks straight out, the right eye about one degree past\nthe viewer's shoulder. The right side of the face is very slightly softer and\nless defined than the left, as if the light there were one stop less certain.\n\nFORMAT. Vertical 3:4, at least 2400 x 3200 pixels, PNG, 16-bit if available.\nSharp everywhere, no depth-of-field blur, no vignette, no film grain, no\nborder, no text, no watermark, no colour.",
+      "negativo": "high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,\nfilm grain, beauty retouching, smoothed skin, plastic skin, airbrushed,\ncropped head, cropped forehead, cropped chin, cropped ears, extreme close-up,\ngradient background, vignetted background, shadow on background, textured wall,\ndramatic lighting, rim light, hair light, catchlight, specular highlight,\nlens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,\nmakeup, background, shoulders, neck, hands, text, watermark, border, colour,\ntilted head, three-quarter view, profile, smile, teeth",
       "varianti": [
         {
           "nome": "a - piu' scultoreo",
@@ -381,7 +418,13 @@
           "quando": "se al retino il viso risulta duro e la meta' in ombra si chiude"
         },
         {
-          "nome": "c - senza dissolvenza",
+          "nome": "c - piu' o meno spazio attorno alla testa",
+          "cambia": "il primo paragrafo",
+          "testo": "Head fills about 50% of the frame height  (piu' campo che respira, viso piu' piccolo)  /  about 70%  (viso piu' leggibile, meno spazio per la banda)",
+          "quando": "il 60% e' il compromesso: la banda ha spazio per attraversare il fondo e la testa resta leggibile a 70 x 110 punti"
+        },
+        {
+          "nome": "d - senza dissolvenza",
           "cambia": "togliere l'ultima frase del paragrafo EXPRESSION",
           "testo": "(rimuovere: 'The right side of the face is very slightly softer...')",
           "quando": "se si preferisce ottenere la dissolvenza dal retino (`--dissolvenza`) invece che dall'immagine"

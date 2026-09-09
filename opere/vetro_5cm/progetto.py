@@ -83,14 +83,21 @@ SOGGETTO = {
 
 PROMPT_PRINCIPALE = """\
 Hyper-realistic black-and-white photographic portrait of a 25-year-old man,
-head and face filling the entire frame edge to edge, cropped just above the
-eyebrows and just below the chin. No background, no shoulders, no neck.
+the WHOLE HEAD inside the frame with clear space around it: the full hairline
+and top of the hair, the whole forehead, both ears, the jaw and the chin, all
+completely visible. Head fills about 60% of the frame height, centred, with
+even margin on all four sides. Cropped at the base of the neck: no shoulders,
+no collar, no clothing.
 
-SUBJECT. Light olive skin. Dark brown wavy hair, about 4.5 cm long, seen only
-at the very top edge of the frame. Light-coloured eyes, pale iris clearly
-brighter than the surrounding eye socket. Harmonious athletic build. Calm,
-elegant, self-possessed. Beautiful without being decorative: the beauty is in
-the bone structure, not in styling.
+BACKGROUND. A perfectly flat, even, seamless mid-grey field, exactly 50%
+grey. No gradient, no vignette, no shadow cast on it, no texture, no edges,
+no floor line. The head sits on a uniform grey wall lit as evenly as the face.
+
+SUBJECT. Light olive skin. Dark brown wavy hair about 4.5 cm long, the whole
+shape of it visible. Light-coloured eyes, pale iris clearly brighter than the
+surrounding eye socket. Head straight on, facing the camera. Calm, elegant,
+self-possessed. Beautiful without being decorative: the beauty is in the bone
+structure, not in styling.
 
 CAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,
 tripod, subject 1.5 m away. Full skin realism: real subsurface scattering,
@@ -98,16 +105,19 @@ real pore structure, fine vellus hair on the cheek, moisture on the lower lip,
 individual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.
 
 LIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a
-large white bounce on the right at half power. Broad simple modelling: the lit
-cheek and forehead read as one continuous mass, the shadow side as another.
-No hard shadow edges, no rim light, no hair light, no catchlight in the eyes.
+large white bounce on the right at half power, and the same light falling on
+the background so it stays even. Broad simple modelling: the lit cheek and
+forehead read as one continuous mass, the shadow side as another. No hard
+shadow edges, no rim light, no hair light, no catchlight in the eyes.
 
-GRADE. Deliberately FLAT, like an ungraded log capture. Mid-grey overall, low
-contrast. Absolutely no pure black and no pure white anywhere in the frame:
-every value between 10% and 90% grey. Expose about half a stop DARK of middle
-grey: the overall impression should read a shade heavier than neutral, never
-airy. The darkest point is the pupil at about 25% grey; the brightest is the
-lit cheekbone at about 80%.
+GRADE. Deliberately FLAT, like an ungraded log capture. THE TONAL SCALE IS
+FIXED, not a matter of taste - these three values are the specification:
+  - the background is exactly 50% grey
+  - nothing anywhere is brighter than 90% grey
+  - nothing anywhere is darker than 10% grey
+The darkest point is the pupil at about 15% grey; the brightest is the lit
+cheekbone at about 85%. Expose the face about half a stop DARK of the
+background, so the head reads a shade heavier than the field it sits on.
 
 EXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no
 tension in the jaw. The gaze is almost - but not quite - directed at the
@@ -123,6 +133,8 @@ border, no text, no watermark, no colour.\
 PROMPT_NEGATIVO = """\
 high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,
 film grain, beauty retouching, smoothed skin, plastic skin, airbrushed,
+cropped head, cropped forehead, cropped chin, cropped ears, extreme close-up,
+gradient background, vignetted background, shadow on background, textured wall,
 dramatic lighting, rim light, hair light, catchlight, specular highlight,
 lens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,
 makeup, background, shoulders, neck, hands, text, watermark, border, colour,
@@ -149,7 +161,16 @@ PROMPT_VARIANTI = [
         "quando": "se al retino il viso risulta duro e la meta' in ombra si chiude",
     },
     {
-        "nome": "c - senza dissolvenza",
+        "nome": "c - piu' o meno spazio attorno alla testa",
+        "cambia": "il primo paragrafo",
+        "testo": ("Head fills about 50% of the frame height  (piu' campo che "
+                  "respira, viso piu' piccolo)  /  about 70%  (viso piu' "
+                  "leggibile, meno spazio per la banda)"),
+        "quando": ("il 60% e' il compromesso: la banda ha spazio per attraversare "
+                   "il fondo e la testa resta leggibile a 70 x 110 punti"),
+    },
+    {
+        "nome": "d - senza dissolvenza",
         "cambia": "togliere l'ultima frase del paragrafo EXPRESSION",
         "testo": "(rimuovere: 'The right side of the face is very slightly softer...')",
         "quando": ("se si preferisce ottenere la dissolvenza dal retino "
@@ -539,6 +560,59 @@ def costruisci(prog, misure):
                                  "candidate tutte idonee",
             "soggetto": SOGGETTO,
             "conflitto_apparente": CONFLITTO_APPARENTE,
+            "inquadratura": {
+                "decisione": ("testa intera dentro il quadro - capelli, fronte, "
+                              "orecchie, mento - con margine attorno, su fondo "
+                              "grigio uniforme anch'esso retinato"),
+                "di_chi_e": ("dell'autore, il 09/09/2026. Corregge il brief "
+                             "precedente, che chiedeva un taglio strettissimo: "
+                             "quella era una MIA scelta, fatta per massimizzare i "
+                             "punti sul viso"),
+                "perche": ("cosi' il moire' attraversa sia il volto sia lo spazio "
+                           "attorno. Il fondo uniforme, essendo lo stesso su tutte "
+                           "e due le lastre, sta per costruzione sul picco della "
+                           "resa: e' la zona che si muove di piu'"),
+                "cosa_costa": ("meno punti sul viso. Con la testa al 60% "
+                               "dell'altezza sono circa 70 x 110 a passo 4,50, "
+                               "contro 134 x 178 del taglio pieno. Restano "
+                               "sufficienti: un viso a 70 punti di larghezza si "
+                               "riconosce"),
+                "non_si_recupera_ritagliando": ("una foto gia' tagliata stretta non "
+                                                "contiene orecchie e capelli. Va "
+                                                "rigenerata"),
+                "se_si_vuole_piu' definizione": {
+                    "passo_4.00": {"punti_sulla_testa": [79, 124],
+                                   "alpha_gradi": 0.5730, "ciclo_mm": 200,
+                                   "fusione_m": 3.4, "punti_per_lastra": 30000},
+                    "passo_3.50": {"punti_sulla_testa": [91, 142],
+                                   "alpha_gradi": 0.5013, "ciclo_mm": 175,
+                                   "fusione_m": 3.0, "punti_per_lastra": 39184},
+                    "nota": ("scendere di passo alza la definizione e rende il "
+                             "movimento piu' nervoso. A 3,50 un ciclo ogni 175 mm "
+                             "di spostamento e' quasi un'oscillazione del corpo"),
+                },
+            },
+            "scala_dei_toni_ancorata": {
+                "cos_e": ("La corrispondenza fra i toni della fotografia e le "
+                          "densita' del retino e' agganciata a due valori FISSI "
+                          "della sorgente (0,10 e 0,90 di densita', cioe' "
+                          "luminanza dal 90% al 10%) invece che ai suoi "
+                          "percentili."),
+                "perche_e_diventato_necessario": (
+                    "Con la testa e il margine il fondo e' il 62% dei pixel. I "
+                    "percentili ci cadono dentro - misurati su un finto: p2=0,231 "
+                    "e p98=0,690 invece di ~0,05 e ~0,95 - quindi la rimappatura "
+                    "stira il rumore del fondo su tutta la finestra e schiaccia il "
+                    "viso. Il taglio strettissimo nascondeva il difetto, perche' "
+                    "li' il viso ERA l'immagine."),
+                "conseguenza_utile": (
+                    "Adesso la corrispondenza e' deterministica: un grigio 50% "
+                    "cade sul picco della resa (0,400 misurato su 0,400 previsto), "
+                    "e chi fa l'immagine sa esattamente dove finira' ogni tono."),
+                "verifica": ("finto di composizione: resa media da 0,831 a 0,936, "
+                             "e il fondo dal 0,343 al 0,399"),
+                "come_tornare_indietro": "collaudo.py --percentili (solo su immagini senza fondo)",
+            },
             "vincoli_che_vengono_dal_retino": {
                 "valori_di_tono_disponibili": (round(prog.larghezza / prog.passo)
                                                * round(prog.altezza / prog.passo)),
@@ -727,7 +801,19 @@ def scrivi_brief(d):
     r += [f"{i+1}. {x}" for i, x in enumerate(p["cosa_non_fare"])]
     a = im["accettazione"]
     asm = im["asimmetria_delle_ombre"]
-    r += ["", "---", "", "## Tienile mezzo stop scure", "",
+    inq = im["inquadratura"]
+    r += ["", "---", "", "## L'inquadratura", "",
+          f"**{inq['decisione']}**", "",
+          f"Decisione {inq['di_chi_e']}.", "",
+          f"*Perche':* {inq['perche']}", "",
+          f"*Cosa costa:* {inq['cosa_costa']}", "",
+          f"> {inq['non_si_recupera_ritagliando'].capitalize()}.", "",
+          "---", "", "## La scala dei toni e' ancorata, non normalizzata", "",
+          im["scala_dei_toni_ancorata"]["cos_e"], "",
+          f"**Perche' e' diventato necessario.** "
+          f"{im['scala_dei_toni_ancorata']['perche_e_diventato_necessario']}", "",
+          f"> {im['scala_dei_toni_ancorata']['conseguenza_utile']}", "",
+          "---", "", "## Tienile mezzo stop scure", "",
           f"**{asm['fatto']}**", "", asm["perche"], "",
           f"> {asm['conseguenza']}", "",
           "---", "", "## Il collaudo — un comando", "",

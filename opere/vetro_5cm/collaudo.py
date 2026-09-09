@@ -226,8 +226,25 @@ def griglia(passo, larghezza=600.0, altezza=800.0):
     return int(round(larghezza / passo)), int(round(altezza / passo))
 
 
+def separa_fondo(dens, tolleranza=0.05):
+    """Distingue le celle del SOGGETTO da quelle del fondo uniforme.
+
+    Con l'inquadratura a testa intera il fondo e' il 60% dell'immagine, e sta
+    per costruzione sul picco della resa: la media generale ne esce gonfiata
+    e un'immagine quasi vuota sembrerebbe ottima. Il fondo si stima dal bordo
+    (una cornice di celle larga il 4%), e cio' che se ne discosta e' soggetto.
+    """
+    ny, nx = dens.shape
+    b = max(2, int(round(0.04 * min(nx, ny))))
+    cornice = np.concatenate([dens[:b].ravel(), dens[-b:].ravel(),
+                              dens[:, :b].ravel(), dens[:, -b:].ravel()])
+    d_fondo = float(np.median(cornice))
+    soggetto = np.abs(dens - d_fondo) > tolleranza
+    return d_fondo, soggetto
+
+
 def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0,
-            due_foto=True):
+            due_foto=True, ancoraggio=(0.10, 0.90)):
     """Un'immagine dentro la finestra tonale derivata da `resa_min`.
 
     `due_foto`: la stessa immagine sta su ENTRAMBE le lastre. E' il concetto
@@ -238,10 +255,14 @@ def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0,
     """
     nx, ny = griglia(passo, larghezza, altezza)
     dl, dh = finestra_tonale(resa_min, passo, r1, due_foto=due_foto)
-    d = viso_mod.da_foto(percorso, nx, ny, finestra=(dl, dh))
+    d = viso_mod.da_foto(percorso, nx, ny, finestra=(dl, dh),
+                         ancoraggio=ancoraggio)
     davanti = d if due_foto else None
     r = resa(d, passo, r1, dens_davanti=davanti)
     sparisce, sopravvive = sopravvivenza(d, passo, r1, dens_davanti=davanti)
+    d_fondo, sogg = separa_fondo(d)
+    frazione_sogg = float(sogg.mean())
+    resa_sogg = float(r[sogg].mean()) if sogg.any() else float("nan")
     # Escursione della SORGENTE, prima della rimappatura. Un'immagine senza
     # toni ha moire' perfetto e viso nullo: senza questo controllo una
     # generazione fallita, o un fondo piatto, vincerebbe la classifica.
@@ -258,6 +279,10 @@ def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0,
         "escursione_tonale": round(dh - dl, 4),
         "squilibrio_verso_le_ombre": round((dh - FONDO) / max(FONDO - dl, 1e-9), 2),
         "resa_media": float(r.mean()),
+        "resa_sul_soggetto": resa_sogg,
+        "frazione_soggetto": frazione_sogg,
+        "densita_del_fondo": d_fondo,
+        "scarto_del_fondo_dal_picco": abs(d_fondo - _picco_resa(passo, r1, due_foto)),
         "resa_minima": float(r.min()),
         "sparisce_nell_allineato": sparisce,
         "sopravvive_nell_allineato": sopravvive,
@@ -320,7 +345,8 @@ def contatto(risultati, path, passo, r1, alto=300):
         colore = (60, 90, 70) if r["idonea"] else (168, 42, 30)
         dr.text((W - 4, y + alto + 4), verdetto, font=fb, fill=colore, anchor="ra")
         dr.text((0, y + alto + 27),
-                f"resa {r['resa_media']:.3f}   peggiore {r['resa_minima']:.3f}"
+                f"resa {r['resa_media']:.3f}   soggetto {r['resa_sul_soggetto']:.3f}"
+              f"   peggiore {r['resa_minima']:.3f}"
                 f"   celle vive {r['frazione_celle_vive']*100:.0f}%"
                 "     allineato / disallineato",
                 font=f, fill=(120, 130, 127))
@@ -400,6 +426,10 @@ def main():
                     help="genera i file di stampa. Senza --scelta usa la prima "
                          "in classifica, che quando le resa sono tutte uguali "
                          "NON vuol dire niente: meglio nominarla")
+    ap.add_argument("--percentili", action="store_true",
+                    help="scala i toni sui percentili invece che sugli ancoraggi "
+                         "fissi 0,10-0,90. Da usare solo su immagini SENZA fondo: "
+                         "con un fondo grande i percentili ci cadono dentro")
     ap.add_argument("--griglia", action="store_true",
                     help="lastra davanti a reticolo REGOLARE invece che a foto. "
                          "E' il progetto vecchio: tenuto perche' e' verificato, "
@@ -433,13 +463,16 @@ def main():
     picco = _picco_resa(a.passo, r1, due)
     print(f"  il picco della resa cade a densita' {picco:.3f}, e la finestra e'"
           f" squilibrata {((dh-picco)/max(picco-dl,1e-9)):.2f}x verso le ombre")
+    print(f"  scala dei toni: {'percentili' if a.percentili else 'ancoraggio 0,10-0,90'}"
+          f"   (un grigio 50% cade sul picco a {picco:.3f})")
     print(f"  soglia: resa media >= {SOGLIA_RESA:.2f}   "
           f"(uniforme 0.724, bimodale 0.350)\n")
 
     ris = []
     for p in file:
         try:
-            r = esamina(p, a.passo, r1, a.resa_min, due_foto=due)
+            r = esamina(p, a.passo, r1, a.resa_min, due_foto=due,
+                        ancoraggio=None if a.percentili else (0.10, 0.90))
         except Exception as e:                       # noqa: BLE001
             print(f"  {os.path.basename(p):34s} ERRORE: {e}")
             continue
@@ -453,7 +486,8 @@ def main():
     for r in ris:
         stato = "IDONEA " if r["idonea"] else "SCARTATA"
         print(f"  {stato}  {os.path.basename(r['file']):34s} "
-              f"resa {r['resa_media']:.3f}   peggiore {r['resa_minima']:.3f}"
+              f"resa {r['resa_media']:.3f}   soggetto {r['resa_sul_soggetto']:.3f}"
+              f"   peggiore {r['resa_minima']:.3f}"
               f"   vive {r['frazione_celle_vive']*100:5.1f}%"
               f"   sparisce {r['sparisce_nell_allineato']*100:3.0f}%"
               f"   sopravvive {r['sopravvive_nell_allineato']*100:3.0f}%"
