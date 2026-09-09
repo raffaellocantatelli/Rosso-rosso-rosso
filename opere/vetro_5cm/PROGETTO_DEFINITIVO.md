@@ -9,12 +9,20 @@ Questo file sostituisce `SPECIFICA_TECNICA.md`: un concetto, un file (CLAUDE.md
 moiré invece di descriverlo.
 
 ```bash
+python3 progetto.py                   # rigenera progetto.json + il brief
+python3 progetto.py --verifica        # il JSON e' ancora quello del codice?
 python3 ottica.py                     # la tavola completa
 python3 verifica_ottica.py --suite    # 4 casi, incluso quello di controllo
 python3 video.py --verifica           # renderer veloce contro renderer lento
 python3 genera_layer.py               # i due file di stampa
 python3 video.py                      # il video dell'effetto
 ```
+
+**`progetto.json` è il progetto in forma leggibile da una macchina** — ogni
+numero, il brief dell'immagine, e gli esiti di verifica misurati. Non è scritto
+a mano: lo genera `progetto.py` calcolando dall'ottica, leggendo i file di
+stampa veri ed eseguendo i falsificatori. Un JSON con i numeri trascritti
+sarebbe una seconda verità che invecchia in silenzio.
 
 ---
 
@@ -59,9 +67,20 @@ esserci allineamento c'è disallineamento. Trovato confrontando due renderer
 (correlazione −0,96: stessa ampiezza, stessa periodicità, fase opposta).
 *Un'ampiezza giusta non dimostra niente.*
 
-**4. Il viso a pieno campo, non una testa che galleggia.**
-Raddoppia i punti che lavorano (100 × 133 invece di ~55 × 103) ed elimina il
-problema del fondo. Requisiti dell'immagine: `BRIEF_GEMINI.md`.
+**4. Il viso a pieno campo, e il soggetto è Raffaello Cantarelli.**
+Il pieno campo raddoppia i punti che lavorano (100 × 133 invece di ~55 × 103)
+ed elimina il problema del fondo. Il volto non è inventato: i tratti canonici
+stanno in `RAFFAELLO_BODY_V1.1` su Drive — entità **progettata** da Claudio
+Terzi, non una persona esistente. Il brief completo è in `BRIEF_GEMINI.md`,
+generato da `progetto.json`.
+
+**Il passo è una decisione aperta.** A 6,00 mm l'opera ha 13.300 valori di
+tono e il viso si compone oltre 5,2 m. A **4,50 mm** ne ha 23.674 e si compone
+a 3,9 m — cioè dentro una stanza normale — al prezzo di un movimento più
+sensibile (un ciclo ogni 225 mm invece di 300) e di 23.852 punti da stampare
+sul vetro invece di 13.400. **Se il viso deve avvicinarsi al ritratto, è 4,50.**
+I file di entrambe le configurazioni sono in `uscita/` (`p45_*` per la seconda);
+il margine da 18 mm è commensurabile con tutti e due i passi.
 
 **5. La stampa sul plexi è in prima superficie e matt.**
 Il lucido aggiunge una quarta superficie speculare che riflette la griglia del

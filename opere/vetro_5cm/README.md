@@ -32,11 +32,14 @@ da uno sbagliato.
 | `simulatore.html` | il banco interattivo: muovi il puntatore, o inclina il telefono |
 | `uscita/vetro_griglia.svg` | 600 × 800 mm — 13.400 punti Ø 4,20 mm |
 | `uscita/plexi_viso.svg` | 636 × 836 mm — 14.840 punti, Ø 0,47–5,92 mm |
+| `uscita/p45_*.svg` | la stessa opera a passo 4,50 mm: 23.674 valori di tono invece di 13.300 |
 | `uscita/effetto.mp4` | 23 s: la macchia che attraversa il viso, poi i punti da vicino |
 
 ## I comandi
 
 ```bash
+python3 progetto.py                   # rigenera progetto.json e il brief
+python3 progetto.py --verifica        # il JSON e' ancora quello del codice?
 python3 ottica.py                     # la tavola completa dei numeri
 python3 verifica_ottica.py --suite    # i 4 casi, incluso quello di controllo
 python3 video.py --verifica           # renderer veloce contro renderer falsificato

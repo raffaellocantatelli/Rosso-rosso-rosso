@@ -1,148 +1,164 @@
-# Brief per Gemini — l'immagine del viso
+# Brief per l'immagine — il viso di Raffaello
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
-Committente: Claudio Terzi. Destinazione: opera *Il viso cerca l'identità*,
-vetro stampato + 50 mm d'aria + plexiglas retinato, 600 × 800 mm.
 
-Questo file esiste perché l'immagine è l'unico pezzo che non posso costruire
-io in modo accettabile. Il viso procedurale in `viso.py` è un **segnaposto
-verificabile**: serve a provare l'ottica, non a reggere un'opera. Va sostituito.
+> Questo file e' **generato** da `progetto.py` a partire da `progetto.json`.
+> Non modificarlo a mano: la fonte e' `progetto.py`, e una seconda copia
+> modificabile e' esattamente il difetto descritto in CLAUDE.md §6.
 
 ---
 
-## 0. Perché questa immagine non è un ritratto qualsiasi
+## Il soggetto
 
-L'immagine non viene stampata: viene **retinata a punti da 6 mm**. Su
-600 × 800 mm ci sono 100 × 133 punti, e ogni punto porta **un solo valore di
-tono**. Tutto ciò che sta sotto i 6 mm — la trama della pelle, le ciglia, i
-capelli, un riflesso negli occhi — non viene rimpicciolito: **viene
-cancellato**, e quello che resta al suo posto è rumore.
+**Raffaello Cantarelli** — entita' progettata da Claudio Terzi, non una persona esistente.
+Fonte dei tratti: RAFFAELLO_BODY_V1.1 - Drive R3_MEMORIA_PERSISTENTE (non riprodotto qui).
 
-E c'è un secondo vincolo, che è quello che di solito nessuno sa:
-**il moiré esiste solo nei mezzitoni.** Il punto davanti copre quello dietro;
-dove dietro c'è bianco non c'è niente da coprire, dove c'è nero pieno il punto
-davanti sparisce dentro. Un'immagine con neri chiusi e bianchi bruciati
-spegne l'opera proprio dove è più drammatica.
+- eta' apparente: 25 anni
+- incarnato: olivastro chiaro
+- capelli: castano scuro, ondulati, 4,5 cm
+- occhi: verde smeraldo
+- corporatura: atletica armoniosa
+- carattere: empatico, lucido, creativo, strategico, protettivo, elegante, calmo, profondo
 
-Quindi le due regole dure, prima di ogni considerazione estetica:
+> Gli occhi verde smeraldo NON sopravvivono: l'opera e' in bianco e nero. Cio' che sopravvive di un occhio chiaro e' il RAPPORTO tonale - iride piu' chiara della zona intorno. Va chiesto quello, non il colore.
 
-1. **Il viso deve leggersi da masse tonali grandi**, non da dettagli.
-2. **Niente nero pieno, niente bianco puro.** Tutto l'istogramma fra il 10% e
-   il 90%. Una foto "bella" con neri profondi qui è una foto inutilizzabile.
+> Costi, roadmap, prompt d'identita', protocolli e struttura software restano su Drive. Il repository e' pubblico e la decisione di pubblicare quel materiale e' solo dell'autore (CLAUDE.md §2.5).
 
 ---
 
-## 1. Il prompt da incollare
+## Iper-realismo e retino: come stanno insieme
 
-In inglese: i modelli di immagine rispondono meglio, e i termini fotografici
-sono meno ambigui. Il senso è quello dei paragrafi italiani sotto.
+**Iper-realismo e retino da 6 mm non si contraddicono?**
 
-```
-A monochrome black-and-white photographic portrait of a single human face,
-filling the entire frame edge to edge — cropped just above the eyebrows and
-just below the chin, no background visible, no shoulders, no neck.
+No, ma vanno separati. L'iper-realismo serve alla STRUTTURA: ossa vere, luce che entra davvero sotto la pelle, masse tonali anatomicamente corrette. Quelle masse sopravvivono al retino e sono la ragione per cui un viso reale regge dove un viso disegnato crolla. Il DETTAGLIO sotto il passo del reticolo invece non sopravvive: pori, ciglia, singoli capelli vengono cancellati, non rimpiccioliti. La piattezza chiesta nel GRADE non e' meno realismo: e' la stessa cosa che si fa girando in log e correggendo dopo. Si cattura tutto, si consegna piatto, e la finestra tonale la decide chi stampa.
 
-Lighting: one large soft source from the upper left at about 45 degrees,
-plus a weak fill from the right. Broad, simple modelling: the lit cheek and
-forehead as one continuous mass, the shadow side as another. No specular
-highlights, no catchlights in the eyes, no rim light.
+L'opera finita NON e' iper-realista: e' 100 x 133 valori di tono a passo 6,00 mm. Dirlo prima e' meglio che scoprirlo davanti alla stampa. Chi vuole avvicinarsi al ritratto scende di passo: vedi `configurazioni.dettaglio`.
 
-Tonality: mid-grey overall, low contrast, flat. No pure black anywhere, no
-pure white anywhere. Every value between 10% and 90% grey. Soft, even skin
-with no visible pores or texture. No fine detail of any kind.
+| | |
+|---|---|
+| valori di tono disponibili | **13300** (100 x 133) |
+| dettaglio piu' piccolo | 6.00 mm |
+| centro della finestra tonale | 0.3848 |
+| semiampiezza | +/- 0.3 |
 
-Expression: still, unreadable, neither warm nor hostile. Lips closed and
-relaxed, no smile. The two eyes do not focus on the same point — the left
-eye looks straight at the viewer, the right eye looks very slightly past it.
-The right side of the face is a little softer and less defined than the left.
+---
 
-Age indeterminate, gender ambiguous, no makeup, no jewellery, no glasses,
-no facial hair, hair not visible.
-
-Format: vertical 3:4, at least 1800 x 2400 pixels. Sharp focus, no depth of
-field blur, no vignetting, no film grain, no border, no text, no watermark.
-```
-
-**Negativo** (se il campo esiste, altrimenti è già nel prompt):
+## Il prompt
 
 ```
-high contrast, deep blacks, blown highlights, vignette, film grain, skin
-texture, pores, wrinkles, eyelashes detail, catchlight, specular highlight,
-jewellery, glasses, hair strands, background, shoulders, neck, text,
-watermark, border, colour, dramatic lighting, rim light, bokeh
+Hyper-realistic black-and-white photographic portrait of a 25-year-old man,
+head and face filling the entire frame edge to edge, cropped just above the
+eyebrows and just below the chin. No background, no shoulders, no neck.
+
+SUBJECT. Light olive skin. Dark brown wavy hair, about 4.5 cm long, seen only
+at the very top edge of the frame. Light-coloured eyes, pale iris clearly
+brighter than the surrounding eye socket. Harmonious athletic build. Calm,
+elegant, self-possessed. Beautiful without being decorative: the beauty is in
+the bone structure, not in styling.
+
+CAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,
+tripod, subject 1.5 m away. Full skin realism: real subsurface scattering,
+real pore structure, fine vellus hair on the cheek, moisture on the lower lip,
+individual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.
+
+LIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a
+large white bounce on the right at half power. Broad simple modelling: the lit
+cheek and forehead read as one continuous mass, the shadow side as another.
+No hard shadow edges, no rim light, no hair light, no catchlight in the eyes.
+
+GRADE. Deliberately FLAT, like an ungraded log capture. Mid-grey overall, low
+contrast. Absolutely no pure black and no pure white anywhere in the frame:
+every value between 10% and 90% grey. The darkest point is the pupil at about
+25% grey; the brightest is the lit cheekbone at about 85%.
+
+EXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no
+tension in the jaw. The gaze is almost - but not quite - directed at the
+viewer: the left eye looks straight out, the right eye about one degree past
+the viewer's shoulder. The right side of the face is very slightly softer and
+less defined than the left, as if the light there were one stop less certain.
+
+FORMAT. Vertical 3:4, at least 2400 x 3200 pixels, PNG, 16-bit if available.
+Sharp everywhere, no depth-of-field blur, no vignette, no film grain, no
+border, no text, no watermark, no colour.
+```
+
+### Negativo
+
+```
+high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,
+film grain, beauty retouching, smoothed skin, plastic skin, airbrushed,
+dramatic lighting, rim light, hair light, catchlight, specular highlight,
+lens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,
+makeup, background, shoulders, neck, hands, text, watermark, border, colour,
+tilted head, three-quarter view, profile, smile, teeth
+```
+
+### Varianti
+
+**a - piu' scultoreo** — se al retino il viso risulta piatto e non si stacca dal campo.
+*sostituire il paragrafo LIGHT*
+
+```
+LIGHT. One 1.5 m octabox from the upper left at 60 degrees, higher and further round, plus a weak bounce on the right at one quarter power. Stronger separation between the lit mass and the shadow mass, but still no hard shadow edge and still no value below 10% grey.
+```
+
+**b - piu' morbido** — se al retino il viso risulta duro e la meta' in ombra si chiude.
+*sostituire il paragrafo LIGHT*
+
+```
+LIGHT. Two 1.5 m octaboxes, one upper left at 40 degrees and one right at 60 degrees at half power, plus a white floor bounce. Almost shadowless, very gentle modelling.
+```
+
+**c - senza dissolvenza** — se si preferisce ottenere la dissolvenza dal retino (`--dissolvenza`) invece che dall'immagine.
+*togliere l'ultima frase del paragrafo EXPRESSION*
+
+```
+(rimuovere: 'The right side of the face is very slightly softer...')
 ```
 
 ---
 
-## 2. Cosa cambia rispetto al segnaposto, e perché
+## Come generarle
 
-| | segnaposto attuale | immagine richiesta |
-|---|---|---|
-| inquadratura | testa che galleggia con margini | **viso a pieno campo** |
-| punti sul viso | ~55 × 103 | **100 × 133** |
-| fondo | campo uniforme al 38,5% | nessuno: è tutto viso |
-| dissolvenza | applicata dal retino (sembra polvere) | **dentro l'immagine**, come sfocatura tonale |
+- 6 generazioni, 3:4 verticale, almeno 2400 x 3200 px
+- PNG, 16 bit se disponibile, altrimenti 8 bit senza compressione con perdita
+- **Come scegliere:** NON a occhio sulla generazione a piena risoluzione. Si passano tutte al collaudo (`viso.py --foto`), si tengono quelle sopra il 70% di frazione utile, e solo fra quelle si sceglie.
 
-Il viso a pieno campo non è una scelta di gusto: **elimina il problema del
-fondo e raddoppia i punti che lavorano.** Ogni punto dell'opera porta viso.
+**Cosa non fare:**
 
-La dissolvenza — la metà destra che perde definizione — è meglio che stia
-nell'immagine, come modellato più morbido, invece di essere ottenuta togliendo
-punti a caso. I punti tolti a caso, visti da 6 m, sembrano sporco.
+1. Non chiedere 'dramatic lighting' o 'cinematic': producono neri chiusi, e il nero chiuso e' esattamente dove il moire' non esiste.
+2. Non ritoccare il contrasto dopo: comprimere in post una foto contrastata lascia bande di posterizzazione che il retino amplifica.
+3. Non usare upscaler generativi: inventano dettaglio sotto il passo del retino, che viene comunque cancellato, e intanto sporcano le masse tonali.
 
 ---
 
-## 3. Il collaudo, prima di ordinare qualsiasi cosa
-
-Non è un giudizio: è un comando che dà un numero.
+## Il collaudo — un comando, un numero
 
 ```bash
-python3 viso.py --foto ritratto.png --out prova.png --senza-dissolvenza
+python3 viso.py --foto ritratto.png --senza-dissolvenza
 ```
 
-Stampa tre righe. Quella che decide è la terza:
+Stampa la **frazione dell'immagine che cade nella finestra utile del moire'**. Sotto **70%** l'immagine si rifa'.
 
-```
-  frazione nella finestra utile del moire': 87%  ->  ok
-```
+> non ritoccare: rifare l'immagine PIU' PIATTA. Comprimere in post una foto contrastata lascia bande di posterizzazione che il retino amplifica
 
-**È la percentuale di immagine che cade dove il moiré esiste** (densità entro
-±0,30 dal fondo 0,3848). Sotto il 70% l'immagine si rifà: significa che
-troppa superficie è finita nei neri chiusi o nei bianchi bruciati, e su quella
-superficie l'opera non si muove.
-
-Se il numero è basso, il rimedio non è ritoccare qui: è chiedere di nuovo
-l'immagine **più piatta**. Comprimere in post una foto contrastata lascia
-bande di posterizzazione che il retino amplifica.
-
-Poi si guarda l'effetto vero:
+Poi:
 
 ```bash
-python3 genera_layer.py --foto ritratto.png    # i due file di stampa 1:1
-python3 video.py --foto ritratto.png           # il video del movimento
+python3 genera_layer.py --foto ritratto.png
+python3 video.py --foto ritratto.png
 ```
 
 ---
 
-## 4. Le tre domande da fare all'immagine finita
+## Le tre domande all'immagine finita
 
-Guardandola **a occhi socchiusi**, da lontano, o rimpicciolita a 100 px:
+Guardandola a occhi socchiusi, o rimpicciolita a 100 px:
 
-1. **Si legge ancora un viso?** Se sparisce, si perde anche nell'opera:
-   il retino a 6 mm è più brutale di qualunque miniatura.
-2. **Le due metà sono diverse?** Una deve essere ferma e l'altra incerta.
-   Non due luminosità diverse: due *gradi di definizione* diversi.
-3. **Lo sguardo si chiude?** Non deve. Se i due occhi convergono, il viso
-   ha un'identità, e questa è l'unica cosa che l'opera non deve dargli.
+1. Rimpicciolita a 100 px si legge ancora un viso? Se sparisce li', sparisce anche nell'opera
+2. Le due meta' hanno grado di definizione diverso, non solo luminosita' diversa?
+3. Lo sguardo NON si chiude? Se i due occhi convergono, il viso ha un'identita', ed e' l'unica cosa che l'opera non deve dargli
 
 ---
 
-## 5. Se si preferisce una fotografia vera
-
-La pipeline non distingue. Vincoli identici a quelli sopra, più uno:
-il ritratto va scattato con una **sorgente grande e vicina** (softbox o
-finestra) e **senza controluce**. In posa: sguardo appena divergente, bocca
-rilassata, testa frontale con una rotazione di 2-3 gradi appena.
-
-Se il soggetto è una persona reale e riconoscibile, la sua liberatoria è un
-atto dell'autore e non di questo repository — qui si dice solo che serve.
+Se si preferisce una fotografia vera, la pipeline non distingue: stessi vincoli, piu' uno — sorgente grande e vicina, niente controluce. Se il soggetto e' una persona reale e riconoscibile, la liberatoria e' un atto dell'autore e non di questo repository; qui si dice solo che serve.

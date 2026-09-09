@@ -144,10 +144,10 @@ def _crocini(larghezza, altezza, margine, passo_tacche=None):
     return "\n".join(p)
 
 
-def svg_vetro(prog, path=None, margine=MARGINE):
+def svg_vetro(prog, path=None, margine=MARGINE, prefisso=""):
     """Faccia 2 del vetro: reticolo regolare di punti neri opachi.
     Il pannello e' a misura esatta: e' il vetro a definire l'area visibile."""
-    path = path or os.path.join(USCITA, "vetro_griglia.svg")
+    path = path or os.path.join(USCITA, f"{prefisso}vetro_griglia.svg")
     W, H = prog.larghezza, prog.altezza
     X, Y = centri(W, H, prog.passo)
     r = prog.diam_griglia / 2.0
@@ -161,10 +161,10 @@ def svg_vetro(prog, path=None, margine=MARGINE):
                 f"R3 vetro - reticolo p={prog.passo}mm d={prog.diam_griglia}mm")
 
 
-def svg_plexi(prog, path=None, margine=MARGINE, **kw):
+def svg_plexi(prog, path=None, margine=MARGINE, prefisso="", **kw):
     """Seconda superficie del plexi: il viso a retino, su pannello
     sovradimensionato di `margine` per lato (serve alla rotazione)."""
-    path = path or os.path.join(USCITA, "plexi_viso.svg")
+    path = path or os.path.join(USCITA, f"{prefisso}plexi_viso.svg")
     W, H = prog.larghezza + 2 * margine, prog.altezza + 2 * margine
     X, Y, D = retino_viso(prog, margine=margine, **kw)
     corpo = [f'  <g fill="#000">']
@@ -345,6 +345,9 @@ def main():
     ap.add_argument("--foto", help="usa una fotografia al posto del viso procedurale")
     ap.add_argument("--res", type=float, default=4.0, help="px/mm della simulazione")
     ap.add_argument("--solo-svg", action="store_true")
+    ap.add_argument("--prefisso", default="",
+                    help="prefisso dei file di stampa, per tenere piu' "
+                         "configurazioni affiancate (es. p45_)")
     a = ap.parse_args()
 
     os.makedirs(USCITA, exist_ok=True)
@@ -355,8 +358,8 @@ def main():
     if a.foto:
         kw["densita_fn"] = lambda w, h: viso_mod.da_foto(a.foto, w, h)
 
-    print(svg_vetro(prog))
-    print(svg_plexi(prog, **kw))
+    print(svg_vetro(prog, prefisso=a.prefisso))
+    print(svg_plexi(prog, prefisso=a.prefisso, **kw))
     if a.solo_svg:
         return
 

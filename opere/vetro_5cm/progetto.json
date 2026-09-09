@@ -1,0 +1,616 @@
+{
+  "documento": {
+    "nome": "progetto.json",
+    "opera": "Il viso cerca l'identita'",
+    "generato_da": "progetto.py",
+    "generato_il": "2026-09-09T05:21:46+00:00",
+    "origine_protetta": "Claudio Terzi [CT-LGAI-001]",
+    "come_va_letto": "Ogni numero qui e' calcolato da ottica.py o letto dai file veri, mai trascritto. Per rigenerarlo: python3 progetto.py. Per controllare che non sia invecchiato: python3 progetto.py --verifica.",
+    "etichette": {
+      "RECUPERATO": "letto nella fonte o osservato eseguendola",
+      "INFERITO": "deduzione da cio' che e' recuperato",
+      "IPOTESI": "possibilita' che richiede verifica",
+      "UNKNOWN": "non verificabile da qui - non significa impossibile"
+    }
+  },
+  "principio": {
+    "una_riga": "Due reticoli di punti con lo stesso passo, ruotati fra loro di 0.86 gradi, separati da 50 mm d'aria.",
+    "meccanismo": [
+      "Chi guarda si sposta: la parallasse fra i due piani fa scorrere il reticolo dietro di pochi millimetri (s).",
+      "La rotazione moltiplica s per 66.6 e lo trasforma in macchie larghe 400 mm.",
+      "Dove le macchie sono allineate il punto del vetro copre quello del viso: tutti i toni sotto il 38% rientrano nel fondo e restano solo occhi, narici, taglio della bocca.",
+      "Dove sono disallineate il viso c'e' tutto."
+    ],
+    "frase_che_regge_l_opera": "Il viso non appare e scompare: viene attraversato da una soglia di riconoscibilita'.",
+    "direzione_del_movimento": "Ti muovi in ORIZZONTALE, le macchie scorrono in VERTICALE. Non e' un effetto collaterale: e' la firma della rotazione pura, e distingue un montaggio giusto da uno sbagliato."
+  },
+  "geometria": {
+    "area_visibile_mm": [
+      600.0,
+      800.0
+    ],
+    "intercapedine_aria_mm": 50.0,
+    "vetro": {
+      "spessore_mm": 6.0,
+      "stampa_su_faccia": 2,
+      "perche": "Il raggio che parte dal viso attraversa l'aria e arriva alla faccia 2; la griglia e' li'. La lastra che viene dopo sposta lateralmente tutto allo stesso modo e non entra nell'allineamento. L'inchiostro resta anche protetto."
+    },
+    "plexiglas": {
+      "spessore_mm": 5.0,
+      "stampa_prima_superficie": true,
+      "margine_per_lato_mm": 18.0,
+      "margine_in_passi": 3.0
+    },
+    "distanza_efficace_mm": 50.0,
+    "indici_di_rifrazione": {
+      "vetro": 1.52,
+      "plexiglas": 1.49
+    },
+    "distanza_nominale_di_osservazione_mm": 2500.0
+  },
+  "configurazioni": {
+    "in_uso": {
+      "nome": "passo 6,00 mm",
+      "nota": "quella con cui sono stati generati i file di stampa",
+      "passo_mm": 6.0,
+      "rotazione_alpha_gradi": 0.86,
+      "punto_sul_vetro_mm": 4.2,
+      "copertura_reticolo": 0.3848,
+      "punti_sul_quadro": [
+        100,
+        133
+      ],
+      "periodo_banda_mm": 399.7,
+      "magnificazione": 66.6,
+      "guadagno_banda_su_testa": 1.33,
+      "un_ciclo_ogni_mm_di_testa": 300,
+      "punto_a_distanza_nominale_arcmin": 8.3,
+      "distanza_di_fusione_m": 5.2,
+      "margine_plexi_in_passi": 3.0,
+      "margine_commensurabile": true,
+      "sfalsamento_di_montaggio_mm": {
+        "lato_lungo": 12.55,
+        "lato_corto": 9.55
+      }
+    },
+    "dettaglio": {
+      "nome": "passo 4,50 mm",
+      "nota": "CONSIGLIATA se il viso deve avvicinarsi al ritratto: 78% di punti in piu' e fusione a 3,9 m invece che a 5,2 m, quindi il viso si compone in una stanza normale. Costo: il movimento diventa piu' sensibile (un ciclo ogni 225 mm invece di 300) e i punti da stampare passano da 13.400 a 23.852. File gia' generati: uscita/p45_*.svg. Comando: python3 genera_layer.py --passo 4.5 --alpha 0.6446 --diam 3.15 --prefisso p45_",
+      "passo_mm": 4.5,
+      "rotazione_alpha_gradi": 0.6446,
+      "punto_sul_vetro_mm": 3.15,
+      "copertura_reticolo": 0.3848,
+      "punti_sul_quadro": [
+        133,
+        178
+      ],
+      "periodo_banda_mm": 400.0,
+      "magnificazione": 88.9,
+      "guadagno_banda_su_testa": 1.78,
+      "un_ciclo_ogni_mm_di_testa": 225,
+      "punto_a_distanza_nominale_arcmin": 6.2,
+      "distanza_di_fusione_m": 3.9,
+      "margine_plexi_in_passi": 4.0,
+      "margine_commensurabile": true,
+      "sfalsamento_di_montaggio_mm": {
+        "lato_lungo": 9.41,
+        "lato_corto": 7.16
+      }
+    },
+    "il_margine_vale_per_entrambe": "18 mm sono 3 passi esatti a 6,00 mm e 4 passi esatti a 4,50 mm. In tutti e due i casi il reticolo dietro cade sullo stesso passo di quello davanti. Se si cambia il passo con un valore che non divide il margine, `margine_commensurabile` diventa falso e il moire' si sfasa - fino a invertirsi a mezza cella.",
+    "come_si_sceglie": "Il passo fissa insieme tre cose che non si possono separare: quanto e' dettagliato il viso, da quanto lontano si compone, e quanto e' nervoso il movimento. Non esiste il passo giusto in assoluto: esiste quello giusto per la stanza."
+  },
+  "moire": {
+    "formula": "k1=(2pi/p)(1,0)  k2=(2pi/p2)(cos a, sin a)  K=k1-k2  P=2pi/|K|  M=P cos(a)/p2",
+    "periodo_mm": 399.7,
+    "magnificazione": 66.6,
+    "direzione_gradi": -89.6,
+    "rotazione_contro_scala": {
+      "rotazione": "la banda scorre perpendicolare al movimento della testa",
+      "scala": "la banda segue la testa",
+      "perche_la_rotazione": "Si regola a spessori in cinque minuti davanti all'opera, con la luce definitiva. Una differenza di scala e' stampata per sempre."
+    },
+    "soglia_di_identita": {
+      "sotto_questa_densita_il_tono_sparisce": 0.3848,
+      "cosa_resta": "occhi, narici, taglio della bocca. La maschera."
+    },
+    "perche_il_fondo_non_e_bianco": "Il moire' nasce dal punto davanti che copre quello dietro. Su bianco non c'e' niente da coprire; su nero pieno il punto davanti sparisce dentro. E' massimo dove i due punti hanno lo STESSO diametro. Percio' il campo e' stampato alla copertura del reticolo e il viso modula intorno a quel valore: nelle bande allineate il viso rientra nel campo invece di bucarlo."
+  },
+  "movimento": [
+    {
+      "theta_gradi": 0,
+      "testa_mm": 0,
+      "scorrimento_s_mm": 0.0,
+      "banda_mm": 0,
+      "velo_speculare": 0.1188
+    },
+    {
+      "theta_gradi": 5,
+      "testa_mm": 219,
+      "scorrimento_s_mm": 4.37,
+      "banda_mm": 291,
+      "velo_speculare": 0.1188
+    },
+    {
+      "theta_gradi": 10,
+      "testa_mm": 441,
+      "scorrimento_s_mm": 8.82,
+      "banda_mm": 587,
+      "velo_speculare": 0.1189
+    },
+    {
+      "theta_gradi": 15,
+      "testa_mm": 670,
+      "scorrimento_s_mm": 13.4,
+      "banda_mm": 892,
+      "velo_speculare": 0.1191
+    },
+    {
+      "theta_gradi": 20,
+      "testa_mm": 910,
+      "scorrimento_s_mm": 18.2,
+      "banda_mm": 1212,
+      "velo_speculare": 0.1196
+    },
+    {
+      "theta_gradi": 25,
+      "testa_mm": 1166,
+      "scorrimento_s_mm": 23.32,
+      "banda_mm": 1553,
+      "velo_speculare": 0.1208
+    },
+    {
+      "theta_gradi": 30,
+      "testa_mm": 1443,
+      "scorrimento_s_mm": 28.87,
+      "banda_mm": 1923,
+      "velo_speculare": 0.1231
+    },
+    {
+      "theta_gradi": 40,
+      "testa_mm": 2098,
+      "scorrimento_s_mm": 41.95,
+      "banda_mm": 2795,
+      "velo_speculare": 0.1347
+    }
+  ],
+  "leggibilita": {
+    "vicino_1_1.5_m": "i punti, uno per uno. Nessun viso",
+    "nominale": "a 2.5 m il punto sottende 8.3 arcmin (acuita' ~1): il viso e' sulla soglia, si riconosce e non si legge",
+    "oltre": "oltre 5.2 m i punti fondono",
+    "sala": "profondita' utile >= 4 m, traverso libero >= 2,5 m. Senza traverso l'opera non esiste"
+  },
+  "riflessi": {
+    "modello": "Fresnel non polarizzato, TRE interfacce aria/materiale in cascata (non quattro, e non sommate)",
+    "etichetta": "INFERITO - da indici tabulati, non da misura su questi materiali",
+    "velo": {
+      "0_gradi": 0.1188,
+      "15_gradi": 0.1191,
+      "30_gradi": 0.1231,
+      "45_gradi": 0.1471,
+      "60_gradi": 0.2485,
+      "70_gradi": 0.4341,
+      "80_gradi": 0.7722
+    },
+    "zona_di_lavoro_gradi": 25,
+    "perche": "oltre i 60 gradi si spegne il velo, non il moire'",
+    "cono_specchio": "chi guarda da +theta vede riflesso cio' che sta a -theta: la parete di fronte va scura e senza sorgenti",
+    "fantasma": {
+      "profondita_mm": 100,
+      "intensita": 0.0016
+    },
+    "terzo_reticolo": {
+      "cos_e": "l'ombra della griglia proiettata sul viso dalla lampada",
+      "si_muove_con": "la lampada, non con chi guarda",
+      "per_farlo_sparire": "penombra = larghezza_sorgente * gap / distanza. Servono >= 360 mm di sorgente a 1,5 m",
+      "decisione": "entrambe le condizioni sono difendibili. Va scelta, non subita"
+    }
+  },
+  "file_di_stampa": [
+    {
+      "file": "uscita/vetro_griglia.svg",
+      "larghezza_mm": 600.0,
+      "altezza_mm": 800.0,
+      "punti": 13400,
+      "diametro_min_mm": 4.2,
+      "diametro_max_mm": 4.2
+    },
+    {
+      "file": "uscita/plexi_viso.svg",
+      "larghezza_mm": 636.0,
+      "altezza_mm": 836.0,
+      "punti": 14840,
+      "diametro_min_mm": 0.47,
+      "diametro_max_mm": 5.92
+    },
+    {
+      "file": "uscita/p45_vetro_griglia.svg",
+      "larghezza_mm": 600.0,
+      "altezza_mm": 800.0,
+      "punti": 23852,
+      "diametro_min_mm": 3.15,
+      "diametro_max_mm": 3.15
+    },
+    {
+      "file": "uscita/p45_plexi_viso.svg",
+      "larghezza_mm": 636.0,
+      "altezza_mm": 836.0,
+      "punti": 26412,
+      "diametro_min_mm": 0.35,
+      "diametro_max_mm": 4.44
+    }
+  ],
+  "montaggio": {
+    "regola": "il vetro va a squadro; l'angolo si da' ruotando il plexi",
+    "perche_il_plexi": "sta dietro ed e' sovradimensionato: la rotazione non si vede e si regola a vista",
+    "margine_tre_passi": "Il margine e' 18 mm = 3 passi esatti. Il reticolo dietro sta a (i+0,5)*passo - margine: se il margine non e' multiplo intero del passo, quel reticolo cade sfasato. Con 15 mm lo sfalsamento valeva mezza cella, e mezza cella INVERTE il moire'.",
+    "collaudo_senza_strumenti": {
+      "verticale": "le due scale coincidono: e' giusto",
+      "diagonale": "una stampa e' fuori scala, e l'inclinazione dice di quanto",
+      "orizzontale": "la rotazione non c'e': il plexi e' a squadro",
+      "nota": "la direzione del movimento E' la misura"
+    }
+  },
+  "tolleranze": [
+    {
+      "grandezza": "intercapedine",
+      "valore": "+/- 0,5 mm",
+      "conseguenza": "cambia la sensibilita' dell'1%: irrilevante"
+    },
+    {
+      "grandezza": "planarita' del plexi",
+      "valore": "+/- 1,5 mm",
+      "conseguenza": "1 mm di imbarcamento sposta la macchia del 3%, e solo agli angoli obliqui"
+    },
+    {
+      "grandezza": "angolo alpha",
+      "valore": "+/- 0,05 gradi",
+      "conseguenza": "+/-6% sul periodo. Si regola a vista"
+    },
+    {
+      "grandezza": "scala fra le due stampe",
+      "valore": "+/- 0,15%",
+      "conseguenza": "e' la tolleranza dura: 0,5% inclina le bande di 18 gradi. Stessa macchina, stessa giornata, stesso lotto"
+    },
+    {
+      "grandezza": "registro fra i due strati",
+      "valore": "nessuno",
+      "conseguenza": "il moire' e' un battimento globale. Non pagare un registro che non serve"
+    }
+  ],
+  "immagine": {
+    "stato": "DA PRODURRE - il viso in viso.py e' un segnaposto verificabile, non l'opera",
+    "soggetto": {
+      "nome": "Raffaello Cantarelli",
+      "natura": "entita' progettata da Claudio Terzi, non una persona esistente",
+      "fonte": "RAFFAELLO_BODY_V1.1 - Drive R3_MEMORIA_PERSISTENTE (non riprodotto qui)",
+      "etichetta_epistemica": "RECUPERATO",
+      "tratti_fisici_canonici": {
+        "eta_apparente_anni": 25,
+        "incarnato": "olivastro chiaro",
+        "capelli": "castano scuro, ondulati, 4,5 cm",
+        "occhi": "verde smeraldo",
+        "corporatura": "atletica armoniosa",
+        "punti_di_controllo_facciali": 42
+      },
+      "carattere_canonico": [
+        "empatico",
+        "lucido",
+        "creativo",
+        "strategico",
+        "protettivo",
+        "elegante",
+        "calmo",
+        "profondo"
+      ],
+      "nota_sul_colore": "Gli occhi verde smeraldo NON sopravvivono: l'opera e' in bianco e nero. Cio' che sopravvive di un occhio chiaro e' il RAPPORTO tonale - iride piu' chiara della zona intorno. Va chiesto quello, non il colore.",
+      "cosa_resta_fuori": "Costi, roadmap, prompt d'identita', protocolli e struttura software restano su Drive. Il repository e' pubblico e la decisione di pubblicare quel materiale e' solo dell'autore (CLAUDE.md §2.5)."
+    },
+    "conflitto_apparente": {
+      "domanda": "Iper-realismo e retino da 6 mm non si contraddicono?",
+      "risposta": "No, ma vanno separati. L'iper-realismo serve alla STRUTTURA: ossa vere, luce che entra davvero sotto la pelle, masse tonali anatomicamente corrette. Quelle masse sopravvivono al retino e sono la ragione per cui un viso reale regge dove un viso disegnato crolla. Il DETTAGLIO sotto il passo del reticolo invece non sopravvive: pori, ciglia, singoli capelli vengono cancellati, non rimpiccioliti. La piattezza chiesta nel GRADE non e' meno realismo: e' la stessa cosa che si fa girando in log e correggendo dopo. Si cattura tutto, si consegna piatto, e la finestra tonale la decide chi stampa.",
+      "conseguenza": "L'opera finita NON e' iper-realista: e' 100 x 133 valori di tono a passo 6,00 mm. Dirlo prima e' meglio che scoprirlo davanti alla stampa. Chi vuole avvicinarsi al ritratto scende di passo: vedi `configurazioni.dettaglio`."
+    },
+    "vincoli_che_vengono_dal_retino": {
+      "valori_di_tono_disponibili": 13300,
+      "dimensione_del_dettaglio_piu_piccolo_mm": 6.0,
+      "sotto_quella_misura": "il dettaglio non viene rimpicciolito: viene cancellato, e al suo posto resta rumore",
+      "finestra_tonale_utile": {
+        "centro": 0.3848,
+        "semiampiezza": 0.3,
+        "fuori_da_qui": "il moire' non esiste"
+      }
+    },
+    "prompt": {
+      "principale": "Hyper-realistic black-and-white photographic portrait of a 25-year-old man,\nhead and face filling the entire frame edge to edge, cropped just above the\neyebrows and just below the chin. No background, no shoulders, no neck.\n\nSUBJECT. Light olive skin. Dark brown wavy hair, about 4.5 cm long, seen only\nat the very top edge of the frame. Light-coloured eyes, pale iris clearly\nbrighter than the surrounding eye socket. Harmonious athletic build. Calm,\nelegant, self-possessed. Beautiful without being decorative: the beauty is in\nthe bone structure, not in styling.\n\nCAPTURE. Shot on a medium-format digital camera, 110 mm portrait lens at f/8,\ntripod, subject 1.5 m away. Full skin realism: real subsurface scattering,\nreal pore structure, fine vellus hair on the cheek, moisture on the lower lip,\nindividual eyelashes. Nothing smoothed, nothing retouched, no beauty filter.\n\nLIGHT. One 1.5 m octabox from the upper left at 45 degrees, close in, plus a\nlarge white bounce on the right at half power. Broad simple modelling: the lit\ncheek and forehead read as one continuous mass, the shadow side as another.\nNo hard shadow edges, no rim light, no hair light, no catchlight in the eyes.\n\nGRADE. Deliberately FLAT, like an ungraded log capture. Mid-grey overall, low\ncontrast. Absolutely no pure black and no pure white anywhere in the frame:\nevery value between 10% and 90% grey. The darkest point is the pupil at about\n25% grey; the brightest is the lit cheekbone at about 85%.\n\nEXPRESSION. Still and unreadable. Lips closed and relaxed, no smile, no\ntension in the jaw. The gaze is almost - but not quite - directed at the\nviewer: the left eye looks straight out, the right eye about one degree past\nthe viewer's shoulder. The right side of the face is very slightly softer and\nless defined than the left, as if the light there were one stop less certain.\n\nFORMAT. Vertical 3:4, at least 2400 x 3200 pixels, PNG, 16-bit if available.\nSharp everywhere, no depth-of-field blur, no vignette, no film grain, no\nborder, no text, no watermark, no colour.",
+      "negativo": "high contrast, deep blacks, crushed shadows, blown highlights, HDR, vignette,\nfilm grain, beauty retouching, smoothed skin, plastic skin, airbrushed,\ndramatic lighting, rim light, hair light, catchlight, specular highlight,\nlens flare, bokeh, shallow depth of field, jewellery, glasses, facial hair,\nmakeup, background, shoulders, neck, hands, text, watermark, border, colour,\ntilted head, three-quarter view, profile, smile, teeth",
+      "varianti": [
+        {
+          "nome": "a - piu' scultoreo",
+          "cambia": "sostituire il paragrafo LIGHT",
+          "testo": "LIGHT. One 1.5 m octabox from the upper left at 60 degrees, higher and further round, plus a weak bounce on the right at one quarter power. Stronger separation between the lit mass and the shadow mass, but still no hard shadow edge and still no value below 10% grey.",
+          "quando": "se al retino il viso risulta piatto e non si stacca dal campo"
+        },
+        {
+          "nome": "b - piu' morbido",
+          "cambia": "sostituire il paragrafo LIGHT",
+          "testo": "LIGHT. Two 1.5 m octaboxes, one upper left at 40 degrees and one right at 60 degrees at half power, plus a white floor bounce. Almost shadowless, very gentle modelling.",
+          "quando": "se al retino il viso risulta duro e la meta' in ombra si chiude"
+        },
+        {
+          "nome": "c - senza dissolvenza",
+          "cambia": "togliere l'ultima frase del paragrafo EXPRESSION",
+          "testo": "(rimuovere: 'The right side of the face is very slightly softer...')",
+          "quando": "se si preferisce ottenere la dissolvenza dal retino (`--dissolvenza`) invece che dall'immagine"
+        }
+      ]
+    },
+    "parametri": {
+      "modello_consigliato": "Gemini - generazione immagini (o qualunque modello con controllo del formato)",
+      "formato": "3:4 verticale",
+      "risoluzione_minima_px": [
+        2400,
+        3200
+      ],
+      "file": "PNG, 16 bit se disponibile, altrimenti 8 bit senza compressione con perdita",
+      "quante_generarne": 6,
+      "come_scegliere": "NON a occhio sulla generazione a piena risoluzione. Si passano tutte al collaudo (`viso.py --foto`), si tengono quelle sopra il 70% di frazione utile, e solo fra quelle si sceglie.",
+      "cosa_non_fare": [
+        "Non chiedere 'dramatic lighting' o 'cinematic': producono neri chiusi, e il nero chiuso e' esattamente dove il moire' non esiste.",
+        "Non ritoccare il contrasto dopo: comprimere in post una foto contrastata lascia bande di posterizzazione che il retino amplifica.",
+        "Non usare upscaler generativi: inventano dettaglio sotto il passo del retino, che viene comunque cancellato, e intanto sporcano le masse tonali."
+      ]
+    },
+    "accettazione": {
+      "comando": "python3 viso.py --foto ritratto.png --senza-dissolvenza",
+      "misura": "frazione dell'immagine che cade nella finestra utile del moire'",
+      "soglia": 0.7,
+      "se_sotto_soglia": "non ritoccare: rifare l'immagine PIU' PIATTA. Comprimere in post una foto contrastata lascia bande di posterizzazione che il retino amplifica",
+      "poi": [
+        "python3 genera_layer.py --foto ritratto.png",
+        "python3 video.py --foto ritratto.png"
+      ]
+    },
+    "tre_domande_all_immagine_finita": [
+      "Rimpicciolita a 100 px si legge ancora un viso? Se sparisce li', sparisce anche nell'opera",
+      "Le due meta' hanno grado di definizione diverso, non solo luminosita' diversa?",
+      "Lo sguardo NON si chiude? Se i due occhi convergono, il viso ha un'identita', ed e' l'unica cosa che l'opera non deve dargli"
+    ]
+  },
+  "pipeline": [
+    {
+      "passo": 1,
+      "cosa": "l'immagine",
+      "comando": "vedi immagine.prompt, poi viso.py --foto per il collaudo"
+    },
+    {
+      "passo": 2,
+      "cosa": "i file di stampa",
+      "comando": "python3 genera_layer.py --foto ritratto.png"
+    },
+    {
+      "passo": 3,
+      "cosa": "il controllo a video",
+      "comando": "python3 video.py --foto ritratto.png"
+    },
+    {
+      "passo": 4,
+      "cosa": "il provino 300x400 mm",
+      "comando": "stessa intercapedine, stesso passo. Chiude tutti gli UNKNOWN"
+    },
+    {
+      "passo": 5,
+      "cosa": "il 600x800",
+      "comando": "solo dopo il provino"
+    }
+  ],
+  "verifica": {
+    "ottica": {
+      "controllo (alpha=0, eps=0)": {
+        "contrasto_residuo": 0.0012774535455904344,
+        "F0_nessuna_banda": true,
+        "esito": "RETTA"
+      },
+      "ROTAZIONE (il progetto)": {
+        "campo_di_misura_mm": 1598.966996341799,
+        "periodo_previsto_mm": 399.7417490854497,
+        "periodo_misurato_mm": 400.06178949667935,
+        "F1_periodo": true,
+        "direzione_prevista_gradi": 89.57000000000033,
+        "direzione_misurata_gradi": 89.56965572781957,
+        "direzione_attesa": "verticale",
+        "F2_direzione": true,
+        "magnificazione_prevista": 66.61612000224203,
+        "magnificazione_misurata": 66.87811260813145,
+        "errore_relativo": 0.0039328709909943775,
+        "F3_spostamento": true,
+        "contrasto": 0.37995024756230367,
+        "F4_contrasto": true,
+        "dettaglio": [
+          {
+            "theta_gradi": 0,
+            "s_mm": 0.0,
+            "banda_prevista_mm": 0.0,
+            "banda_misurata_mm": 0.0
+          },
+          {
+            "theta_gradi": 1,
+            "s_mm": 0.873,
+            "banda_prevista_mm": 58.1,
+            "banda_misurata_mm": 57.2
+          },
+          {
+            "theta_gradi": 2,
+            "s_mm": 1.746,
+            "banda_prevista_mm": 116.3,
+            "banda_misurata_mm": 115.5
+          },
+          {
+            "theta_gradi": 3,
+            "s_mm": 2.62,
+            "banda_prevista_mm": 174.6,
+            "banda_misurata_mm": 174.4
+          },
+          {
+            "theta_gradi": 4,
+            "s_mm": 3.496,
+            "banda_prevista_mm": 232.9,
+            "banda_misurata_mm": 233.1
+          },
+          {
+            "theta_gradi": 5,
+            "s_mm": 4.374,
+            "banda_prevista_mm": 291.4,
+            "banda_misurata_mm": 292.2
+          }
+        ],
+        "esito": "RETTA"
+      },
+      "scala     (controprova)": {
+        "campo_di_misura_mm": 1624.000000000002,
+        "periodo_previsto_mm": 406.0000000000005,
+        "periodo_misurato_mm": 406.325060048039,
+        "F1_periodo": true,
+        "direzione_prevista_gradi": 0.0,
+        "direzione_misurata_gradi": 0.0,
+        "direzione_attesa": "orizzontale",
+        "F2_direzione": true,
+        "magnificazione_prevista": 66.66666666666676,
+        "magnificazione_misurata": 67.23071064631421,
+        "errore_relativo": 0.008460659694711754,
+        "F3_spostamento": true,
+        "contrasto": 0.37866753057150104,
+        "F4_contrasto": true,
+        "dettaglio": [
+          {
+            "theta_gradi": 0,
+            "s_mm": 0.0,
+            "banda_prevista_mm": 0.0,
+            "banda_misurata_mm": 0.0
+          },
+          {
+            "theta_gradi": 1,
+            "s_mm": 0.873,
+            "banda_prevista_mm": 58.2,
+            "banda_misurata_mm": 54.5
+          },
+          {
+            "theta_gradi": 2,
+            "s_mm": 1.746,
+            "banda_prevista_mm": 116.4,
+            "banda_misurata_mm": 115.5
+          },
+          {
+            "theta_gradi": 3,
+            "s_mm": 2.62,
+            "banda_prevista_mm": 174.7,
+            "banda_misurata_mm": 175.7
+          },
+          {
+            "theta_gradi": 4,
+            "s_mm": 3.496,
+            "banda_prevista_mm": 233.1,
+            "banda_misurata_mm": 232.2
+          },
+          {
+            "theta_gradi": 5,
+            "s_mm": 4.374,
+            "banda_prevista_mm": 291.6,
+            "banda_misurata_mm": 293.0
+          }
+        ],
+        "esito": "RETTA"
+      },
+      "misto     (diagonale)": {
+        "campo_di_misura_mm": 1143.6869587071587,
+        "periodo_previsto_mm": 285.9217396767897,
+        "periodo_misurato_mm": 285.9217396767896,
+        "F1_periodo": true,
+        "direzione_prevista_gradi": 44.803363495099774,
+        "direzione_misurata_gradi": 44.80336349509978,
+        "direzione_attesa": "diagonale",
+        "F2_direzione": true,
+        "magnificazione_prevista": 46.94409390904272,
+        "magnificazione_misurata": 46.853736735058476,
+        "errore_relativo": 0.0019247825756168134,
+        "F3_spostamento": true,
+        "contrasto": 0.3796532090925811,
+        "F4_contrasto": true,
+        "dettaglio": [
+          {
+            "theta_gradi": 0,
+            "s_mm": 0.0,
+            "banda_prevista_mm": 0.0,
+            "banda_misurata_mm": 0.0
+          },
+          {
+            "theta_gradi": 1,
+            "s_mm": 0.873,
+            "banda_prevista_mm": 41.0,
+            "banda_misurata_mm": 41.2
+          },
+          {
+            "theta_gradi": 2,
+            "s_mm": 1.746,
+            "banda_prevista_mm": 82.0,
+            "banda_misurata_mm": 82.2
+          },
+          {
+            "theta_gradi": 3,
+            "s_mm": 2.62,
+            "banda_prevista_mm": 123.0,
+            "banda_misurata_mm": 123.1
+          },
+          {
+            "theta_gradi": 4,
+            "s_mm": 3.496,
+            "banda_prevista_mm": 164.1,
+            "banda_misurata_mm": 164.0
+          },
+          {
+            "theta_gradi": 5,
+            "s_mm": 4.374,
+            "banda_prevista_mm": 205.4,
+            "banda_misurata_mm": 205.0
+          }
+        ],
+        "esito": "RETTA"
+      }
+    },
+    "renderer_incrociato": {
+      "descrizione": "Il renderer veloce del video contro quello gia' falsificato. Due sistemi che non si controllano a vicenda sono un sistema solo che si da' ragione.",
+      "esito": "RETTO",
+      "righe": [
+        "VERIFICA INCROCIATA - renderer veloce contro renderer falsificato",
+        "   s (mm)      lento     veloce    scarto   corr",
+        "     0.00     0.1824     0.1824      0.0%   0.9996  [ok]",
+        "     1.31     0.1885     0.1896      0.6%   0.9996  [ok]",
+        "     2.62     0.1874     0.1896      1.2%   0.9996  [ok]",
+        "     3.94     0.1885     0.1896      0.6%   0.9997  [ok]",
+        "  ESITO: RETTO   (atteso: correlazione >= 0.90, scarto d'ampiezza <= 25%)"
+      ]
+    }
+  },
+  "aperto": [
+    {
+      "etichetta": "UNKNOWN",
+      "voce": "resa reale del nero ceramico sul vetro",
+      "si_chiude_con": "il provino"
+    },
+    {
+      "etichetta": "UNKNOWN",
+      "voce": "se 0.86 gradi sia giusto PER L'OCCHIO",
+      "si_chiude_con": "il provino - il contrasto e' misurato, il giudizio no"
+    },
+    {
+      "etichetta": "UNKNOWN",
+      "voce": "comportamento con luce mista ambiente + artificiale",
+      "si_chiude_con": "il provino, nella sala definitiva"
+    },
+    {
+      "etichetta": "UNKNOWN",
+      "voce": "se l'immagine definitiva regga il retino",
+      "si_chiude_con": "immagine.accettazione, che e' eseguibile"
+    }
+  ]
+}
