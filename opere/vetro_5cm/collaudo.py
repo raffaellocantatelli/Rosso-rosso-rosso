@@ -152,6 +152,34 @@ def resa(dens, passo, r1):
 
 
 # ------------------------------------------------------------------ collaudo
+def _sfoca(a, sigma):
+    n = max(1, int(3 * sigma))
+    k = np.exp(-0.5 * (np.arange(-n, n + 1) / sigma) ** 2)
+    k /= k.sum()
+    o = np.apply_along_axis(lambda m: np.convolve(m, k, "same"), 1, a)
+    return np.apply_along_axis(lambda m: np.convolve(m, k, "same"), 0, o)
+
+
+def sopravvivenza(dens, passo, r1):
+    """Quanto del viso resta leggibile quando i due reticoli si allineano.
+
+    Nello stato allineato il punto davanti copre quello dietro, quindi OGNI
+    tono piu' chiaro del fondo rende esattamente lo stesso valore: quella
+    parte del viso diventa una superficie unica. E' li' che l'identita' si
+    perde, e `sparisce` la misura.
+
+    `sopravvive` e' il contrasto locale che resta, in rapporto a quello dello
+    stato disallineato. Locale, cioe' tolto il gradiente generale della luce:
+    contano i tratti, non da che parte arriva la lampada. E RELATIVO al
+    livello medio, perche' lo stato allineato e' molto piu' chiaro e in
+    assoluto sembrerebbe piu' contrastato di quanto sia.
+    """
+    a, b = estremi(dens, passo, r1)
+    ca = float((a - _sfoca(a, 3.0)).std() / max(a.mean(), 1e-9))
+    cb = float((b - _sfoca(b, 3.0)).std() / max(b.mean(), 1e-9))
+    return float(np.mean(dens < FONDO)), ca / max(cb, 1e-9)
+
+
 def griglia(passo, larghezza=600.0, altezza=800.0):
     return int(round(larghezza / passo)), int(round(altezza / passo))
 
@@ -162,6 +190,7 @@ def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0):
     dl, dh = finestra_tonale(resa_min, passo, r1)
     d = viso_mod.da_foto(percorso, nx, ny, finestra=(dl, dh))
     r = resa(d, passo, r1)
+    sparisce, sopravvive = sopravvivenza(d, passo, r1)
     # Escursione della SORGENTE, prima della rimappatura. Un'immagine senza
     # toni ha moire' perfetto e viso nullo: senza questo controllo una
     # generazione fallita, o un fondo piatto, vincerebbe la classifica.
@@ -178,6 +207,8 @@ def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0):
         "squilibrio_verso_le_ombre": round((dh - FONDO) / max(FONDO - dl, 1e-9), 2),
         "resa_media": float(r.mean()),
         "resa_minima": float(r.min()),
+        "sparisce_nell_allineato": sparisce,
+        "sopravvive_nell_allineato": sopravvive,
         "frazione_celle_vive": float(np.mean(r >= RESA_MINIMA_CELLA)),
         "densita": {"min": float(d.min()), "media": float(d.mean()),
                     "max": float(d.max()),
@@ -246,6 +277,52 @@ def contatto(risultati, path, passo, r1, alto=300):
     return path
 
 
+def confronto(risultati, path, passo, r1, alto=460):
+    """Le candidate affiancate, nei due stati. E' il foglio su cui si sceglie.
+
+    Quando il filtro le promuove tutte - ed e' il caso normale, se vengono
+    dallo stesso prompt - i numeri non servono piu' a niente. Serve vederle
+    nello stato in cui l'opera le mette.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+    try:
+        f = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf", 15)
+        fb = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", 17)
+        ft = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf", 20)
+    except OSError:
+        f = fb = ft = ImageFont.load_default()
+
+    largo = int(alto * 600 / 800)
+    sep, cima, mezzo, fondo_h = 12, 40, 52, 46
+    W = len(risultati) * (largo + sep) + sep
+    H = cima + alto + mezzo + alto + fondo_h
+    tela = Image.new("RGB", (W, H), (238, 240, 238))
+    dr = ImageDraw.Draw(tela)
+    dr.text((sep, 12), "ALLINEATO — il viso rientra nel campo, resta la maschera",
+            font=ft, fill=(24, 28, 27))
+    dr.text((sep, cima + alto + 14),
+            "DISALLINEATO — il viso c'e' tutto", font=ft, fill=(24, 28, 27))
+    for k, r in enumerate(risultati):
+        a, b = estremi(r["_densita"], passo, r1)
+        x = sep + k * (largo + sep)
+        for riga, campo in ((cima, a), (cima + alto + mezzo, b)):
+            g = np.clip(campo / 0.62, 0, 1) ** (1 / 1.35)
+            im = Image.fromarray((g * 255).astype(np.uint8)).resize((largo, alto),
+                                                                    Image.LANCZOS)
+            tela.paste(im.convert("RGB"), (x, riga))
+            dr.rectangle([x, riga, x + largo - 1, riga + alto - 1],
+                         outline=(200, 206, 203))
+        y = cima + alto + mezzo + alto + 6
+        dr.text((x, y), os.path.basename(r["file"]).replace(".png", ""), font=fb,
+                fill=(24, 28, 27))
+        dr.text((x, y + 22),
+                f"resa {r['resa_media']:.3f}  sparisce "
+                f"{r['sparisce_nell_allineato']*100:.0f}%", font=f,
+                fill=(120, 130, 127))
+    tela.save(path)
+    return path
+
+
 # ------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser(
@@ -263,8 +340,14 @@ def main():
                          "contrasto sul viso")
     ap.add_argument("--json", default="collaudo.json")
     ap.add_argument("--contatto", default="collaudo_contatto.png")
+    ap.add_argument("--confronto", default="collaudo_confronto.png",
+                    help="foglio con tutte le candidate affiancate nei due stati")
     ap.add_argument("--stampa", action="store_true",
-                    help="genera i file di stampa dall'immagine migliore")
+                    help="genera i file di stampa. Senza --scelta usa la prima "
+                         "in classifica, che quando le resa sono tutte uguali "
+                         "NON vuol dire niente: meglio nominarla")
+    ap.add_argument("--scelta", help="quale immagine stampare (nome o percorso). "
+                                     "La classifica ordina, non sceglie")
     a = ap.parse_args()
 
     diam = a.diam if a.diam else a.passo * math.sqrt(4 * FONDO / math.pi)
@@ -311,7 +394,8 @@ def main():
         print(f"  {stato}  {os.path.basename(r['file']):34s} "
               f"resa {r['resa_media']:.3f}   peggiore {r['resa_minima']:.3f}"
               f"   vive {r['frazione_celle_vive']*100:5.1f}%"
-              f"   sotto il fondo {r['frazione_sotto_il_fondo']*100:3.0f}%"
+              f"   sparisce {r['sparisce_nell_allineato']*100:3.0f}%"
+              f"   sopravvive {r['sopravvive_nell_allineato']*100:3.0f}%"
               + ("" if r["idonea"] else f"\n            -> {r['motivo']}"))
 
     idonee = [r for r in ris if r["idonea"]]
@@ -321,6 +405,17 @@ def main():
         print(f"  MIGLIORE: {os.path.basename(m['file'])}  "
               f"(resa {m['resa_media']:.3f})")
         print(f"  {len(idonee)} idonee su {len(ris)}.")
+        if len(idonee) > 1:
+            sp = [r["resa_media"] for r in idonee]
+            if max(sp) - min(sp) < 0.05:
+                print()
+                print("  ATTENZIONE: le idonee stanno tutte entro il 5% di resa. "
+                      "Il filtro NON le")
+                print("  distingue - vengono dallo stesso prompt e hanno lo stesso "
+                      "istogramma.")
+                print("  Non c'e' una ragione tecnica per preferirne una. Si sceglie "
+                      "sul foglio")
+                print("  di confronto, e la ragione e' artistica.")
     else:
         peggio = max(ris, key=lambda r: r["resa_media"]) if ris else None
         print("  NESSUNA IDONEA.")
@@ -338,6 +433,8 @@ def main():
 
     if ris:
         print("\n  scritto " + contatto(ris, a.contatto, a.passo, r1))
+        if len(ris) > 1:
+            print("  scritto " + confronto(ris, a.confronto, a.passo, r1))
         with open(a.json, "w", encoding="utf-8") as fh:
             json.dump({
                 "passo_mm": a.passo, "diametro_punto_vetro_mm": round(diam, 3),
@@ -355,6 +452,16 @@ def main():
     if a.stampa:
         if not idonee:
             print("\n  --stampa ignorato: nessuna immagine idonea."); return 2
+        if a.scelta:
+            trovate = [r for r in idonee
+                       if os.path.basename(r["file"]) == os.path.basename(a.scelta)
+                       or r["file"] == a.scelta]
+            if not trovate:
+                print(f"\n  --scelta '{a.scelta}' non e' fra le idonee."); return 2
+            idonee = trovate
+        elif len(idonee) > 1:
+            print(f"\n  --stampa senza --scelta: uso "
+                  f"{os.path.basename(idonee[0]['file'])}, la prima in classifica.")
         import subprocess
         alpha = math.degrees(2 * math.asin(a.passo / 800.0))
         # La resa minima va passata: da quella si ricava la finestra tonale.
