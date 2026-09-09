@@ -99,6 +99,24 @@ def centri(larghezza, altezza, passo, margine=0.0):
 
 
 # ------------------------------------------------------------- retino AM
+def retino_vetro(prog, densita_fn):
+    """Retino della lastra DAVANTI, quando anche lei porta una foto.
+
+    Pannello a misura esatta (nessun margine: e' il vetro a definire l'area
+    visibile) e nessuna pre-compensazione, perche' il vetro va a squadro e
+    non viene ruotato. Il campione si prende dove sta il punto, e basta.
+    """
+    W, H = prog.larghezza, prog.altezza
+    X, Y = centri(W, H, prog.passo, 0.0)
+    res = 4
+    w_px, h_px = int(W * res), int(H * res)
+    campo = densita_fn(w_px, h_px)
+    ix = np.clip((X * res).astype(int), 0, w_px - 1)
+    iy = np.clip((Y * res).astype(int), 0, h_px - 1)
+    dens = np.clip(campo[iy, ix], 0.0, 0.95)
+    return X, Y, 2.0 * prog.passo * np.sqrt(dens / math.pi)
+
+
 def retino_viso(prog, densita_fn=None, margine=None, seed=11,
                 dissolvenza=True, precompensa=True):
     """Retino AM del viso sulla lastra di plexi (che al montaggio sara'
@@ -171,21 +189,28 @@ def _crocini(larghezza, altezza, margine, passo_tacche=None):
     return "\n".join(p)
 
 
-def svg_vetro(prog, path=None, margine=None, prefisso=""):
+def svg_vetro(prog, path=None, margine=None, prefisso="", densita_fn=None):
     """Faccia 2 del vetro: reticolo regolare di punti neri opachi.
     Il pannello e' a misura esatta: e' il vetro a definire l'area visibile."""
     path = path or os.path.join(USCITA, f"{prefisso}vetro_griglia.svg")
     W, H = prog.larghezza, prog.altezza
-    X, Y = centri(W, H, prog.passo)
-    r = prog.diam_griglia / 2.0
-    corpo = [f'  <g fill="#000">']
-    for x, y in zip(X.ravel(), Y.ravel()):
-        if -r <= x <= W + r and -r <= y <= H + r:
-            corpo.append(f'    <circle cx="{x:.3f}" cy="{y:.3f}" r="{r:.3f}"/>')
+    corpo = ['  <g fill="#000">']
+    if densita_fn is None:
+        X, Y = centri(W, H, prog.passo)
+        r = prog.diam_griglia / 2.0
+        for x, y in zip(X.ravel(), Y.ravel()):
+            if -r <= x <= W + r and -r <= y <= H + r:
+                corpo.append(f'    <circle cx="{x:.3f}" cy="{y:.3f}" r="{r:.3f}"/>')
+        titolo = f"R3 vetro - reticolo p={prog.passo}mm d={prog.diam_griglia}mm"
+    else:
+        X, Y, D = retino_vetro(prog, densita_fn)
+        for x, y, d in zip(X.ravel(), Y.ravel(), D.ravel()):
+            if d >= 0.30 and -d <= x <= W + d and -d <= y <= H + d:
+                corpo.append(f'    <circle cx="{x:.3f}" cy="{y:.3f}" r="{d/2:.3f}"/>')
+        titolo = f"R3 vetro - foto a retino p={prog.passo}mm"
     corpo.append("  </g>")
     corpo.append(_crocini(W, H, 12.0))
-    return _svg(path, W, H, "\n".join(corpo),
-                f"R3 vetro - reticolo p={prog.passo}mm d={prog.diam_griglia}mm")
+    return _svg(path, W, H, "\n".join(corpo), titolo)
 
 
 def svg_plexi(prog, path=None, margine=None, prefisso="", **kw):
@@ -231,7 +256,7 @@ def _copertura_reticolo(shape, res, passo, raggio, off_x=0.0, off_y=0.0,
     return np.clip((raggio + bordo - d) / (2 * bordo), 0.0, 1.0)
 
 
-def _copertura_viso(shape, res, prog, diam, margine, off_x=0.0):
+def _copertura_lastra(shape, res, prog, diam, margine, off_x=0.0, ruota=True):
     """Campo di copertura del retino del viso (raggi variabili per cella).
 
     La lastra di plexi e' ruotata di alpha: si ruotano le COORDINATE DEI
@@ -250,10 +275,11 @@ def _copertura_viso(shape, res, prog, diam, margine, off_x=0.0):
     # dal mondo alle coordinate della LASTRA: la lastra dietro e' ruotata di
     # alpha e stampata in scala (1+eps), quindi si applica l'inversa.
     cx, cy = prog.larghezza / 2.0, prog.altezza / 2.0
-    c, s_ = math.cos(-prog.alpha), math.sin(-prog.alpha)
+    ang = -prog.alpha if ruota else 0.0
+    c, s_ = math.cos(ang), math.sin(ang)
     dx, dy = x - cx - off_x, y - cy
     rx, ry = c * dx - s_ * dy, s_ * dx + c * dy
-    k = 1.0 / (1.0 + prog.eps)
+    k = 1.0 / (1.0 + prog.eps) if ruota else 1.0
     x = cx + rx * k + margine
     y = cy + ry * k + margine
 
@@ -267,7 +293,8 @@ def _copertura_viso(shape, res, prog, diam, margine, off_x=0.0):
 class Scena:
     """Il composito dei due strati, simulato in coordinate del piano dietro."""
 
-    def __init__(self, prog, res=4.0, margine=None, **kw_retino):
+    def __init__(self, prog, res=4.0, margine=None, densita_fronte=None,
+                 **kw_retino):
         self.prog = prog
         self.res = res
         margine = margine_o_default(prog, margine)
@@ -278,6 +305,9 @@ class Scena:
         _, _, self.diam = retino_viso(prog, margine=margine, **kw_retino)
         self.diam_map = self.diam
         self.margine = margine
+        # lastra davanti: reticolo regolare, oppure anche lei una foto
+        self.diam_fronte = (None if densita_fronte is None
+                            else retino_vetro(prog, densita_fronte)[2])
 
     def render(self, theta_vista, theta_luce=None):
         """Luminanza percepita 0..1. theta in radianti; theta_luce=None = diffusa.
@@ -291,9 +321,13 @@ class Scena:
         s_v = p.parallasse(theta_vista)
         r1 = p.diam_griglia / 2.0
         # lo scorrimento di parallasse si applica allo strato DIETRO
-        viso = _copertura_viso(self.shape, self.res, p, self.diam_map,
-                               self.margine, off_x=-s_v)
-        t_vista = 1.0 - _copertura_reticolo(self.shape, self.res, p.passo, r1)
+        viso = _copertura_lastra(self.shape, self.res, p, self.diam_map,
+                                 self.margine, off_x=-s_v)
+        if self.diam_fronte is None:
+            t_vista = 1.0 - _copertura_reticolo(self.shape, self.res, p.passo, r1)
+        else:
+            t_vista = 1.0 - _copertura_lastra(self.shape, self.res, p,
+                                              self.diam_fronte, 0.0, ruota=False)
         if theta_luce is None:
             t_luce = np.float32(1.0 - p.copertura_griglia)   # luce diffusa larga
         else:
@@ -382,6 +416,10 @@ def main():
                          "le ombre). Vedi collaudo.py")
     ap.add_argument("--res", type=float, default=4.0, help="px/mm della simulazione")
     ap.add_argument("--solo-svg", action="store_true")
+    ap.add_argument("--griglia", action="store_true",
+                    help="lastra davanti a reticolo REGOLARE. Senza, con --foto, "
+                         "la stessa immagine va su ENTRAMBE le lastre: e' il "
+                         "concetto dell'opera")
     ap.add_argument("--prefisso", default="",
                     help="prefisso dei file di stampa, per tenere piu' "
                          "configurazioni affiancate (es. p45_)")
@@ -394,19 +432,25 @@ def main():
                     diam_griglia=a.diam, distanza=a.distanza)
 
     kw = {}
+    fronte = None
     if a.foto:
         import collaudo
-        fin = collaudo.finestra_tonale(a.resa_min, prog.passo, prog.diam_griglia / 2)
-        print(f"  finestra tonale (resa minima {a.resa_min:.2f}): "
-              f"{fin[0]:.3f} .. {fin[1]:.3f}")
-        kw["densita_fn"] = lambda w, h: viso_mod.da_foto(a.foto, w, h, finestra=fin)
+        due = not a.griglia
+        fin = collaudo.finestra_tonale(a.resa_min, prog.passo,
+                                       prog.diam_griglia / 2, due_foto=due)
+        print(f"  {'DUE FOTO' if due else 'foto + griglia'}   finestra tonale "
+              f"(resa minima {a.resa_min:.2f}): {fin[0]:.3f} .. {fin[1]:.3f}")
+        campo = lambda w, h: viso_mod.da_foto(a.foto, w, h, finestra=fin)
+        kw["densita_fn"] = campo
+        if due:
+            fronte = campo
 
-    print(svg_vetro(prog, prefisso=a.prefisso))
+    print(svg_vetro(prog, prefisso=a.prefisso, densita_fn=fronte))
     print(svg_plexi(prog, prefisso=a.prefisso, **kw))
     if a.solo_svg:
         return
 
-    sc = Scena(prog, res=a.res, **kw)
+    sc = Scena(prog, res=a.res, densita_fronte=fronte, **kw)
     pt = passo_testa(prog, 5)
     offsets = tuple(round(i * pt) for i in range(5))
     print(f"  passo di campionamento: {pt:.0f} mm di testa = 1/5 di periodo "

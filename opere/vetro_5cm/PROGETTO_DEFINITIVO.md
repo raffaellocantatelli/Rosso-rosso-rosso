@@ -26,10 +26,23 @@ sarebbe una seconda verità che invecchia in silenzio.
 
 ---
 
+## 0. Il concetto, nelle parole dell'autore
+
+> *Due foto fatte solo di puntini su due lastre sovrapposte distanti, perché
+> passando producano movimento.*
+
+Non una foto e una griglia tecnica: **due fotografie**, la stessa immagine su
+tutte e due le lastre. È una correzione al progetto precedente, e non è
+estetica — è un'altra ottica, migliore. Vedi §2 decisione 1.
+
+Il soggetto è **Raffaello Cantarelli**, entità progettata da Claudio Terzi.
+L'immagine scelta è `raffaello_05`, il 09/09/2026, fra sei candidate tutte
+idonee al collaudo.
+
 ## 1. Il meccanismo, in tre righe
 
-Due reticoli di punti neri con lo **stesso passo** (6,00 mm), uno sul vetro e
-uno sul plexi, ruotati fra loro di **0,86°**. Quando ti sposti, la parallasse
+Due retini di punti neri con lo **stesso passo** (4,50 mm), uno sul vetro e
+uno sul plexi, ruotati fra loro di **0,64°**. Quando ti sposti, la parallasse
 fra i due piani fa scorrere il reticolo dietro di pochi millimetri; la
 rotazione moltiplica quello scorrimento **66,6 volte** e lo trasforma in
 macchie larghe 400 mm che attraversano il quadro.
@@ -45,13 +58,33 @@ sono disallineate, il viso c'è tutto.
 
 ## 2. Le cinque decisioni, e perché sono quelle
 
-**1. Il fondo non è bianco — è al 38,5%, come il reticolo del vetro.**
+**1. Due foto, non una foto e una griglia.**
 Il moiré nasce dal punto davanti che copre quello dietro: su bianco non c'è
 niente da coprire, su nero pieno il punto sparisce dentro. L'effetto è massimo
-dove i due punti hanno **lo stesso diametro**. Perciò il campo è stampato alla
-copertura del reticolo e il viso modula intorno a quel valore: nelle bande
-allineate il viso **rientra nel campo** invece di bucarlo. È letteralmente la
-perdita di identità, non una metafora.
+dove i due punti hanno **lo stesso diametro** — e con la stessa immagine su
+entrambe le lastre quella condizione è soddisfatta **ovunque per costruzione**:
+dove il viso è chiaro entrambi i punti sono piccoli, dove è scuro entrambi
+sono grandi.
+
+Si paga una cosa che con la griglia era costante e si poteva ignorare: **la
+lastra davanti fa ombra anche sul percorso della luce**, non solo su quello
+dello sguardo. Con luce diffusa quell'ombra vale `1 − densità davanti`. La
+foto compare due volte, come disegno e come ombra. Ignorarlo sovrastimerebbe
+il movimento del 70%.
+
+Il conto, fatto:
+
+| | due foto | foto + griglia |
+|---|---|---|
+| ampiezza massima | **0,2390** | 0,2367 |
+| contrasto Michelson | **0,497** | 0,456 |
+| picco a densità | 0,400 | 0,3848 |
+| finestra tonale | 0,092–0,708 | 0,135–0,865 |
+| squilibrio verso le ombre | **1,00×** | 1,92× |
+
+**Il concetto dell'autore è anche otticamente migliore**, e per giunta la
+finestra torna simmetrica. La vecchia configurazione resta raggiungibile
+(`--griglia`) perché è verificata, ma non è l'opera.
 
 **2. L'angolo si dà ruotando il plexi al montaggio, non stampandolo.**
 Il plexi sta dietro ed è sovradimensionato: la sua rotazione non si vede, e si
@@ -112,7 +145,9 @@ seconda diventa 53,36 (il PMMA rifrange) e compare un fantasma della griglia
 
 | File | Formato 1:1 | Contenuto |
 |---|---|---|
-| `uscita/vetro_griglia.svg` | 600 × 800 mm | 13.400 punti Ø 4,20 mm, passo 6,00, copertura 38,5% |
+| `uscita/p45_finale_vetro_griglia.svg` | 600 × 800 mm | 23.852 punti Ø 0,35–4,27 mm — **la foto**, passo 4,50 |
+| `uscita/p45_finale_plexi_viso.svg` | 663 × 863 mm | 28.416 punti, stessa foto, stesso passo |
+| `uscita/vetro_griglia.svg` | 600 × 800 mm | 13.400 punti Ø 4,20 mm — reticolo regolare, configurazione vecchia |
 | `uscita/plexi_viso.svg` | 672 × 872 mm | 16.352 punti, Ø 0,47–5,92 mm, stesso passo |
 
 Il margine per lato serve allo scorrimento e alla rotazione, e resta coperto. Il viso

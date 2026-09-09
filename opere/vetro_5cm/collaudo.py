@@ -103,23 +103,46 @@ def _lente(d, r1, r2):
     return out
 
 
-def estremi(dens, passo, r1):
-    """Luminanza della cella nei due stati estremi: allineato, disallineato."""
+def estremi(dens, passo, r1=None, dens_davanti=None):
+    """Luminanza della cella nei due stati estremi: allineato, disallineato.
+
+    DUE MODI, e sono due opere diverse.
+
+    `r1` (raggio fisso)        la lastra davanti e' un reticolo REGOLARE.
+    `dens_davanti` (campo)     la lastra davanti e' anch'essa una FOTO.
+
+    Nel secondo caso cambia una cosa che nel primo era costante e si poteva
+    ignorare: la lastra davanti fa ombra anche sul percorso della LUCE, non
+    solo su quello dello sguardo. Con luce diffusa larga quell'ombra si
+    spalma e vale la copertura locale, cioe' (1 - densita' davanti). La foto
+    davanti compare quindi due volte: come disegno che si vede, e come
+    ombra proiettata su quella dietro.
+
+    Con la griglia regolare quel fattore era una costante e spariva nel
+    rapporto; con due foto no, e ignorarlo sovrastimerebbe il movimento del
+    70%.
+    """
     r2 = passo * np.sqrt(np.clip(dens, 0.0, 0.95) / math.pi)
+    if dens_davanti is None:
+        d1 = np.full_like(r2, math.pi * r1 ** 2 / passo ** 2)
+        r1v = np.full_like(r2, float(r1))
+    else:
+        d1 = np.clip(np.broadcast_to(dens_davanti, r2.shape), 0.0, 0.95)
+        r1v = passo * np.sqrt(d1 / math.pi)
 
     def L(ox, oy):
         sovr = np.zeros_like(r2)
         for i in (-1, 0, 1):
             for j in (-1, 0, 1):
                 d = np.hypot(ox + i * passo, oy + j * passo) * np.ones_like(r2)
-                sovr += _lente(d, r1, r2)
-        nero = (math.pi * r1 ** 2 + math.pi * r2 ** 2 - sovr) / passo ** 2
-        return 1.0 - np.clip(nero, 0.0, 1.0)
+                sovr += _lente(d, r1v, r2)
+        nero = (math.pi * r1v ** 2 + math.pi * r2 ** 2 - sovr) / passo ** 2
+        return (1.0 - np.clip(nero, 0.0, 1.0)) * (1.0 - d1)
 
     return L(0.0, 0.0), L(passo / 2, passo / 2)
 
 
-def finestra_tonale(resa_min, passo, r1, campioni=4000):
+def finestra_tonale(resa_min, passo, r1=None, campioni=4000, due_foto=False):
     """I due estremi di densita' fra cui mappare l'immagine.
 
     NON e' una scelta di gusto: e' determinata. Fissato quanto deve muoversi
@@ -132,23 +155,42 @@ def finestra_tonale(resa_min, passo, r1, campioni=4000):
     zona dove il moire' non esiste: su un ritratto vero il 20% delle celle
     finiva ferma, TUTTE dal lato chiaro, e tutte sulla guancia illuminata.
     """
-    d = np.linspace(0.0, 0.95, campioni)
-    r = resa(d, passo, r1)
-    basso, alto = d <= FONDO, d >= FONDO
+    d = np.linspace(0.001, 0.95, campioni)
+    r = resa(d, passo, r1, dens_davanti=d if due_foto else None)
+    # il picco si CALCOLA: con la griglia cade sul fondo, con due foto no
+    # (viene a densita' ~0,40, perche' l'ombra della lastra davanti sposta
+    # l'ottimo verso il chiaro)
+    k = int(np.argmax(r))
+    basso, alto = d <= d[k], d >= d[k]
     dl = float(d[basso][int(np.argmin(np.abs(r[basso] - resa_min)))])
     dh = float(d[alto][int(np.argmin(np.abs(r[alto] - resa_min)))])
     return dl, dh
 
 
-def resa(dens, passo, r1):
+def resa(dens, passo, r1=None, dens_davanti=None):
     """Frazione dell'ampiezza massima che ogni cella consegna. In [0, 1]."""
-    a, b = estremi(dens, passo, r1)
+    a, b = estremi(dens, passo, r1, dens_davanti)
     dl = np.abs(a - b)
-    # il massimo cade sul fondo: e' la cella che ha il punto dietro uguale a
-    # quello davanti. Si calcola invece di scriverlo, cosi' resta vero anche
-    # cambiando passo o diametro.
-    ma, mb = estremi(np.array([FONDO]), passo, r1)
-    return dl / max(float(abs(ma[0] - mb[0])), 1e-9)
+    return dl / max(_ampiezza_massima(passo, r1, dens_davanti is not None), 1e-9)
+
+
+def _picco_resa(passo, r1, due_foto, campioni=1200):
+    """La densita' a cui la cella rende di piu'."""
+    d = np.linspace(0.001, 0.95, campioni)
+    a, b = estremi(d, passo, r1, d if due_foto else None)
+    return float(d[int(np.argmax(np.abs(a - b)))])
+
+
+def _ampiezza_massima(passo, r1, due_foto, campioni=1200):
+    """L'ampiezza della cella migliore. Si CERCA, non si scrive.
+
+    Con la griglia regolare cade sul fondo (il punto dietro uguale a quello
+    davanti). Con due foto cade altrove, e scriverla a mano sarebbe una
+    costante che invecchia al primo cambio di passo.
+    """
+    d = np.linspace(0.001, 0.95, campioni)
+    a, b = estremi(d, passo, r1, d if due_foto else None)
+    return float(np.abs(a - b).max())
 
 
 # ------------------------------------------------------------------ collaudo
@@ -160,7 +202,7 @@ def _sfoca(a, sigma):
     return np.apply_along_axis(lambda m: np.convolve(m, k, "same"), 0, o)
 
 
-def sopravvivenza(dens, passo, r1):
+def sopravvivenza(dens, passo, r1=None, dens_davanti=None):
     """Quanto del viso resta leggibile quando i due reticoli si allineano.
 
     Nello stato allineato il punto davanti copre quello dietro, quindi OGNI
@@ -174,7 +216,7 @@ def sopravvivenza(dens, passo, r1):
     livello medio, perche' lo stato allineato e' molto piu' chiaro e in
     assoluto sembrerebbe piu' contrastato di quanto sia.
     """
-    a, b = estremi(dens, passo, r1)
+    a, b = estremi(dens, passo, r1, dens_davanti)
     ca = float((a - _sfoca(a, 3.0)).std() / max(a.mean(), 1e-9))
     cb = float((b - _sfoca(b, 3.0)).std() / max(b.mean(), 1e-9))
     return float(np.mean(dens < FONDO)), ca / max(cb, 1e-9)
@@ -184,13 +226,22 @@ def griglia(passo, larghezza=600.0, altezza=800.0):
     return int(round(larghezza / passo)), int(round(altezza / passo))
 
 
-def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0):
-    """Un'immagine dentro la finestra tonale derivata da `resa_min`."""
+def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0,
+            due_foto=True):
+    """Un'immagine dentro la finestra tonale derivata da `resa_min`.
+
+    `due_foto`: la stessa immagine sta su ENTRAMBE le lastre. E' il concetto
+    dell'opera - due fotografie fatte solo di puntini, sovrapposte e
+    distanziate - e non e' la stessa cosa di una foto dietro e un reticolo
+    regolare davanti: cambia la curva, cambia la finestra, e cambia quello
+    che si vede quando i due reticoli si allineano.
+    """
     nx, ny = griglia(passo, larghezza, altezza)
-    dl, dh = finestra_tonale(resa_min, passo, r1)
+    dl, dh = finestra_tonale(resa_min, passo, r1, due_foto=due_foto)
     d = viso_mod.da_foto(percorso, nx, ny, finestra=(dl, dh))
-    r = resa(d, passo, r1)
-    sparisce, sopravvive = sopravvivenza(d, passo, r1)
+    davanti = d if due_foto else None
+    r = resa(d, passo, r1, dens_davanti=davanti)
+    sparisce, sopravvive = sopravvivenza(d, passo, r1, dens_davanti=davanti)
     # Escursione della SORGENTE, prima della rimappatura. Un'immagine senza
     # toni ha moire' perfetto e viso nullo: senza questo controllo una
     # generazione fallita, o un fondo piatto, vincerebbe la classifica.
@@ -201,6 +252,7 @@ def esamina(percorso, passo, r1, resa_min, larghezza=600.0, altezza=800.0):
     lo, hi = np.percentile(src, (2.0, 98.0))
     return {
         "escursione_sorgente": float(hi - lo),
+        "modo": "due foto" if due_foto else "griglia regolare davanti",
         "resa_min_richiesta": round(resa_min, 3),
         "finestra": [round(dl, 4), round(dh, 4)],
         "escursione_tonale": round(dh - dl, 4),
@@ -254,7 +306,8 @@ def contatto(risultati, path, passo, r1, alto=300):
     tela = Image.new("RGB", (W, riga_h * len(risultati) + 8), (238, 240, 238))
     dr = ImageDraw.Draw(tela)
     for k, r in enumerate(risultati):
-        a, b = estremi(r["_densita"], passo, r1)
+        a, b = estremi(r["_densita"], passo, r1,
+                       r["_densita"] if r.get("modo") == "due foto" else None)
         y = k * riga_h
         for i, campo in enumerate((a, b)):
             g = np.clip(campo / 0.62, 0, 1) ** (1 / 1.35)
@@ -303,7 +356,8 @@ def confronto(risultati, path, passo, r1, alto=460):
     dr.text((sep, cima + alto + 14),
             "DISALLINEATO — il viso c'e' tutto", font=ft, fill=(24, 28, 27))
     for k, r in enumerate(risultati):
-        a, b = estremi(r["_densita"], passo, r1)
+        a, b = estremi(r["_densita"], passo, r1,
+                       r["_densita"] if r.get("modo") == "due foto" else None)
         x = sep + k * (largo + sep)
         for riga, campo in ((cima, a), (cima + alto + mezzo, b)):
             g = np.clip(campo / 0.62, 0, 1) ** (1 / 1.35)
@@ -346,6 +400,10 @@ def main():
                     help="genera i file di stampa. Senza --scelta usa la prima "
                          "in classifica, che quando le resa sono tutte uguali "
                          "NON vuol dire niente: meglio nominarla")
+    ap.add_argument("--griglia", action="store_true",
+                    help="lastra davanti a reticolo REGOLARE invece che a foto. "
+                         "E' il progetto vecchio: tenuto perche' e' verificato, "
+                         "ma non e' l'opera")
     ap.add_argument("--scelta", help="quale immagine stampare (nome o percorso). "
                                      "La classifica ordina, non sceglie")
     a = ap.parse_args()
@@ -365,20 +423,23 @@ def main():
     if not file:
         print("Nessuna immagine trovata."); return 2
 
-    dl, dh = finestra_tonale(a.resa_min, a.passo, r1)
-    print(f"COLLAUDO  passo {a.passo:.2f} mm   punto sul vetro {diam:.2f} mm   "
+    due = not a.griglia
+    dl, dh = finestra_tonale(a.resa_min, a.passo, r1, due_foto=due)
+    print(f"COLLAUDO  {'DUE FOTO' if due else 'foto + griglia regolare'}   "
+          f"passo {a.passo:.2f} mm   punto sul vetro {diam:.2f} mm   "
           f"griglia {griglia(a.passo)[0]} x {griglia(a.passo)[1]} celle")
     print(f"  finestra tonale derivata da resa minima {a.resa_min:.2f}: "
           f"{dl:.3f} .. {dh:.3f}")
-    print(f"  squilibrata {((dh-FONDO)/(FONDO-dl)):.2f}x verso le ombre - "
-          "non e' una scelta, e' la curva della resa")
+    picco = _picco_resa(a.passo, r1, due)
+    print(f"  il picco della resa cade a densita' {picco:.3f}, e la finestra e'"
+          f" squilibrata {((dh-picco)/max(picco-dl,1e-9)):.2f}x verso le ombre")
     print(f"  soglia: resa media >= {SOGLIA_RESA:.2f}   "
           f"(uniforme 0.724, bimodale 0.350)\n")
 
     ris = []
     for p in file:
         try:
-            r = esamina(p, a.passo, r1, a.resa_min)
+            r = esamina(p, a.passo, r1, a.resa_min, due_foto=due)
         except Exception as e:                       # noqa: BLE001
             print(f"  {os.path.basename(p):34s} ERRORE: {e}")
             continue
@@ -470,7 +531,9 @@ def main():
         cmd = [sys.executable, "genera_layer.py", "--foto", idonee[0]["file"],
                "--passo", str(a.passo), "--diam", f"{diam:.3f}",
                "--alpha", f"{alpha:.4f}",
-               "--resa-min", f"{a.resa_min:.3f}", "--solo-svg",
+               "--resa-min", f"{a.resa_min:.3f}", "--solo-svg"]
+        cmd += ([] if due else ["--griglia"])
+        cmd += [
                "--prefisso", f"p{int(a.passo*10)}_finale_"]
         print("\n  " + " ".join(cmd))
         subprocess.run(cmd, check=False)

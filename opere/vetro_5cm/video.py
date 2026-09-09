@@ -75,7 +75,8 @@ def _lente(d, r1, r2):
 class Opera:
     """Il retino del viso, calcolato una volta sola."""
 
-    def __init__(self, prog, densita_fn=None, margine=None, dissolvenza=True):
+    def __init__(self, prog, densita_fn=None, margine=None, dissolvenza=True,
+                 densita_fronte=None):
         self.prog = prog
         margine = gl.margine_o_default(prog, margine)
         self.margine = margine
@@ -83,6 +84,8 @@ class Opera:
                                          densita_fn=densita_fn,
                                          dissolvenza=dissolvenza)
         self.ny, self.nx = self.diam.shape
+        self.diam_fronte = (None if densita_fronte is None
+                            else gl.retino_vetro(prog, densita_fronte)[2])
 
     def _raggio(self, x_lastra, y_lastra):
         """Raggio del punto della cella che contiene un punto della lastra."""
@@ -98,10 +101,14 @@ class Opera:
         """Luminanza media per cella del reticolo del vetro. (ny_c, nx_c)."""
         p = self.prog
         cx, cy = p.larghezza / 2.0, p.altezza / 2.0
-        r1 = p.diam_griglia / 2.0
         nxc = int(math.ceil(p.larghezza / p.passo))
         nyc = int(math.ceil(p.altezza / p.passo))
         ix, iy = np.meshgrid(np.arange(nxc), np.arange(nyc))
+        if self.diam_fronte is None:
+            r1 = np.full((nyc, nxc), p.diam_griglia / 2.0)
+        else:
+            df = self.diam_fronte
+            r1 = df[:nyc, :nxc] / 2.0 if df.shape >= (nyc, nxc) else np.resize(df, (nyc, nxc)) / 2.0
         FX = (ix + 0.5) * p.passo
         FY = (iy + 0.5) * p.passo
 
@@ -136,7 +143,9 @@ class Opera:
                     r2c = r2
         nero = (math.pi * r1 ** 2 + math.pi * r2c ** 2 - sovr) / p.passo ** 2
         nero = np.clip(nero, 0.0, 1.0)
-        return (1.0 - nero) * (1.0 - math.pi * r1 ** 2 / p.passo ** 2)
+        # la lastra davanti fa ombra anche sul percorso della luce
+        d1 = math.pi * r1 ** 2 / p.passo ** 2
+        return (1.0 - nero) * (1.0 - d1)
 
     def lontano(self, s, dim, regione=None, riferimento=0.62):
         """Vista da lontano, ingrandita a `dim`.
@@ -163,17 +172,23 @@ class Opera:
         """Ritaglio a piena risoluzione: i punti si vedono uno per uno."""
         p = self.prog
         cx, cy = p.larghezza / 2.0, p.altezza / 2.0
-        r1 = p.diam_griglia / 2.0
         W, H = int(w_mm * res), int(h_mm * res)
         y, x = np.mgrid[0:H, 0:W].astype(np.float64)
         X = x0 + x / res
         Y = y0 + y / res
         bordo = 0.5 / res
 
-        # reticolo del vetro
-        u = np.mod(X, p.passo) - p.passo / 2
-        v = np.mod(Y, p.passo) - p.passo / 2
-        cov_f = np.clip((r1 + bordo - np.hypot(u, v)) / (2 * bordo), 0, 1)
+        # lastra davanti: reticolo regolare, oppure anche lei una foto
+        fx = np.floor(X / p.passo) * p.passo + p.passo / 2
+        fy = np.floor(Y / p.passo) * p.passo + p.passo / 2
+        if self.diam_fronte is None:
+            r1 = p.diam_griglia / 2.0
+        else:
+            nyf, nxf = self.diam_fronte.shape
+            i = np.clip((fx / p.passo - 0.5).round().astype(int), 0, nxf - 1)
+            j = np.clip((fy / p.passo - 0.5).round().astype(int), 0, nyf - 1)
+            r1 = self.diam_fronte[j, i] / 2.0
+        cov_f = np.clip((r1 + bordo - np.hypot(X - fx, Y - fy)) / (2 * bordo), 0, 1)
 
         # reticolo del viso, sulla lastra ruotata e scorsa di s
         qx, qy = _rot(X + s, Y, cx, cy, -p.alpha)
@@ -345,6 +360,8 @@ def main():
                     help="con --foto: quanto deve muoversi la cella peggiore. "
                          "Da qui si ricava la finestra tonale. Vedi collaudo.py")
     ap.add_argument("--verifica", action="store_true")
+    ap.add_argument("--griglia", action="store_true",
+                    help="lastra davanti a reticolo regolare invece che a foto")
     ap.add_argument("--dissolvenza", action="store_true",
                     help="con --foto: applica anche la dissolvenza del retino. "
                          "Spenta di default: su un'immagine fatta bene la "
@@ -360,16 +377,22 @@ def main():
         print("VERIFICA INCROCIATA - renderer veloce contro renderer falsificato")
         raise SystemExit(0 if verifica(prog) else 2)
 
+    fronte = None
     if a.foto:
         import collaudo
-        fin = collaudo.finestra_tonale(a.resa_min, prog.passo, prog.diam_griglia / 2)
-        print(f"  finestra tonale (resa minima {a.resa_min:.2f}): "
-              f"{fin[0]:.3f} .. {fin[1]:.3f}")
+        due = not a.griglia
+        fin = collaudo.finestra_tonale(a.resa_min, prog.passo,
+                                       prog.diam_griglia / 2, due_foto=due)
+        print(f"  {'DUE FOTO' if due else 'foto + griglia'}   finestra tonale "
+              f"(resa minima {a.resa_min:.2f}): {fin[0]:.3f} .. {fin[1]:.3f}")
         fn = lambda w, h: viso_mod.da_foto(a.foto, w, h, finestra=fin,
                                            dissolvenza=a.dissolvenza)
+        if due:
+            fronte = lambda w, h: viso_mod.da_foto(a.foto, w, h, finestra=fin)
     else:
         fn = None
-    op = Opera(prog, densita_fn=fn, dissolvenza=not a.foto)
+    op = Opera(prog, densita_fn=fn, dissolvenza=not a.foto,
+               densita_fronte=fronte)
     print(monta(op, prog, a.out))
 
 

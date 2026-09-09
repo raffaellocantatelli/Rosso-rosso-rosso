@@ -297,9 +297,15 @@ def costruisci(prog, misure):
         },
 
         "principio": {
+            "concetto_dell_autore": (
+                "Due fotografie fatte solo di puntini, su due lastre "
+                "sovrapposte e distanziate, perche' passandoci davanti "
+                "producano movimento."
+            ),
             "una_riga": (
-                "Due reticoli di punti con lo stesso passo, ruotati fra loro di "
-                f"{a_gradi:.2f} gradi, separati da {prog.gap:.0f} mm d'aria."
+                "La STESSA immagine retinata su tutte e due le lastre, con lo "
+                f"stesso passo, ruotate fra loro di {a_gradi:.2f} gradi e "
+                f"separate da {prog.gap:.0f} mm d'aria."
             ),
             "meccanismo": [
                 "Chi guarda si sposta: la parallasse fra i due piani fa scorrere "
@@ -397,6 +403,39 @@ def costruisci(prog, misure):
             "soglia_di_identita": {
                 "sotto_questa_densita_il_tono_sparisce": round(prog.tono_soglia(), 4),
                 "cosa_resta": "occhi, narici, taglio della bocca. La maschera.",
+            },
+            "due_foto_invece_di_foto_piu_griglia": {
+                "cambio": ("La prima versione aveva una foto dietro e un "
+                           "reticolo REGOLARE davanti. L'autore ha corretto: "
+                           "due foto. Non e' una variante estetica, e' un'altra "
+                           "ottica."),
+                "cosa_migliora": (
+                    "L'effetto e' massimo dove i due punti hanno lo stesso "
+                    "diametro. Con la stessa immagine su entrambe le lastre "
+                    "quella condizione e' soddisfatta OVUNQUE per costruzione: "
+                    "dove il viso e' chiaro entrambi i punti sono piccoli, dove "
+                    "e' scuro entrambi sono grandi."),
+                "cosa_si_paga": (
+                    "La lastra davanti fa ombra anche sul percorso della LUCE, "
+                    "non solo su quello dello sguardo: con luce diffusa quella "
+                    "ombra vale (1 - densita' davanti). La foto compare due "
+                    "volte, come disegno e come ombra. Con la griglia quel "
+                    "fattore era costante e spariva nel rapporto; ignorarlo "
+                    "qui sovrastimerebbe il movimento del 70%."),
+                "il_conto": {
+                    "due_foto": {"ampiezza_max": 0.2390, "michelson": 0.497,
+                                 "picco_a_densita": 0.400,
+                                 "finestra": [0.092, 0.708],
+                                 "squilibrio": 1.00},
+                    "foto_piu_griglia": {"ampiezza_max": 0.2367, "michelson": 0.456,
+                                         "picco_a_densita": 0.3848,
+                                         "finestra": [0.135, 0.865],
+                                         "squilibrio": 1.92},
+                    "verdetto": ("il concetto dell'autore e' anche otticamente "
+                                 "migliore, e per giunta la finestra torna "
+                                 "simmetrica"),
+                },
+                "come_si_torna_indietro": "collaudo.py --griglia, genera_layer.py --griglia",
             },
             "perche_il_fondo_non_e_bianco": (
                 "Il moire' nasce dal punto davanti che copre quello dietro. Su "
@@ -496,6 +535,8 @@ def costruisci(prog, misure):
         "immagine": {
             "stato": "DA PRODURRE - il viso in viso.py e' un segnaposto verificabile, "
                      "non l'opera",
+            "scelta_dell_autore": "raffaello_05 - scelta il 2026-09-09 fra sei "
+                                 "candidate tutte idonee",
             "soggetto": SOGGETTO,
             "conflitto_apparente": CONFLITTO_APPARENTE,
             "vincoli_che_vengono_dal_retino": {
