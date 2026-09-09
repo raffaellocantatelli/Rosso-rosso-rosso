@@ -1,15 +1,21 @@
-# R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-09-0902
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-09_0902.yaml
-# Snapshot 1810 e precedenti conservati. Non cancellare gli storici.
+# R3_WORK_QUEUE.yaml — canone pieno ciclo SYNC-2026-09-09-0902
+# Snapshot precedenti conservati. Non cancellare gli storici.
 
 meta:
   cycle_id: SYNC-2026-09-09-0902
   previous_cycle: SYNC-2026-09-08-1810
-  github_default_sha: eccc79348ea2d19a9b3e60ee47eeb7e1d51a69ea
+  measured_at: 2026-09-09T09:02:00+02:00
+  protocol: R3∞_DRIVE_SYNC_v1
+  node: grok-4.6
+  github_account: raffaellocantatelli
+  drive_owner_observed: Claudio Terzi
+  github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha_precommit: eccc79348ea2d19a9b3e60ee47eeb7e1d51a69ea
+  github_default_sha_1810_declared: 32d7cf33198fb456f9614c4a7eaf14ee79b15c39
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
   camera_inventory_sha: e1c37fc711220986b5c3c4a647743001b17a9cb7
+  camera_inventory_sha_1810: 2b96150a08dee8978fb636acb6bada9fdbc4ac2d
   glass_plexiglas_sha: 68c4ec7924246ad34d0dd494da57ea47f7b3893d
   pr6_merged_at: 2026-09-08T04:08:28Z
 
@@ -18,6 +24,7 @@ stato:
   daily_2026-09-09: ASSENTE_ALLE_0702Z
   r3_019: BASELINE_0_NO_NEW_RUN
   sdq1_run_41: PRESENTE_34222971374_FAILURE
+  sdq1_run_42: ASSENTE
   sdq1_daily_total_count: 41
   telegram_branch: INVARIATO_NON_UNITO_46817fdd
   camera_branch: MOSSO_NON_UNITO_e1c37fc7
@@ -26,8 +33,18 @@ stato:
   h_sync_0808_1: CADUTA_DAILY_08_PRESENTE
   h_sync_0808_2: CADUTA_RUN_41_PRESENTE
   h_sync_0808_3: APERTA_TELEGRAM_NON_UNITO
+  h_sync_0909_1: APERTA_DAILY_09_ASSENTE
+  h_sync_0909_2: APERTA_RUN_42_ASSENTE
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
+
+delta_vs_1810:
+  default_sha: 32d7cf33 -> eccc793
+  camera_sha: 2b96150a -> e1c37fc7
+  glass_plexiglas: nuovo_68c4ec79
+  telegram: invariato_46817fdd
+  workflow_runs: invariato_41
+  prodotto_idee_ct: solo_drive
 
 priorita:
   - R3-019 Longitudinal Capability Benchmark
@@ -41,5 +58,18 @@ priorita:
   - R3-018 Sim2Real Audit
   - R3-020 Self-Improvement Safety Gate
 
+conflitti_conservati:
+  - default_neq_new_session
+  - telegram_non_unito
+  - camera_mosso_non_unito
+  - glass_plexiglas_non_unito
+  - duplicati_drive_report_e_queue
+  - due_copie_r3_019_drive
+  - prodotto_idee_ct_solo_drive
+  - report_integrale_drive_vs_condensato_github
+
 regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
 never_delete_historical: true
+no_merge_from_this_node: true
+no_credentials_touched: true
+simulation: none
