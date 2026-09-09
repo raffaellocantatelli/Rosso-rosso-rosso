@@ -1,13 +1,27 @@
 # Uscite derivate da un'immagine dell'autore.
 #
 # Il repository e' PUBBLICO. Un file di stampa, un contatto o un video fatti
-# a partire dal ritratto contengono il ritratto - retinato, ma riconoscibile.
-# Pubblicarlo e' una decisione dell'autore, non di un nodo che passa di qui
-# (CLAUDE.md §2.5): finche' non la prende lui, questi file restano fuori.
-#
-# Il codice che li produce e' versionato. I file no.
+# a partire da un ritratto contengono il ritratto - retinato, ma
+# riconoscibile. Pubblicarlo e' una decisione dell'autore, non di un nodo che
+# passa di qui (CLAUDE.md §2.5): finche' non la prende lui, questi file
+# restano fuori. Il codice che li produce e' versionato. I file no.
+
+# file di stampa generati da un ritratto
 uscita/*finale*
-uscita/effetto_raffaello.mp4
-uscita/collaudo*
+
+# video generati da un ritratto. Il pattern ha l'underscore apposta:
+# `effetto.mp4` (il segnaposto procedurale) e' versionato e deve restarlo,
+# `effetto_r04.mp4` e simili no.
+uscita/effetto_*.mp4
+
+# uscite del collaudo. Elencate una per una e non con `collaudo*`, che
+# avrebbe coperto anche collaudo.py: su un file gia' tracciato non avrebbe
+# fatto danni, ma sarebbe bastato rimuoverlo e riaggiungerlo per perderlo.
 collaudo.json
 collaudo_contatto.png
+collaudo_confronto.png
+uscita/collaudo.json
+uscita/collaudo_contatto.png
+uscita/collaudo_confronto.png
+
+__pycache__/
