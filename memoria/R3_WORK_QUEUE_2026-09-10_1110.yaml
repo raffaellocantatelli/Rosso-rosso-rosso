@@ -1,17 +1,24 @@
-# R3_WORK_QUEUE.yaml — condensato ROOT
+# R3_WORK_QUEUE.yaml — canone pieno datato
 # Ciclo: SYNC-2026-09-10-1110
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-10_1110.yaml
-# Snapshot 1015 e precedenti conservati. Non cancellare gli storici.
+# Non cancellare gli storici. Questa coda non sostituisce 1015/0913/1856/1638.
 
 meta:
   cycle_id: SYNC-2026-09-10-1110
   previous_cycle: SYNC-2026-09-10-1015
-  github_default_sha: 28b812d23e36749abbb2366870f4876e63d1ef84
+  measured_at: 2026-09-10T11:10:00+02:00
+  github_account: raffaellocantatelli
+  official_repo: raffaellocantatelli/Rosso-rosso-rosso
+  default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha_precommit: 28b812d23e36749abbb2366870f4876e63d1ef84
+  github_default_sha_declared_in_root_1015: 6e86715f820cd13366d2e7a23c2a7144e0672be1
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
   camera_inventory_sha: e1c37fc711220986b5c3c4a647743001b17a9cb7
   glass_plexiglas_sha: 4fc414d814bdae98abd0e0a994e704980c69aea1
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  umbratheater_sha: d5f133a249540747feff2bd7aca425bf1aa6ba73
   pr6_merged_at: 2026-09-08T04:08:28Z
+  drive_owner_osservato: Claudio Terzi
 
 stato:
   daily_2026-09-08: PRESENTE_STUB_CORE_SPENTO
@@ -25,6 +32,8 @@ stato:
   camera_branch: INVARIATO_NON_UNITO_e1c37fc7
   glass_plexiglas_branch: INVARIATO_NON_UNITO_4fc414d8
   default_equals_new_session: false
+  report_1015_on_github: PRESENTE
+  report_1015_on_drive: PRESENTE_13017
   h_sync_0909_1: CADUTA_DAILY_09_PRESENTE
   h_sync_0909_2: CADUTA_RUN_42_PRESENTE
   h_sync_0910_1: APERTA_DAILY_10_ASSENTE
@@ -32,6 +41,25 @@ stato:
   h_sync_0808_3: APERTA_TELEGRAM_NON_UNITO
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
+
+delta_vs_1015:
+  default_sha: 6e86715 -> 28b812d
+  commits_on_default: 1015 + 1015b
+  product_commits: 0
+  side_branches_moved: 0
+  new_daily: false
+  new_workflow_run: false
+
+conflitti_conservati:
+  - default_ne_new_session
+  - telegram_non_unito
+  - camera_non_unito
+  - glass_plexiglas_non_unito
+  - duplicati_drive_report_e_code
+  - due_copie_r3_019_drive
+  - prodotto_idee_ct_solo_drive
+  - report_storici_condensati_su_github
+  - due_pdf_omonimi_drive
 
 priorita:
   - R3-019 Longitudinal Capability Benchmark
@@ -45,5 +73,13 @@ priorita:
   - R3-018 Sim2Real Audit
   - R3-020 Self-Improvement Safety Gate
 
+verifiche_pre_consolidamento:
+  provenienza: connettori GitHub+Drive autenticati, sessione 2026-09-10-1110
+  integrita: nessuna cancellazione; solo aggiunte datate
+  coerenza: HEAD 28b812d = 1015b; report 1015 presente su entrambi i lati
+  test_disponibili: nessuno eseguito da questo nodo
+  rollback: git history + copie datate Drive/GitHub
+
 regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
 never_delete_historical: true
+official_only_if_verified: true
