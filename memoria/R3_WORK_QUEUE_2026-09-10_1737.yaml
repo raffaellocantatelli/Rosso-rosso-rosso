@@ -1,23 +1,35 @@
-# R3_WORK_QUEUE.yaml — condensato ROOT
+# R3_WORK_QUEUE.yaml — canone pieno datato
 # Ciclo: SYNC-2026-09-10-1737
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-10_1737.yaml
-# Snapshot 1618 e precedenti conservati. Non cancellare gli storici.
+# Non sostituisce gli snapshot 1618, 1535 e precedenti.
 
 meta:
   cycle_id: SYNC-2026-09-10-1737
   previous_cycle: SYNC-2026-09-10-1618
-  github_default_sha: c4e3326c09f16068a03463cda92b63cf5c4cc53c
+  measured_at: 2026-09-10T15:37:00Z
+  measured_at_cest: 2026-09-10 17:37 CEST
+  protocol: R3∞_DRIVE_SYNC_v1
+  github_owner: raffaellocantatelli
+  github_repo: Rosso-rosso-rosso
+  github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha_pre_commit: c4e3326c09f16068a03463cda92b63cf5c4cc53c
+  github_default_sha_declared_in_previous_root: d54dc6972224f66b22c3e23bb986b69de95761dc
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
   camera_inventory_sha: e1c37fc711220986b5c3c4a647743001b17a9cb7
   glass_plexiglas_sha: 4fc414d814bdae98abd0e0a994e704980c69aea1
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  umbratheater_sha: d5f133a249540747feff2bd7aca425bf1aa6ba73
   pr6_merged_at: 2026-09-08T04:08:28Z
+  drive_memoria_id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+  never_delete_historical: true
 
 stato:
   daily_2026-09-08: PRESENTE_STUB_CORE_SPENTO
   daily_2026-09-09: PRESENTE_STUB_CORE_SPENTO
   daily_2026-09-10: PRESENTE_STUB_CORE_SPENTO
+  daily_2026-09-10_blob: 5d6cafe8e04bb1dd831e6fefbacfd76fb6b5cfe6
   r3_019: BASELINE_0_NO_NEW_RUN
+  r3_019_spec_blob: dafcd4b3da606e967c9270a0ef1dcdbe6ad1a5d1
   sdq1_run_42: PRESENTE_34348698599_FAILURE
   sdq1_run_43: PRESENTE_34473979602_FAILURE
   sdq1_daily_total_count: 43
@@ -25,6 +37,7 @@ stato:
   camera_branch: INVARIATO_NON_UNITO_e1c37fc7
   glass_plexiglas_branch: INVARIATO_NON_UNITO_4fc414d8
   default_equals_new_session: false
+  open_prs: 0
   h_sync_0909_1: CADUTA_DAILY_09_PRESENTE
   h_sync_0909_2: CADUTA_RUN_42_PRESENTE
   h_sync_0910_1: CADUTA_DAILY_10_PRESENTE
@@ -32,6 +45,16 @@ stato:
   h_sync_0808_3: APERTA_TELEGRAM_NON_UNITO
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
+
+conflitti_conservati:
+  - default_ne_new_session
+  - telegram_non_unito
+  - camera_tip_non_unito
+  - glass_plexiglas_non_unito
+  - duplicati_drive_report_e_queue
+  - due_copie_r3_019_drive
+  - prodotto_idee_ct_solo_drive
+  - report_condensati_storici_su_github
 
 priorita:
   - R3-019 Longitudinal Capability Benchmark
