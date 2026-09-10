@@ -1,0 +1,89 @@
+# R3_WORK_QUEUE.yaml — canone ciclo SYNC-2026-09-10-1535
+# Snapshot 1416 e precedenti conservati. Non cancellare gli storici.
+
+meta:
+  cycle_id: SYNC-2026-09-10-1535
+  previous_cycle: SYNC-2026-09-10-1416
+  measured_at: 2026-09-10T13:35:00Z
+  measured_at_cest: 2026-09-10T15:35:00+02:00
+  protocol: R3∞_DRIVE_SYNC_v1
+  github_owner: raffaellocantatelli
+  github_repo: Rosso-rosso-rosso
+  github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha: 381ad04c2fcb13ccb7d2e99c6344c8f0f9983c68
+  github_default_sha_note: HEAD pre-commit 1535 (= commit cronaca 1416)
+  new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
+  camera_inventory_sha: e1c37fc711220986b5c3c4a647743001b17a9cb7
+  glass_plexiglas_sha: 4fc414d814bdae98abd0e0a994e704980c69aea1
+  instagram_sha: 357e0ca1a2285faf6af826d8408d207361ee3a9a
+  umbratheater_sha: d5f133a249540747feff2bd7aca425bf1aa6ba73
+  pr6_merged_at: 2026-09-08T04:08:28Z
+  drive_owner_observed: Claudio Terzi
+  never_delete_historical: true
+
+stato:
+  daily_2026-09-08: PRESENTE_STUB_CORE_SPENTO
+  daily_2026-09-09: PRESENTE_STUB_CORE_SPENTO
+  daily_2026-09-10: PRESENTE_STUB_CORE_SPENTO
+  daily_2026-09-10_blob: 5d6cafe8e04bb1dd831e6fefbacfd76fb6b5cfe6
+  r3_019: BASELINE_0_NO_NEW_RUN
+  sdq1_run_42: PRESENTE_34348698599_FAILURE
+  sdq1_run_43: PRESENTE_34473979602_FAILURE
+  sdq1_run_44: ASSENTE_ALLE_1335Z
+  sdq1_daily_total_count: 43
+  telegram_branch: INVARIATO_NON_UNITO_46817fdd
+  camera_branch: INVARIATO_NON_UNITO_e1c37fc7
+  glass_plexiglas_branch: INVARIATO_NON_UNITO_4fc414d8
+  default_equals_new_session: false
+  open_prs: 0
+  h_sync_0606_2: APERTA_DEFAULT_NEQ_NEW_SESSION
+  h_sync_0606_4: APERTA_CRON_NON_0700_0800_UTC
+  h_sync_0707_2: APERTA_RUN_FAILURE_STUB
+  h_sync_0808_1: CADUTA_DAILY_08_PRESENTE
+  h_sync_0808_2: CADUTA_RUN_41_PRESENTE
+  h_sync_0808_3: APERTA_TELEGRAM_NON_UNITO
+  h_sync_0909_1: CADUTA_DAILY_09_PRESENTE
+  h_sync_0909_2: CADUTA_RUN_42_PRESENTE
+  h_sync_0909_3: APERTA_CAMERA_TIP_NON_UNITO
+  h_sync_0909_4: APERTA_GLASS_NON_UNITO
+  h_sync_0910_1: CADUTA_DAILY_10_PRESENTE
+  h_sync_0910_2: CADUTA_RUN_43_PRESENTE
+  capacita_vs_baseline_26_08: NON_DIMOSTRATA
+  possibilita_avanzamento: APERTA
+
+conflitti_conservati:
+  - default_neq_new_session
+  - telegram_branch_not_merged
+  - camera_branch_not_merged
+  - glass_plexiglas_branch_not_merged
+  - drive_duplicate_dated_reports
+  - drive_undated_work_queues_aug26_27
+  - drive_two_copies_r3_019_spec_baseline
+  - prodotto_idee_ct_drive_only
+  - historical_condensed_reports_on_github
+  - two_pdf_codice_claude_code
+
+priorita:
+  - R3-019 Longitudinal Capability Benchmark
+  - R3-011 Evidence Graph
+  - R3-012 Meta-Scacchiera
+  - R3-013 Evolution Lab
+  - R3-016 Synthetic Data Firewall
+  - R3-017 Red/Blue/Purple Harness
+  - R3-014 Curriculum Engine
+  - R3-015 Research Loop
+  - R3-018 Sim2Real Audit
+  - R3-020 Self-Improvement Safety Gate
+
+regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
+propagazione:
+  github_paths:
+    - memoria/R3_DRIVE_SYNC_REPORT_2026-09-10_1535.md
+    - memoria/R3_WORK_QUEUE_2026-09-10_1535.yaml
+    - R3_WORK_QUEUE.yaml
+  drive_targets:
+    - radice
+    - R3_MEMORIA_PERSISTENTE
+  non_propagare:
+    - PRODOTTO_IDEE_CT.md
