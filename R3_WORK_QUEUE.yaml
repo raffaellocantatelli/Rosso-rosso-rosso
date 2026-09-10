@@ -1,12 +1,12 @@
 # R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-10-1316
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-10_1316.yaml
-# Snapshot 1217 e precedenti conservati. Non cancellare gli storici.
+# Ciclo: SYNC-2026-09-10-1416
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-10_1416.yaml
+# Snapshot 1316 e precedenti conservati. Non cancellare gli storici.
 
 meta:
-  cycle_id: SYNC-2026-09-10-1316
-  previous_cycle: SYNC-2026-09-10-1217
-  github_default_sha: 74c70d403096885a57d6db77d9d3f50eefd8b8a4
+  cycle_id: SYNC-2026-09-10-1416
+  previous_cycle: SYNC-2026-09-10-1316
+  github_default_sha: 42d7434e5fc383c3984ac48c4046bfd928b4117b
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
   camera_inventory_sha: e1c37fc711220986b5c3c4a647743001b17a9cb7
@@ -16,19 +16,19 @@ meta:
 stato:
   daily_2026-09-08: PRESENTE_STUB_CORE_SPENTO
   daily_2026-09-09: PRESENTE_STUB_CORE_SPENTO
-  daily_2026-09-10: ASSENTE_ALLE_1116Z
+  daily_2026-09-10: PRESENTE_STUB_CORE_SPENTO
   r3_019: BASELINE_0_NO_NEW_RUN
   sdq1_run_42: PRESENTE_34348698599_FAILURE
-  sdq1_run_43: ASSENTE
-  sdq1_daily_total_count: 42
+  sdq1_run_43: PRESENTE_34473979602_FAILURE
+  sdq1_daily_total_count: 43
   telegram_branch: INVARIATO_NON_UNITO_46817fdd
   camera_branch: INVARIATO_NON_UNITO_e1c37fc7
   glass_plexiglas_branch: INVARIATO_NON_UNITO_4fc414d8
   default_equals_new_session: false
   h_sync_0909_1: CADUTA_DAILY_09_PRESENTE
   h_sync_0909_2: CADUTA_RUN_42_PRESENTE
-  h_sync_0910_1: APERTA_DAILY_10_ASSENTE
-  h_sync_0910_2: APERTA_RUN_43_ASSENTE
+  h_sync_0910_1: CADUTA_DAILY_10_PRESENTE
+  h_sync_0910_2: CADUTA_RUN_43_PRESENTE
   h_sync_0808_3: APERTA_TELEGRAM_NON_UNITO
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
