@@ -50,7 +50,12 @@ SORVEGLIATI = [
 ]
 
 # Tutto il codice del sistema e i documenti depositati, ricorsivamente.
-ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests"]
+# `occhio` e `ponte` mancavano: erano nati dopo questa riga e nessuno
+# l'aveva allargata. E' il difetto che CLAUDE.md §6 regola 4 descrive —
+# un Layer 4 che non copre i file nuovi non protegge niente — e si vede
+# solo andando a cercare un nome nel manifesto. Aggiunti l'11/09/2026.
+ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests",
+          "occhio", "ponte"]
 ESTENSIONI = (".py", ".yml", ".yaml", ".md")
 
 

@@ -1,4 +1,5 @@
 # Prossimo passo — consegna del 2026-09-05, 20:10 UTC
+### aggiunta dell'11/09/2026: §0-bis, il ponte verso il NAS
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -54,6 +55,57 @@ che nulla entri dall'esterno è §4.
 **L'altra metà — quanti oggetti VERI finiscono scritti — resta il numero che
 manca a tutto il progetto.** Non lo dà nessun comando: si fotografa uno
 scaffale e si contano a mano gli oggetti che ci sono. Serve la chiave di §1.
+
+## 0-bis. Aggiunto l'11/09: il ponte verso il NAS
+
+**Il problema che aveva Claudio:** aveva dato ID QuickConnect, utente e
+password, e mancava ancora l'unica cosa che serviva — l'indirizzo esterno del
+NAS. QuickConnect non è un URL WebDAV, e nessun client può collegarcisi.
+
+**RECUPERATO (eseguito l'11/09).** L'indirizzo non va cercato a mano. Il
+coordinatore Synology risponde a chiunque chieda dove si trova un ID, senza
+credenziali — provato con un ID inesistente, per non usare quello vero:
+
+```
+POST https://global.quickconnect.to/Serv.php  →  errno 4, «Alias not found»
+```
+
+Con l'ID vero, la risposta contiene DDNS, dominio, IP pubblico e indirizzi
+interni. Da lì il ponte si configura da solo:
+
+```bash
+python -m ponte --cerca <ID> --prova    # indirizzi + quale ha la 5006 aperta
+python -m ponte --check                 # regge? e se no, cosa guardare
+```
+
+**Cosa resta a Claudio, e non può farlo nessun altro** (dettaglio in
+`PONTE_NAS.md`): attivare WebDAV HTTPS sulla 5006, creare un account che veda
+solo la cartella `R3`, cambiare la password detta in chat.
+
+**Perché non è un diversivo.** `sdq1 --backup` scrive in `output/backups/`,
+che è fuori da git di proposito: su una macchina effimera quello snapshot
+muore con la macchina, e oggi non c'è nessun posto dove possa restare senza
+finire in un repository pubblico. `python -m ponte --deposita-backup` è quel
+posto. Non tocca H2 — il NAS è di Claudio, quindi è ancora il sistema che
+parla a sé stesso (§7): conservazione, non trasmissione.
+
+**IPOTESI dichiarata prima di provare (P6):** il tunnel `*.quickconnect.to`
+inoltra i servizi DSM, e WebDAV sulla 5006 in generale non è fra quelli. Se
+l'unico indirizzo che risponde è il relay, serve il DDNS o la porta aperta.
+Cade o regge con `--cerca --prova`.
+
+**H12 registrata, falsificatore eseguibile:** *il ponte non dichiara mai un
+esito che non ha ottenuto.* `python3 falsificatori/h12_ponte_non_finge.py`
+→ REGGE (uscita 1): senza configurazione, con la porta chiusa, con la password
+sbagliata e con la radice assente esce sempre 2 e non stampa mai «IL PONTE
+REGGE». **È rimasta APERTA nel registro apposta:** il verificatore è stato
+eseguito solo con `--prova`, e non deposito uno stato ottenuto in un ambiente
+dove `dotenv` è stato installato a mano per l'occasione.
+
+**UNKNOWN, ed è il numero che conta qui:** se il NAS risponda. 29 prove passano
+contro un NAS finto in memoria (`ponte/banco.py`), e quel banco non è un NAS —
+è la trappola di §4, quindi ogni comando che lo usa lo stampa. Diventa
+RECUPERATO quando `--check` gira sulla macchina di Claudio, non prima.
 
 ## 1. L'unica cosa che blocca tutto
 

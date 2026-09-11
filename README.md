@@ -412,6 +412,25 @@ davvero, in penombra, di traverso. Serve una chiave di visione e una passata
 vera. Tutto il resto — costi, taratura, verdetto su Emergent — sta in
 [`OCCHIO.md`](OCCHIO.md).
 
+## ponte — il NAS come deposito, via WebDAV
+
+`sdq1 --backup` scrive in `output/backups/`, che è fuori da git di proposito: sono registri, e questa repository è pubblica. Su una macchina effimera quello snapshot muore con la macchina. Il ponte è il primo posto dove può restare senza essere pubblicato.
+
+```bash
+python -m ponte --cerca <ID-QuickConnect> --prova   # dall'ID agli indirizzi veri del NAS
+python -m ponte --check                             # regge? e se no, cosa guardare
+python -m ponte --deposita-backup                   # snapshot sdq1 -> NAS
+python -m ponte --prova-locale                      # prova il client senza NAS
+```
+
+QuickConnect non è un URL WebDAV: WebDAV vuole `https://qualcosa:5006`. Ma il coordinatore Synology, interrogato con l'ID, restituisce DDNS, dominio e IP — quindi l'indirizzo non va cercato a mano. Solo libreria standard, nessuna dipendenza nuova. Le credenziali si leggono **solo** da `~/.r3/webdav.env`, fuori dalla repository, e la riga di comando non ha nessuna opzione `--password`.
+
+`--prova-locale` gira contro un NAS finto in memoria e **non dimostra niente sul NAS vero**: lo stampa ogni volta, perché è la trappola di `CLAUDE.md` §4. La sorveglia H12 (`falsificatori/h12_ponte_non_finge.py`): quattro modi di non avere un NAS, e nessuno dei quattro deve produrre un successo.
+
+Istruzioni per il NAS (pacchetto WebDAV, account dedicato, cartella): [`PONTE_NAS.md`](PONTE_NAS.md).
+
+---
+
 ## Licenza
 
 _Da definire._

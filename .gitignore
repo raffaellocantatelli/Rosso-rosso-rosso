@@ -57,3 +57,12 @@ occhio/privato/
 # comando; averli versionati significherebbe che possono divergere dal
 # codice che li produce.
 dimostrazione/
+
+# ponte/ — le credenziali del NAS non entrano qui.
+# Vivono in ~/.r3/webdav.env, fuori dal repository, perche' questo repository
+# e' PUBBLICO e git non dimentica: una password spinta per sbaglio resta nella
+# cronologia anche dopo che il file e' stato cancellato. Queste righe sono la
+# rete sotto la rete, per il giorno in cui qualcuno crea il file qui dentro.
+webdav.env
+*.webdav.env
+ponte/credenziali*

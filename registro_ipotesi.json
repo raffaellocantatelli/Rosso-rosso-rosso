@@ -213,5 +213,25 @@
       "ultima": null,
       "ultimo_esito": null
     }
+  },
+  {
+    "id": "H12",
+    "testo": "Il ponte verso il NAS non dichiara mai un esito che non ha ottenuto",
+    "stato": "APERTA",
+    "criterio_falsificazione": "Falsificata se una qualsiasi delle quattro condizioni di fallimento (configurazione assente, porta chiusa, password sbagliata, radice assente) produce un'uscita 0 o la riga «IL PONTE REGGE». Il banco finto non puo' bastare a dichiarare che il ponte regge verso un NAS reale.",
+    "falsificatore": {
+      "comando": [
+        "python3",
+        "falsificatori/h12_ponte_non_finge.py"
+      ],
+      "descrizione": "quattro modi di non avere un NAS: nessuno deve uscire 0"
+    },
+    "scadenza": null,
+    "verifiche": {
+      "eseguite": 0,
+      "cadute": 0,
+      "ultima": null,
+      "ultimo_esito": null
+    }
   }
 ]
