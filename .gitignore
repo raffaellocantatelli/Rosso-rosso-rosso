@@ -66,3 +66,13 @@ dimostrazione/
 webdav.env
 *.webdav.env
 ponte/credenziali*
+
+# Il pacchetto dell'Oracolo del Sovrano non entra in questa repository.
+# Motivo: porta `fonte/` — il PDF originale delle 74 Lame e il taccuino
+# artistico — e gli identificativi del progetto Vercel. Questa repository e'
+# PUBBLICA, e la decisione di pubblicare materiale personale e' sempre e solo
+# dell'autore (CLAUDE.md §2.5). Il pacchetto si tiene accanto al repository,
+# non dentro: `--oracolo` vuole un percorso, non un file versionato qui.
+ORACOLO_SOVRANO_WEB_AUTORIZZATO/
+ORACOLO_SOVRANO*.zip
+*ORACOLO_SOVRANO_RELEASE*

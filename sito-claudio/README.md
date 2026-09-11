@@ -29,6 +29,52 @@ test del costo a terra passano. Se una cade non scrive `RELEASE.json`, e
 `publish.py` pubblica un'**anteprima** salvo che tu scriva `--produzione`, e in
 quel caso si ferma e aspetta che tu digiti `pubblica`.
 
+### Con anche l'Oracolo del Sovrano (11/09)
+
+Il pacchetto `ORACOLO_SOVRANO_WEB_AUTORIZZATO` è una **seconda** consegna, con
+strumenti suoi. Non sono stati riscritti: sanno cose che questa consegna non sa
+— quale progetto Vercel è la destinazione, come fondere le route dentro
+`vercel.json` senza sostituirlo alla cieca. Quindi la copia la fa il pacchetto,
+e sopra ci va la consegna del 04/09:
+
+```bat
+py tools\prepare_release.py "..\Claudio-sito" "..\Claudio-release" ^
+   --oracolo "..\ORACOLO_SOVRANO_WEB_AUTORIZZATO"
+```
+
+Prima di eseguire il codice del pacchetto ne vengono ricalcolate le 53
+impronte SHA256: se una non torna, non si esegue niente.
+
+**Due conflitti, dichiarati invece che risolti in silenzio:**
+
+- `public/alpha.html` esiste in entrambe le consegne. **Vince l'Oracolo**,
+  perché Claudio l'11/09 ha stabilito che Alpha usa le 74 Lame. Non è una
+  versione più nuova dello stesso file: è un altro mazzo, e la riga viene
+  stampata a ogni preparazione.
+- `public/nav.js` — **un passaggio che sembrava eseguito e non faceva nulla.**
+  Il pacchetto rinomina la voce di menu cercando `['index.html', 'Tarocchi']`
+  con gli apici singoli, come è scritta nel `nav.js` oggi in produzione. Il
+  `nav.js` nuovo di questa consegna la scrive con i **doppi** apici: la
+  sostituzione non trova niente, non fallisce, e il menu resterebbe
+  «Tarocchi». Nessuna delle due consegne poteva accorgersene da sola. La
+  rinomina viene ora rifatta sul file nuovo e poi verificata.
+
+**Ricontrollato qui, non letto nel suo rapporto (P5):** che `public/soglia.js`,
+`soglia.html`, `oracolo.html` e `atelier.html` restino identici alla sorgente,
+e che i vecchi mazzi spariscano dalla sola copia di rilascio. `fonte/` — il PDF
+e il taccuino — non entra nel rilascio: il pacchetto copia soltanto `app/`.
+
+**Per pubblicare si usano gli strumenti del pacchetto**, non `tools/publish.py`
+di qui: i suoi conoscono il progetto Vercel autorizzato e si rifiutano di
+pubblicare altrove.
+
+**Non eseguito da nessuna sessione:** il `prepare_release.py` del pacchetto.
+Il classificatore di sicurezza ha bloccato l'esecuzione di codice arrivato in
+uno ZIP, e il blocco non è stato aggirato. Verificato leggendo: le 53 impronte
+tornano, 46 prove Node e 13 Python passano, la fusione delle route rifiuta una
+configurazione che non riconosce. Che la composizione delle due consegne
+funzioni sul serio **si vede al primo comando sulla macchina di Claudio.**
+
 Serve Vercel installato e collegato, una volta sola:
 
 ```bat

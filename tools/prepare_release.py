@@ -6,6 +6,11 @@ Origine protetta: Claudio Terzi [CT-LGAI-001].
     py tools\\prepare_release.py "..\\Claudio-sito" "..\\Claudio-release"
     python3 tools/prepare_release.py ../Claudio-sito ../Claudio-release
 
+Con anche l'Oracolo del Sovrano (il pacchetto scompattato):
+
+    py tools\\prepare_release.py "..\\Claudio-sito" "..\\Claudio-release" ^
+       --oracolo "..\\ORACOLO_SOVRANO_WEB_AUTORIZZATO"
+
 Che cosa fa, e perche' in due cartelle invece di una.
 
 `sito-claudio/` contiene lavoro verificato nel browser e mai applicato: la
@@ -85,6 +90,53 @@ PRESENTI = ["public/lettura.html", "public/enzo.html", "tests/test_costi_terra.p
             "vercel.json", "tarocchi_web.py"]
 
 ASSENTI = [".env", ".git"]
+
+# ---------------------------------------------------------------- l'Oracolo
+#
+# Il pacchetto «ORACOLO_SOVRANO_WEB_AUTORIZZATO» e' una seconda consegna, con
+# strumenti suoi. Non li riscrivo: sanno cose che io non so — quale progetto
+# Vercel e' la destinazione, come fondere le route dentro `vercel.json` senza
+# sostituirlo alla cieca, quali file estranei devono restare identici. Un
+# secondo programma che fa la stessa cosa sarebbe la malattia delle copie
+# (CLAUDE.md §6 regola 2) applicata al codice. Quindi: il suo prepare_release
+# fa la copia e la fusione, il mio ci sovrappone la consegna di `sito-claudio/`
+# e verifica il risultato.
+#
+# L'ordine e' obbligato, non scelto: il loro pretende una destinazione che non
+# esiste ancora, quindi va per primo.
+
+MANIFESTO_PACCHETTO = "MANIFEST_SHA256.json"
+PREPARA_PACCHETTO = "tools/prepare_release.py"
+
+# Quando l'Oracolo e' in gioco, questo file e' suo: la consegna del 04/09 non
+# lo sovrascrive. Alpha deve usare le 74 Lame — deciso da Claudio l'11/09 — e
+# la vecchia alpha.html e' un altro mazzo, non una versione piu' vecchia dello
+# stesso. E' una scelta, quindi viene stampata invece che eseguita in silenzio.
+DELL_ORACOLO = {"public/alpha.html"}
+
+# Il difetto trovato leggendo, che nessuna delle due consegne puo' vedere da
+# sola. Il pacchetto rinomina la voce di menu cercando  ['index.html', 'Tarocchi']
+# con gli apici singoli, come e' scritta nel nav.js oggi in produzione. Il
+# nav.js nuovo di `sito-claudio/` la scrive con i doppi apici: la sostituzione
+# non trova niente, non fallisce, e il menu resta «Tarocchi» senza che nessuno
+# se ne accorga. Un passaggio che sembra eseguito e non fa nulla e' l'eco di
+# §4. Qui la rinomina viene rifatta sul file nuovo, e poi verificata.
+RINOMINA_MENU = ('["index.html", "Tarocchi"]', '["index.html", "Oracolo del Sovrano"]')
+
+PROVE_ORACOLO = [
+    ("public/sovrano/lame.v1.json", '"id": 74', True, "le 74 Lame devono esserci tutte"),
+    ("public/nav.js", "Oracolo del Sovrano", True, "la voce di menu rinominata"),
+    ("vercel.json", "sovrano_entry.py", True, "le route devono puntare al nuovo ingresso"),
+]
+
+# Devono sparire dalla copia di rilascio — non dal repository, che resta il backup.
+RITIRATI = ["public/cards", "public/tarocchi_quantici_alpha.json"]
+
+# Devono restare identici alla sorgente. Il pacchetto lo verifica da se' e lo
+# scrive nel proprio report; lo rifaccio sui file, perche' un controllo che si
+# legge nel rapporto di chi l'ha eseguito non e' un controllo (P5).
+INTATTI = ["public/soglia.js", "public/soglia.html", "public/oracolo.html",
+           "public/atelier.html"]
 
 
 class Fermata(Exception):
@@ -199,9 +251,12 @@ def applica_patch(consegna: Path, destinazione: Path) -> list[dict]:
     return esiti
 
 
-def copia_file(consegna: Path, destinazione: Path) -> list[dict]:
+def copia_file(consegna: Path, destinazione: Path, salta=()) -> list[dict]:
     esiti = []
     for origine, arrivo in COPIE:
+        if arrivo in salta:
+            esiti.append({"file": arrivo, "esito": "saltato: e' dell'Oracolo"})
+            continue
         da = consegna / origine
         a = destinazione / arrivo
         nuovo = not a.exists()
@@ -213,7 +268,7 @@ def copia_file(consegna: Path, destinazione: Path) -> list[dict]:
     return esiti
 
 
-def verifica(destinazione: Path) -> list[str]:
+def verifica(destinazione: Path, prove_extra=()) -> list[str]:
     """Le prove sulla release finita. Ritorna l'elenco di cio' che non torna."""
     guai = []
     for nome in PRESENTI:
@@ -222,7 +277,7 @@ def verifica(destinazione: Path) -> list[str]:
     for nome in ASSENTI:
         if (destinazione / nome).exists():
             guai.append(f"{nome} e' finito nella release e non doveva")
-    for nome, testo, atteso, perche in PROVE:
+    for nome, testo, atteso, perche in [*PROVE, *prove_extra]:
         f = destinazione / nome
         if not f.is_file():
             guai.append(f"manca {nome} (serviva per: {perche})")
@@ -234,6 +289,94 @@ def verifica(destinazione: Path) -> list[str]:
                 f"{nome}: «{testo}» {'presente' if trovato else 'assente'} "
                 f"ma doveva essere {'presente' if atteso else 'assente'} — {perche}"
             )
+    return guai
+
+
+def verifica_pacchetto(pacchetto: Path) -> int:
+    """Ricalcola i SHA256 del pacchetto prima di eseguirne il codice.
+
+    Sto per far girare un programma che non ho scritto io su una copia del
+    sito. Il pacchetto porta le proprie impronte: se anche una sola non torna,
+    non e' il pacchetto che Claudio ha ricevuto, e non si esegue.
+    """
+    import hashlib
+
+    manifesto = pacchetto / MANIFESTO_PACCHETTO
+    if not manifesto.is_file():
+        raise Fermata(
+            f"{pacchetto} non contiene {MANIFESTO_PACCHETTO}: non e' il pacchetto dell'Oracolo.\n"
+            "  Indica la cartella che contiene LEGGIMI.md, app/ e tools/."
+        )
+    if not (pacchetto / PREPARA_PACCHETTO).is_file():
+        raise Fermata(f"{pacchetto} non contiene {PREPARA_PACCHETTO}.")
+    atteso = json.loads(manifesto.read_text(encoding="utf-8"))
+    guai = []
+    for percorso, impronta in atteso.items():
+        f = pacchetto / percorso
+        if not f.is_file():
+            guai.append(f"manca {percorso}")
+        elif hashlib.sha256(f.read_bytes()).hexdigest() != impronta:
+            guai.append(f"{percorso} non corrisponde alla propria impronta")
+    if guai:
+        raise Fermata("il pacchetto non corrisponde al proprio manifesto:\n  "
+                      + "\n  ".join(guai[:10]))
+    return len(atteso)
+
+
+def applica_oracolo(pacchetto: Path, sorgente: Path, destinazione: Path) -> None:
+    """Lascia fare al pacchetto la copia del sito e la fusione delle route.
+
+    Non riscrivo il suo lavoro: chiamo il suo programma. Se si ferma, si ferma
+    tutto — e la sua stessa procedura lascia sul posto un file che dice di non
+    pubblicare quella cartella.
+    """
+    esito = subprocess.run(
+        [sys.executable, str(pacchetto / PREPARA_PACCHETTO), str(sorgente), str(destinazione)],
+        capture_output=True, text=True, timeout=900,
+    )
+    for riga in (esito.stdout or "").strip().splitlines()[-2:]:
+        print(f"   | {riga}")
+    if esito.returncode != 0:
+        raise Fermata(
+            "il prepare_release del pacchetto si e' fermato:\n    "
+            + (esito.stderr or esito.stdout).strip().replace("\n", "\n    ")
+        )
+    if not destinazione.is_dir():
+        raise Fermata("il pacchetto non ha creato la destinazione.")
+    if (destinazione / "RELEASE_INCOMPLETA_NON_PUBBLICARE.txt").is_file():
+        raise Fermata("il pacchetto ha lasciato la release incompleta: non va pubblicata.")
+
+
+def rinomina_menu(destinazione: Path) -> str:
+    """Rifa' sul nav.js nuovo la rinomina che il pacchetto non puo' trovarci."""
+    nav = destinazione / "public/nav.js"
+    if not nav.is_file():
+        return "public/nav.js assente"
+    testo = nav.read_text(encoding="utf-8")
+    if RINOMINA_MENU[1] in testo:
+        return "gia' rinominata dal pacchetto"
+    if RINOMINA_MENU[0] not in testo:
+        return f"UNKNOWN: «{RINOMINA_MENU[0]}» non trovata — il menu va guardato a mano"
+    nav.write_text(testo.replace(*RINOMINA_MENU), encoding="utf-8")
+    return "rinominata qui (il pacchetto cerca gli apici singoli e non l'avrebbe trovata)"
+
+
+def controlla_intatti(sorgente: Path, destinazione: Path) -> list[str]:
+    """I file estranei all'Oracolo devono essere identici alla sorgente."""
+    import hashlib
+
+    guai = []
+    for nome in INTATTI:
+        a, b = sorgente / nome, destinazione / nome
+        if not a.is_file():
+            continue
+        if not b.is_file():
+            guai.append(f"{nome} e' sparito dalla release")
+        elif hashlib.sha256(a.read_bytes()).digest() != hashlib.sha256(b.read_bytes()).digest():
+            guai.append(f"{nome} e' stato modificato e non doveva")
+    for nome in RITIRATI:
+        if (destinazione / nome).exists():
+            guai.append(f"{nome} e' ancora nella release: il vecchio mazzo non e' stato ritirato")
     return guai
 
 
@@ -274,11 +417,16 @@ def main(argv=None) -> int:
                         help="dove sta il lavoro da applicare (default: sito-claudio/)")
     parser.add_argument("--forza", action="store_true",
                         help="rifa' una release gia' preparata nella stessa cartella")
+    parser.add_argument("--oracolo", metavar="CARTELLA",
+                        help="il pacchetto ORACOLO_SOVRANO_WEB_AUTORIZZATO scompattato: "
+                             "la copia e le route le fa lui, qui sopra si sovrappone "
+                             "la consegna di sito-claudio/")
     args = parser.parse_args(argv)
 
     sorgente = Path(args.sorgente).expanduser().resolve()
     destinazione = Path(args.destinazione).expanduser().resolve()
     consegna = Path(args.consegna).expanduser().resolve()
+    pacchetto = Path(args.oracolo).expanduser().resolve() if args.oracolo else None
 
     if destinazione == sorgente:
         print("FERMO: sorgente e destinazione sono la stessa cartella. "
@@ -296,17 +444,43 @@ def main(argv=None) -> int:
 
         print(f"\n2. Copia in {destinazione}")
         prepara_destinazione(destinazione, args.forza)
-        quanti = copia_sito(sorgente, destinazione)
-        print(f"   {quanti} file copiati (esclusi: {', '.join(sorted(ESCLUSI))})")
+        if pacchetto:
+            quanti_file = verifica_pacchetto(pacchetto)
+            print(f"   pacchetto Oracolo: {quanti_file} file, tutti corrispondenti "
+                  "al proprio MANIFEST_SHA256")
+            print(f"   la copia e le route le fa {pacchetto.name}/{PREPARA_PACCHETTO}:")
+            applica_oracolo(pacchetto, sorgente, destinazione)
+        else:
+            quanti = copia_sito(sorgente, destinazione)
+            print(f"   {quanti} file copiati (esclusi: {', '.join(sorted(ESCLUSI))})")
 
         print("\n3. Patch")
         esiti_patch = applica_patch(consegna, destinazione)
 
         print("\n4. File nuovi")
-        esiti_file = copia_file(consegna, destinazione)
+        salta = DELL_ORACOLO if pacchetto else set()
+        for nome in sorted(salta):
+            print(f"  {nome}: NON sostituito — e' dell'Oracolo, e Alpha deve "
+                  "usare le 74 Lame")
+        esiti_file = copia_file(consegna, destinazione, salta)
+
+        prove_extra = ()
+        if pacchetto:
+            print("\n4-bis. Il menu, e i file che non dovevano cambiare")
+            print(f"  public/nav.js: {rinomina_menu(destinazione)}")
+            intatti = controlla_intatti(sorgente, destinazione)
+            if intatti:
+                print("   LA RELEASE NON E' BUONA:")
+                for g in intatti:
+                    print(f"     - {g}")
+                return 2
+            print(f"  ok  {len(INTATTI)} file estranei identici alla sorgente "
+                  "(Soglia compresa), ricontrollati qui e non letti dal suo report")
+            print(f"  ok  {len(RITIRATI)} vecchi mazzi ritirati dalla sola copia di rilascio")
+            prove_extra = PROVE_ORACOLO
 
         print("\n5. Prove sulla cartella finita")
-        guai = verifica(destinazione)
+        guai = verifica(destinazione, prove_extra)
         if guai:
             print("   LA RELEASE NON E' BUONA:")
             for g in guai:
@@ -314,7 +488,7 @@ def main(argv=None) -> int:
             print(f"\n   Non scrivo {MANIFESTO}: senza quello, publish.py si rifiuta "
                   "di pubblicare.")
             return 2
-        for nome, testo, atteso, perche in PROVE:
+        for nome, testo, atteso, perche in [*PROVE, *prove_extra]:
             print(f"   ok  {nome}: «{testo}» {'presente' if atteso else 'assente'}")
         print(f"   ok  {len(PRESENTI)} file attesi presenti, "
               f"{len(ASSENTI)} esclusioni rispettate (.env, .git)")
@@ -338,16 +512,28 @@ def main(argv=None) -> int:
         "consegna": str(consegna),
         "patch": esiti_patch,
         "file": esiti_file,
-        "prove_superate": len(PROVE) + len(PRESENTI) + len(ASSENTI),
+        "oracolo": str(pacchetto) if pacchetto else None,
+        "prove_superate": len(PROVE) + len(prove_extra) + len(PRESENTI) + len(ASSENTI),
     }
     (destinazione / MANIFESTO).write_text(
         json.dumps(manifesto, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"\nPRONTA: {destinazione}")
     print(f"Il clone in {sorgente} non e' stato toccato.")
-    print("\nIl passo dopo — anteprima, non produzione:")
-    print(f'  py tools\\publish.py "{args.destinazione}"')
-    print("La produzione e' un'altra riga, e la digiti tu: --produzione")
+    if pacchetto:
+        # Il pacchetto pubblica con strumenti suoi, che conoscono il progetto
+        # Vercel giusto e rifiutano di pubblicare su un altro. Il mio publish.py
+        # non lo sa, quindi qui la strada e' la sua.
+        print("\nIl passo dopo — anteprima protetta, con gli strumenti del pacchetto:")
+        print(f'  py "{args.oracolo}\\tools\\publish.py" "{args.destinazione}"')
+        print("Poi si apre l'anteprima e si guardano /tarot, /alpha, la Soglia e le immagini.")
+        print("Solo dopo, e con la stessa riga piu' due parole:")
+        print(f'  py "{args.oracolo}\\tools\\publish.py" "{args.destinazione}" '
+              "--production --preview-tested")
+    else:
+        print("\nIl passo dopo — anteprima, non produzione:")
+        print(f'  py tools\\publish.py "{args.destinazione}"')
+        print("La produzione e' un'altra riga, e la digiti tu: --produzione")
     return 0
 
 

@@ -253,6 +253,147 @@ def test_comando_windows_passa_da_cmd(monkeypatch):
     assert pub.comando("/usr/bin/vercel", ["deploy"]) == ["/usr/bin/vercel", "deploy"]
 
 
+# ---------------------------------------------------- l'Oracolo sovrapposto
+
+def pacchetto_finto(cartella: Path, rinomina_singoli=True) -> Path:
+    """Un finto pacchetto Oracolo: manifesto di impronte e un prepare_release suo.
+
+    Sta in piedi da solo — non contiene niente che venga dallo ZIP di Claudio.
+    Serve a provare la delega e le guardie attorno, non il pacchetto vero: che
+    il pacchetto vero funzioni è UNKNOWN da qui, e questa sessione il suo
+    codice non l'ha eseguito.
+    """
+    import hashlib
+
+    pacchetto = cartella / "PACCHETTO"
+    (pacchetto / "tools").mkdir(parents=True)
+    # Un prepare_release che fa ciò che fa quello vero: copia, tocca vercel.json,
+    # ritira il vecchio mazzo, rinomina la voce di menu con gli APICI SINGOLI.
+    apici = "'index.html', 'Tarocchi'" if rinomina_singoli else '"index.html", "Tarocchi"'
+    (pacchetto / "tools" / "prepare_release.py").write_text(
+        "import json, shutil, sys\n"
+        "from pathlib import Path\n"
+        "repo, dest = Path(sys.argv[1]), Path(sys.argv[2])\n"
+        "shutil.copytree(repo, dest, ignore=shutil.ignore_patterns('.git', '.env'))\n"
+        "(dest / 'public' / 'sovrano').mkdir(parents=True, exist_ok=True)\n"
+        "(dest / 'public' / 'sovrano' / 'lame.v1.json').write_text('{\"id\": 74}')\n"
+        "(dest / 'vercel.json').write_text('{\"builds\": [\"sovrano_entry.py\"]}')\n"
+        "vecchio = dest / 'public' / 'cards'\n"
+        "shutil.rmtree(vecchio) if vecchio.is_dir() else None\n"
+        "nav = dest / 'public' / 'nav.js'\n"
+        f"nav.write_text(nav.read_text().replace(\"[{apici}]\", \"['index.html', 'Oracolo del Sovrano']\"))\n"
+        "print('report del pacchetto')\n",
+        encoding="utf-8",
+    )
+    impronte = {}
+    for f in pacchetto.rglob("*"):
+        if f.is_file():
+            impronte[str(f.relative_to(pacchetto)).replace(os.sep, "/")] = \
+                hashlib.sha256(f.read_bytes()).hexdigest()
+    (pacchetto / "MANIFEST_SHA256.json").write_text(
+        json.dumps(impronte, indent=2), encoding="utf-8")
+    return pacchetto
+
+
+@pytest.fixture
+def scena_oracolo(scena, tmp_path, monkeypatch):
+    sito, consegna, release = scena
+    (sito / "public" / "cards").mkdir()
+    (sito / "public" / "cards" / "vecchia.json").write_text("{}", encoding="utf-8")
+    (sito / "public" / "soglia.js").write_text("// la Soglia\n", encoding="utf-8")
+    # Il nav.js del sito ha gli apici singoli, quello della consegna i doppi:
+    # è la differenza da cui nasce la rinomina perduta.
+    (sito / "public" / "nav.js").write_text(
+        "var VOCI = [\n  ['index.html', 'Tarocchi'],\n];\n", encoding="utf-8")
+    (consegna / "nuovi" / "nav.js").write_text(
+        '// flex-wrap\nvar VOCI = [\n  ["index.html", "Tarocchi"],\n];\n', encoding="utf-8")
+    subprocess.run(["git", "add", "-A"], cwd=sito, check=True)
+    subprocess.run(["git", "-c", "user.email=p@p", "-c", "user.name=prova",
+                    "commit", "-qm", "cards"], cwd=sito, check=True)
+    monkeypatch.setattr(pr, "COPIE", [("nuovi/nav.js", "public/nav.js")])
+    monkeypatch.setattr(pr, "PROVE", [])
+    monkeypatch.setattr(pr, "PROVE_ORACOLO", [
+        ("public/sovrano/lame.v1.json", '"id": 74', True, "le 74 Lame"),
+        ("public/nav.js", "Oracolo del Sovrano", True, "il menu rinominato"),
+    ])
+    monkeypatch.setattr(pr, "PRESENTI", ["vercel.json"])
+    monkeypatch.setattr(pr, "INTATTI", ["public/soglia.js"])
+    monkeypatch.setattr(pr, "RITIRATI", ["public/cards"])
+    return scena
+
+
+def test_oracolo_delega_al_pacchetto(scena_oracolo, tmp_path):
+    sito, consegna, release = scena_oracolo
+    pacchetto = pacchetto_finto(tmp_path)
+    assert prepara(scena_oracolo, ["--oracolo", str(pacchetto)]) == 0
+    assert (release / "public" / "sovrano" / "lame.v1.json").is_file()
+    assert not (release / "public" / "cards").exists()
+    manifesto = json.loads((release / pr.MANIFESTO).read_text(encoding="utf-8"))
+    assert manifesto["oracolo"] == str(pacchetto)
+
+
+def test_il_menu_resta_rinominato_anche_col_nav_nuovo(scena_oracolo, tmp_path):
+    """Il difetto vero: il pacchetto cerca gli apici singoli, il nav.js nuovo
+    ha i doppi. Senza il recupero, la rinomina sparisce senza un errore."""
+    sito, consegna, release = scena_oracolo
+    (consegna / "nuovi" / "nav.js").write_text(
+        '// flex-wrap\nvar VOCI = [\n  ["index.html", "Tarocchi"],\n];\n', encoding="utf-8")
+    pacchetto = pacchetto_finto(tmp_path)
+    assert prepara(scena_oracolo, ["--oracolo", str(pacchetto)]) == 0
+    nav = (release / "public" / "nav.js").read_text(encoding="utf-8")
+    assert "Oracolo del Sovrano" in nav
+    assert "flex-wrap" in nav          # e la correzione del 04/09 è ancora lì
+
+
+def test_alpha_resta_dell_oracolo(scena_oracolo, tmp_path):
+    sito, consegna, release = scena_oracolo
+    (consegna / "nuovi" / "alpha.html").write_text("<p>il vecchio Alpha</p>", encoding="utf-8")
+    pr.COPIE.append(("nuovi/alpha.html", "public/alpha.html"))
+    (sito / "public" / "alpha.html").write_text("<p>Lame del Sovrano</p>", encoding="utf-8")
+    pacchetto = pacchetto_finto(tmp_path)
+    assert prepara(scena_oracolo, ["--oracolo", str(pacchetto)]) == 0
+    assert "Lame del Sovrano" in (release / "public" / "alpha.html").read_text(encoding="utf-8")
+
+
+def test_pacchetto_manomesso_non_viene_eseguito(scena_oracolo, tmp_path):
+    """Un file che non corrisponde alla propria impronta ferma tutto prima
+    di eseguire qualunque cosa."""
+    sito, consegna, release = scena_oracolo
+    pacchetto = pacchetto_finto(tmp_path)
+    strumento = pacchetto / "tools" / "prepare_release.py"
+    strumento.write_text(strumento.read_text(encoding="utf-8") + "\nprint('cambiato')\n",
+                         encoding="utf-8")
+    assert prepara(scena_oracolo, ["--oracolo", str(pacchetto)]) == 2
+    assert not release.exists()
+
+
+def test_pacchetto_senza_manifesto_rifiutato(scena_oracolo, tmp_path):
+    sito, consegna, release = scena_oracolo
+    pacchetto = pacchetto_finto(tmp_path)
+    (pacchetto / "MANIFEST_SHA256.json").unlink()
+    assert prepara(scena_oracolo, ["--oracolo", str(pacchetto)]) == 2
+
+
+def test_soglia_alterata_ferma_la_release(scena_oracolo, tmp_path, monkeypatch):
+    """Se la Soglia cambia, la release non si dichiara pronta: è il file che
+    protegge tutto il resto del sito."""
+    sito, consegna, release = scena_oracolo
+    pacchetto = pacchetto_finto(tmp_path)
+    strumento = pacchetto / "tools" / "prepare_release.py"
+    strumento.write_text(
+        strumento.read_text(encoding="utf-8").replace(
+            "print('report del pacchetto')",
+            "(dest / 'public' / 'soglia.js').write_text('// manomessa')"),
+        encoding="utf-8")
+    # rigenero il manifesto: qui la manomissione è dichiarata, non nascosta
+    import hashlib
+    impronte = json.loads((pacchetto / "MANIFEST_SHA256.json").read_text(encoding="utf-8"))
+    impronte["tools/prepare_release.py"] = hashlib.sha256(strumento.read_bytes()).hexdigest()
+    (pacchetto / "MANIFEST_SHA256.json").write_text(json.dumps(impronte), encoding="utf-8")
+    assert prepara(scena_oracolo, ["--oracolo", str(pacchetto)]) == 2
+    assert not (release / pr.MANIFESTO).exists()
+
+
 # --------------------------------------------- la consegna vera non è sparita
 
 def test_la_consegna_dichiarata_esiste_davvero():
