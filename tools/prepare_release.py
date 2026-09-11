@@ -197,6 +197,19 @@ def prepara_destinazione(destinazione: Path, forza: bool) -> None:
     contenuto = list(destinazione.iterdir())
     if not contenuto:
         return
+    # Una preparazione fallita a meta' lascia dietro questo file — lo scrive il
+    # pacchetto dell'Oracolo. E' un segno inequivocabile: nessuna persona
+    # chiama cosi' una cartella sua. Con --forza si rifa' senza chiedere, che
+    # e' il caso in cui si trova chi rilancia dopo un errore.
+    incompleta = destinazione / "RELEASE_INCOMPLETA_NON_PUBBLICARE.txt"
+    if incompleta.is_file():
+        if not forza:
+            raise Fermata(
+                f"{destinazione} contiene una preparazione interrotta.\n"
+                "  Rilancia con --forza per rifarla da capo."
+            )
+        shutil.rmtree(destinazione)
+        return
     # Cancellare una cartella indicata da riga di comando e' irreversibile.
     # Si cancella solo cio' che questo script ha preparato, e lo riconosce
     # dal manifesto: senza quello, si ferma e lo dice.

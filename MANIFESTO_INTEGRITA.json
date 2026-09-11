@@ -70,8 +70,8 @@
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 5422,
-      "sha256": "997c02b58c4701010e2b4f42165f44d8213e76ac3a348010e85a6337dd48f354"
+      "byte": 5581,
+      "sha256": "d254db273d9566f1f23ef242a150e5b902dcd8294b8f86eb5a5883bb79d4d45d"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
@@ -1166,16 +1166,20 @@
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
     },
     "tests/test_tools_release.py": {
-      "byte": 17851,
-      "sha256": "7cf4c9e148b82b315f142eabfc83e001b45d44b79ae4e6fe642094ca0adac210"
+      "byte": 20709,
+      "sha256": "4d9ccc74a4e8a350acbae3e6ffbf7eaff2d57f065eedbe23414e8fe4b2e60f53"
     },
     "tests/test_verificatore.py": {
       "byte": 16718,
       "sha256": "b85f5d6eeca5508751a23bafd34806e226e4406ac26334a309ecd5d70d2ae5b5"
     },
+    "tools/PUBBLICA_ORACOLO.bat": {
+      "byte": 3756,
+      "sha256": "7ee0d7bbf1cf84a2f5cdc83ce933043e65652478ddf897f85ee69531721a8562"
+    },
     "tools/prepare_release.py": {
-      "byte": 24179,
-      "sha256": "faa4c88d0da70457e6d598b4b544f6f1e85c30dcdfe7cd384e9a03df9d73b632"
+      "byte": 24826,
+      "sha256": "2dc1d11fa0e5712d73b7c1f4e7318cde7b57c0180c905ef65f16fc0bf7e8948b"
     },
     "tools/publish.py": {
       "byte": 7022,
@@ -1190,6 +1194,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-11T14:45:43.501642+00:00",
+  "generato": "2026-09-11T14:50:24.303682+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

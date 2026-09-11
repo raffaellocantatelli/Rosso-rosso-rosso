@@ -151,6 +151,18 @@ def test_release_gia_fatta_chiede_forza(scena):
     assert prepara(scena, ["--forza"]) == 0
 
 
+def test_una_preparazione_interrotta_si_rifa_con_forza(scena):
+    """Il pacchetto lascia questo file quando si ferma a metà: è un segno, non
+    una cartella di qualcuno."""
+    sito, consegna, release = scena
+    release.mkdir()
+    (release / "RELEASE_INCOMPLETA_NON_PUBBLICARE.txt").write_text("rotta", encoding="utf-8")
+    assert prepara(scena) == 2                      # senza --forza non tocca niente
+    assert (release / "RELEASE_INCOMPLETA_NON_PUBBLICARE.txt").is_file()
+    assert prepara(scena, ["--forza"]) == 0
+    assert not (release / "RELEASE_INCOMPLETA_NON_PUBBLICARE.txt").exists()
+
+
 def test_patch_che_non_si_applica_piu_ferma_tutto(scena):
     """Se il sito è cambiato, la consegna va rifatta a mano — non forzata."""
     sito, consegna, release = scena
@@ -392,6 +404,63 @@ def test_soglia_alterata_ferma_la_release(scena_oracolo, tmp_path, monkeypatch):
     (pacchetto / "MANIFEST_SHA256.json").write_text(json.dumps(impronte), encoding="utf-8")
     assert prepara(scena_oracolo, ["--oracolo", str(pacchetto)]) == 2
     assert not (release / pr.MANIFESTO).exists()
+
+
+# ------------------------------------------------- il lanciatore di Windows
+#
+# Non posso eseguire un .bat da qui: è Linux. Quello che posso fare è leggerlo
+# con le regole di cmd.exe in mano, ed è dove sta il difetto che conta — un
+# .bat che chiama un .cmd senza CALL non torna indietro, e si ferma a metà
+# sembrando finito. Queste prove guardano il testo, e lo dichiarano.
+
+LANCIATORE = RADICE / "tools" / "PUBBLICA_ORACOLO.bat"
+
+
+def righe_eseguibili():
+    """Le righe del lanciatore che eseguono qualcosa: niente echo, rem, etichette."""
+    righe = []
+    for riga in LANCIATORE.read_text(encoding="utf-8").splitlines():
+        spoglia = riga.strip()
+        basso = spoglia.lower()
+        if not spoglia or basso.startswith(("rem ", "echo", ":", "@echo", "set ")):
+            continue
+        righe.append(spoglia)
+    return righe
+
+
+def test_npm_e_vercel_sono_chiamati_con_call():
+    """Il difetto del .bat del pacchetto: senza CALL lo script muore lì."""
+    for riga in righe_eseguibili():
+        basso = riga.lower()
+        for comando in ("npm ", "vercel ", "npm.cmd", "vercel.cmd"):
+            if basso.startswith(comando):
+                assert basso.startswith("call "), f"manca CALL: {riga}"
+
+
+def test_il_clone_viene_aggiornato_non_solo_creato():
+    """Una release da un clone vecchio pubblica il sito di un'altra settimana."""
+    testo = LANCIATORE.read_text(encoding="utf-8")
+    assert "pull --ff-only" in testo
+    assert "git clone" in testo
+
+
+def test_applica_anche_la_consegna_del_04_09():
+    testo = LANCIATORE.read_text(encoding="utf-8")
+    assert "tools\\prepare_release.py" in testo
+    assert "--oracolo" in testo
+
+
+def test_il_lanciatore_non_pubblica_in_produzione():
+    """`--production` può comparire solo dentro un echo: è una riga da leggere,
+    non da eseguire. È l'unico punto in cui una persona dice sì."""
+    for riga in righe_eseguibili():
+        assert "--production" not in riga, f"il lanciatore eseguirebbe: {riga}"
+    assert "--production --preview-tested" in LANCIATORE.read_text(encoding="utf-8")
+
+
+def test_non_installa_niente_a_livello_di_sistema():
+    for riga in righe_eseguibili():
+        assert "install" not in riga.lower(), f"modifica il computer da sé: {riga}"
 
 
 # --------------------------------------------- la consegna vera non è sparita

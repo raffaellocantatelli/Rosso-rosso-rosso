@@ -68,6 +68,39 @@ e il taccuino — non entra nel rilascio: il pacchetto copia soltanto `app/`.
 di qui: i suoi conoscono il progetto Vercel autorizzato e si rifiutano di
 pubblicare altrove.
 
+### Il doppio clic — `tools\PUBBLICA_ORACOLO.bat` (11/09)
+
+```bat
+tools\PUBBLICA_ORACOLO.bat
+```
+
+Fa i quattro passi da solo e **si ferma all'anteprima**. Esiste perché il
+`.bat` del pacchetto «pubblicazione rapida» ha tre problemi, trovati leggendolo:
+
+1. **INFERITO, ed è quello che lo blocca.** Su Windows `npm` e `vercel` sono
+   file `.cmd`. Un `.bat` che ne chiama un altro **senza `call`** non torna
+   indietro: il controllo passa e non ritorna. Quel `.bat` esegue
+   `npm install -g vercel` e `vercel login` senza `call`, quindi finisce lì —
+   dopo il login sembra che non sia successo niente, e il passo `[4/4]` non
+   parte mai. Non l'ho eseguito: qui è Linux. È il comportamento documentato
+   di `cmd.exe`, e si falsifica in dieci secondi facendo doppio clic.
+2. **Il clone non si aggiorna.** Clona solo se la cartella non c'è: se c'è ed è
+   vecchia, prepara una release dal sito di un'altra settimana senza dirlo. Il
+   lanciatore di qui fa `git pull --ff-only` e si ferma se non può.
+3. **La consegna del 04/09 resta fuori.** Quel `.bat` chiama solo il
+   `prepare_release.py` del pacchetto: niente barra di navigazione corretta,
+   niente quattro pagine che sbordavano, niente costo a terra. Il lanciatore di
+   qui passa da `tools\prepare_release.py --oracolo`, che applica entrambe.
+
+Non installa niente a livello di sistema: se manca `vercel` lo dice e si ferma.
+Cinque prove leggono il file e lo verificano, compresa quella che `--production`
+non compaia mai in una riga eseguibile.
+
+**Stato verificato l'11/09, dalla diagnosi di un altro nodo e dal clone qui:**
+`main` è a `6a870d0`, e il dominio `claudio-ebon.vercel.app` serve ancora il
+deployment di quel commit. L'Oracolo non è online, e nemmeno la consegna del
+04/09.
+
 **Non eseguito da nessuna sessione:** il `prepare_release.py` del pacchetto.
 Il classificatore di sicurezza ha bloccato l'esecuzione di codice arrivato in
 uno ZIP, e il blocco non è stato aggirato. Verificato leggendo: le 53 impronte
