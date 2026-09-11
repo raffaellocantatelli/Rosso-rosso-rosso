@@ -70,8 +70,8 @@
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 5413,
-      "sha256": "7d2c66ac3b405aab4434c9d4d7f623d108110b51e912c6d4b0e21c1c1a49bc89"
+      "byte": 5422,
+      "sha256": "997c02b58c4701010e2b4f42165f44d8213e76ac3a348010e85a6337dd48f354"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
@@ -1165,9 +1165,21 @@
       "byte": 5152,
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
     },
+    "tests/test_tools_release.py": {
+      "byte": 10654,
+      "sha256": "10fe42a50c9f8c06725d51473a5108906687cdcd0cc820667da9653643e774cd"
+    },
     "tests/test_verificatore.py": {
       "byte": 16718,
       "sha256": "b85f5d6eeca5508751a23bafd34806e226e4406ac26334a309ecd5d70d2ae5b5"
+    },
+    "tools/prepare_release.py": {
+      "byte": 14824,
+      "sha256": "9ad05c992a0f56e111b9d4c5485ef2c036e15c9dc55ab9a64e316f36eed58d4c"
+    },
+    "tools/publish.py": {
+      "byte": 7022,
+      "sha256": "25c14bfba16077687af7ca211e30d9e24fccd565df2edc8b084bdb8faa0a5a43"
     },
     "trasmissione_ciclica.py": {
       "byte": 11893,
@@ -1178,6 +1190,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-11T10:24:51.954149+00:00",
+  "generato": "2026-09-11T14:35:01.590542+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

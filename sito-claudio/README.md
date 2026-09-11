@@ -9,6 +9,46 @@ I file del sito vivono in `public/`.
 
 ---
 
+## Come si applica, in quattro comandi (11/09/2026)
+
+Dalla radice di **questa** repository, così che `..\Claudio-sito` finisca
+accanto e `tools\` si trovi:
+
+```bat
+git clone https://github.com/claudioterzi/Claudio.git "..\Claudio-sito"
+py tools\prepare_release.py "..\Claudio-sito" "..\Claudio-release"
+py tools\publish.py "..\Claudio-release"                 :: ANTEPRIMA
+py tools\publish.py "..\Claudio-release" --produzione    :: il sito vero
+```
+
+`prepare_release.py` non tocca il clone: ne fa una copia, ci applica le patch e
+i file nuovi, e la dichiara pronta solo se cinque prove sul testo e i dieci
+test del costo a terra passano. Se una cade non scrive `RELEASE.json`, e
+`publish.py` senza quel file si rifiuta di pubblicare.
+
+`publish.py` pubblica un'**anteprima** salvo che tu scriva `--produzione`, e in
+quel caso si ferma e aspetta che tu digiti `pubblica`.
+
+Serve Vercel installato e collegato, una volta sola:
+
+```bat
+npm.cmd install --global vercel
+vercel.cmd login
+```
+
+**Verificato l'11/09** eseguendo `prepare_release.py` sul clone vero
+(`6a870d0`): le due patch si applicano ancora pulite, i quattro file entrano,
+10/10 test passano, e `public/lettura.html`, `public/enzo.html` e
+`tests/test_costi_terra.py` **non sono ancora nel sito**. La consegna del
+04/09 è tuttora inapplicata: `alpha.html` in produzione chiama ancora due
+volte l'API che risponde 404.
+
+**Che la pubblicazione vada a buon fine è UNKNOWN da qui**: nessuna sessione ha
+le credenziali Vercel, e non deve averle. Lo dice il comando sulla macchina di
+Claudio.
+
+---
+
 ## 1. File nuovi o rifatti — `nuovi/`
 
 Si copiano dentro `public/` sovrascrivendo, oppure si creano da GitHub via

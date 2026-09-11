@@ -55,7 +55,7 @@ SORVEGLIATI = [
 # un Layer 4 che non copre i file nuovi non protegge niente — e si vede
 # solo andando a cercare un nome nel manifesto. Aggiunti l'11/09/2026.
 ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests",
-          "occhio", "ponte"]
+          "occhio", "ponte", "tools"]
 ESTENSIONI = (".py", ".yml", ".yaml", ".md")
 
 
