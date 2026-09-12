@@ -1,18 +1,29 @@
-# R3_WORK_QUEUE.yaml — condensato ROOT
+# R3_WORK_QUEUE.yaml — canone pieno
 # Ciclo: SYNC-2026-09-12-1620
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-12_1620.yaml
+# Condensato ROOT: R3_WORK_QUEUE.yaml
 # Snapshot 1311, 0919, 1803, 1737, 1618 e precedenti conservati. Non cancellare gli storici.
 
 meta:
   cycle_id: SYNC-2026-09-12-1620
   previous_cycle: SYNC-2026-09-11-1311
+  measured_at: 2026-09-12T14:20:00Z
+  measured_at_cest: 2026-09-12 16:20 CEST
+  github_owner: raffaellocantatelli
+  github_repo: Rosso-rosso-rosso
+  github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
   github_default_sha: 86add26b7db198f9eed40cd82e1367ded1ccf5e9
+  github_default_message: "chore: run giornaliero SDQ-1 2026-09-12"
+  github_default_committed_at: 2026-09-12T11:22:19Z
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
   telegram_sha: 46817fddb8cb7ee0832dc044ef2f16cbf57c1ee0
   camera_inventory_sha: e1c37fc711220986b5c3c4a647743001b17a9cb7
   glass_plexiglas_sha: 4fc414d814bdae98abd0e0a994e704980c69aea1
   synology_webdav_sha: 1425267597d42f75e603c19a551837ac17fd4048
+  synology_webdav_sha_1311: 9532827d5d86500ca2f2148b1f32c8940caafc78
   pr6_merged_at: 2026-09-08T04:08:28Z
+  drive_owner_observed: Claudio Terzi
+  drive_memoria_id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+  previous_report_drive_id: 17DVhCyw2GOJnJShH_rqXd_rWLLDD5qoF
 
 stato:
   daily_2026-09-08: PRESENTE_STUB_CORE_SPENTO
@@ -20,7 +31,11 @@ stato:
   daily_2026-09-10: PRESENTE_STUB_CORE_SPENTO
   daily_2026-09-11: PRESENTE_STUB_CORE_SPENTO
   daily_2026-09-12: PRESENTE_STUB_CORE_SPENTO
+  daily_2026-09-11_blob: 2dcb0d4b4dcfef80f3d4c84c1f37478eb716c5e3
+  daily_2026-09-12_blob: 177500b02293bdf884ff29eba395c7d492e5dfd8
   r3_019: BASELINE_0_NO_NEW_RUN
+  r3_019_spec_blob: dafcd4b3da606e967c9270a0ef1dcdbe6ad1a5d1
+  sdq1_run_42: PRESENTE_34348698599_FAILURE
   sdq1_run_43: PRESENTE_34473979602_FAILURE
   sdq1_run_44: PRESENTE_34596388090_FAILURE
   sdq1_run_45: PRESENTE_34690869736_FAILURE
@@ -30,13 +45,31 @@ stato:
   glass_plexiglas_branch: INVARIATO_NON_UNITO_4fc414d8
   synology_webdav_branch: MOSSO_NON_UNITO_14252675
   default_equals_new_session: false
+  open_prs: 0
+  h_sync_0909_1: CADUTA_DAILY_09_PRESENTE
+  h_sync_0909_2: CADUTA_RUN_42_PRESENTE
+  h_sync_0910_1: CADUTA_DAILY_10_PRESENTE
+  h_sync_0910_2: CADUTA_RUN_43_PRESENTE
   h_sync_0911_1: CADUTA_DAILY_11_PRESENTE
   h_sync_0911_2: CADUTA_RUN_44_PRESENTE
   h_sync_0912_1: CADUTA_DAILY_12_PRESENTE
   h_sync_0912_2: CADUTA_RUN_45_PRESENTE
   h_sync_0808_3: APERTA_TELEGRAM_NON_UNITO
+  h_sync_0912_3: APERTA_SYNOLOGY_MOSSO_NON_UNITO
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
+  core: SPENTO
+  contatti_jsonl_size: 0
+
+delta_vs_1311:
+  default_sha: 493a3c10 -> 86add26b
+  default_product_commits: 0
+  sdq1_commits_added: 2
+  runs_added: 2
+  synology_moved: true
+  telegram_moved: false
+  camera_moved: false
+  glass_moved: false
 
 priorita:
   - R3-019 Longitudinal Capability Benchmark
@@ -50,5 +83,17 @@ priorita:
   - R3-018 Sim2Real Audit
   - R3-020 Self-Improvement Safety Gate
 
+conflitti_conservati:
+  - default != new-session
+  - telegram non unito
+  - camera tip post-merge non unito
+  - glass-plexiglas non unito
+  - synology mosso e non unito
+  - PRODOTTO_IDEE_CT.md solo Drive
+  - duplicati Drive report/queue
+
 regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
 never_delete_historical: true
+simulation: false
+pytest_run_this_cycle: false
+r3_019_run_this_cycle: false
