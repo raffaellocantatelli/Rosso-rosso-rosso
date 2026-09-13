@@ -173,6 +173,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._fotogramma()
         if percorso == "/api/conferma":
             return self._conferma()
+        if percorso == "/api/decidi":
+            return self._decidi()
         if percorso == "/api/chat":
             return self._chat()
         if percorso == "/api/voce":
@@ -206,6 +208,14 @@ class Handler(BaseHTTPRequestHandler):
                 "totale": len(reg.voci),
                 "fusioni": [{"chiave": f["chiave"], "titoli": f["titoli_visti"]}
                             for f in fusioni],
+                "da_decidere": [
+                    {"chiave": v.get("chiave"), "tipo": v.get("tipo"),
+                     "titolo": v.get("titolo"),
+                     "titoli_visti": v.get("titoli_visti", []),
+                     "simile_a": v.get("simile_a"),
+                     "simile_a_titolo": (reg._per_chiave.get(v.get("simile_a")) or {}).get("titolo")}
+                    for v in reg.da_ancorare()],
+                "sola_lettura": not s.autoscrittura,
                 "pianta": s.pianta,
                 "stub": s.cascata == ("stub",),
                 "consegne": [], "differenza": None, "vendite": [], "chiari": None,
@@ -353,6 +363,45 @@ class Handler(BaseHTTPRequestHandler):
 
         self._json(200, {"oggetti": risposta, "provider": esito["provider"],
                          "stub": esito["stub"], "totale_inventario": totale})
+
+    def _decidi(self):
+        """Le decisioni sull'identita', prese dalla console invece che dal
+        terminale.
+
+        Il costo di ancorare un oggetto e' il tempo di chi lo fa: scrivere
+        una chiave a mano per tredici oggetti e' il motivo per cui non lo
+        farebbe nessuno. Qui sono due tocchi.
+
+        Scrivere resta una strada ESPLICITA — un gesto per volta, mai un
+        effetto collaterale di una lettura — e `--solo-lettura` la chiude,
+        come per ogni altra scrittura di questo server.
+        """
+        if not self.stato.autoscrittura:
+            return self._json(403, {"errore": "server in sola lettura"})
+        d = self._corpo() or {}
+        azione = str(d.get("azione", "")).strip()
+        k = str(d.get("chiave", "")).strip()
+        try:
+            with self.stato.lock:
+                reg = self.stato.inventario
+                if azione == "conferma":
+                    titolo = str(d.get("titolo", "")).strip()
+                    if not titolo:
+                        return self._json(400, {"errore": "titolo mancante"})
+                    reg.ancora(k, titolo)
+                elif azione == "uguale":
+                    reg.uguale(k, str(d.get("altra", "")).strip())
+                elif azione == "diversa":
+                    reg.diversa(k)
+                else:
+                    return self._json(400, {"errore": f"azione sconosciuta: {azione!r}"})
+                restano = len(reg.da_ancorare())
+                totale = len(reg.voci)
+        except KeyError as e:
+            return self._json(404, {"errore": str(e)})
+        except ValueError as e:
+            return self._json(400, {"errore": str(e)})
+        return self._json(200, {"totale": totale, "da_decidere": restano})
 
     def _conferma(self):
         """L'umano corregge o conferma una lettura incerta. Sempre disponibile.

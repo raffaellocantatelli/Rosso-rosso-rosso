@@ -203,6 +203,53 @@ function differenza() {
       <span class="t">${o.titolo || ""}</span></div>`).join("");
 }
 
+/* ---------- le decisioni che solo una persona può prendere ----------
+ * Un quadro, un orologio, un candelabro non hanno un titolo scritto sopra:
+ * lo inventa chi legge, e due letture lo inventano diverso. Il costo di
+ * ancorarli è il tempo di chi lo fa — scrivere una chiave a mano per tredici
+ * oggetti è il motivo per cui non lo farebbe nessuno. Qui sono due tocchi.
+ */
+function decisioni() {
+  const carta = $("#carta-decisioni"), ul = $("#decisioni");
+  const righe = QUADRO.da_decidere || [];
+  carta.hidden = !righe.length || QUADRO.sola_lettura;
+  testo($("#quante-decisioni"), righe.length ? `${righe.length}` : "");
+  if (carta.hidden) return;
+  ul.innerHTML = righe.map(r => {
+    const altri = (r.titoli_visti || []).filter(t => t !== r.titolo);
+    return `<li data-chiave="${r.chiave}">
+      <div class="testa"><span class="tipo">${r.tipo || "altro"}</span>
+        <span class="tit">${r.titolo || ""}</span></div>
+      ${altri.length ? `<div class="visti">letto anche: ${altri.join(" · ")}</div>` : ""}
+      ${r.simile_a ? `<div class="somiglia">somiglia a <b>${r.simile_a_titolo || r.simile_a}</b></div>
+        <div class="scelta">
+          <button class="si" data-fai="uguale">è lo stesso</button>
+          <button class="no" data-fai="diversa">è un altro</button></div>` : ""}
+      <div class="ancora">
+        <input type="text" placeholder="titolo definitivo" value="${r.titolo || ""}">
+        <button data-fai="conferma">fissa</button>
+      </div>
+    </li>`;
+  }).join("");
+
+  ul.querySelectorAll("button").forEach(b => {
+    b.onclick = async () => {
+      const li = b.closest("li");
+      const corpo = {azione: b.dataset.fai, chiave: li.dataset.chiave};
+      if (corpo.azione === "conferma") {
+        corpo.titolo = li.querySelector("input").value.trim();
+        if (!corpo.titolo) return;
+      }
+      b.disabled = true;
+      const r = await fetch("/api/decidi", {
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(corpo)});
+      if (!r.ok) { b.disabled = false; b.textContent = "no"; return; }
+      await carica();          // il quadro è uno: si ridisegna intero
+    };
+  });
+}
+
 /* ---------- il registro ---------- */
 function registro() {
   const ul = $("#elenco");
@@ -294,7 +341,7 @@ function disegna() {
   f.hidden = !QUADRO.stub;
   if (QUADRO.stub) f.textContent =
     "MODO STUB — nessun modello sta guardando. Ciò che vedi non è stato letto.";
-  numeri(); pianta(); linea(); differenza(); registro(); mercato();
+  numeri(); pianta(); linea(); differenza(); decisioni(); registro(); mercato();
   testo($("#sottotitolo"),
     QUADRO.totale ? `${QUADRO.totale} oggetti · aggiornato ora` : "nessun oggetto nel registro");
   testo($("#stato-lettura"),

@@ -1371,7 +1371,7 @@ def test_le_classi_disegnate_dalla_console_esistono_nel_foglio():
     js, css = _console("console.js"), _console("console.css")
     for classe in ("zona", "spenta", "allarme", "buono", "riga", "segnale",
                    "comprato", "manca", "vuoto", "firma", "fatto", "aperto",
-                   "banco", "resta"):
+                   "banco", "resta", "somiglia", "scelta", "ancora", "visti"):
         assert classe in js, f"la classe {classe} non è più usata: aggiorna il test"
         assert f".{classe}" in css, f"console.css non definisce .{classe}"
     # tre stati e tre colori: se qualcuno ne aggiunge un quarto, la pianta
@@ -1909,3 +1909,87 @@ def test_un_tipo_sconosciuto_non_inventa_un_filtro(tmp_path):
     r.registra("quadro", "Vecchia con la candela", luogo={"stanza": "salotto"})
     e = vc.rispondi(r, "quanti tappeti ho")
     assert e["tipo"] is None
+
+
+# --------------------------------------------------------------------------
+# decidere dalla console: il costo di B è il tempo di chi lo fa
+# --------------------------------------------------------------------------
+
+def _due_quadri(stato):
+    reg = stato.inventario
+    L = {"stanza": "salotto"}
+    reg.registra("quadro", "Dipinto donna anziana con candela", fonte="foto",
+                 confidenza=0.6, luogo=L, foto_sha="a" * 64)
+    reg.ancora("quadro:dipinto donna anziana con candela", "Vecchia con la candela")
+    reg.registra("quadro", "Ritratto di anziana con candela", fonte="foto",
+                 confidenza=0.6, luogo=L, foto_sha="b" * 64)
+    return reg
+
+
+def test_il_quadro_porta_le_decisioni_in_sospeso(occhio_in_ascolto):
+    reg = _due_quadri(srv.Handler.stato)
+    _, q = chiama(occhio_in_ascolto + "/api/quadro")
+    assert [d["titolo"] for d in q["da_decidere"]] == ["Ritratto di anziana con candela"]
+    assert q["da_decidere"][0]["simile_a_titolo"] == "Vecchia con la candela"
+    assert q["sola_lettura"] is False
+    assert len(reg.voci) == 2
+
+
+def test_uguale_dalla_console_riporta_il_registro_al_numero_giusto(occhio_in_ascolto):
+    _due_quadri(srv.Handler.stato)
+    codice, r = chiama(occhio_in_ascolto + "/api/decidi",
+                       {"azione": "uguale", "chiave": "quadro:ritratto di anziana con candela"})
+    assert codice == 200 and r["totale"] == 1 and r["da_decidere"] == 0
+
+
+def test_conferma_dalla_console_fissa_il_titolo(occhio_in_ascolto):
+    reg = srv.Handler.stato.inventario
+    reg.registra("orologio", "Orologio da mensola scuro", fonte="foto",
+                 confidenza=0.5, luogo={"stanza": "salotto"}, foto_sha="c" * 64)
+    codice, _ = chiama(occhio_in_ascolto + "/api/decidi",
+                       {"azione": "conferma", "chiave": "orologio:orologio da mensola scuro",
+                        "titolo": "Orologio a pendolo del nonno"})
+    assert codice == 200
+    assert reg.voci[0]["titolo"] == "Orologio a pendolo del nonno"
+    assert reg.voci[0]["confermato"] is True
+
+
+def test_una_decisione_senza_titolo_non_passa(occhio_in_ascolto):
+    reg = srv.Handler.stato.inventario
+    reg.registra("orologio", "Orologio da mensola scuro", fonte="foto",
+                 confidenza=0.5, luogo={"stanza": "salotto"}, foto_sha="c" * 64)
+    codice, r = chiama(occhio_in_ascolto + "/api/decidi",
+                       {"azione": "conferma", "chiave": "orologio:orologio da mensola scuro",
+                        "titolo": "   "})
+    assert codice == 400 and "titolo" in r["errore"]
+
+
+def test_una_chiave_inesistente_non_passa(occhio_in_ascolto):
+    codice, _ = chiama(occhio_in_ascolto + "/api/decidi",
+                       {"azione": "diversa", "chiave": "quadro:mai visto"})
+    assert codice == 404
+
+
+def test_un_azione_inventata_non_passa(occhio_in_ascolto):
+    codice, r = chiama(occhio_in_ascolto + "/api/decidi",
+                       {"azione": "cancella", "chiave": "x"})
+    assert codice == 400 and "cancella" in r["errore"]
+
+
+def test_in_sola_lettura_nessuna_decisione_scrive(tmp_path):
+    """`--solo-lettura` chiude ogni scrittura di questo server, e le
+    decisioni sono scritture come le altre."""
+    from http.server import ThreadingHTTPServer
+    srv.Handler.stato = srv.Stato(tmp_path / "i.jsonl", ("stub",), False, 0.75)
+    s = ThreadingHTTPServer(("127.0.0.1", 0), srv.Handler)
+    t = threading.Thread(target=s.serve_forever, daemon=True)
+    t.start()
+    try:
+        base = f"http://127.0.0.1:{s.server_address[1]}"
+        codice, _ = chiama(base + "/api/decidi",
+                           {"azione": "diversa", "chiave": "x"})
+        assert codice == 403
+        _, q = chiama(base + "/api/quadro")
+        assert q["sola_lettura"] is True
+    finally:
+        s.shutdown(); s.server_close()

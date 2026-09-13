@@ -140,6 +140,32 @@ h2 em{font-style:normal;color:var(--v);text-transform:none;letter-spacing:0;font
 .riga .t{flex:1;min-width:0;overflow-wrap:anywhere}
 .riga .p{color:var(--tenue);font-size:12px;font-variant-numeric:tabular-nums}
 
+/* ── da decidere ── */
+/* L'ambra è «non lo so», ed è esattamente cosa sono queste righe: il
+   sistema ha letto qualcosa e non sa se è un oggetto nuovo. */
+.carta.decisioni{border-color:#ffb02033;background:#15161a}
+.carta.decisioni h2 em{color:var(--a)}
+#decisioni{list-style:none;margin:0;padding:0;overflow:auto;min-height:0;flex:0 1 auto}
+#decisioni li{padding:11px 0;border-top:1px solid var(--bordo)}
+#decisioni li:first-child{border-top:0}
+#decisioni .testa{display:flex;gap:11px;align-items:baseline}
+#decisioni .visti,#decisioni .somiglia{margin-top:5px;font-size:11.5px;color:var(--fioco);
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#decisioni .somiglia b{color:var(--testo);font-weight:600}
+/* i due bottoni su una riga loro: con un titolo lungo andavano a capo
+   separati, e una scelta spezzata in due righe non sembra una scelta */
+#decisioni .scelta{margin-top:6px;display:flex;gap:7px}
+#decisioni .ancora{margin-top:7px;display:flex;gap:7px}
+#decisioni input{flex:1;min-width:0;background:var(--fondo);color:var(--testo);
+  border:1px solid var(--bordo);border-radius:8px;padding:6px 9px;font:inherit;font-size:12.5px}
+#decisioni input:focus{outline:none;border-color:#2ee06a66}
+#decisioni button{background:var(--carta2);color:var(--testo);border:1px solid var(--bordo);
+  border-radius:8px;padding:5px 11px;font:inherit;font-size:11.5px;cursor:pointer}
+#decisioni button:hover{border-color:#2ee06a66}
+#decisioni button.si:hover{border-color:var(--v);color:var(--v)}
+#decisioni button.no:hover{border-color:var(--a);color:var(--a)}
+#decisioni button[disabled]{opacity:.45;cursor:default}
+
 /* ── registro ── */
 #elenco{list-style:none;margin:0;padding:0;flex:1 1 auto;min-height:0;overflow:auto}
 #elenco li{display:flex;gap:11px;align-items:baseline;padding:8px 2px;
