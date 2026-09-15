@@ -107,6 +107,33 @@ contro un NAS finto in memoria (`ponte/banco.py`), e quel banco non è un NAS �
 è la trappola di §4, quindi ogni comando che lo usa lo stampa. Diventa
 RECUPERATO quando `--check` gira sulla macchina di Claudio, non prima.
 
+## 0-ter. Aggiunto il 15/09: il numero che manca si può prendere adesso
+
+§1-bis qui sotto dice che nessun modello ha mai guardato un oggetto vero, e che
+`letti / presenti` è l'unica misura che valga. Diceva anche che serve una chiave
+di visione. **Per quella misura non serve più.**
+
+`core` di Qwen-MM-Plugins (Alibaba, Apache-2.0) fa vedere i pixel al modello che
+è già nella sessione: nessuna chiave, nessun account, il file non esce dalla
+macchina. Letto alla fonte il 15/09 — repository, installatore e manifesti —
+in `QWEN_MM_PLUGINS.md`, con due correzioni al riassunto che girava (le
+capability sono 11, non 8; `vision` non esiste, si chiama `api`).
+
+```bash
+claude plugin marketplace add https://github.com/QwenLM/Qwen-MM-Plugins.git
+claude plugin install qwen-mm-plugins-core@qwen-mm-plugins
+```
+
+**Quello che non sblocca, e non va confuso:** `occhio/visione.py` resta senza
+API, quindi il daily e la Action restano dove sono. Un modello che guarda dentro
+una sessione non è un programma che guarda quando nessuno c'è. La chiave di §1
+serve ancora per tutto il resto — solo non serve più per ottenere il numero.
+
+**IPOTESI dichiarata prima di misurare:** il rapporto ottenuto con il modello
+della sessione non si trasferisce al modello che `occhio` userebbe in
+produzione. Si falsifica confrontandoli sullo stesso scaffale, il giorno in cui
+una chiave esiste.
+
 ## 1. L'unica cosa che blocca tutto
 
 **RECUPERATO (run #35, 02/09 23:19 UTC).** La Action non vede nessun secret:
