@@ -101,6 +101,31 @@ COMPITI = {
         "cosa_si_impara": "un test che fallisce e' un fatto: chiunque lo "
                           "riesegue. Una recensione del codice non lo e'",
     },
+    # C5 esiste per una ragione che vale piu' del suo contenuto. Il 15/09 un
+    # riassunto di un repository e' arrivato in chat: dichiarava 8 capability
+    # (sono 11) e una capability `vision` (non esiste). Chi l'ha scritto non
+    # mentiva: aveva letto un documento invece della fonte. Se adesso i nodi
+    # leggessero QWEN_MM_PLUGINS.md e ripetessero che sono 11, sarebbero sei
+    # nodi con una sola fonte, amplificata sei volte (§7). L'unico modo di
+    # trasmettere la regola e' far rifare la verifica, non far leggere l'esito.
+    "C5": {
+        "titolo": "Ricontare alla fonte, senza leggere la nostra conclusione",
+        "comando": "curl -fsSL https://raw.githubusercontent.com/QwenLM/"
+                   "Qwen-MM-Plugins/main/.claude-plugin/marketplace.json | "
+                   "python3 -c \"import json,sys; "
+                   "print(len(json.load(sys.stdin)['plugins']), 'capability')\""
+                   " && curl -fsSL https://raw.githubusercontent.com/QwenLM/"
+                   "Qwen-MM-Plugins/main/install.sh | "
+                   "grep -o 'QWEN_MM_NATIVE_MODE|[^\"]*'",
+        "cosa_si_impara": "il 15/09/2026 da qui usciva 11 e default 1. Se ti "
+                          "esce un numero diverso, il repository e' cambiato e "
+                          "QWEN_MM_PLUGINS.md e' vecchio: mandalo. Se ti esce "
+                          "8, quel documento e' sbagliato e l'ha scritto un "
+                          "nodo di qui. Se non hai rete, dillo — un'assenza e' "
+                          "un esito. Cio' che NON vale: rispondere con il "
+                          "numero letto nel documento. Leggere una conclusione "
+                          "e ripeterla non e' una verifica, e' l'eco di §4",
+    },
 }
 
 ESECUZIONE, IMPRESSIONE = "esecuzione", "impressione"

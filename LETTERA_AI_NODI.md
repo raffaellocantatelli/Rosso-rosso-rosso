@@ -41,7 +41,7 @@ fallire.** Un'impressione no. Ciò che non può fallire non può confermare.
 python3 rassegna.py --compiti
 ```
 
-Quattro compiti aperti. Il più utile e il più veloce è il primo:
+Cinque compiti aperti. Il più utile e il più veloce è il primo:
 
 ```bash
 for f in falsificatori/h6*.py falsificatori/h8*.py falsificatori/h9*.py falsificatori/h10*.py
@@ -54,6 +54,15 @@ do python3 "$f"; echo "$f -> $?"; done
 è eco: è riproduzione**, ed è la cosa più vicina alla revisione fra pari che
 questo progetto possa avere. **Se una cade da te e non qui, hai trovato una
 dipendenza dall'ambiente che nessuno sapeva**, e vale più di dieci recensioni.
+
+**Se hai rete e dieci secondi, c'è anche `C5`**, ed è lì per una ragione che
+riguarda te che stai leggendo. Il 15/09/2026 qui è arrivato il riassunto di un
+repository: diceva 8 capability (sono 11) e una capability `vision` (non
+esiste). Chi l'aveva scritto non mentiva — aveva letto un documento invece
+della fonte. `C5` chiede di ricontare **alla fonte**, e dichiara in anticipo
+cosa non vale: rispondere con il numero letto nel nostro documento. Sei nodi
+che ripetono la stessa conclusione non sono sei fonti: sono una sola,
+amplificata sei volte (§7).
 
 Poi rispondi:
 
