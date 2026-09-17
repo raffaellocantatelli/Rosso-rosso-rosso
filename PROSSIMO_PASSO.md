@@ -112,20 +112,42 @@ oggi non c'è più, quindi l'esecuzione è stata fatta e scritta.
 **`RETTA` non è `CONFERMATA`.** Il tetto resta lì: eseguire non è confermare,
 e `CONFERMATA` richiede una fonte esterna che da qui non è raggiungibile.
 
-## 3-bis. Il Layer 4 ha un punto cieco, e la decisione e' tua
+## 3-bis. Il Layer 4 aveva un punto cieco. Chiuso il 17/09
 
-**RECUPERATO.** `MANIFESTO_INTEGRITA.json` sorveglia un elenco scritto a mano
-piu' gli alberi `sdq1/ r3/ testi/ memoria/ falsificatori/ tests/`. Tutto il
-resto della radice non e' coperto: `occhio/` — cioe' il prodotto intero —
-`contraddittore.py`, `archivio.py`, `rassegna.py`, `esperimenti/`. Oggi ci
-sono entrati `ambiente.py` e `test_ambiente.py` (308 file), perche' §6 regola 4
-lo impone per i file nuovi; il resto no.
+**RECUPERATO.** Il manifesto sorvegliava un elenco scritto a mano piu' sei
+alberi, filtrati per estensione: **434 file nel repository, 308 sorvegliati.**
+I 126 fuori non erano una scelta — erano quelli a cui nessuno aveva pensato.
+`occhio/`, cioe' il prodotto intero, non era coperto; nemmeno
+`contraddittore.py`, `archivio.py`, `rassegna.py`, `esperimenti/`. E
+soprattutto: **ogni file nuovo nasceva fuori.** La guardia diceva
+«INTEGRITÀ OK» mentre un modulo appena aggiunto non era guardato da nessuno.
 
-Vale la pena saperlo com'e': **un Layer 4 che copre meta' del sistema dice
-«INTEGRITÀ OK» anche quando il prodotto e' stato cambiato di nascosto.** Non
-l'ho esteso da solo perche' significa decidere cosa e' nucleo di continuità e
-cosa no, e quella e' una tua riga, non mia. Se vuoi, si aggiunge `occhio` agli
-`ALBERI` e il manifesto passa da 308 a ~340 file.
+Adesso la copertura e' **per difetto**: il confine del manifesto e' il confine
+del repository — lo disegna `.gitignore`, che e' una tua decisione, e per
+questo i registri di `occhio` restano fuori come devono. 381 file sorvegliati,
+73 in piu', **zero tolti**.
+
+Fuori restano quattro cose, ciascuna con il motivo scritto accanto nel codice:
+
+| fuori | perche' |
+|---|---|
+| `output/` (51 file) | e' cio' che il sistema produce; la run giornaliera lo riscrive |
+| `sdq1/memory/store.json`, `sdq1/sar/state.json` | stato di runtime, riscritto a ogni daily |
+| `MANIFESTO_INTEGRITA.json` | non puo' contenere il proprio hash |
+
+Sono **esattamente** i percorsi che la Action committa a ogni giro, e un test
+lega le due cose: se un domani quel `git add` cresce senza che l'esclusione sia
+dichiarata, il test lo dice. Coprirli significherebbe un avviso rosso ogni
+notte per costruzione — e un avviso che si accende sempre e' una lettura che
+non obbliga a niente, il difetto che `latenza.py` esiste per misurare.
+
+**Se vuoi coprirli lo stesso**, la strada non e' allargare il manifesto: e'
+far rigenerare il manifesto alla Action dopo il daily, dentro lo stesso commit.
+E' una tua riga, non mia — cambia cosa significa «INTEGRITÀ OK» per tutti i nodi.
+
+`test_manifesto_integrita.py` (9 prove) esiste perche' il buco non torni in
+silenzio: la prima fallisce se un file nuovo non entra nella copertura.
+Provate rimettendo il difetto — l'elenco scritto a mano — e ne cadono quattro.
 
 ## 4. Cosa resta a te — tre cose, in ordine di quanto costano
 

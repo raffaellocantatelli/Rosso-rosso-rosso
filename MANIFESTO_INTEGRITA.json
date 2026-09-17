@@ -1,17 +1,49 @@
 {
   "algoritmo": "sha256",
   "file": {
+    ".env.example": {
+      "byte": 733,
+      "sha256": "e738162b5e4a3d388dab1c5bcee9d9320ef4e4a135a57a0bee5ec62469e5744c"
+    },
     ".github/workflows/daily.yml": {
       "byte": 4499,
       "sha256": "395fee429a691de97d9de7400f0ce79ed4cead9338f01d146667bbd8ef01fed7"
+    },
+    ".gitignore": {
+      "byte": 2234,
+      "sha256": "e350c9e0ab8eadaf4684d67f41de4b45b44a36d3137b8366ce27133cd86ba2f1"
+    },
+    "CAPACITA.json": {
+      "byte": 42716,
+      "sha256": "171162ee693013221134abbcc27fc3c6ff104ad31cda6f1dd91184b33bd0eb33"
     },
     "CLAUDE.md": {
       "byte": 15444,
       "sha256": "c16d7b3939bd251f195a77a1b9579cc8095a7b37f11d4c06e31e697a6c42fb10"
     },
+    "INNESTO_PRIVATO.md": {
+      "byte": 2267,
+      "sha256": "803b551a828ffc32d6812233247d85af058ce000369935256628767da1c610c8"
+    },
+    "LETTERA_AI_NODI.md": {
+      "byte": 4015,
+      "sha256": "38b232ba041b70280f4f4374da021d409df3c3d81fdfd49e06507b8a03d16926"
+    },
+    "OCCHIO.md": {
+      "byte": 40409,
+      "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
+    },
+    "PROSSIMO_PASSO.md": {
+      "byte": 10118,
+      "sha256": "925d44b222824f3ef195eaebbe28016829d145e4dc410ebf2729335f10983927"
+    },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
+    },
+    "R3_WORK_QUEUE.yaml": {
+      "byte": 1818,
+      "sha256": "bedc5edde7a40ee8d4d1ce15050689f458d55cfc7c8eeec7f35335aa3ed0b775"
     },
     "README.md": {
       "byte": 20068,
@@ -20,6 +52,54 @@
     "ambiente.py": {
       "byte": 2962,
       "sha256": "6df74a414b8f1de8252ed5cb3a284b73170905a48200cbcbcb1ca79423045ade"
+    },
+    "analisi_foto.py": {
+      "byte": 31710,
+      "sha256": "3ae9ba5bccac0d705374b9032fe08b364db5a4f7c0cea651362d242c47f9925a"
+    },
+    "archivio.py": {
+      "byte": 8176,
+      "sha256": "988b8a42e63876cd071fc5c47349327f4fd282b140eb2af66d58839cae7028f0"
+    },
+    "autonomous_core_v3.py": {
+      "byte": 32401,
+      "sha256": "d3d252eb05fac07de333e94822ed1757a9b4de3c6d5c82bb837692ff680c534d"
+    },
+    "benchmarks/R3-019_BASELINE_2026-08-26.json": {
+      "byte": 1557,
+      "sha256": "10e9beb98a4debe25bfcd8ab13c851686e612eefaa0c563c1248c56b6e5b52b0"
+    },
+    "benchmarks/r3_019_runner.py": {
+      "byte": 5314,
+      "sha256": "34051fc49bb363c84982e5cf25d21b9a9eb97da95e4334a223720afc63604126"
+    },
+    "contraddittore.py": {
+      "byte": 12217,
+      "sha256": "3b23568d49c75251205982c1fe29759916359950f86326a92bff35556ba1704a"
+    },
+    "costituzione_cev.json": {
+      "byte": 3492,
+      "sha256": "6f28851e6d4398d30aa2d72db0975499895cc8dc7970096e16da348a75936700"
+    },
+    "esempi/backup_sistema_rosso.esempio.json": {
+      "byte": 689,
+      "sha256": "9968ffd6654a10156109ed42ced85755785cb92f03f60265fb784ff4031bd848"
+    },
+    "esempi/dimostrazione.py": {
+      "byte": 10108,
+      "sha256": "095988f89c426808609d07db79426a8257584f68f1b367875e84be013b8afbc6"
+    },
+    "esperimenti/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "esperimenti/tracce.json": {
+      "byte": 2723,
+      "sha256": "5ce50de5eae85401e5d9752e59be86505ef50295d3a2414e94f283e1f79b7242"
+    },
+    "esperimenti/tracce.py": {
+      "byte": 6802,
+      "sha256": "183c81a9199054fa31827b2c1be725840f353093206b6f6a22eabe3e867eecde"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -70,8 +150,8 @@
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 5378,
-      "sha256": "9413f962a908e9e233b05b938e41d3de9db8710e3da14e3261e57e22a52abd20"
+      "byte": 7875,
+      "sha256": "4545fd483f5368a9f6042c59b84f832839f38da5f0967f0218d3ec4b5cd92ee1"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
@@ -969,6 +1049,10 @@
       "byte": 3421,
       "sha256": "0b2db6080b9530c89d11f4d1b42ca03928c6b4b716e5c73d6ce036f58d133779"
     },
+    "memoria/REGISTRO_NODI.jsonl": {
+      "byte": 10552,
+      "sha256": "f7c082b16423dbf2e21b660724e0ba375e83034d2a1b214ab306b4651b524a97"
+    },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
       "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
@@ -984,6 +1068,146 @@
     "memoria/ZZ_SUPERATO_MEMORIA_PERSISTENTE_INDICE_2026-08-19T18-21.md": {
       "byte": 1144,
       "sha256": "a13eea39651f3beeb5a88cda52f79dd96151a9740de873ef6807735a8e5684d1"
+    },
+    "occhio/__init__.py": {
+      "byte": 1170,
+      "sha256": "76ee70d329e7dbefa5dfb2b4f5faee66728ebdb3f945012d003f513c34d9ad58"
+    },
+    "occhio/__main__.py": {
+      "byte": 29155,
+      "sha256": "9d7650536d633212c2fad5d38d1aa22dea6b97709c2a6f7510ff6da8462c551e"
+    },
+    "occhio/capacita.py": {
+      "byte": 11244,
+      "sha256": "d0623a14ffc8fd8a047008451d729bbe854271bb5a9fc173470aa0b73d1ecb4e"
+    },
+    "occhio/cartella.py": {
+      "byte": 10060,
+      "sha256": "440ab78697d34259b1a2531692e27465e806a32138477e6015d86b191d8fd672"
+    },
+    "occhio/consegna.py": {
+      "byte": 13525,
+      "sha256": "1fe6e885c6e9f0cbd0ba8a12d229f671330ba91ea6925ed0a3ec62dbb29e0226"
+    },
+    "occhio/costo.py": {
+      "byte": 4671,
+      "sha256": "aacb44897b87ada3c7eac3c9377989d7ef1492729bb39da9c9dd801299d1821d"
+    },
+    "occhio/crediti.py": {
+      "byte": 12973,
+      "sha256": "db7182e9ea8994e061b10daefb870de42e616d3615e1ea2c764955f940e8d364"
+    },
+    "occhio/inventario.py": {
+      "byte": 17370,
+      "sha256": "83373b6d7f2877ada02753bd74b2a6d0d6bde2a2fa6507453298c2ccb851df60"
+    },
+    "occhio/luogo.py": {
+      "byte": 8945,
+      "sha256": "6709fea7d9b6f6daf1597061438b321bcd23f52d755da6f12627593f9e274c41"
+    },
+    "occhio/planimetria.py": {
+      "byte": 10464,
+      "sha256": "19de4e132b91ae77c094462a1327521d9741e18a1d8f7f2203e13403065c5ecd"
+    },
+    "occhio/portavia.py": {
+      "byte": 19707,
+      "sha256": "3ebe56a8f3569f093b9b8bb5b4b9ed2ce677853f241fa714314e796aeef17c7f"
+    },
+    "occhio/server.py": {
+      "byte": 21441,
+      "sha256": "4e5ca9daa9ad3987df47f297615baa126aa734ff51722009794694aa54f1393d"
+    },
+    "occhio/visione.py": {
+      "byte": 11463,
+      "sha256": "e90fb8f64d84dac47faa58ec21cbf503b947349a1573f6a6ad98b56d3dfa837e"
+    },
+    "occhio/voce.py": {
+      "byte": 15901,
+      "sha256": "e71173f9f217b1eb9bef76df4d6ef84f0f3a2ec2f69fdea96d7ad50f7e016759"
+    },
+    "occhio/web/app.js": {
+      "byte": 17150,
+      "sha256": "b8fc9e0f4a98583394e50e88e7c591532532ac7bcc2e72a2995a6e83b132082d"
+    },
+    "occhio/web/console.css": {
+      "byte": 10520,
+      "sha256": "8a5430e4bbd99ba5ee3f99278854680fa77e6c5d9e01786f8cab896d5123e16f"
+    },
+    "occhio/web/console.html": {
+      "byte": 2444,
+      "sha256": "c802cf47b9ddc7c4f204f5de9a4b554e900f4d996ea9dde6ad506333947f36e7"
+    },
+    "occhio/web/console.js": {
+      "byte": 13992,
+      "sha256": "0faf76c360b5c0ea9d807d1a00d89ab2fbe30975be7fd507901cffe6871504cc"
+    },
+    "occhio/web/index.html": {
+      "byte": 3662,
+      "sha256": "497f87f32b40881e6fa57e38dd1fd372fe447832627f8ac19afad3c78bfe40f0"
+    },
+    "occhio/web/stile.css": {
+      "byte": 6924,
+      "sha256": "09b20efa55c938ab8427c94430e2e6882dad7534e1e45c4ef1cbcb374cbd26d6"
+    },
+    "protocollo-rosso-bot/.env.example": {
+      "byte": 453,
+      "sha256": "d8643dfb21398c3c8723d6900c16ec628e4255092406d79aec3fc1162e5928ad"
+    },
+    "protocollo-rosso-bot/.gitignore": {
+      "byte": 36,
+      "sha256": "8428c6974193bedd5c0ebd75ea8a3b6433437db4a143bde294bb2eaead83b069"
+    },
+    "protocollo-rosso-bot/README.md": {
+      "byte": 4705,
+      "sha256": "6eb2fce407181310134587b88c424b310993853ee41385d6a0f41236b8b0b91c"
+    },
+    "protocollo-rosso-bot/bot/__init__.py": {
+      "byte": 260,
+      "sha256": "63c54c74bb0c8de1e0043fbe37eaec7a6698c40719472fc84365e72a22440d71"
+    },
+    "protocollo-rosso-bot/bot/__main__.py": {
+      "byte": 142,
+      "sha256": "e81cdf6f7cb9e0c68f21b8c8c761b5dc59d51689931a323db70fb9fc08847c93"
+    },
+    "protocollo-rosso-bot/bot/db.py": {
+      "byte": 7597,
+      "sha256": "95af40d35fb89fd13dc4713451d183c05440aafd2390f2944eacdf2bc31fe2f3"
+    },
+    "protocollo-rosso-bot/bot/handlers.py": {
+      "byte": 16407,
+      "sha256": "32e28ffbc48ee2778a2aa73b68efd314f2579431ba8f329bd2aa630e237de4d1"
+    },
+    "protocollo-rosso-bot/bot/main.py": {
+      "byte": 4052,
+      "sha256": "ea671db84aec758a8de58ce0967d5e64c053d6c95987c02141b7b95805291a34"
+    },
+    "protocollo-rosso-bot/bot/states.py": {
+      "byte": 1001,
+      "sha256": "8c1a29f202c2d13a8767ac40b87ccf9532178a70eaa6b9b9963f0c66ff6da0cd"
+    },
+    "protocollo-rosso-bot/bot/texts.py": {
+      "byte": 19187,
+      "sha256": "cf6cd3ca888e1a4bd739ec7becc1a02d7a663335792252abb382c58b731c8b2f"
+    },
+    "protocollo-rosso-bot/requirements.txt": {
+      "byte": 50,
+      "sha256": "9fda5d0eb39ffa005779a8967ed4e0baf0bd3c26fef2475556646d8eedc1a6d0"
+    },
+    "protocollo-rosso-bot/tests/test_db.py": {
+      "byte": 2651,
+      "sha256": "862d7ac84b366f624314c73677ec4c2de719b2dc30fb763ccb8b2777e6753c3c"
+    },
+    "protocollo-rosso-bot/tests/test_flussi.py": {
+      "byte": 8927,
+      "sha256": "cd355542717e439aa752bf7e1d2e1c93837b19f73f2c29ccc285192aa46d2fc9"
+    },
+    "protocollo-rosso-bot/tests/test_texts.py": {
+      "byte": 3219,
+      "sha256": "f87a5cb42a7d6a9075b974c02ad05c11a651d739d758fec8bc58fcc2a5a3183e"
+    },
+    "r3/Dockerfile": {
+      "byte": 212,
+      "sha256": "f74a44a6bf49a11cda79041d6a0cd0f2e7a77a24975f54a1034bc6ef075b4f09"
     },
     "r3/README.md": {
       "byte": 6155,
@@ -1021,6 +1245,10 @@
       "byte": 3925,
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
+    "rassegna.py": {
+      "byte": 11102,
+      "sha256": "d02cf51d8939be74a9aacab766ad561e74ad6ac6e91f51aebb28772c772a25b1"
+    },
     "registro_ipotesi.json": {
       "byte": 9954,
       "sha256": "65cb5d9a128efcedee9e03a2742cb117461763fdcad40de55f36c9f7afd5f282"
@@ -1029,6 +1257,10 @@
       "byte": 15024,
       "sha256": "26d5f1b7623a8113b0327873d531ccea4aaafd105d25b219f7c303a875d9ac55"
     },
+    "registro_nodi.py": {
+      "byte": 4812,
+      "sha256": "b12380e37e9ed5bb7a1b0b710b1ed3f53a617ea7cd568e7adc8a50bd49612714"
+    },
     "registro_osservazioni.jsonl": {
       "byte": 2889,
       "sha256": "a62674cf119065491a5ebe416f7244caae102b7bff6b458e33e353180592c0b6"
@@ -1036,6 +1268,14 @@
     "registro_osservazioni.py": {
       "byte": 7570,
       "sha256": "7d5c18c23563108a2543fb0fed495da5d50ee004773e15b67873a93320204d1f"
+    },
+    "requirements.txt": {
+      "byte": 342,
+      "sha256": "ad8f564deb83cc338979fa68578cf1c237873772a52c28f9130ee45619addc10"
+    },
+    "rlaif_module.py": {
+      "byte": 11548,
+      "sha256": "0ece9a0f70a57ab225f2cabf5cb763819a2645649d3f8fce9d347a84c14c403c"
     },
     "sdq1/__init__.py": {
       "byte": 0,
@@ -1157,6 +1397,50 @@
       "byte": 2092,
       "sha256": "ac6efb653d21dd1461ec077eeaca7ab0ff5eab87ede5c9beb4a307fdcbefb44d"
     },
+    "sito-claudio/README.md": {
+      "byte": 7531,
+      "sha256": "46d9f5b8143811d47f1f4294c89e5350dbc23059d8ce182a79879b2050fcc216"
+    },
+    "sito-claudio/genera_alpha.py": {
+      "byte": 15812,
+      "sha256": "a79036eb9e37afeff60183cf7ad64ab87584ed25065e4d486abd3c17b2d77b3b"
+    },
+    "sito-claudio/nuovi/alpha.html": {
+      "byte": 39669,
+      "sha256": "39916b565f19f478d7407df3173713c7863fdcb27767cdc482af6a5a17cfaa24"
+    },
+    "sito-claudio/nuovi/enzo.html": {
+      "byte": 17456,
+      "sha256": "12e6e49bec68cd28137da8940404b55c2f1365f3ba376c348a95877c00a3867e"
+    },
+    "sito-claudio/nuovi/flight_hunter/costi.py": {
+      "byte": 3753,
+      "sha256": "15c63a0c86b57f6dfe6b09d998c7f3d56a0f6d3165072f09d0f3031a3cd59613"
+    },
+    "sito-claudio/nuovi/lettura.html": {
+      "byte": 14496,
+      "sha256": "5650b7a183d5941bfe02f2d2fe5cf3eddedf9fc57bafa6f79cecf4af35cbccbd"
+    },
+    "sito-claudio/nuovi/nav.js": {
+      "byte": 2666,
+      "sha256": "e86a57cbd31a814f89e78cb3721f5ae8da678e356cacfbd626e776345a23345f"
+    },
+    "sito-claudio/nuovi/tarocchi_quantici_alpha.json": {
+      "byte": 37769,
+      "sha256": "d1b0ffc39989e40f440b4b6d1ad4544df69180d8446faf0f5f7d665db12a5b68"
+    },
+    "sito-claudio/nuovi/tests/test_costi_terra.py": {
+      "byte": 3782,
+      "sha256": "1d6eb30fcfe59b799a6aa6858c2dff04c9c446a7908b57883bec422833c529fe"
+    },
+    "sito-claudio/patch/costo-terra-reale.patch": {
+      "byte": 12291,
+      "sha256": "23cbe60af40466a6a1291adc8a85e52e48c2f7908c252bfa903731b5feb32c4c"
+    },
+    "sito-claudio/patch/responsive-mobile.patch": {
+      "byte": 3388,
+      "sha256": "3a6ace06f18dff72b09970f54f9868664f0d5ddd5241adb8714283f3e9e722f5"
+    },
     "test_ambiente.py": {
       "byte": 6116,
       "sha256": "4f1afa5e460e546eb0335f9d4e90c86373431b4d5dc68bb9b0677f59fc809cbc"
@@ -1164,6 +1448,10 @@
     "test_latenza.py": {
       "byte": 5541,
       "sha256": "90fc0f335a35a7ca7e15d43e31031fc5dd87e8b2154e4ccec609d51da670e06f"
+    },
+    "test_manifesto_integrita.py": {
+      "byte": 7497,
+      "sha256": "a745542356f0aa76701622ff88b68c6daf879f5a291b37a2ffaddaad54e22275"
     },
     "test_registro_ipotesi.py": {
       "byte": 7141,
@@ -1229,11 +1517,15 @@
       "byte": 11893,
       "sha256": "15d394dd66455e0dc4753c4127a2ff32396be7e9ba78a7bb7db9af041332cc88"
     },
+    "usa_backup_rosso.py": {
+      "byte": 3968,
+      "sha256": "33981ea8640a70c5d2d2a58c8b393ca564378351d05d4ce67418f8d901b4129a"
+    },
     "verificatore.py": {
       "byte": 9001,
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-17T20:29:12.748490+00:00",
+  "generato": "2026-09-17T20:35:16.146549+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
