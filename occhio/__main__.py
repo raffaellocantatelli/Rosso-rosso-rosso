@@ -23,19 +23,16 @@ from . import visione as vis
 
 
 def carica_env():
-    """Legge .env se c'e', senza sovrascrivere l'ambiente gia' impostato."""
-    try:
-        from dotenv import load_dotenv
-        load_dotenv()
-    except ImportError:
-        f = Path(".env")
-        if f.exists():
-            import os
-            for riga in f.read_text(encoding="utf-8").splitlines():
-                riga = riga.strip()
-                if riga and not riga.startswith("#") and "=" in riga:
-                    k, _, v = riga.partition("=")
-                    os.environ.setdefault(k.strip(), v.strip())
+    """Legge .env se c'e'. L'implementazione e' una sola: `ambiente.py`.
+
+    `occhio` si esegue dalla radice del repository, quindi il modulo si
+    trova. Se qualcuno lo sposta, meglio un ImportError rumoroso che due
+    letture di `.env` che divergono in silenzio (§6 regola 2).
+    """
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from ambiente import carica_env as _carica_env
+    return _carica_env()
 
 
 def check() -> int:
