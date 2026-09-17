@@ -112,6 +112,21 @@ oggi non c'è più, quindi l'esecuzione è stata fatta e scritta.
 **`RETTA` non è `CONFERMATA`.** Il tetto resta lì: eseguire non è confermare,
 e `CONFERMATA` richiede una fonte esterna che da qui non è raggiungibile.
 
+## 3-bis. Il Layer 4 ha un punto cieco, e la decisione e' tua
+
+**RECUPERATO.** `MANIFESTO_INTEGRITA.json` sorveglia un elenco scritto a mano
+piu' gli alberi `sdq1/ r3/ testi/ memoria/ falsificatori/ tests/`. Tutto il
+resto della radice non e' coperto: `occhio/` — cioe' il prodotto intero —
+`contraddittore.py`, `archivio.py`, `rassegna.py`, `esperimenti/`. Oggi ci
+sono entrati `ambiente.py` e `test_ambiente.py` (308 file), perche' §6 regola 4
+lo impone per i file nuovi; il resto no.
+
+Vale la pena saperlo com'e': **un Layer 4 che copre meta' del sistema dice
+«INTEGRITÀ OK» anche quando il prodotto e' stato cambiato di nascosto.** Non
+l'ho esteso da solo perche' significa decidere cosa e' nucleo di continuità e
+cosa no, e quella e' una tua riga, non mia. Se vuoi, si aggiunge `occhio` agli
+`ALBERI` e il manifesto passa da 308 a ~340 file.
+
 ## 4. Cosa resta a te — tre cose, in ordine di quanto costano
 
 1. **La chiave nei secrets** (§1). Due minuti. Sblocca il daily pensato e
