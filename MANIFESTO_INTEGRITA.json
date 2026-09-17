@@ -17,6 +17,10 @@
       "byte": 20068,
       "sha256": "b9df841852c49e56ef03c83c98b1ef3d0cd2bb9fe74d08fded6e1fea1064889e"
     },
+    "ambiente.py": {
+      "byte": 2962,
+      "sha256": "6df74a414b8f1de8252ed5cb3a284b73170905a48200cbcbcb1ca79423045ade"
+    },
     "falsificatori/__init__.py": {
       "byte": 1321,
       "sha256": "e11880d315ca08302b3039ecd95340a7f23caa8cbf8cad6215186f46d70cbe39"
@@ -66,8 +70,8 @@
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 5094,
-      "sha256": "50d3143c4761dad6d0628b26cf835dccbd549a509b3eeea1fcc2126c85a16a9f"
+      "byte": 5378,
+      "sha256": "9413f962a908e9e233b05b938e41d3de9db8710e3da14e3261e57e22a52abd20"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
@@ -1153,6 +1157,10 @@
       "byte": 2092,
       "sha256": "ac6efb653d21dd1461ec077eeaca7ab0ff5eab87ede5c9beb4a307fdcbefb44d"
     },
+    "test_ambiente.py": {
+      "byte": 6116,
+      "sha256": "4f1afa5e460e546eb0335f9d4e90c86373431b4d5dc68bb9b0677f59fc809cbc"
+    },
     "test_latenza.py": {
       "byte": 5541,
       "sha256": "90fc0f335a35a7ca7e15d43e31031fc5dd87e8b2154e4ccec609d51da670e06f"
@@ -1226,6 +1234,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-17T20:23:39.302971+00:00",
+  "generato": "2026-09-17T20:27:57.370162+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

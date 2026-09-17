@@ -92,6 +92,38 @@ def test_legge_env_senza_dotenv(tmp_path):
     _controlla_lettura(tmp_path, con_dotenv=False)
 
 
+CODICE_RISALITA = """
+    import os, sys
+    sys.path.insert(0, {radice!r})
+    os.chdir({dentro!r})
+    import ambiente
+    print(ambiente.carica_env(), os.environ.get("R3_PROVA_RISALITA"), sep="|")
+"""
+
+
+def test_senza_argomenti_i_due_rami_risalgono_uguale(tmp_path):
+    """`load_dotenv()` senza argomenti risale le cartelle. Anche il ripiego.
+
+    Se i due rami divergono qui, il programma si comporta in un modo o
+    nell'altro a seconda di quale libreria sia installata — che e' il difetto
+    che `ambiente.py` esiste per chiudere, riaperto un piano piu' sotto.
+    """
+    (tmp_path / ".env").write_text("R3_PROVA_RISALITA=dal-genitore\n", encoding="utf-8")
+    dentro = tmp_path / "una" / "due"
+    dentro.mkdir(parents=True)
+
+    esiti = []
+    for con_dotenv in (True, False):
+        r = _esegui(
+            CODICE_RISALITA.format(radice=str(RADICE), dentro=str(dentro)),
+            con_dotenv=con_dotenv,
+        )
+        assert r.returncode == 0, r.stderr
+        esiti.append(r.stdout.strip())
+
+    assert esiti[0] == esiti[1] == "True|dal-genitore", esiti
+
+
 def test_env_assente_non_e_un_errore():
     for con_dotenv in (True, False):
         r = _esegui(

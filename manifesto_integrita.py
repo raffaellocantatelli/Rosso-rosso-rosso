@@ -41,6 +41,11 @@ SORVEGLIATI = [
     "test_trasmissione_ciclica.py",
     "trasmissione_ciclica.py",
     "manifesto_integrita.py",
+    # L'unica lettura di `.env` del progetto, e il test che ne tiene i due rami
+    # allineati. Se cambia in silenzio, cambia quali chiavi vede il Core — e un
+    # Core che legge chiavi diverse da quelle che crede e' il §4 alla radice.
+    "ambiente.py",
+    "test_ambiente.py",
     # Il verificatore e i suoi falsificatori: sono la guardia che esegue P5/P6
     # invece di leggerli. Se qualcuno li ammorbidisce in silenzio, il registro
     # continua a dire RETTA senza che niente sia stato messo alla prova.

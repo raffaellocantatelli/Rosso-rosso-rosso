@@ -23,8 +23,22 @@ import os
 from pathlib import Path
 
 
-def carica_env(percorso: str | os.PathLike[str] = ".env") -> bool:
+def _risali_cercando_env(partenza: Path) -> Path | None:
+    """Il primo `.env` da `partenza` in su, come fa `find_dotenv` di dotenv."""
+    for cartella in [partenza, *partenza.parents]:
+        f = cartella / ".env"
+        if f.is_file():
+            return f
+    return None
+
+
+def carica_env(percorso: str | os.PathLike[str] | None = None) -> bool:
     """Porta le variabili di `.env` nell'ambiente. True se il file c'era.
+
+    Senza argomenti risale le cartelle a partire da quella corrente, come
+    `load_dotenv()` di python-dotenv: i due rami devono fare la stessa cosa,
+    o il comportamento del programma dipende da quale libreria e' installata —
+    che e' il difetto che questo file esiste per chiudere.
 
     Non sovrascrive mai una variabile gia' presente: nella Action le chiavi
     arrivano dai secrets, e un `.env` dimenticato nel checkout non deve
@@ -35,10 +49,12 @@ def carica_env(percorso: str | os.PathLike[str] = ".env") -> bool:
     except ImportError:
         pass
     else:
+        if percorso is None:
+            return bool(load_dotenv())
         return bool(load_dotenv(percorso))
 
-    f = Path(percorso)
-    if not f.is_file():
+    f = _risali_cercando_env(Path.cwd()) if percorso is None else Path(percorso)
+    if f is None or not f.is_file():
         return False
 
     for riga in f.read_text(encoding="utf-8").splitlines():
