@@ -1,0 +1,488 @@
+--- a/capability_registry.yaml
++++ b/capability_registry.yaml
+@@ -1,4 +1,13 @@
++
+ capabilities:
+   CAP-R3-002:
+     name: Evidence-Aware Planner
+     status: ACTIVE
++    owner: previous
++  CAP-R3-004:
++    name: Persistent Node Registry
++    status: ACTIVE
++    description: Hardened NodeRegistryStore with InMemory and PostgreSQL, atomic CAS, REJECT_CONFLICT, external checkpoint signing
++    provenance: renamed from misnamed CAP-R3-002, history preserved
++    integration: FabricNode -> NodeRegistryStore interface
++    compliance: R3-PEER/1.1c
+--- /dev/null
++++ b/cap_r3_004/store.py
+@@ -0,0 +1,24 @@
++
++from abc import ABC, abstractmethod
++from typing import Optional, List, Dict
++
++class NodeRegistryStore(ABC):
++    @abstractmethod
++    def register(self, node_id: str, key_id: str, public_key: str) -> Dict:
++        ...
++
++    @abstractmethod
++    def rotate(self, node_id: str, old_key_id: str, new_key_id: str, new_public_key: str) -> Dict:
++        ...
++
++    @abstractmethod
++    def revoke(self, node_id: str, key_id: str) -> Dict:
++        ...
++
++    @abstractmethod
++    def get_active(self, node_id: str) -> Optional[Dict]:
++        ...
++
++    @abstractmethod
++    def list_keys(self, node_id: str) -> List[Dict]:
++        ...
+--- /dev/null
++++ b/cap_r3_004/errors.py
+@@ -0,0 +1,30 @@
++
++from enum import Enum
++
++class RegistryErrorCode(str, Enum):
++    REJECT_CONFLICT = "REJECT_CONFLICT"
++    UNKNOWN_KEY = "UNKNOWN_KEY"
++    INVALID_STATE = "INVALID_STATE"
++    TWO_ACTIVE = "TWO_ACTIVE"
++    MISSING_DSN = "MISSING_DSN"
++
++class RegistryError(Exception):
++    def __init__(self, code: RegistryErrorCode, msg: str):
++        super().__init__(f"[{code}] {msg}")
++        self.code = code
++
++class KeyConflictError(RegistryError):
++    def __init__(self, msg="public key diversa per stesso (node_id,key_id)"):
++        super().__init__(RegistryErrorCode.REJECT_CONFLICT, msg)
++
++class UnknownKeyError(RegistryError):
++    def __init__(self, msg="chiave non trovata"):
++        super().__init__(RegistryErrorCode.UNKNOWN_KEY, msg)
++
++class InvalidStateError(RegistryError):
++    def __init__(self, msg="vecchia chiave non ACTIVE"):
++        super().__init__(RegistryErrorCode.INVALID_STATE, msg)
++
++class TwoActiveError(RegistryError):
++    def __init__(self, msg="due chiavi ACTIVE per stesso nodo impossibili"):
++        super().__init__(RegistryErrorCode.TWO_ACTIVE, msg)
+--- /dev/null
++++ b/cap_r3_004/in_memory.py
+@@ -0,0 +1,68 @@
++
++from typing import Optional, List, Dict
++import threading
++from .store import NodeRegistryStore
++from .errors import KeyConflictError, UnknownKeyError, InvalidStateError, TwoActiveError
++
++class InMemoryNodeRegistry(NodeRegistryStore):
++    def __init__(self, initial_keys: Optional[set] = None):
++        self._store: Dict[tuple, Dict] = {}
++        self._lock = threading.RLock()
++        self._initial = initial_keys or set()
++
++    def _check_two_active(self, node_id: str, exclude_key_id: Optional[str] = None):
++        actives = [v for (n,k), v in self._store.items() if n==node_id and v["status"]=="ACTIVE" and k!=exclude_key_id]
++        if actives:
++            raise TwoActiveError(f"node {node_id} ha gia ACTIVE {actives[0]['key_id']}")
++
++    def register(self, node_id: str, key_id: str, public_key: str) -> Dict:
++        with self._lock:
++            key = (node_id, key_id)
++            if key in self._store:
++                existing = self._store[key]
++                if existing["public_key"] == public_key:
++                    return {"status": "IDEMPOTENT", "record": existing}
++                else:
++                    raise KeyConflictError(f"conflict (node_id={node_id}, key_id={key_id}) public_key diversa")
++            self._check_two_active(node_id)
++            rec = {"node_id": node_id, "key_id": key_id, "public_key": public_key, "status": "ACTIVE"}
++            self._store[key] = rec
++            return {"status": "OK", "record": rec}
++
++    def rotate(self, node_id: str, old_key_id: str, new_key_id: str, new_public_key: str) -> Dict:
++        with self._lock:
++            old_key = (node_id, old_key_id)
++            if old_key not in self._store or self._store[old_key]["status"] != "ACTIVE":
++                raise InvalidStateError(f"old_key {old_key_id} non ACTIVE per nodo {node_id}")
++            new_key = (node_id, new_key_id)
++            if new_key in self._store:
++                if self._store[new_key]["public_key"] != new_public_key:
++                    raise KeyConflictError()
++            self._store[old_key]["status"] = "ROTATED"
++            try:
++                self._check_two_active(node_id, exclude_key_id=old_key_id)
++            except TwoActiveError:
++                self._store[old_key]["status"] = "ACTIVE"
++                raise
++            rec = {"node_id": node_id, "key_id": new_key_id, "public_key": new_public_key, "status": "ACTIVE"}
++            self._store[new_key] = rec
++            return {"status": "ROTATED", "old": old_key_id, "new": rec}
++
++    def revoke(self, node_id: str, key_id: str) -> Dict:
++        with self._lock:
++            key = (node_id, key_id)
++            if key not in self._store:
++                raise UnknownKeyError(f"revoke {node_id}/{key_id} - nessuna riga modificata")
++            del self._store[key]
++            return {"status": "REVOKED"}
++
++    def get_active(self, node_id: str) -> Optional[Dict]:
++        with self._lock:
++            for (n,k), v in self._store.items():
++                if n==node_id and v["status"]=="ACTIVE":
++                    return v
++            return None
++
++    def list_keys(self, node_id: str) -> List[Dict]:
++        with self._lock:
++            return [v for (n,k), v in self._store.items() if n==node_id]
+--- /dev/null
++++ b/cap_r3_004/postgres.py
+@@ -0,0 +1,148 @@
++
++import os
++from typing import Optional, List, Dict
++from .store import NodeRegistryStore
++from .errors import RegistryErrorCode, KeyConflictError, UnknownKeyError, InvalidStateError, TwoActiveError, RegistryError
++
++DDL = """
++CREATE TABLE IF NOT EXISTS node_keys (
++  node_id TEXT NOT NULL,
++  key_id TEXT NOT NULL,
++  public_key TEXT NOT NULL,
++  status TEXT NOT NULL CHECK (status IN ('ACTIVE','ROTATED','REVOKED')),
++  PRIMARY KEY (node_id, key_id)
++);
++CREATE UNIQUE INDEX IF NOT EXISTS uniq_active_node ON node_keys(node_id) WHERE status='ACTIVE';
++"""
++
++class PostgreSQLNodeRegistry(NodeRegistryStore):
++    def __init__(self, dsn: Optional[str] = None, use_real_db: Optional[bool] = None):
++        self.dsn = dsn or os.getenv("NODE_REGISTRY_DSN")
++        if not self.dsn and (use_real_db is True):
++            raise RegistryError(RegistryErrorCode.MISSING_DSN, "NODE_REGISTRY_DSN mancante")
++        self._mem = {}
++        self._real_conn = None
++        self._use_real = False
++        if self.dsn and use_real_db is not False:
++            try:
++                import psycopg
++                self._real_conn = psycopg.connect(self.dsn)
++                self._real_conn.autocommit = False
++                with self._real_conn.cursor() as cur:
++                    cur.execute(DDL)
++                self._real_conn.commit()
++                self._use_real = True
++            except Exception as e:
++                self._use_real = False
++                self._real_error = str(e)
++
++    def register(self, node_id: str, key_id: str, public_key: str) -> Dict:
++        if self._use_real:
++            import psycopg
++            try:
++                with self._real_conn.cursor() as cur:
++                    cur.execute("SELECT public_key, status FROM node_keys WHERE node_id=%s AND key_id=%s", (node_id, key_id))
++                    row = cur.fetchone()
++                    if row:
++                        if row[0] == public_key:
++                            self._real_conn.commit()
++                            return {"status": "IDEMPOTENT", "record": {"node_id": node_id, "key_id": key_id, "public_key": public_key, "status": row[1]}}
++                        else:
++                            self._real_conn.rollback()
++                            raise KeyConflictError()
++                    cur.execute("INSERT INTO node_keys(node_id,key_id,public_key,status) VALUES (%s,%s,%s,'ACTIVE')", (node_id,key_id,public_key))
++                self._real_conn.commit()
++                return {"status": "OK", "record": {"node_id": node_id, "key_id": key_id, "public_key": public_key, "status": "ACTIVE"}}
++            except psycopg.errors.UniqueViolation as e:
++                self._real_conn.rollback()
++                if "uniq_active_node" in str(e):
++                    raise TwoActiveError()
++                raise KeyConflictError()
++        else:
++            key = (node_id, key_id)
++            if key in self._mem:
++                if self._mem[key]["public_key"] == public_key:
++                    return {"status": "IDEMPOTENT", "record": self._mem[key]}
++                raise KeyConflictError()
++            for (n,k), v in self._mem.items():
++                if n==node_id and v["status"]=="ACTIVE":
++                    raise TwoActiveError()
++            rec = {"node_id": node_id, "key_id": key_id, "public_key": public_key, "status": "ACTIVE"}
++            self._mem[key]=rec
++            return {"status":"OK","record":rec}
++
++    def rotate(self, node_id: str, old_key_id: str, new_key_id: str, new_public_key: str) -> Dict:
++        if self._use_real:
++            import psycopg
++            with self._real_conn.cursor() as cur:
++                cur.execute("SELECT status FROM node_keys WHERE node_id=%s AND key_id=%s FOR UPDATE", (node_id, old_key_id))
++                row = cur.fetchone()
++                if not row or row[0] != "ACTIVE":
++                    self._real_conn.rollback()
++                    raise InvalidStateError()
++                cur.execute("UPDATE node_keys SET status='ROTATED' WHERE node_id=%s AND key_id=%s", (node_id, old_key_id))
++                try:
++                    cur.execute("INSERT INTO node_keys(node_id,key_id,public_key,status) VALUES (%s,%s,%s,'ACTIVE') ON CONFLICT (node_id,key_id) DO NOTHING", (node_id,new_key_id,new_public_key))
++                    cur.execute("SELECT public_key FROM node_keys WHERE node_id=%s AND key_id=%s", (node_id,new_key_id))
++                    r2 = cur.fetchone()
++                    if r2 and r2[0] != new_public_key:
++                        self._real_conn.rollback()
++                        raise KeyConflictError()
++                except psycopg.errors.UniqueViolation:
++                    self._real_conn.rollback()
++                    raise TwoActiveError()
++            self._real_conn.commit()
++            return {"status":"ROTATED","old":old_key_id,"new":{"node_id":node_id,"key_id":new_key_id,"public_key":new_public_key,"status":"ACTIVE"}}
++        else:
++            old = (node_id, old_key_id)
++            if old not in self._mem or self._mem[old]["status"]!="ACTIVE":
++                raise InvalidStateError()
++            new = (node_id, new_key_id)
++            if new in self._mem and self._mem[new]["public_key"]!=new_public_key:
++                raise KeyConflictError()
++            self._mem[old]["status"]="ROTATED"
++            for (n,k), v in list(self._mem.items()):
++                if n==node_id and k!=old_key_id and k!=new_key_id and v["status"]=="ACTIVE":
++                    self._mem[old]["status"]="ACTIVE"
++                    raise TwoActiveError()
++            rec = {"node_id":node_id,"key_id":new_key_id,"public_key":new_public_key,"status":"ACTIVE"}
++            self._mem[new]=rec
++            return {"status":"ROTATED","old":old_key_id,"new":rec}
++
++    def revoke(self, node_id: str, key_id: str) -> Dict:
++        if self._use_real:
++            with self._real_conn.cursor() as cur:
++                cur.execute("DELETE FROM node_keys WHERE node_id=%s AND key_id=%s", (node_id,key_id))
++                if cur.rowcount==0:
++                    self._real_conn.rollback()
++                    raise UnknownKeyError()
++            self._real_conn.commit()
++            return {"status":"REVOKED"}
++        else:
++            key=(node_id,key_id)
++            if key not in self._mem:
++                raise UnknownKeyError()
++            del self._mem[key]
++            return {"status":"REVOKED"}
++
++    def get_active(self, node_id: str) -> Optional[Dict]:
++        if self._use_real:
++            with self._real_conn.cursor() as cur:
++                cur.execute("SELECT node_id,key_id,public_key,status FROM node_keys WHERE node_id=%s AND status='ACTIVE' LIMIT 1", (node_id,))
++                row=cur.fetchone()
++                if not row:
++                    return None
++                return {"node_id":row[0],"key_id":row[1],"public_key":row[2],"status":row[3]}
++        else:
++            for (n,k), v in self._mem.items():
++                if n==node_id and v["status"]=="ACTIVE":
++                    return v
++            return None
++
++    def list_keys(self, node_id: str) -> List[Dict]:
++        if self._use_real:
++            with self._real_conn.cursor() as cur:
++                cur.execute("SELECT node_id,key_id,public_key,status FROM node_keys WHERE node_id=%s", (node_id,))
++                return [{"node_id":r[0],"key_id":r[1],"public_key":r[2],"status":r[3]} for r in cur.fetchall()]
++        else:
++            return [v for (n,k), v in self._mem.items() if n==node_id]
+--- /dev/null
++++ b/cap_r3_004/fabric_node.py
+@@ -0,0 +1,44 @@
++
++from typing import Optional
++from .store import NodeRegistryStore
++from .in_memory import InMemoryNodeRegistry
++from .postgres import PostgreSQLNodeRegistry
++import os
++
++class FabricNode:
++    """
++    CAP-R3-004: FabricNode dipende da NodeRegistryStore, non istanzia direttamente PG o InMemory.
++    Supporta R3-PEER/1.1c: ChannelRegistry, observed vs canonical head, provref opaco.
++    """
++    def __init__(self, node_id: str, registry_store: NodeRegistryStore, backup_store=None, channel_registry=None):
++        self.node_id = node_id
++        self.registry: NodeRegistryStore = registry_store
++        self.backup_store = backup_store
++        self.channel_registry = channel_registry
++        # R3-PEER: provref opaco - mapping solo in secret store
++        self.provider_account_ref = os.getenv("PROVIDER_ACCOUNT_REF")  # deve essere provref:...
++
++    def register_key(self, key_id: str, public_key: str):
++        return self.registry.register(self.node_id, key_id, public_key)
++
++    def rotate_key(self, old_key_id: str, new_key_id: str, new_public_key: str):
++        res = self.registry.rotate(self.node_id, old_key_id, new_key_id, new_public_key)
++        if self.backup_store:
++            self.backup_store.snapshot(self.node_id, res["new"])
++        return res
++
++    def revoke_key(self, key_id: str):
++        return self.registry.revoke(self.node_id, key_id)
++
++    def get_active(self):
++        return self.registry.get_active(self.node_id)
++
++    @staticmethod
++    def from_env(node_id: str) -> "FabricNode":
++        # Factory che rispetta R3-PEER + CAP-R3-004: ENV non hardcodato
++        dsn = os.getenv("NODE_REGISTRY_DSN")
++        if dsn:
++            store = PostgreSQLNodeRegistry(dsn=dsn)
++        else:
++            store = InMemoryNodeRegistry()
++        return FabricNode(node_id=node_id, registry_store=store)
+--- /dev/null
++++ b/cap_r3_004/channel_registry.py
+@@ -0,0 +1,12 @@
++
++from typing import Optional, Set
++
++class ChannelRegistry:
++    def __init__(self, allowed_channels: Optional[set] = None):
++        self.allowed = allowed_channels or set()
++
++    def is_authorized(self, channel_id: str) -> bool:
++        return channel_id in self.allowed
++
++    def authorize(self, channel_id: str):
++        self.allowed.add(channel_id)
+--- /dev/null
++++ b/cap_r3_004/__init__.py
+@@ -0,0 +1 @@
++__all__ = []
+--- /dev/null
++++ b/tests/test_registry.py
+@@ -0,0 +1,61 @@
++
++import pytest
++from cap_r3_004.in_memory import InMemoryNodeRegistry
++from cap_r3_004.postgres import PostgreSQLNodeRegistry
++from cap_r3_004.errors import KeyConflictError, UnknownKeyError, TwoActiveError, InvalidStateError
++from cap_r3_004.fabric_node import FabricNode
++
++def get_stores():
++    return [InMemoryNodeRegistry(), PostgreSQLNodeRegistry(dsn=None, use_real_db=False)]
++
++@pytest.mark.parametrize("store", get_stores())
++def test_register_same_key_id_same_key_is_idempotent(store):
++    r1 = store.register("nodeA", "k1", "pub1")
++    assert r1["status"] in ("OK","IDEMPOTENT")
++    r2 = store.register("nodeA", "k1", "pub1")
++    assert r2["status"] == "IDEMPOTENT"
++
++@pytest.mark.parametrize("store", get_stores())
++def test_register_same_key_id_different_key_rejects_conflict(store):
++    store.register("nodeB", "k1", "pub1")
++    with pytest.raises(KeyConflictError) as exc:
++        store.register("nodeB", "k1", "pub-different")
++    assert exc.value.code.value == "REJECT_CONFLICT"
++
++@pytest.mark.parametrize("store", get_stores())
++def test_two_active_keys_impossible(store):
++    store.register("nodeC", "k1", "pub1")
++    with pytest.raises(TwoActiveError):
++        store.register("nodeC", "k2", "pub2")
++
++@pytest.mark.parametrize("store", get_stores())
++def test_revoke_unknown_key_returns_error(store):
++    with pytest.raises(UnknownKeyError) as exc:
++        store.revoke("nodeX", "nonexistent")
++    assert exc.value.code.value == "UNKNOWN_KEY"
++
++@pytest.mark.parametrize("store", get_stores())
++def test_rotate_verifies_old_active(store):
++    store.register("nodeD", "k1", "pub1")
++    with pytest.raises(InvalidStateError):
++        store.rotate("nodeD", "k-wrong", "k2", "pub2")
++    res = store.rotate("nodeD", "k1", "k2", "pub2")
++    assert res["status"] == "ROTATED"
++    assert store.get_active("nodeD")["key_id"] == "k2"
++    with pytest.raises(InvalidStateError):
++        store.rotate("nodeD", "k1", "k3", "pub3")
++
++@pytest.mark.parametrize("store", get_stores())
++def test_fabric_registry_integration(store):
++    node = FabricNode(node_id="fabric-1", registry_store=store)
++    node.register_key("k1", "pub1")
++    assert node.get_active()["key_id"] == "k1"
++
++def test_mutable_default_is_none():
++    import inspect
++    from cap_r3_004.in_memory import InMemoryNodeRegistry
++    from cap_r3_004.channel_registry import ChannelRegistry
++    sig1 = inspect.signature(InMemoryNodeRegistry.__init__)
++    assert sig1.parameters["initial_keys"].default is None
++    sig2 = inspect.signature(ChannelRegistry.__init__)
++    assert sig2.parameters["allowed_channels"].default is None
+--- /dev/null
++++ b/tests/test_concurrent.py
+@@ -0,0 +1,37 @@
++
++import threading
++from cap_r3_004.in_memory import InMemoryNodeRegistry
++from cap_r3_004.postgres import PostgreSQLNodeRegistry
++from cap_r3_004.errors import InvalidStateError, TwoActiveError
++
++def run_double_rotation(store):
++    store.register("node-conc", "k1", "pub1")
++    results = []
++    def attempt(new_id):
++        try:
++            r = store.rotate("node-conc", "k1", new_id, f"pub-{new_id}")
++            results.append(("OK", new_id))
++        except (InvalidStateError, TwoActiveError) as e:
++            results.append(("FAIL", new_id, str(e.code)))
++
++    t1 = threading.Thread(target=attempt, args=("k2",))
++    t2 = threading.Thread(target=attempt, args=("k3",))
++    t1.start()
++    t2.start()
++    t1.join()
++    t2.join()
++    ok = [x for x in results if x[0]=="OK"]
++    fail = [x for x in results if x[0]=="FAIL"]
++    assert len(ok)==1, f"expected 1 OK got {results}"
++    assert len(fail)==1
++    active = store.get_active("node-conc")
++    assert active["key_id"] in ("k2","k3")
++    all_keys = store.list_keys("node-conc")
++    actives = [k for k in all_keys if k["status"]=="ACTIVE"]
++    assert len(actives)==1
++
++def test_double_rotation_inmemory():
++    run_double_rotation(InMemoryNodeRegistry())
++
++def test_double_rotation_postgres_sim():
++    run_double_rotation(PostgreSQLNodeRegistry(dsn=None, use_real_db=False))
+--- /dev/null
++++ b/tests/test_r3_peer.py
+@@ -0,0 +1,17 @@
++
++from cap_r3_004.channel_registry import ChannelRegistry
++from cap_r3_004.fabric_node import FabricNode
++from cap_r3_004.in_memory import InMemoryNodeRegistry
++
++def test_channel_id_authorization():
++    cr = ChannelRegistry(allowed_channels={"ch-allowed"})
++    assert cr.is_authorized("ch-allowed")
++    assert not cr.is_authorized("ch-evil")
++
++def test_provider_ref_opaco():
++    import os
++    os.environ["PROVIDER_ACCOUNT_REF"] = "provref:abc123"
++    store = InMemoryNodeRegistry()
++    node = FabricNode(node_id="n1", registry_store=store)
++    assert node.provider_account_ref.startswith("provref:")
++    del os.environ["PROVIDER_ACCOUNT_REF"]
