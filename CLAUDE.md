@@ -293,6 +293,52 @@ impedirlo.
 
 ---
 
+## 7-bis. Cosa vale come test (stabilito da Claudio Terzi il 18/09/2026)
+
+Un test non vale perché si chiama bene, né perché contiene la stringa giusta.
+**Deve osservare la proprietà che promette, nel modo reale in cui quella
+proprietà fallisce.**
+
+La regola nasce da un caso misurato: un test asseriva `"FOR UPDATE" in sql` e
+restava verde mentre due rotazioni concorrenti, su un PostgreSQL vero,
+producevano **due chiavi ACTIVE**. Quelle parole erano presenti per tutto il
+tempo in cui il lock non proteggeva niente.
+
+| se prometti | il test deve avere |
+|---|---|
+| concorrenza | **due scrittori veri**, non due chiamate in fila |
+| replay | **un replay vero**: la stessa busta, di nuovo |
+| rollback | **lo stato prima e dopo**, confrontati |
+| provenienza | **la ricostruzione effettiva** dell'origine, non il campo che la dichiara |
+| durabilità | un processo che **muore**, non un `flush()` |
+
+Corollario, e costa: **un test va provato rimettendo il difetto che dichiara di
+prendere.** Se non cade, non prova quella proprietà — prova qualcos'altro, o
+niente. È già successo tre volte in questo progetto in due giorni: un campo
+`false_adoption: true` che significava il contrario, un
+`test_rotation_revocation_preserves_history` che respingeva la busta storica
+come `REPLAY` prima di arrivare al controllo della chiave, e la grep su
+`FOR UPDATE`. Tre volte lo stesso §4: **il sistema legge la propria eco come
+risposta.**
+
+### La formula, per i nodi che arrivano
+
+> un concetto → **un canone operativo**;
+> molte provenienze → **tutte preservate**;
+> documenti storici → **mai riscritti**;
+> correzioni → **append-only**;
+> test → **devono poter fallire sulla proprietà che dichiarano di provare**.
+
+Conseguenza operativa, decisa il 18/09: quando due nodi scrivono due volte lo
+stesso concetto, non si tengono due versioni. Si sceglie **il canone
+operativo** — quello che ha PR, CI, HEAD e test misurabili — e l'altra diventa
+una **patch candidata** verso di esso, con le proprie prove allegate. Adottata
+la patch, la copia parallela si marca `ABSORBED`/`SUPERSEDED` e **non si corregge
+più separatamente**. Un documento storico, invece, non si tocca mai: si estende
+con un addendum (`memoria/ADDENDUM_ARTEFATTO_PANAJEDREZ.md` è il primo).
+
+---
+
 ## 8. Prima di chiudere
 
 **Se esiste `PROSSIMO_PASSO.md`, leggilo subito dopo questo file.** È lo stato

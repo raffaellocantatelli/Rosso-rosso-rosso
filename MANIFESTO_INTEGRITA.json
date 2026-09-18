@@ -18,8 +18,8 @@
       "sha256": "171162ee693013221134abbcc27fc3c6ff104ad31cda6f1dd91184b33bd0eb33"
     },
     "CLAUDE.md": {
-      "byte": 15444,
-      "sha256": "c16d7b3939bd251f195a77a1b9579cc8095a7b37f11d4c06e31e697a6c42fb10"
+      "byte": 17724,
+      "sha256": "377ee5123df776bb00a8654bfaaba178f267974d8d27cbf96141ef98ff83d199"
     },
     "INNESTO_PRIVATO.md": {
       "byte": 2267,
@@ -156,6 +156,10 @@
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
       "sha256": "6cc0eaaaf73d66edcc68d19cb49228cab4c04ba1cf2b67cabf0dc24c277c65c2"
+    },
+    "memoria/ADDENDUM_ARTEFATTO_PANAJEDREZ.md": {
+      "byte": 5454,
+      "sha256": "f6e69ce582800cb66b63d8ca423ada1e27d803b9a59bb64dd1e71a31ec369a59"
     },
     "memoria/CONTRADDITTORIO.md": {
       "byte": 4647,
@@ -1050,8 +1054,8 @@
       "sha256": "0b2db6080b9530c89d11f4d1b42ca03928c6b4b716e5c73d6ce036f58d133779"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 10552,
-      "sha256": "f7c082b16423dbf2e21b660724e0ba375e83034d2a1b214ab306b4651b524a97"
+      "byte": 10786,
+      "sha256": "a852889f0701fafe2cbe71eaa97d819bc594c9047d70116082e81329e6762317"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1526,6 +1530,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-17T20:35:16.146549+00:00",
+  "generato": "2026-09-18T01:33:38.385642+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
