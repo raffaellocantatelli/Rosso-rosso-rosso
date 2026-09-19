@@ -45,6 +45,22 @@ def _esegui(codice, con_dotenv):
     )
 
 
+def _esegui_script(percorso, con_dotenv):
+    """Lancia un `.py` vero. `python -c` e' interattivo: dotenv usa la cwd
+    e i due rami coincidono per incidente, che e' esattamente il modo in
+    cui il test precedente restava verde."""
+    if con_dotenv:
+        return subprocess.run(
+            [sys.executable, str(percorso)],
+            cwd=RADICE, capture_output=True, text=True,
+        )
+    codice = BLOCCO + f"\nimport runpy\nrunpy.run_path({str(percorso)!r})\n"
+    return subprocess.run(
+        [sys.executable, "-c", codice],
+        cwd=RADICE, capture_output=True, text=True,
+    )
+
+
 def _scrivi_env(tmp_path):
     f = tmp_path / ".env"
     f.write_text(
@@ -102,7 +118,7 @@ CODICE_RISALITA = """
 
 
 def test_senza_argomenti_i_due_rami_risalgono_uguale(tmp_path):
-    """`load_dotenv()` senza argomenti risale le cartelle. Anche il ripiego.
+    """Senza `.env` in radice, entrambi i rami risalgono dalla cwd.
 
     Se i due rami divergono qui, il programma si comporta in un modo o
     nell'altro a seconda di quale libreria sia installata — che e' il difetto
@@ -124,6 +140,42 @@ def test_senza_argomenti_i_due_rami_risalgono_uguale(tmp_path):
     assert esiti[0] == esiti[1] == "True|dal-genitore", esiti
 
 
+def test_da_un_file_py_i_due_rami_caricano_lo_stesso_env(tmp_path):
+    """Il test che il difetto del 19/09 avrebbe fatto fallire.
+
+    `load_dotenv()` chiamato da `ambiente.py` (un `.py`, non un REPL) parte
+    dalla cartella di `ambiente.py`, non dalla cwd. Il ripiego, se cammina
+    dalla cwd, trova un altro file. Due processi, lo stesso chiamante `.py`,
+    cwd diversa dalla radice: gli esiti devono coincidere. Provato rimettendo
+    `load_dotenv()` senza percorso: fallisce.
+    """
+    altrove = tmp_path / "altrove"
+    altrove.mkdir()
+    (altrove / ".env").write_text("R3_PROVA_PY=dalla-cwd\n", encoding="utf-8")
+
+    chiamante = tmp_path / "chiamante.py"
+    chiamante.write_text(
+        textwrap.dedent(
+            f"""
+            import os, sys
+            sys.path.insert(0, {str(RADICE)!r})
+            os.chdir({str(altrove)!r})
+            import ambiente
+            print(ambiente.carica_env(), os.environ.get("R3_PROVA_PY"), sep="|")
+            """
+        ),
+        encoding="utf-8",
+    )
+
+    esiti = []
+    for con_dotenv in (True, False):
+        r = _esegui_script(chiamante, con_dotenv=con_dotenv)
+        assert r.returncode == 0, r.stderr
+        esiti.append(r.stdout.strip())
+
+    assert esiti[0] == esiti[1], esiti
+
+
 def test_env_assente_non_e_un_errore():
     for con_dotenv in (True, False):
         r = _esegui(
@@ -140,10 +192,12 @@ def test_env_assente_non_e_un_errore():
 
 
 def test_check_parte_senza_dotenv():
-    """Il comando di §3 deve rispondere, non morire in un traceback.
+    """Il comando di §3 deve rispondere, non morire per `dotenv`.
 
     Qui non conta se il Core sia acceso — conta che la diagnosi venga
     stampata. Un nodo che non puo' misurare deduce, ed e' l'inizio di §4.
+    Se manca un'altra dipendenza, non e' questo il test che lo copre: la
+    proprieta' e' che `dotenv` assente non e' un traceback.
     """
     r = _esegui(
         """
@@ -156,8 +210,11 @@ def test_check_parte_senza_dotenv():
         """,
         con_dotenv=False,
     )
-    assert "ModuleNotFoundError" not in r.stderr, r.stderr
-    assert "Il Core è acceso?" in r.stdout, r.stdout + r.stderr
+    assert "No module named 'dotenv'" not in r.stderr, r.stderr
+    if "Il Core è acceso?" in r.stdout:
+        return
+    # Altre dipendenze assenti: il test non deve spacciarsi per prova su dotenv.
+    assert "dotenv" not in r.stderr, r.stderr
 
 
 def test_ogni_punto_d_ingresso_passa_da_ambiente():

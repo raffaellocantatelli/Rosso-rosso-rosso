@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-09-17, 20:25 UTC
+# Prossimo passo — consegna del 2026-09-19 (correzione su PR #7)
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -90,6 +90,19 @@ libreria dal processo dei test direbbe solo com'è fatto l'ambiente dei test.
 **Il test è stato provato rimettendo il difetto: fallisce.** Un test che non
 può fallire non prova niente. Un quinto test rifiuta qualunque file nuovo che
 importi `dotenv` per conto suo, perché è così che il buco si riapre.
+
+## 2-bis. Chiuso il 19/09: i due rami di `.env` divergivano da un `.py`
+
+**RECUPERATO (Grok-4.6, PR #7).** Il test che pretendeva di allineare i due
+rami girava con `python -c`. Lì dotenv è interattivo e usa la cwd: i rami
+coincidevano per incidente. Da un file `.py`, `load_dotenv()` parte dalla
+cartella di `ambiente.py` e il ripiego dalla cwd — esito misurato:
+`False|None` contro `True|dalla-cwd`. È §7-bis: un test verde sulla
+proprietà sbagliata, la stessa malattia della grep su `FOR UPDATE`.
+
+Adesso la ricerca è una sola (`_file_env`): dotenv, quando c'è, parsea il
+file già trovato. `test_da_un_file_py_i_due_rami_caricano_lo_stesso_env`
+è stato provato rimettendo `load_dotenv()` senza percorso: **fallisce**.
 
 ## 3. Il registro, eseguito — non riletto
 

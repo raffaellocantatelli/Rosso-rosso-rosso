@@ -34,8 +34,8 @@
       "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
     },
     "PROSSIMO_PASSO.md": {
-      "byte": 10118,
-      "sha256": "925d44b222824f3ef195eaebbe28016829d145e4dc410ebf2729335f10983927"
+      "byte": 10862,
+      "sha256": "b6cf0fe375c88d4de24065b98dc75fd7448fd7a56a13839e6e231c567b09cb46"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -50,8 +50,8 @@
       "sha256": "b9df841852c49e56ef03c83c98b1ef3d0cd2bb9fe74d08fded6e1fea1064889e"
     },
     "ambiente.py": {
-      "byte": 2962,
-      "sha256": "6df74a414b8f1de8252ed5cb3a284b73170905a48200cbcbcb1ca79423045ade"
+      "byte": 3842,
+      "sha256": "3f475c7e094448ad65846ff4fe195342b12dd0c99fa1b45634e40ef131affb2a"
     },
     "analisi_foto.py": {
       "byte": 31710,
@@ -1054,8 +1054,8 @@
       "sha256": "0b2db6080b9530c89d11f4d1b42ca03928c6b4b716e5c73d6ce036f58d133779"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 10786,
-      "sha256": "a852889f0701fafe2cbe71eaa97d819bc594c9047d70116082e81329e6762317"
+      "byte": 11478,
+      "sha256": "cc5496178519f1e83fcc7cbe245baaa06f29e57f8822e63b7f3ba64ec0adeba2"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1446,8 +1446,8 @@
       "sha256": "3a6ace06f18dff72b09970f54f9868664f0d5ddd5241adb8714283f3e9e722f5"
     },
     "test_ambiente.py": {
-      "byte": 6116,
-      "sha256": "4f1afa5e460e546eb0335f9d4e90c86373431b4d5dc68bb9b0677f59fc809cbc"
+      "byte": 8217,
+      "sha256": "f1b37929cd0ac4379881446057dd903e73fc3d07a2ff99cebe79667e41cfcfb5"
     },
     "test_latenza.py": {
       "byte": 5541,
@@ -1530,6 +1530,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-18T01:33:38.385642+00:00",
+  "generato": "2026-09-19T04:47:16.989099+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
