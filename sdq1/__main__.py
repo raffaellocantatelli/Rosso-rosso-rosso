@@ -5,9 +5,10 @@ import os
 import sys
 import time
 
-from dotenv import load_dotenv
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from ambiente import carica_env  # noqa: E402
 
-load_dotenv()
+carica_env()
 
 from .llm.router import Router, COME_ATTIVARE, REAL_PROVIDERS
 from .memory.vector_store import VectorStore
@@ -17,7 +18,6 @@ from .sar import reflect as sar_reflect
 from . import daily as daily_mod
 from . import backup as backup_mod
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import registro_ipotesi  # noqa: E402
 import verificatore  # noqa: E402
 
