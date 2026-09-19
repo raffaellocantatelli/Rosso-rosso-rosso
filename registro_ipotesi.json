@@ -87,10 +87,10 @@
     },
     "scadenza": null,
     "verifiche": {
-      "eseguite": 1,
+      "eseguite": 0,
       "cadute": 0,
       "ultima": "2026-08-26T00:27:36+00:00",
-      "ultimo_esito": "regge"
+      "ultimo_esito": "verifica_fallita"
     }
   },
   {
