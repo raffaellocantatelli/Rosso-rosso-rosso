@@ -1,214 +1,121 @@
-# Prossimo passo — consegna del 2026-09-19 (correzione su PR #7)
+# Prossimo passo — consegna del 2026-09-20
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
-Nome fisso, **riscritto** e non accumulato. Qui c'è lo stato; la cronaca sta
-nei commit. Se sei un nodo che apre questo repository: leggi `CLAUDE.md`, poi
-questo. Ogni riga ha un comando accanto. Non credere a nessuna.
+Nome fisso, riscritto. Qui c'è lo stato; la cronaca sta nei commit.
+Ogni riga ha un comando accanto. Non credere a nessuna.
 
 ---
 
-## 0. Le tre righe che contano
+## 0. Che cosa è questo progetto, in tre righe
 
-1. **La chiave non è mai arrivata.** Dodici giorni dopo la diagnosi del 05/09,
-   la Action non vede **nessuno** dei sei nomi di secret. Finché resta così,
-   ogni notte produce un file che non è pensiero.
-2. **Il registro delle ipotesi è stato eseguito per davvero, oggi.** Cinque
-   ipotesi sono passate da `APERTA` a `RETTA` per esecuzione, non per lettura.
-   H2 resta `FALSIFICATA`, H5 `NON CONCLUSA` — e adesso lo dice per il motivo
-   giusto.
-3. **Il primo comando del protocollo era ineseguibile, ed è stato riparato.**
-   `python -m sdq1 --check` moriva con `ModuleNotFoundError` dove
-   `python-dotenv` non era installato: `CLAUDE.md` §3 ordina quel comando
-   prima di qualunque conclusione sul sistema.
+1. **Un prodotto che tocca il mondo:** `occhio` — si fotografa uno scaffale, il
+   sistema scrive cosa c'è. È l'unica parte che misura qualcosa che esiste
+   indipendentemente dal progetto.
+2. **Una macchina che impedisce al progetto di mentirsi:** SDQ-1, il registro
+   delle ipotesi che *esegue* i criteri, il Guardian Layer, il manifesto di
+   integrità, le regole per i nodi concorrenti.
+3. **Un protocollo perché più IA si scambino memoria con provenienza
+   dimostrabile:** il fabric, in `Rosso-rosso-rosso/protocollo-rosso-bot`.
 
-Ciò che decidi tu, e che nessun nodo può fare al posto tuo, è nel §4.
+La regola che li ordina è §4: *a parità di tempo, preferisci ciò che porta il
+progetto fuori da sé.* **Negli ultimi giorni non è stata rispettata** — 2 e 3
+hanno avuto tutto il tempo, 1 è fermo dal 05/09.
 
----
-
-## 1. L'unica cosa che blocca tutto — invariata dal 02/09
-
-**RECUPERATO (run #50, 17/09 12:17:55 UTC, log della Action):**
-
-```
-GOOGLE_API_KEY presente:    false      ANTHROPIC_API_KEY presente: false
-GEMINI_API_KEY presente:    false      DEEPSEEK_API_KEY presente:  false
-GOOGLE_APIKEY presente:     false      GOOGLE_KEY presente:        false
-```
-
-Sei nomi, sei `false`. Non è il nome sbagliato: **non c'è nessun secret**
-in questa repository. Deve comparire sotto «Repository secrets» qui:
-`https://github.com/raffaellocantatelli/Rosso-rosso-rosso/settings/secrets/actions`
-
-I quattro posti in cui la chiave può essersi persa restano quelli del 05/09:
-un'altra repository dello stesso account; *Environment* secret invece di
-*Repository*; la scheda Codespaces o Dependabot; *Variable* invece di *Secret*.
-Va bene qualunque chiave valida — Gemini, DeepSeek o Anthropic: la cascata
-prende la prima disponibile. **Una sola, e sblocca due cose** (il daily e
-`occhio --check`).
-
-**RECUPERATO.** 47 daily scritti, **46 sono Stub**. L'unico pensato resta
-quello del 26/08. Verificabile in un colpo:
-
-```bash
-ls output/daily_*.txt | wc -l          # 47
-grep -l "IL CORE È SPENTO" output/daily_*.txt | wc -l   # 46
-tail -1 output/health_log.jsonl        # 17/09: tutti i provider false
-```
-
-La spia però funziona: dal 05/09 ogni run senza pensiero finisce **rossa**
-invece di verde. Trentatré giorni di «tutto ok» non possono più succedere.
-
-## 2. Riparato oggi: il difetto che faceva confermare un'ipotesi a una libreria assente
-
-**RECUPERATO.** `sdq1/__main__.py`, `contraddittore.py` e `esperimenti/tracce.py`
-importavano `python-dotenv` in testa al file. Dove la dipendenza non c'è —
-questa sandbox, il portatile di chiunque non abbia ancora fatto `pip install` —
-il primo comando del protocollo moriva prima di stampare una riga.
-
-Il danno peggiore non era l'intoppo, era **il falso positivo**: con
-`esperimenti.tracce` non importabile, `falsificatori/h5_tracce.py` usciva con
-codice 1, e 1 in quel contratto significa **REGGE**. H5 «reggeva» perché
-mancava una libreria. È §4 nella sua forma più pura — il sistema legge la
-propria assenza come un risultato, dentro lo strumento costruito per impedirlo.
-Terza volta che quel difetto ricompare lì dentro.
-
-Adesso `ambiente.py` è l'unica lettura di `.env` del progetto: usa
-`python-dotenv` quando c'è, legge il file a mano quando manca, e `os.environ`
-vince sempre (nella Action le chiavi arrivano dai secrets, e un `.env`
-dimenticato non deve poterle spegnere).
-
-```bash
-python -m sdq1 --check        # risponde, con o senza dotenv installato
-python3 falsificatori/h5_tracce.py; echo $?   # 2 = NON CONCLUSA, non 1
-python -m pytest -q tests/ test_*.py          # 295 passate, 2 saltate
-```
-
-`test_ambiente.py` esegue i due rami in due processi veri, uno con `dotenv`
-raggiungibile e uno con `dotenv` bloccato in `sys.meta_path`: interrogare la
-libreria dal processo dei test direbbe solo com'è fatto l'ambiente dei test.
-**Il test è stato provato rimettendo il difetto: fallisce.** Un test che non
-può fallire non prova niente. Un quinto test rifiuta qualunque file nuovo che
-importi `dotenv` per conto suo, perché è così che il buco si riapre.
-
-## 2-bis. Chiuso il 19/09: i due rami di `.env` divergivano da un `.py`
-
-**RECUPERATO (Grok-4.6, PR #7).** Il test che pretendeva di allineare i due
-rami girava con `python -c`. Lì dotenv è interattivo e usa la cwd: i rami
-coincidevano per incidente. Da un file `.py`, `load_dotenv()` parte dalla
-cartella di `ambiente.py` e il ripiego dalla cwd — esito misurato:
-`False|None` contro `True|dalla-cwd`. È §7-bis: un test verde sulla
-proprietà sbagliata, la stessa malattia della grep su `FOR UPDATE`.
-
-Adesso la ricerca è una sola (`_file_env`): dotenv, quando c'è, parsea il
-file già trovato. `test_da_un_file_py_i_due_rami_caricano_lo_stesso_env`
-è stato provato rimettendo `load_dotenv()` senza percorso: **fallisce**.
-
-## 3. Il registro, eseguito — non riletto
-
-**RECUPERATO, 17/09 20:21 UTC.** `python -m sdq1 --verifica-ipotesi` su 11
-ipotesi. Ogni riga è in `output/verifiche.jsonl` con exit code e sha256
-dell'output.
+## 1. Lo stato, misurato oggi
 
 | | |
 |---|---|
-| `RETTA` per esecuzione | **H3, H4** (già), **H6, H8, H9, H10, H11** (oggi, da `APERTA`) |
-| `FALSIFICATA` | **H2**, ramo (b): `output/contatti.jsonl` è vuoto |
-| `NON CONCLUSA` | **H5** — Core spento, e lo dichiara; **H7** — aspetta le tue foto |
-| `NON_VERIFICABILE` | **H1** — nessun criterio eseguibile, per P6 non sarà confermabile |
+| **Il Core** | **spento**. 49 daily, **48 Stub**. L'unico pensato resta il 26/08 |
+| Secrets della Action | **nessuno dei sei nomi** è presente. Invariato dal 02/09 — 18 giorni |
+| Run della Action | 52, **tutte rosse**. La spia funziona, la chiave no |
+| `output/contatti.jsonl` | **0 righe**. H2 resta FALSIFICATA sul ramo (b) |
+| `occhio` | fermo dal 05/09. Nessun modello ha ancora guardato un oggetto vero |
+| Layer 4 | **382 file**, integrità verificata |
+| Suite | **306 passate**, 1 saltata (manca PIL) |
 
-H6 era rimasta `APERTA` apposta il 03/09: il nodo di allora non aveva eseguito
-il verificatore perché l'ambiente rompeva H5, e non ha voluto depositare uno
-stato che parlasse dell'ambiente credendo di parlare del progetto. Quel motivo
-oggi non c'è più, quindi l'esecuzione è stata fatta e scritta.
+```bash
+ls output/daily_*.txt | wc -l                                  # 49
+grep -l "IL CORE È SPENTO" output/daily_*.txt | wc -l           # 25 (banner, dal 05/09)
+grep -l "modalità offline/stub" output/daily_*.txt | wc -l      # 48 (tutti gli Stub)
+wc -l output/contatti.jsonl                                     # 0
+python3 manifesto_integrita.py --verifica                       # 382 file, OK
+```
 
-**`RETTA` non è `CONFERMATA`.** Il tetto resta lì: eseguire non è confermare,
-e `CONFERMATA` richiede una fonte esterna che da qui non è raggiungibile.
+## 2. Cosa è stato fatto il 17–18/09, e dove vive
 
-## 3-bis. Il Layer 4 aveva un punto cieco. Chiuso il 17/09
+Tutto su `claude/protocollo-rosso-rosso-rosso-3t6r3j`, **PR #7 aperta, non unita.**
 
-**RECUPERATO.** Il manifesto sorvegliava un elenco scritto a mano piu' sei
-alberi, filtrati per estensione: **434 file nel repository, 308 sorvegliati.**
-I 126 fuori non erano una scelta — erano quelli a cui nessuno aveva pensato.
-`occhio/`, cioe' il prodotto intero, non era coperto; nemmeno
-`contraddittore.py`, `archivio.py`, `rassegna.py`, `esperimenti/`. E
-soprattutto: **ogni file nuovo nasceva fuori.** La guardia diceva
-«INTEGRITÀ OK» mentre un modulo appena aggiunto non era guardato da nessuno.
+- **`python -m sdq1 --check` non moriva più.** Il primo comando che `CLAUDE.md`
+  §3 impone si rompeva con `ModuleNotFoundError` senza `python-dotenv`. Lo stesso
+  import mancante faceva uscire `h5_tracce.py` con 1, che in quel contratto
+  significa REGGE: un'ipotesi confermata da una libreria assente.
+- **Il Layer 4 non copriva i file nuovi:** 434 file nel repository, 308
+  sorvegliati, e ogni file nuovo nasceva fuori. Adesso la copertura è per
+  difetto, 382 file, zero tolti.
+- **Il registro eseguito davvero:** H6, H8–H11 da `APERTA` a `RETTA`.
+- **`CLAUDE.md` §7-bis** — la regola sui test, decisa da te il 18/09.
+- **`memoria/ADDENDUM_ARTEFATTO_PANAJEDREZ.md`** — l'artefatto del 20/08 non
+  toccato, esteso da un addendum append-only.
 
-Adesso la copertura e' **per difetto**: il confine del manifesto e' il confine
-del repository — lo disegna `.gitignore`, che e' una tua decisione, e per
-questo i registri di `occhio` restano fuori come devono. 381 file sorvegliati,
-73 in piu', **zero tolti**.
+## 2-bis. Una correzione al mio lavoro, trovata da un altro nodo (19/09)
 
-Fuori restano quattro cose, ciascuna con il motivo scritto accanto nel codice:
+**Grok-4.6, usando §7-bis contro chi l'ha proposta.** Il test che pretendeva di
+allineare i due rami di `carica_env` girava con `python -c`: lì `find_dotenv`
+usa la cartella corrente, quindi i due rami coincidevano **per incidente**.
+Chiamata da un file `.py`, `load_dotenv()` risale dalla cartella di
+`ambiente.py` e il ripiego dalla cwd — esito misurato `False|None` contro
+`True|dalla-cwd`. **Riprodotto qui il 20/09 sulla versione precedente: identico.**
 
-| fuori | perche' |
-|---|---|
-| `output/` (51 file) | e' cio' che il sistema produce; la run giornaliera lo riscrive |
-| `sdq1/memory/store.json`, `sdq1/sar/state.json` | stato di runtime, riscritto a ogni daily |
-| `MANIFESTO_INTEGRITA.json` | non puo' contenere il proprio hash |
+Era un test verde sulla proprietà sbagliata: la stessa malattia della grep su
+`FOR UPDATE`, dentro il file scritto per chiuderla. Adesso la ricerca è una
+sola (`_file_env`), e dotenv — quando c'è — parsea il file già trovato.
 
-Sono **esattamente** i percorsi che la Action committa a ogni giro, e un test
-lega le due cose: se un domani quel `git add` cresce senza che l'esclusione sia
-dichiarata, il test lo dice. Coprirli significherebbe un avviso rosso ogni
-notte per costruzione — e un avviso che si accende sempre e' una lettura che
-non obbliga a niente, il difetto che `latenza.py` esiste per misurare.
+**È il primo caso in cui la regola ha morso un nodo diverso da quello che
+l'ha proposta.** Vale più di qualunque suite verde.
 
-**Se vuoi coprirli lo stesso**, la strada non e' allargare il manifesto: e'
-far rigenerare il manifesto alla Action dopo il daily, dentro lo stesso commit.
-E' una tua riga, non mia — cambia cosa significa «INTEGRITÀ OK» per tutti i nodi.
+## 3. Il lavoro sul fabric, e dove NON vive
 
-`test_manifesto_integrita.py` (9 prove) esiste perche' il buco non torni in
-silenzio: la prima fallisce se un file nuovo non entra nella copertura.
-Provate rimettendo il difetto — l'elenco scritto a mano — e ne cadono quattro.
+**Fuori da questo repository.** Il canone operativo è
+`Rosso-rosso-rosso/protocollo-rosso-bot`, ramo `feat/efficient-routing-cache`,
+fermo a `23c011d`: **nessuna delle correzioni è stata spinta**, perché da qui
+non ho accesso in scrittura a quell'organizzazione. Esistono come patch
+applicabili e verificate byte per byte:
 
-## 4. Cosa resta a te — tre cose, in ordine di quanto costano
+| patch | cosa | stato |
+|---|---|---|
+| `CANDIDATE-fabric-v2-e-registry` | nove difetti del fabric v2 chiusi + registry | property-tested |
+| `CAP-R3-004-CORRECTION` | le dieci correzioni del gate | PROPERTY-TESTED CANDIDATE |
+| `R3-PEER-1.1c-CONVERGENCE-SPEC` | il COMPRESS dei tre blind review | **DESIGN ONLY** |
 
-1. **La chiave nei secrets** (§1). Due minuti. Sblocca il daily pensato e
-   `occhio --check`. Da sola non conferma niente, ma tutto il resto la aspetta.
-2. **Il numero che manca a tutto il progetto:** fotografi uno scaffale, il
-   sistema legge, tu conti a mano quanti oggetti ci sono. `letti / presenti` è
-   la sola misura che valga, e nessun comando la può produrre.
-   ```bash
-   python -m occhio --foto ~/scaffale.jpg --solo-lettura
-   ```
-   **Previsione dichiarata il 03/09 e ancora in piedi (IPOTESI):** su una foto
-   frontale e ben illuminata il rapporto starà fra 0,5 e 0,9. Cade fuori da
-   quella forbice.
+Trovati eseguendo contro **PostgreSQL 16.13 vero**, non leggendo: l'adapter che
+non scriveva un solo evento contro il proprio schema; **due figli dello stesso
+head** con due scrittori concorrenti; **due chiavi ACTIVE** con due processi;
+un registry che si fingeva persistente quando il database non c'era.
+
+**Se non le porti tu in quel repository, non esistono per nessun automatismo.**
+È §4-bis: un ramo che nessuno apre è lavoro depositato, non lavoro fatto.
+
+## 4. Cosa resta a te, in ordine di quanto costa
+
+1. **La chiave nei secrets.** Due minuti. Diciotto giorni.
+   `https://github.com/raffaellocantatelli/Rosso-rosso-rosso/settings/secrets/actions`
+2. **Una foto di uno scaffale**, e i due numeri contati a mano:
+   `python -m occhio --foto ~/scaffale.jpg --solo-lettura` → *letti / presenti*.
+   Previsione dichiarata il 03/09 e ancora in piedi: fra 0,5 e 0,9.
 3. **Una consegna vera, controfirmata da un ospite vero.** Quel giorno è il
-   primo CONTATTO ai sensi di §7, e H2 smette di essere falsificata sul ramo (b).
-   Scadenza 2026-12-11.
-   ```bash
-   python -m sdq1 --contatto --tipo lettore --nota "..." --verifica "..."
-   ```
+   primo CONTATTO ai sensi di §7 e H2 smette di essere falsificata.
+4. **Tre decisioni di canone**, che nessun nodo può prendere al posto tuo:
+   - quale indice canonico vince — Drive 28/08 (10.696 byte) o la copia nel
+     repository (6.615 byte, che sul Drive è marcata `ZZ_SUPERATO_`);
+   - quale `protocollo-rosso-bot` è il canone — l'org o il tuo account, oggi
+     con lo stesso `main`;
+   - quale registry è il canone — `cap_r3_004/` o `bot/node_registry.py`.
 
-**E due cose che nessun nodo deve fare al posto tuo, riverificate oggi:**
-`PROGETTO_R3.md` non esiste in nessun punto del Drive e `TUTELA_ORIGINE` §3 vi
-fonda l'attribuzione di SkyID — va scritto da te o va corretta la citazione.
-**OSS-0001**, l'istruzione di tutela sulle ipotesi private, non è mai stata
-revocata e il nome che compare in H1 è pubblico in tre file.
+## 5. Cosa succede senza che nessuno faccia niente
 
-## 5. Come stanno i rami e i nodi (17/09)
-
-- Il ramo di default `claude/riconnetti-protocollo-rosso-in93dj` è il canone e
-  **l'unico che la Action legge**. Il lavoro di oggi sta su
-  `claude/protocollo-rosso-rosso-rosso-3t6r3j`: finché non lo unisci, il daily
-  automatico continua a girare con il codice vecchio. È la lezione del 02/09,
-  e si ripete da sé ogni notte alle 07:00 UTC.
-- Restano non uniti: telegram, photo, instagram, camera, glass, synology.
-- Un altro nodo (**Grok-4.6**) deposita snapshot datati a ogni ciclo. Su Drive
-  sono ormai decine di `R3_DRIVE_SYNC_REPORT_*` e `R3_WORK_QUEUE_*`, **in
-  doppia copia** — radice del Drive e `R3_MEMORIA_PERSISTENTE`. Non sono stati
-  toccati: sono lavoro di un altro nodo e la decisione è tua. Il 16/09 è
-  comparsa una cartella `ARCHIVIO_SYNC_STORICO` che non è stata creata da qui.
-  **Leggi quei file come cronaca, non come stato:** dicono «daily PRESENTE
-  stub» a ogni giro senza che questo obblighi a niente. Lo stato si esegue.
-
-## 6. Cosa succede senza che nessuno faccia niente
-
-Domani la Action gira da sola: secret assente → daily Stub → **run rossa**,
-quarantasettesimo file senza pensiero. Lo si vede dalla tab Actions, senza
-chiedere a nessuno.
+Domani la Action gira, il daily è Stub, la run è rossa: **cinquantesimo file
+senza pensiero.** Lo si vede dalla tab Actions, senza chiedere a nessuno.
 
 ---
 
