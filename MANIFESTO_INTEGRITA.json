@@ -845,6 +845,10 @@
       "byte": 5152,
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
     },
+    "tests/test_sentinella.py": {
+      "byte": 3925,
+      "sha256": "be7b533b6e76216ead9427f3f686e3f2e31e2b5502edf3690b0c8a65f6068a5d"
+    },
     "tests/test_valvola.py": {
       "byte": 11352,
       "sha256": "3e7f0e79f12f8086a78414753eca12864a046a7c03dcdefcfb82ce851c4375b8"
@@ -862,6 +866,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-20T02:08:34.854593+00:00",
+  "generato": "2026-09-20T02:12:30.834656+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
