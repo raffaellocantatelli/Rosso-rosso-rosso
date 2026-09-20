@@ -56,6 +56,8 @@ def build_parser():
     p.add_argument("--tipo")
     p.add_argument("--nota")
     p.add_argument("--verifica")
+    p.add_argument("--comunque", action="store_true",
+                   help="Registra anche se la valvola (§7) ferma la voce. Decide una persona, e il verdetto resta scritto nella voce")
 
     return p
 
@@ -143,6 +145,18 @@ TIPI_INTERNI = {
 }
 
 
+# Il §7 in tre classi, per la valvola. Le stesse parole di valvola/jev.py:
+# se qui e li' divergessero, la porta controllerebbe un'altra regola.
+def classe_sette(tipo):
+    if tipo in TIPI_INDIPENDENTI:
+        return "indipendente"
+    if tipo in TIPI_TRASMISSIONE:
+        return "trasmissione"
+    if tipo in TIPI_INTERNI:
+        return "interno"
+    return None
+
+
 def cmd_contatto(args):
     if not args.tipo:
         print("Errore: --contatto richiede almeno --tipo", file=sys.stderr)
@@ -178,6 +192,26 @@ def cmd_contatto(args):
     indipendente = tipo in TIPI_INDIPENDENTI
     trasmissione = tipo in TIPI_TRASMISSIONE
 
+    # La valvola: --tipo lo dichiara chi scrive, e finora nessuno lo
+    # controllava. Jev rilegge nota e verifica senza vedere l'etichetta e
+    # puo' solo abbassarla. Senza chiave dice ASSENTE e non ferma niente.
+    from valvola import controlla
+
+    verdetto = controlla(args.nota or "", args.verifica, classe_sette(tipo))
+    if verdetto.blocca() and not args.comunque:
+        print(f"\nFermata dalla valvola: {verdetto.stato}", file=sys.stderr)
+        print(f"  {verdetto.motivo}", file=sys.stderr)
+        if verdetto.probabilita:
+            for k, v in sorted(verdetto.probabilita.items(), key=lambda x: -x[1]):
+                print(f"    {k:<14} {v:.3f}", file=sys.stderr)
+        print(
+            "\nLa voce NON è stata scritta. Se il tipo è giusto e la valvola\n"
+            "sbaglia, riesegui con --comunque: decidi tu, e il verdetto resta\n"
+            "scritto nella voce perché si veda che è stato scavalcato.",
+            file=sys.stderr,
+        )
+        sys.exit(3)
+
     os.makedirs(os.path.dirname(CONTATTI_PATH), exist_ok=True)
     voce = {
         "tipo": tipo,
@@ -187,6 +221,8 @@ def cmd_contatto(args):
         "verifica": args.verifica,
         "timestamp": time.time(),
         "data_iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "valvola": verdetto.come_json(),
+        "valvola_scavalcata": bool(verdetto.blocca() and args.comunque),
     }
     with open(CONTATTI_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(voce, ensure_ascii=False) + "\n")
@@ -195,6 +231,11 @@ def cmd_contatto(args):
     print(f"  tipo:      {voce['tipo']}")
     print(f"  direzione: {voce['direzione']}")
     print(f"  verifica:  {voce['verifica']}")
+
+    if verdetto.blocca() and args.comunque:
+        print(f"\n  valvola:   {verdetto.stato} — SCAVALCATA da te, resta scritto")
+    elif verdetto.stato != "ASSENTE":
+        print(f"  valvola:   {verdetto.stato}")
 
     if indipendente:
         print("\nVale per H2: qualcun altro ha agito.")

@@ -147,6 +147,18 @@ Registrare un contatto reale:
 python -m sdq1 --contatto --tipo lettore --nota "..." --verifica "..."
 ```
 
+**La valvola §7 (20/09).** Fino al 20/09 `--tipo` era autodichiarato: chi
+scriveva la voce decideva da sé se contava per H2, e nessuno controllava.
+Adesso `valvola/` rilegge nota e verifica con **Jev** di TypeSafe AI — un
+modello che risponde con decisioni tipizzate e probabilità calibrate
+invece che in prosa — e **può solo declassare**: `indipendente` →
+`trasmissione` → `interno`, mai il contrario, con nessuna confidenza. È
+un modello, quindi per §7 non conferma niente: `vale_come_conferma` è un
+campo che vale sempre `False`. Senza `TYPESAFE_API_KEY` dice `ASSENTE` e
+non ferma nulla. `--comunque` la scavalca e lascia il verdetto scritto
+nella voce: la fonte sei tu. Dettagli in `VALVOLA.md`, garanzia eseguibile
+in `falsificatori/h12_valvola_non_promuove.py`.
+
 **H1** non ha un criterio di falsificazione eseguibile: dal 25/08 è
 `NON_VERIFICABILE` invece che `APERTA`. Per P6 non sarà confermabile — dirlo è
 più utile che lasciarla aperta per sempre.

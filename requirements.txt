@@ -14,5 +14,10 @@ Pillow>=10,<13
 # Autonomous Core v3 (autonomous_core_v3.py) — interfaccia Telegram
 python-telegram-bot>=21,<23
 
+# Valvola §7 (valvola/) — la sorella TypeSafe, decisioni tipizzate.
+# Senza chiave TYPESAFE_API_KEY la valvola dice ASSENTE e non ferma niente:
+# la dipendenza serve ai tipi e ai test, non a far girare il progetto.
+typesafe-sdk>=0.7,<1
+
 # Sviluppo
 pytest>=8

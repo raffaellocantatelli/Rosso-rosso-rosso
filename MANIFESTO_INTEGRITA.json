@@ -6,8 +6,8 @@
       "sha256": "395fee429a691de97d9de7400f0ce79ed4cead9338f01d146667bbd8ef01fed7"
     },
     "CLAUDE.md": {
-      "byte": 22422,
-      "sha256": "11ffd8c2c1eb666e34d92ffc87031a6e832bf9f286d8782619a61bcfa6c727bf"
+      "byte": 23207,
+      "sha256": "c9c889eb4f4dad611c2e44a00ef82d4bc49626f6b347bda1bcc7df6c3f961040"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -28,6 +28,10 @@
     "falsificatori/h11_generi.py": {
       "byte": 5910,
       "sha256": "184e531a73dae7353a443940888c0db5cab3f060902c932b2c0b68f475916fa3"
+    },
+    "falsificatori/h12_valvola_non_promuove.py": {
+      "byte": 5795,
+      "sha256": "969b20708636c9dda03625d0cfcf017c69c3ff753487b54779d3c29f919996c4"
     },
     "falsificatori/h2_battito_e_contatto.py": {
       "byte": 2695,
@@ -662,8 +666,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 12058,
-      "sha256": "4e970a043b852ad7b76c8d9245f66eb3015d48b0c7f2059f788c9d1a22bb46ff"
+      "byte": 13950,
+      "sha256": "cf31f0feccccbadff42b48a332ec7db03d4b6786a1cce77b03f9245c752e9713"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -837,6 +841,10 @@
       "byte": 5152,
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
     },
+    "tests/test_valvola.py": {
+      "byte": 10227,
+      "sha256": "3936ba4190300401649ab04c6d95ff5b0da4446d8346b01991c667b3fe1ad2cc"
+    },
     "tests/test_verificatore.py": {
       "byte": 16718,
       "sha256": "b85f5d6eeca5508751a23bafd34806e226e4406ac26334a309ecd5d70d2ae5b5"
@@ -850,6 +858,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-18T02:35:15.310389+00:00",
+  "generato": "2026-09-20T01:05:43.922085+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
