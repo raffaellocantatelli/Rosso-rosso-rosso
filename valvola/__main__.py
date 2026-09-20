@@ -15,12 +15,39 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
+from pathlib import Path
 
 from .jev import ASSENTE, CONCORDE, ERRORE, SOGLIA, classi, controlla, stato_sorella
 
 
+def carica_env() -> None:
+    """Legge .env senza sovrascrivere l'ambiente gia' impostato.
+
+    Cerca il file accanto al pacchetto, non nella cartella corrente: il
+    difetto corretto il 19/09 su `occhio` era esattamente questo — due
+    rami dello stesso caricatore che risalivano in modo diverso, e la
+    chiave che spariva a seconda di da dove lanciavi il comando.
+    """
+    radice = Path(__file__).resolve().parent.parent
+    f = radice / ".env"
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(f if f.exists() else None)
+        return
+    except ImportError:
+        pass
+    if f.exists():
+        for riga in f.read_text(encoding="utf-8").splitlines():
+            riga = riga.strip()
+            if riga and not riga.startswith("#") and "=" in riga:
+                k, _, v = riga.partition("=")
+                os.environ.setdefault(k.strip(), v.strip())
+
+
 def main(argv=None) -> int:
+    carica_env()
     p = argparse.ArgumentParser(
         prog="python -m valvola",
         description="Secondo parere tipizzato sul §7. Puo' solo declassare.",

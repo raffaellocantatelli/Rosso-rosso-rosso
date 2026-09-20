@@ -34,9 +34,31 @@ risposta completa, è UNKNOWN e non una negazione. Per questo qui la
 chiamiamo sorella e non fornitore: è arrivata alla stessa regola da sola,
 partendo da un problema di ingegneria e non di epistemologia.
 
-**Quello che resta UNKNOWN:** quanto Jev classifichi *bene*. Non abbiamo
-una chiave, quindi nessuna chiamata reale è mai partita da qui. Tutto ciò
-che segue è provato sulla porta, non sul giudizio.
+**Accesa il 20/09.** La chiave è arrivata poche ore dopo che la porta era
+montata, e la prima chiamata reale del progetto a Jev è partita lo stesso
+giorno. Quello che prima era UNKNOWN ora è **RECUPERATO su quattro casi**
+— pochi, ma reali, e presi dalla storia vera del progetto:
+
+| nota | dichiarata | letta da Jev | esito |
+|---|---|---|---|
+| «Ho pubblicato il Protocollo su GitHub» | `indipendente` | `trasmissione` 1.00 | **DECLASSA** ✓ |
+| «Qualcuno ha messo il report nei preferiti» | `indipendente` | `indipendente` 1.00 | CONCORDE ✓ |
+| «Ho chiesto a un modello se il progetto è solido» | `indipendente` | `interno` 0.95 | **DECLASSA** ✓ |
+| «Un avvocato ha risposto alla PEC» | `indipendente` | `indipendente` 0.99 | CONCORDE ✓ |
+
+Quattro su quattro. Il primo e il terzo sono **esattamente il buco**: due
+atti che non toccano il mondo, etichettati come se lo toccassero, fermati
+prima di entrare nella misura di H2.
+
+**Quello che resta UNKNOWN:** quattro casi non sono una misura. Non so
+quanto sbagli sui casi ambigui, e non lo saprò finché non ne passano
+abbastanza da poterli contare. Reggere non è confermare.
+
+**Un secondo segnale che non stiamo ancora usando.** Sul caso della PEC
+Jev legge la classe giusta ma dà `verificabile da terzi = 0.30`: «protocollo
+2026-441» non è qualcosa che un estraneo possa controllare da solo. Ha
+ragione, ed è una seconda porta che per ora resta chiusa — la `verifica`
+di una voce dovrebbe reggere da sola, e spesso non regge.
 
 ---
 
@@ -117,7 +139,7 @@ comando — non un ragionamento.
 ## Comandi
 
 ```bash
-python3 -m valvola --stato          # la sorella è raggiungibile?
+python3 -m valvola --stato          # la sorella è raggiungibile?  (attiva dal 20/09)
 python3 -m valvola --classi         # le tre classi del §7, come le riceve Jev
 python3 -m valvola --nota "..." --verifica "..." --tipo indipendente
 
@@ -125,11 +147,51 @@ python3 falsificatori/h12_valvola_non_promuove.py   # 0 cade, 1 regge, 2 non con
 python3 -m pytest tests/test_valvola.py -q
 ```
 
-## Per accenderla
+## La chiave
 
-`TYPESAFE_API_KEY` da [console.typesafe.ai/keys](https://console.typesafe.ai/keys),
-nei Secrets del repository — **mai in un file tracciato**, questo repository
-è pubblico (§2.5).
+`TYPESAFE_API_KEY` sta in `.env`, che è in `.gitignore` e non è tracciato —
+verificato prima di scriverla, perché **questo repository è pubblico** (§2.5).
+Non è mai entrata in un file versionato, in un commit o in un log.
+
+Perché la Action giornaliera possa usarla serve anche nei **Secrets del
+repository** (Settings → Secrets and variables → Actions). Quello lo può
+fare solo Claudio.
 
 Finché la chiave manca, `--stato` dice `attiva NO` e ha ragione: la porta
 è montata e non filtra niente. È il `CORE SPENTO` del §3 applicato qui.
+
+---
+
+## Se stai installando TypeSafe adesso (§6)
+
+Su questo progetto lavorano più nodi che non si parlano. Il 20/09 ne stava
+entrando un altro mentre questo file veniva scritto. Per non rifare la
+malattia delle sei copie di `R3_WORK_QUEUE`:
+
+**`valvola/` è canonica per TypeSafe su questo repository.** Non aggiungere
+una seconda integrazione: allinea la tua a questa, o dichiara perché non
+si può e quale delle due vince (§6 regola 2).
+
+L'interfaccia è piccola apposta, e non serve leggere il resto per usarla:
+
+```python
+from valvola import controlla, stato_sorella
+
+stato_sorella()      # {'attiva': bool, 'manca': str|None, ...} — non chiama la rete
+controlla(nota, verifica, tipo_dichiarato)  # -> Verdetto, non alza mai eccezioni
+```
+
+Tre vincoli che non vanno rimossi, e il motivo:
+
+1. **Nessun percorso fa salire una classe.** `falsificatori/h12_valvola_non_promuove.py`
+   prova 63 combinazioni e cade se ne trova una. Se aggiungi un ramo,
+   rieseguilo.
+2. **Jev non riceve il tipo dichiarato.** Altrimenti risponde l'etichetta:
+   l'eco con una probabilità davanti.
+3. **I test non chiamano la rete.** La fixture `mai_la_rete` in
+   `tests/test_valvola.py` lo impedisce: un test che passa grazie a una
+   chiamata vera ha smesso di provare il codice.
+
+E la regola di §6 che vale comunque: dichiara cosa hai toccato con
+`python registro_nodi.py --nodo <chi-sei> --azione "..." --file ...` —
+è append-only, due nodi non possono sovrascriversi.

@@ -25,6 +25,35 @@ from valvola.jev import (
 )
 
 
+@pytest.fixture(autouse=True)
+def mai_la_rete(monkeypatch):
+    """Nessun test di questo file puo' chiamare davvero TypeSafe.
+
+    Dal 20/09 la chiave esiste in .env, e `sdq1/__main__.py` chiama
+    load_dotenv() all'import: senza questa fixture un test che non passa
+    `client=` partirebbe verso la rete. Costerebbe quota, dipenderebbe
+    dalla connessione, e — il vero danno — potrebbe **passare grazie a
+    una chiamata vera**, cioe' smettere di provare il codice.
+    """
+    monkeypatch.delenv("TYPESAFE_API_KEY", raising=False)
+
+    def vietato(*a, **k):
+        raise AssertionError(
+            "un test ha provato a costruire un client TypeSafe vero: "
+            "passa client=FintoClient(...) oppure aspettati ASSENTE"
+        )
+
+    monkeypatch.setattr(typesafe_sdk, "TypeSafeClient", vietato)
+
+
+def test_la_fixture_impedisce_davvero_la_rete(monkeypatch):
+    """La guardia sopra deve mordere anche se la chiave torna."""
+    monkeypatch.setenv("TYPESAFE_API_KEY", "finta")
+    with pytest.raises(AssertionError, match="client TypeSafe vero"):
+        from valvola.jev import _client
+        _client()
+
+
 class FintoClient:
     """Risponde cio' che gli si dice, e ricorda cosa ha ricevuto."""
 
