@@ -162,6 +162,80 @@ Finché la chiave manca, `--stato` dice `attiva NO` e ha ragione: la porta
 
 ---
 
+## Il bot che legge — `/analizza` (20/09)
+
+`output/contatti.jsonl` è vuoto, e H2 è falsificata sul ramo (b) per
+questo. **Non perché non arrivi niente: perché registrare ciò che arriva
+costa una riga di terminale con tre argomenti, e quella riga non la scrive
+nessuno.** L'attrito è la causa.
+
+Quindi: giri al bot quello che ti è arrivato, e lui te lo legge.
+
+```
+/analizza Buongiorno, ho trovato il suo Protocollo su GitHub e l'ho letto
+tutto stanotte. Posso farle due domande? Sono Marco, insegno a Bologna.
+```
+```
+chi scrive      persona  (99%)
+  da fuori?     100%
+iniziativa      indipendente  (92%)
+genere          lettore  (100%)
+appiglio        88% — c'è qualcosa da controllare
+chiede risposta 96%
+urgenza         1.0/2 — Vorrebbe una risposta, ma può aspettare
+
+Potrebbe valere per H2 come --tipo lettore.
+Registrarlo è una tua decisione: nessun bot scrive quella metrica da solo.
+```
+
+Cinque domande in **una sola chiamata** — è il *speculative fan-out* che
+TypeSafe consiglia: costano poco, e il codice decide dopo quali guardare.
+
+**Non registra niente.** Il §3 dice che la metrica di H2 la alimenta solo
+un essere umano. Qui l'atto umano resta doppio: **giri** una cosa, e
+**decidi** se registrarla. Un bot che si registra i contatti da solo
+misura la propria eco, con un'interfaccia più comoda.
+
+### Tre difetti trovati eseguendo, non leggendo
+
+Provato su quattro messaggi veri prima di collegarlo, e ne è uscito
+storto tre volte:
+
+1. **`verificabile` dava sempre 10-17%.** Chiedevo se un estraneo potesse
+   controllare *un testo incollato* — ovviamente no, mai. La domanda
+   giusta era un'altra: **c'è dentro un appiglio** — un nome, una data,
+   un numero di protocollo, un link? Adesso dà 88% al lettore vero e 21%
+   alla newsletter.
+2. **Stampavo «persona (24%)» come se fosse una lettura.** Una risposta
+   al 24% è un lancio di moneta, e mostrarla come dato è un UNKNOWN
+   travestito. Sotto il 50% adesso esce **«non lo so»**, che è la
+   risposta onesta — e che è ciò per cui la `confidence` esiste.
+3. **La PEC di un ufficio veniva scartata.** Il mio criterio «automatico»
+   diceva «newsletter, notifica, messaggio in serie», e una PEC è
+   formale e quasi a modulo: ci finiva dentro al 44%. Ma per il §7 la
+   domanda non è *l'ha scritto un umano o una macchina* — è **qualcuno
+   ha deciso di mandarlo proprio a te**. Riscritta la domanda, la PEC
+   esce a 100% «da fuori» e viene proposta come `--tipo istituzione`,
+   che è il caso che per H2 vale di più.
+
+Il difetto stava nella domanda, non nella soglia e non nel modello. È la
+terza volta che questo progetto impara la stessa cosa — H12, la soglia,
+e adesso il mittente: **l'etichetta che vince è la domanda sbagliata, la
+distribuzione è quella giusta.**
+
+## La seconda porta, chiusa
+
+`autonomous_core_v3.registra_contatto()` scriveva in
+`output/contatti.jsonl` **senza nessun controllo sul tipo** — nemmeno
+quello che il comando CLI aveva da sempre. Due porte sulla stessa stanza,
+una sola con la serratura, e la più comoda era quella aperta.
+
+Adesso anche quella passa dalla valvola. Per scavalcarla dal bot:
+`/contatto !lettore | ... | ...` — il punto esclamativo è il `--comunque`
+della riga di comando, e lascia la stessa traccia.
+
+---
+
 ## Se stai installando TypeSafe adesso (§6)
 
 Su questo progetto lavorano più nodi che non si parlano. Il 20/09 ne stava

@@ -817,6 +817,10 @@
       "byte": 1557,
       "sha256": "199afafae11d45e35e0eb0c0d6daa44acfb986181bdc6f140b7894bdc4b26255"
     },
+    "tests/test_analisi.py": {
+      "byte": 6147,
+      "sha256": "70c5ee8ed9407e7809d3dc41036eb053fa36f5e01c39423baa943a6c64fa6118"
+    },
     "tests/test_analisi_foto.py": {
       "byte": 9726,
       "sha256": "1a8d650a8ff2d47e0842bec2deafba21a61dce8f17f6e415ba9d87a0b09859a4"
@@ -858,6 +862,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-20T01:09:16.148195+00:00",
+  "generato": "2026-09-20T02:08:34.854593+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

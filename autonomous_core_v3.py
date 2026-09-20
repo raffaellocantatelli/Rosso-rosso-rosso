@@ -566,7 +566,32 @@ class AutonomousCore:
 # CONTATTI — l'unica scrittura che richiede un essere umano
 # ============================================================
 
-def registra_contatto(tipo: str, nota: str, verifica: str) -> Dict[str, Any]:
+class ValvolaHaFermato(Exception):
+    """La valvola §7 ha fermato la voce prima che entrasse nella metrica."""
+
+    def __init__(self, verdetto):
+        super().__init__(verdetto.motivo)
+        self.verdetto = verdetto
+
+
+#: Gli stessi tipi di `sdq1 --contatto`, mappati sulle tre classi del §7.
+#: Se qui e li' divergessero, le due porte controllerebbero regole diverse.
+_TIPI_SETTE = {
+    "lettore": "indipendente", "download": "indipendente",
+    "citazione": "indipendente", "fork": "indipendente",
+    "risposta": "indipendente", "acquisto": "indipendente",
+    "istituzione": "indipendente",
+    "pubblicazione": "trasmissione", "invio": "trasmissione",
+    "ia": "interno", "nodo": "interno", "autore": "interno", "test": "interno",
+}
+
+
+def _classe_sette(tipo: str):
+    return _TIPI_SETTE.get((tipo or "").strip().lower())
+
+
+def registra_contatto(tipo: str, nota: str, verifica: str,
+                      forza: bool = False) -> Dict[str, Any]:
     """Appende a output/contatti.jsonl nel formato di `python -m sdq1 --contatto`.
 
     Chiamabile solo dal comando Telegram /contatto: è la metrica di H2 e
@@ -574,10 +599,24 @@ def registra_contatto(tipo: str, nota: str, verifica: str) -> Dict[str, Any]:
     """
     if not verifica.strip():
         raise ValueError("Un contatto senza verifica non è un contatto: serve come controllarlo.")
+
+    # La valvola §7. Fino al 20/09 questa porta era aperta: il comando CLI
+    # controllava il tipo dichiarato, questa funzione no, e scriveva nella
+    # stessa metrica di H2. Due porte sulla stessa stanza, una sola con la
+    # serratura. Senza chiave TypeSafe dice ASSENTE e non ferma niente.
+    from valvola import controlla
+
+    classe = _classe_sette(tipo)
+    verdetto = controlla(nota, verifica, classe)
+    if verdetto.blocca() and not forza:
+        raise ValvolaHaFermato(verdetto)
+
     voce = {
         "tipo": tipo,
         "nota": nota,
         "verifica": verifica,
+        "valvola": verdetto.come_json(),
+        "valvola_scavalcata": bool(verdetto.blocca() and forza),
         "timestamp": time.time(),
         "data_iso": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "origine": "telegram",
@@ -641,6 +680,7 @@ def costruisci_bot(core: "AutonomousCore"):
             "/run      — avvia il ciclo autonomo\n"
             "/stop     — ferma il ciclo\n"
             "/ciclo    — esegui un ciclo adesso\n"
+            "/analizza <messaggio>  — leggilo prima di decidere\n"
             "/contatto tipo | nota | come verificarlo\n"
             "/aiuto    — questo messaggio\n\n"
             "Nota: creazioni e proposte sono composizioni da template, "
@@ -709,8 +749,23 @@ def costruisci_bot(core: "AutonomousCore"):
                 "non conta per H2."
             )
             return
+        forza = pezzi[0].startswith("!")
+        tipo = pezzi[0].lstrip("!").strip()
         try:
-            voce = registra_contatto(pezzi[0], pezzi[1], "|".join(pezzi[2:]))
+            voce = registra_contatto(tipo, pezzi[1], "|".join(pezzi[2:]), forza=forza)
+        except ValvolaHaFermato as e:
+            v = e.verdetto
+            righe = "\n".join(
+                f"  {k:<14} {p:.0%}"
+                for k, p in sorted(v.probabilita.items(), key=lambda x: -x[1])
+            )
+            await update.message.reply_text(
+                f"Fermata dalla valvola: {v.stato}\n{v.motivo}\n{righe}\n\n"
+                "La voce NON è stata scritta. Se hai ragione tu, rimanda il "
+                f"comando con /contatto !{tipo} | ... — decidi tu, e resta "
+                "scritto che l'hai scavalcata."
+            )
+            return
         except ValueError as e:
             await update.message.reply_text(str(e))
             return
@@ -723,6 +778,35 @@ def costruisci_bot(core: "AutonomousCore"):
             "Questo è l'unico dato del sistema che viene da fuori."
         )
 
+    async def cmd_analizza(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Gira qui quello che ti è arrivato: te lo legge, non lo registra."""
+        if not autorizzato(update):
+            return
+        testo = " ".join(context.args) if context.args else ""
+        if not testo and update.message and update.message.reply_to_message:
+            testo = update.message.reply_to_message.text or ""
+        if not testo.strip():
+            await update.message.reply_text(
+                "Uso: /analizza <incolla qui il messaggio>\n"
+                "Oppure rispondi con /analizza a un messaggio inoltrato.\n\n"
+                "Ti dice chi ha scritto, se è arrivato da fuori, che genere "
+                "di evento è, se c'è qualcosa da andare a controllare e "
+                "quanto è urgente. Non registra niente: quello lo decidi tu."
+            )
+            return
+
+        from valvola.analisi import analizza, riassunto
+
+        lettura = analizza(testo)
+        testo_risposta = riassunto(lettura)
+        t = lettura.tipo_suggerito()
+        if t:
+            testo_risposta += (
+                f"\n\nPer registrarlo, quando hai la verifica in mano:\n"
+                f"/contatto {t} | <cosa è successo> | <come si controlla>"
+            )
+        await update.message.reply_text(testo_risposta)
+
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
     application.add_handler(CommandHandler("start", cmd_start))
     application.add_handler(CommandHandler("aiuto", cmd_start))
@@ -732,6 +816,7 @@ def costruisci_bot(core: "AutonomousCore"):
     application.add_handler(CommandHandler("stop", cmd_stop))
     application.add_handler(CommandHandler("ciclo", cmd_ciclo))
     application.add_handler(CommandHandler("contatto", cmd_contatto))
+    application.add_handler(CommandHandler("analizza", cmd_analizza))
     return application, Update
 
 
