@@ -138,22 +138,40 @@ che lo fa fallire da solo: un verificatore che dice sempre PASS e' il difetto di
 
 ---
 
-## 7. Stato della build di Candidate A
+## 7. Perche' non esiste un'immagine 3.8.51: la causa, trovata
 
-**RECUPERATO.** Il ramo `release/v3.8.51` **non si costruisce cosi' com'e'** in
-questo ambiente, e i due tentativi falliscono in punti diversi:
+**RECUPERATO.** Il ramo `release/v3.8.51` **non si costruisce** a questo commit,
+e i due bundler falliscono nello stesso punto:
 
-- con Turbopack (il default del Dockerfile): `Module not found: Can't resolve
-  'net' / 'tls' / 'readline'` — `playwright-core` finisce nel bundle
-  *Client Component Browser* passando per `browserPool.ts` →
-  `tokenHealthCheck.ts` → `src/lib/db/settings.ts` →
-  `dashboard/combos/page.tsx`;
-- con Webpack (`OMNIROUTE_USE_TURBOPACK=0`): heap esaurito a 6 GB.
+- Turbopack (il default del Dockerfile): `Module not found: Can't resolve
+  'net' / 'tls' / 'readline'`;
+- Webpack (`OMNIROUTE_USE_TURBOPACK=0`, heap 11 GB): `Failed to compile` con
+  `Can't resolve 'fs' / 'child_process' / 'module'`.
 
-**IPOTESI (falsificabile).** Non esiste un'immagine 3.8.51 perche' quel ramo,
-a questo commit, non produce un'immagine. Si falsifica in un modo solo:
-pubblicando o costruendo `3.8.51` da quel commit e vedendolo riuscire. Il
-tentativo con heap da 11 GB e' in corso; l'esito va scritto qui, qualunque sia.
+**Le tracce di import finiscono tutte nello stesso file**, e la causa e' una
+riga sola. `src/app/(dashboard)/dashboard/combos/page.tsx` e' `"use client"`,
+e in 3.8.51 acquista alla riga 88:
+
+```ts
+import { resolveCanonicalProviderModel } from "@omniroute/open-sse/services/model.ts";
+```
+
+Quell'import trascina nel bundle del browser `src/lib/db/settings.ts` →
+`tokenHealthCheck.ts` → `sharp`, `playwright-core`, gli executor `codex` — cioe'
+mezzo server. **Su `release/v3.8.50` la stessa pagina non importa
+`services/model.ts`** (verificato con `git show` sul ramo): e' nuovo in 3.8.51,
+ed e' la ragione per cui quel ramo non produce un'immagine.
+
+Non e' piu' un'ipotesi: e' la differenza fra i due rami, letta nel codice e
+confermata da due build fallite per la stessa catena.
+
+**Il patch di build, dichiarato**: `0001-build-client-bundle.patch` sostituisce
+quell'import con `resolveProviderAlias` da `open-sse/services/providerAlias.ts`
+(che dipende solo da una tabella di dati). La pagina legge soltanto `.provider`,
+che e' esattamente cio' che quella funzione calcola: il comportamento non
+cambia. **Non fa parte di Candidate A** — serve solo a poter costruire
+l'immagine e misurare la denylist. Va tenuto separato nel giudizio: se adotti A,
+adotti anche il fatto che quel ramo, com'e', non si costruisce.
 
 **Nota di ambiente, non una modifica a OmniRoute.** La build usa
 `Dockerfile.ccr`, identico a `Dockerfile` piu' la CA del proxy di sessione

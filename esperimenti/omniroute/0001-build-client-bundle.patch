@@ -1,0 +1,27 @@
+diff --git a/src/app/(dashboard)/dashboard/combos/page.tsx b/src/app/(dashboard)/dashboard/combos/page.tsx
+index d93a2d34..85d610e0 100644
+--- a/src/app/(dashboard)/dashboard/combos/page.tsx
++++ b/src/app/(dashboard)/dashboard/combos/page.tsx
+@@ -85,7 +85,12 @@ import {
+ import { getComboStepTarget } from "@/lib/combos/steps";
+ import { DEAD_COMBO_CONFIG_KEYS } from "@/lib/combos/deadConfigKeys";
+ import { modelFamily } from "@/lib/combos/invariants";
+-import { resolveCanonicalProviderModel } from "@omniroute/open-sse/services/model.ts";
++// PATCH DI BUILD (non fa parte di Candidate A): questa pagina e' "use client",
++// e services/model.ts trascina nel bundle del browser l'intera catena server
++// (db/settings -> tokenHealthCheck -> sharp, playwright-core, executors), da cui
++// "Can't resolve fs/child_process/net/tls/module". Qui si legge solo .provider,
++// che e' esattamente resolveProviderAlias(); il ramo sul modello non lo tocca.
++import { resolveProviderAlias } from "@omniroute/open-sse/services/providerAlias.ts";
+ import { resolveServerErrorMessage } from "@/lib/api/serverErrorMessage";
+ import { useTranslations } from "next-intl";
+ 
+@@ -681,7 +686,7 @@ function computeAllowedRestrictionSync(
+         if (m.providerId) return m.providerId;
+         if (typeof m.model !== "string" || !m.model.includes("/")) return "";
+         const [aliasOrProvider, ...rest] = m.model.split("/");
+-        return resolveCanonicalProviderModel(aliasOrProvider, rest.join("/")).provider || "";
++        return resolveProviderAlias(aliasOrProvider) || "";
+       })
+       .filter((p): p is string => Boolean(p));
+     result.allowedProviders = Array.from(new Set([...existingProviders, ...stepProviders]));
