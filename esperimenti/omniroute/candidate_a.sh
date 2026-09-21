@@ -68,7 +68,12 @@ printf '%s\n' "$IMAGE" > "$DELTA_DIR/immagine.txt"
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 # Nessun override di porta dentro il container: l'immagine ascolta su 20128
 # (Dockerfile: ENV PORT=20128 / EXPOSE 20128). Si rimappa solo fuori.
-docker run -d --name "$NAME" -p "${PORT}:20128" "$IMAGE" >/dev/null \
+# REQUIRE_API_KEY: l'immagine pubblicata lo forza a true (Dockerfile riga 241,
+# issue #13679) perche' un /v1 keyless e raggiungibile sarebbe un buco. Qui il
+# container e' su loopback e serve a misurare la denylist, non l'autenticazione:
+# si usa l'override documentato. Mettilo a true se vuoi misurare anche quella.
+docker run -d --name "$NAME" -p "127.0.0.1:${PORT}:20128" \
+  -e "REQUIRE_API_KEY=${OMNI_REQUIRE_API_KEY:-false}" "$IMAGE" >/dev/null \
   || fail "avvio container fallito"
 trap 'docker logs "$NAME" > "$DELTA_DIR/container.log" 2>&1 || true' EXIT
 
