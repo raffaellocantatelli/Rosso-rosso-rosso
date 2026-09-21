@@ -5,32 +5,43 @@
 Origine protetta: Claudio Terzi [CT-LGAI-001].
 
 Non misura niente da se': legge gli artefatti che `candidate_a.sh` ha scritto
-eseguendo davvero il container. Se gli artefatti non ci sono, non inventa un
-verdetto — esce 2 (UNKNOWN). E' la differenza fra un falsificatore e un
-documento che dice di aver verificato.
+eseguendo davvero il container. Se non ci sono, non inventa un verdetto — esce
+2 (UNKNOWN). E' la differenza fra un falsificatore e un documento che dichiara
+di aver verificato.
+
+**Perche' non confronta le stringhe.** Una prima versione di questo file
+rifaceva a mano il match di `isModelExposureAllowed` sugli id stampati da
+/v1/models. E' sbagliato, e la misura lo ha mostrato: il catalogo espone
+`oc/big-pickle` con `owned_by: opencode`, `felo/felo-chat` con
+`owned_by: felo-web`, `no-think/dva/claude-opus-5-max` con
+`owned_by: devin-cli-agentic` — mentre il predicato upstream lavora sull'id
+INTERNO del modello, che non e' quello stampato. Dedurre la corrispondenza dal
+nome vuol dire indovinare. Qui si misura: si applica una voce per volta e si
+guarda che cosa sparisce dal catalogo. Cio' che nessuna misura copre resta
+UNKNOWN, non diventa un PASS.
 
 I criteri sono dichiarati PRIMA di guardare i dati (P6). ADOPT A richiede
 tutti e sei:
 
   A1  catalogo /v1/models raggiungibile prima e dopo (HTTP 200 entrambe)
-  A2  PATCH accettato (2xx) e la RILETTURA di /api/settings riporta esattamente
-      le voci inviate — non ci si fida della risposta del PATCH
-  A3  ogni voce della denylist corrispondeva ad almeno un id nel catalogo
-      PRIMA. Una voce che non corrisponde a niente non da' errore e non fa
-      niente: e' il modo silenzioso in cui questa modifica finge di funzionare
-  A4  nel catalogo DOPO, zero id corrispondenti alla denylist
-  A5  nessun id non-negato e' sparito fra prima e dopo (nessun danno collaterale)
-  A6  la completion con model="auto" e' riuscita e il modello risolto non e'
-      fra quelli negati
+  A2  la denylist completa e' accettata e la RILETTURA di /api/settings la
+      riporta — non ci si fida del codice di risposta del PATCH: su 3.8.50 il
+      PATCH risponde 200 e butta via la chiave in silenzio (misurato)
+  A3  ogni voce, applicata DA SOLA, fa sparire almeno un id dal catalogo.
+      Una voce che non fa sparire niente non da' errore e non fa niente
+  A4  con la denylist intera spariscono tutti gli id che le voci facevano
+      sparire da sole
+  A5  e non sparisce nient'altro (nessun danno collaterale)
+  A6  la completion con model="auto" risponde e non sceglie un modello che la
+      denylist ha tolto
 
-Fuori dal verdetto, ma stampato sempre, perche' cambia cosa Candidate A compra
-davvero:
+Fuori dal verdetto, ma stampato sempre, perche' cambia cosa Candidate A compra:
 
   E1  un modello negato, CHIESTO PER NOME, risponde ancora. Upstream lo
       dichiara (docs/routing/MODEL_EXPOSURE_LIST.md, "What is NOT filtered"):
-      la denylist toglie dalla vetrina e dal pool di `auto/*`, non blocca la
-      chiamata esplicita. Se lo scopo era impedire l'uso, Candidate A non lo
-      fa — ne' A ne' B, perche' e' il disegno upstream, non un difetto.
+      la denylist toglie dalla vetrina e dal pool di `auto/*`, non blocca il
+      dispatch esplicito. Se lo scopo era impedire l'uso, non lo fa — ne' A ne'
+      B, perche' e' il disegno upstream, non un difetto.
 
 Uso:  python3 falsificatore_delta.py <cartella_delta>
 Esce: 0 = ADOPT A · 1 = REJECT A · 2 = UNKNOWN (artefatti insufficienti, o un
@@ -39,52 +50,7 @@ Esce: 0 = ADOPT A · 1 = REJECT A · 2 = UNKNOWN (artefatti insufficienti, o un
 """
 import json
 import os
-import re
 import sys
-
-ESCAPE = re.compile(r"[.+^${}()|\[\]\\]")
-
-
-def glob_to_regex(pattern):
-    """Stessa semantica di src/shared/utils/globPattern.ts::globToRegex:
-    escape degli specials, poi * -> .* e ? -> . , ancorato, case-insensitive.
-    `*` attraversa anche le barre, esattamente come la'."""
-    escaped = ESCAPE.sub(lambda m: "\\" + m.group(0), pattern)
-    escaped = escaped.replace("*", ".*").replace("?", ".")
-    return re.compile("^" + escaped + "$", re.IGNORECASE)
-
-
-def voce_corrisponde(voce, candidati):
-    """src/shared/utils/modelExposureList.ts::listMatchesAny, una voce sola.
-    Match esatto (case-sensitive) prima; glob solo se la voce ha * o ?."""
-    if voce in candidati:
-        return True
-    if not re.search(r"[*?]", voce):
-        return False
-    try:
-        rx = glob_to_regex(voce)
-    except re.error:
-        return False
-    return any(rx.search(c) for c in candidati)
-
-
-def candidati_di(modello):
-    """isModelExposureAllowed costruisce [modelId, provider/modelId]. Nel JSON
-    di /v1/models l'id e' gia' quello del catalogo; il provider, quando c'e',
-    sta in owned_by. INFERITO: che owned_by sia il `provider` passato al
-    predicato e' deduzione dalla forma del catalogo, non letto nel codice
-    della route — per questo si tiene anche l'id nudo."""
-    ident = modello.get("id")
-    if not isinstance(ident, str) or not ident:
-        return []
-    fuori = [ident]
-    prov = modello.get("owned_by")
-    if isinstance(prov, str) and prov:
-        fuori.append(prov + "/" + ident)
-        if "/" in ident:
-            fuori.append(ident.split("/", 1)[1])
-    return fuori
-
 
 TABELLA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "provider_3851.json")
 
@@ -101,19 +67,20 @@ def _tabella():
 
 
 def diagnosi_voce_a_vuoto(voce):
-    """Perche' una voce non colpisce niente. Le due cause note sono nel codice
-    3.8.51, non dedotte: il provider e' ritirato, oppure la voce e' scritta con
-    l'alias mentre catalog.ts passa al predicato l'id canonico
+    """Perche' una voce non fa sparire niente. Le cause note stanno nel codice
+    3.8.51, non sono dedotte: il provider e' ritirato, oppure la voce e'
+    scritta con l'alias mentre catalog.ts passa al predicato l'id canonico
     (`isModelExposureAllowed(aliasToProviderId[providerKey] || providerKey, ...)`,
     src/app/api/v1/models/catalog.ts)."""
     alias, ritirati = _tabella()
     prefisso = voce.split("/", 1)[0].strip().lower()
+    coda = voce.split("/", 1)[1] if "/" in voce else ""
     if prefisso in ritirati:
         return "provider ritirato in 3.8.51 (410 PROVIDER_RETIRED): non c'e' niente da nascondere"
     if prefisso in alias:
-        return ("scritta con l'alias; il predicato riceve l'id canonico '%s' — usa '%s/%s'"
-                % (alias[prefisso], alias[prefisso], voce.split("/", 1)[1] if "/" in voce else ""))
-    return "nessun id del catalogo le corrisponde"
+        return ("scritta con l'alias; il predicato riceve l'id canonico '%s' — prova '%s/%s'"
+                % (alias[prefisso], alias[prefisso], coda))
+    return "nessun modello sparisce quando si applica questa voce da sola"
 
 
 def leggi_json(percorso):
@@ -133,27 +100,39 @@ def leggi_testo(percorso):
         return f.read().strip()
 
 
-def modelli_di(catalogo):
+def ids_di(catalogo):
+    """Gli id esposti da /v1/models, come insieme. Nient'altro viene dedotto."""
     if isinstance(catalogo, dict):
         dati = catalogo.get("data")
-        if isinstance(dati, list):
-            return [m for m in dati if isinstance(m, dict)]
-    if isinstance(catalogo, list):
-        return [m for m in catalogo if isinstance(m, dict)]
-    return []
+    elif isinstance(catalogo, list):
+        dati = catalogo
+    else:
+        return set()
+    if not isinstance(dati, list):
+        return set()
+    return {m["id"] for m in dati if isinstance(m, dict) and isinstance(m.get("id"), str)}
 
 
-def negati(modelli, denylist):
-    """Gli id del catalogo che almeno una voce della denylist colpisce."""
-    colpiti = {}
-    for modello in modelli:
-        cands = candidati_di(modello)
-        if not cands:
-            continue
-        for voce in denylist:
-            if voce_corrisponde(voce, cands):
-                colpiti.setdefault(voce, []).append(modello["id"])
-    return colpiti
+def misure_per_voce(d, ids_prima):
+    """Per ogni voce applicata da sola: quali id sono spariti. Misurato."""
+    cartella = os.path.join(d, "per_voce")
+    if not os.path.isdir(cartella):
+        return None
+    misure = []
+    n = 1
+    while True:
+        voce_f = os.path.join(cartella, "%d_voce.txt" % n)
+        if not os.path.exists(voce_f):
+            break
+        voce = leggi_testo(voce_f)
+        stato = leggi_testo(os.path.join(cartella, "%d_models.status" % n))
+        catalogo = leggi_json(os.path.join(cartella, "%d_models.json" % n))
+        if stato != "200" or catalogo is None:
+            misure.append((voce, None))          # non misurata
+        else:
+            misure.append((voce, ids_prima - ids_di(catalogo)))
+        n += 1
+    return misure or None
 
 
 def main(argv):
@@ -165,23 +144,27 @@ def main(argv):
         print("UNKNOWN — la cartella %s non esiste. Esegui prima candidate_a.sh." % d)
         return 2
 
-    denylist = [r.strip() for r in leggi_testo(os.path.join(d, "denylist.txt")).splitlines() if r.strip()]
+    denylist = [r.strip() for r in leggi_testo(os.path.join(d, "denylist.txt")).splitlines()
+                if r.strip()]
     prima = leggi_json(os.path.join(d, "models_prima.json"))
     dopo = leggi_json(os.path.join(d, "models_dopo.json"))
     impostazioni = leggi_json(os.path.join(d, "settings_dopo.json"))
     auto_meta = leggi_json(os.path.join(d, "auto.meta.json"))
+    auto_prima_meta = leggi_json(os.path.join(d, "auto_prima.meta.json"))
     auto_resp = leggi_json(os.path.join(d, "auto_risposta.json"))
     expl_meta = leggi_json(os.path.join(d, "explicit.meta.json"))
-    auto_prima_meta = leggi_json(os.path.join(d, "auto_prima.meta.json"))
 
     if not denylist:
         print("UNKNOWN — nessuna denylist registrata in %s/denylist.txt." % d)
         return 2
     if prima is None or dopo is None:
-        print("UNKNOWN — manca models_prima.json o models_dopo.json: "
-              "l'esecuzione non e' arrivata in fondo. Guarda %s/container.log." % d)
+        print("UNKNOWN — manca models_prima.json o models_dopo.json: l'esecuzione non e' "
+              "arrivata in fondo. Guarda %s/container.log." % d)
         return 2
 
+    ids_prima = ids_di(prima)
+    ids_dopo = ids_di(dopo)
+    spariti = ids_prima - ids_dopo
     esiti = []
 
     def stato(ok):
@@ -192,7 +175,8 @@ def main(argv):
     s_dopo = leggi_testo(os.path.join(d, "models_dopo.status"))
     esiti.append(("A1 catalogo raggiungibile prima e dopo",
                   stato(s_prima == "200" and s_dopo == "200"),
-                  "HTTP prima=%s dopo=%s" % (s_prima or "?", s_dopo or "?")))
+                  "HTTP prima=%s dopo=%s; %d modelli prima" % (s_prima or "?", s_dopo or "?",
+                                                               len(ids_prima))))
 
     # A2
     s_patch = leggi_testo(os.path.join(d, "patch.status"))
@@ -207,62 +191,72 @@ def main(argv):
             if isinstance(annidato, dict) and isinstance(
                     annidato.get("modelVisibilityDenylist"), list):
                 riletta = [x for x in annidato["modelVisibilityDenylist"] if isinstance(x, str)]
-    persiste = sorted(riletta) == sorted(denylist)
-    esiti.append(("A2 PATCH accettato e denylist riletta dallo stato",
-                  stato(patch_ok and persiste),
-                  "HTTP %s; riletta %d/%d voci" % (s_patch or "?", len(riletta), len(denylist))))
+    esiti.append(("A2 denylist riletta dallo stato, non solo accettata",
+                  stato(patch_ok and sorted(riletta) == sorted(denylist)),
+                  "PATCH HTTP %s; riletta %d/%d voci" % (s_patch or "?", len(riletta),
+                                                         len(denylist))))
 
-    # A3
-    m_prima = modelli_di(prima)
-    colpiti_prima = negati(m_prima, denylist)
-    orfane = [v for v in denylist if v not in colpiti_prima]
-    esiti.append(("A3 ogni voce colpisce almeno un id del catalogo",
-                  stato(not orfane),
-                  "catalogo prima: %d modelli; voci a vuoto: %d" % (len(m_prima), len(orfane))))
+    # A3 — misurata, una voce per volta
+    misure = misure_per_voce(d, ids_prima)
+    inefficaci, non_misurate, unione = [], [], set()
+    if misure is None:
+        esiti.append(("A3 ogni voce, da sola, fa sparire almeno un id", "UNKNOWN",
+                      "nessuna misura per voce in per_voce/: rilancia candidate_a.sh"))
+    else:
+        for voce, tolti in misure:
+            if tolti is None:
+                non_misurate.append(voce)
+            elif not tolti:
+                inefficaci.append(voce)
+            else:
+                unione |= tolti
+        if non_misurate:
+            esiti.append(("A3 ogni voce, da sola, fa sparire almeno un id", "UNKNOWN",
+                          "%d voci non misurate (catalogo non leggibile)" % len(non_misurate)))
+        else:
+            esiti.append(("A3 ogni voce, da sola, fa sparire almeno un id",
+                          stato(not inefficaci),
+                          "%d/%d voci efficaci; %d id tolti in tutto"
+                          % (len(misure) - len(inefficaci), len(misure), len(unione))))
 
-    # A4
-    m_dopo = modelli_di(dopo)
-    colpiti_dopo = negati(m_dopo, denylist)
-    rimasti = sorted({i for ids in colpiti_dopo.values() for i in ids})
-    esiti.append(("A4 nel catalogo dopo non resta nessun id negato",
-                  stato(not rimasti),
-                  "rimasti: %s" % (", ".join(rimasti[:10]) if rimasti else "nessuno")))
-
-    # A5
-    ids_prima = {m["id"] for m in m_prima if isinstance(m.get("id"), str)}
-    ids_dopo = {m["id"] for m in m_dopo if isinstance(m.get("id"), str)}
-    attesi_via = {i for ids in colpiti_prima.values() for i in ids}
-    collaterali = sorted((ids_prima - ids_dopo) - attesi_via)
-    esiti.append(("A5 nessun id non-negato sparito",
-                  stato(not collaterali),
-                  "spariti senza motivo: %s"
-                  % (", ".join(collaterali[:10]) if collaterali else "nessuno")))
+    # A4 / A5 — coerenza fra le misure singole e la denylist intera
+    if misure is None or non_misurate:
+        esiti.append(("A4 la denylist intera toglie quello che tolgono le voci", "UNKNOWN",
+                      "manca la misura per voce"))
+        esiti.append(("A5 e non toglie nient'altro", "UNKNOWN", "manca la misura per voce"))
+    else:
+        mancanti = sorted(unione - spariti)
+        extra = sorted(spariti - unione)
+        esiti.append(("A4 la denylist intera toglie quello che tolgono le voci",
+                      stato(not mancanti),
+                      "rimasti in vetrina: %s"
+                      % (", ".join(mancanti[:8]) if mancanti else "nessuno")))
+        esiti.append(("A5 e non toglie nient'altro", stato(not extra),
+                      "spariti senza una voce che li spieghi: %s"
+                      % (", ".join(extra[:8]) if extra else "nessuno")))
 
     # A6 — con il controllo PRIMA del PATCH. `auto` che non risponde ne' prima
     # ne' dopo non dice niente sulla denylist: dice che qui non c'e' un provider.
-    # UNKNOWN non e' una bocciatura gentile, e' l'assenza di misura (CLAUDE.md §1).
     http_auto = (auto_meta or {}).get("http")
     http_auto_prima = (auto_prima_meta or {}).get("http")
     auto_ok = isinstance(http_auto, int) and 200 <= http_auto < 300
     auto_ok_prima = isinstance(http_auto_prima, int) and 200 <= http_auto_prima < 300
-    modello_scelto = ""
+    scelto = ""
     if isinstance(auto_resp, dict) and isinstance(auto_resp.get("model"), str):
-        modello_scelto = auto_resp["model"]
-    scelto_negato = bool(modello_scelto) and bool(negati([{"id": modello_scelto}], denylist))
+        scelto = auto_resp["model"]
     if auto_ok:
-        esiti.append(("A6 auto risponde e non sceglie un modello negato",
-                      stato(not scelto_negato),
-                      "HTTP %s; modello risolto: %s"
-                      % (http_auto, modello_scelto or "non dichiarato")))
+        esiti.append(("A6 auto risponde e non sceglie un modello tolto",
+                      stato(scelto not in spariti),
+                      "HTTP %s; modello risolto: %s" % (http_auto, scelto or "non dichiarato")))
     elif auto_ok_prima:
-        esiti.append(("A6 auto risponde e non sceglie un modello negato", "FAIL",
-                      "funzionava prima del PATCH (HTTP %s) e dopo no (HTTP %s): "
-                      "la denylist ha rotto il routing"
-                      % (http_auto_prima, http_auto if http_auto is not None else "?")))
+        esiti.append(("A6 auto risponde e non sceglie un modello tolto", "FAIL",
+                      "funzionava prima del PATCH (HTTP %s) e dopo no (HTTP %s): la denylist "
+                      "ha rotto il routing" % (http_auto_prima,
+                                               http_auto if http_auto is not None else "?")))
     else:
-        esiti.append(("A6 auto risponde e non sceglie un modello negato", "UNKNOWN",
-                      "auto non rispondeva gia' prima del PATCH (HTTP %s -> %s): "
-                      "nessun provider configurato, non misurabile qui"
+        esiti.append(("A6 auto risponde e non sceglie un modello tolto", "UNKNOWN",
+                      "auto non rispondeva gia' prima del PATCH (HTTP %s -> %s): nessun "
+                      "provider configurato, non misurabile qui"
                       % (http_auto_prima if http_auto_prima is not None else "?",
                          http_auto if http_auto is not None else "?")))
 
@@ -277,10 +271,17 @@ def main(argv):
         print("%-*s  %-7s %s" % (larghezza, nome, st, dettaglio))
     print("-" * (larghezza + 14))
 
-    if orfane:
-        print("\nVoci che non colpiscono niente — passano il PATCH e non fanno nulla:")
-        for voce in orfane:
-            print("  %-45s %s" % (voce, diagnosi_voce_a_vuoto(voce)))
+    if misure:
+        print("\nEffetto misurato di ogni voce, applicata da sola:")
+        for voce, tolti in misure:
+            if tolti is None:
+                print("  %-42s non misurata" % voce)
+            elif not tolti:
+                print("  %-42s NIENTE — %s" % (voce, diagnosi_voce_a_vuoto(voce)))
+            else:
+                elenco = ", ".join(sorted(tolti)[:4])
+                print("  %-42s toglie %d: %s%s" % (voce, len(tolti), elenco,
+                                                   " ..." if len(tolti) > 4 else ""))
 
     http_expl = (expl_meta or {}).get("http")
     if isinstance(http_expl, int) and 200 <= http_expl < 300:
@@ -290,8 +291,8 @@ def main(argv):
         print("    esplicito. Se lo scopo era impedire l'uso, questa modifica non lo fa.")
     elif http_expl is not None:
         print("\nE1  il modello negato chiamato per nome NON ha risposto (HTTP %s)." % http_expl)
-        print("    Diverso da quanto dichiara upstream: verifica se e' la denylist o")
-        print("    un provider assente prima di dedurne qualcosa.")
+        print("    Non deducibile dalla denylist: puo' essere un provider assente o senza")
+        print("    credenziali. Serve un'istanza con quel provider configurato.")
 
     bocciati = [n.split()[0] for n, st, _ in esiti if st == "FAIL"]
     non_misurati = [n.split()[0] for n, st, _ in esiti if st == "UNKNOWN"]
