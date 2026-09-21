@@ -1,0 +1,24 @@
+DELTA Candidate A — misurato in sessione: delta-3851-a
+immagine: omniroute:3.8.51-local
+---------------------------------------------------------------------
+A1 catalogo raggiungibile prima e dopo                   PASS    HTTP prima=200 dopo=200; 461 modelli prima
+A2 denylist riletta dallo stato, non solo accettata      PASS    PATCH HTTP 200; riletta 5/5 voci
+A3 ogni voce, da sola, fa sparire almeno un id           FAIL    1/5 voci efficaci; 1 id tolti in tutto
+A4 la denylist intera toglie quello che tolgono le voci  PASS    rimasti in vetrina: nessuno
+A5 e non toglie nient'altro                              PASS    spariti senza una voce che li spieghi: nessuno
+A6 auto risponde e non sceglie un modello tolto          UNKNOWN auto non rispondeva gia' prima del PATCH (HTTP 503 -> 503): nessun provider configurato, non misurabile qui
+A7 il pool di auto/* si muove solo per la denylist       PASS    poolSize 10 -> 9 (1 modelli tolti dalla vetrina)
+---------------------------------------------------------------------
+
+Effetto misurato di ogni voce, applicata da sola:
+  kilo-gateway/anthropic/claude-opus-5       NIENTE — il provider 'kilo-gateway' non compare in questo catalogo: qui non c'e' niente da togliere. Rimisurala dove e' configurato
+  opencode/big-pickle                        toglie 1: oc/big-pickle
+  oc/big-pickle                              NIENTE — scritta con l'alias; il predicato riceve l'id canonico 'opencode' — prova 'opencode/big-pickle'
+  felo/felo-chat                             NIENTE — provider ritirato in 3.8.51 (410 PROVIDER_RETIRED): non c'e' niente da nascondere
+  felo/felo-search                           NIENTE — provider ritirato in 3.8.51 (410 PROVIDER_RETIRED): non c'e' niente da nascondere
+
+E1  il modello negato chiamato per nome NON ha risposto (HTTP 401).
+    Non deducibile dalla denylist: puo' essere un provider assente o senza
+    credenziali. Serve un'istanza con quel provider configurato.
+
+VERDETTO: REJECT A — A3

@@ -21,7 +21,7 @@ guarda che cosa sparisce dal catalogo. Cio' che nessuna misura copre resta
 UNKNOWN, non diventa un PASS.
 
 I criteri sono dichiarati PRIMA di guardare i dati (P6). ADOPT A richiede
-tutti e sei:
+tutti e sette:
 
   A1  catalogo /v1/models raggiungibile prima e dopo (HTTP 200 entrambe)
   A2  la denylist completa e' accettata e la RILETTURA di /api/settings la
@@ -34,6 +34,12 @@ tutti e sei:
   A5  e non sparisce nient'altro (nessun danno collaterale)
   A6  la completion con model="auto" risponde e non sceglie un modello che la
       denylist ha tolto
+  A7  il pool di candidati di `auto/*` si muove solo per la denylist: non
+      cresce, e non perde piu' modelli di quanti ne siano spariti dalla vetrina.
+      E' il secondo punto di strozzatura — la lezione di #6512 citata da
+      upstream: un filtro solo sulla vetrina lascerebbe `auto` libero di
+      scegliere lo stesso un modello negato. `poolSize` torna nelle diagnostics
+      anche quando la chiamata fallisce, quindi questo si misura senza provider
 
 Fuori dal verdetto, ma stampato sempre, perche' cambia cosa Candidate A compra:
 
@@ -66,17 +72,37 @@ def _tabella():
             {p.lower() for p in (dati.get("provider_ritirati") or [])})
 
 
-def diagnosi_voce_a_vuoto(voce):
+def _provider_nel_catalogo(prefisso, ids, alias):
+    """Se un id del catalogo comincia con questo provider — o con il suo alias,
+    o con l'alias che punta a lui. Serve a distinguere una voce SBAGLIATA da un
+    provider che su questa istanza non c'e'."""
+    if not ids:
+        return None                      # senza catalogo non si dichiara niente
+    forme = {prefisso}
+    if prefisso in alias:
+        forme.add(alias[prefisso])
+    forme |= {a for a, canonico in alias.items() if canonico == prefisso}
+    return any(i.split("/", 1)[0].lower() in forme for i in ids if "/" in i)
+
+
+def diagnosi_voce_a_vuoto(voce, ids_catalogo=None):
     """Perche' una voce non fa sparire niente. Le cause note stanno nel codice
-    3.8.51, non sono dedotte: il provider e' ritirato, oppure la voce e'
-    scritta con l'alias mentre catalog.ts passa al predicato l'id canonico
+    3.8.51 e nel catalogo misurato, non sono dedotte: il provider e' ritirato,
+    il provider non e' configurato su questa istanza, oppure la voce e' scritta
+    con l'alias mentre catalog.ts passa al predicato l'id canonico
     (`isModelExposureAllowed(aliasToProviderId[providerKey] || providerKey, ...)`,
     src/app/api/v1/models/catalog.ts)."""
     alias, ritirati = _tabella()
     prefisso = voce.split("/", 1)[0].strip().lower()
     coda = voce.split("/", 1)[1] if "/" in voce else ""
-    if prefisso in ritirati:
+    presente = _provider_nel_catalogo(prefisso, ids_catalogo, alias)
+    # "Ritirato" si dice solo se il provider non e' nemmeno in vetrina: su 3.8.50
+    # i modelli felo/* ci sono ancora, e chiamarli ritirati sarebbe falso.
+    if prefisso in ritirati and presente is not True:
         return "provider ritirato in 3.8.51 (410 PROVIDER_RETIRED): non c'e' niente da nascondere"
+    if presente is False:
+        return ("il provider '%s' non compare in questo catalogo: qui non c'e' niente da "
+                "togliere. Rimisurala dove e' configurato" % prefisso)
     if prefisso in alias:
         return ("scritta con l'alias; il predicato riceve l'id canonico '%s' — prova '%s/%s'"
                 % (alias[prefisso], alias[prefisso], coda))
@@ -98,6 +124,19 @@ def leggi_testo(percorso):
         return ""
     with open(percorso, encoding="utf-8") as f:
         return f.read().strip()
+
+
+def _pool(risposta):
+    """`diagnostics.poolSize` di una risposta /v1/chat/completions: quanti
+    candidati aveva il pool di `auto/*`. Torna anche nell'errore, quindi si
+    misura pure senza provider configurati."""
+    if not isinstance(risposta, dict):
+        return None
+    diag = risposta.get("diagnostics")
+    if not isinstance(diag, dict):
+        return None
+    n = diag.get("poolSize")
+    return n if isinstance(n, int) else None
 
 
 def ids_di(catalogo):
@@ -152,6 +191,7 @@ def main(argv):
     auto_meta = leggi_json(os.path.join(d, "auto.meta.json"))
     auto_prima_meta = leggi_json(os.path.join(d, "auto_prima.meta.json"))
     auto_resp = leggi_json(os.path.join(d, "auto_risposta.json"))
+    auto_prima_resp = leggi_json(os.path.join(d, "auto_prima_risposta.json"))
     expl_meta = leggi_json(os.path.join(d, "explicit.meta.json"))
 
     if not denylist:
@@ -260,6 +300,34 @@ def main(argv):
                       % (http_auto_prima if http_auto_prima is not None else "?",
                          http_auto if http_auto is not None else "?")))
 
+    # A7 — il secondo punto di strozzatura. La vetrina e il pool di `auto/*` sono
+    # costruiti separatamente (e' la lezione di #6512, citata da upstream): un
+    # filtro che tocca solo la vetrina lascerebbe `auto` libero di scegliere un
+    # modello negato. `poolSize` torna nelle diagnostics anche quando la chiamata
+    # fallisce per mancanza di credenziali, quindi questo si misura anche qui.
+    pool_prima = _pool(auto_prima_resp)
+    pool_dopo = _pool(auto_resp)
+    if pool_prima is None or pool_dopo is None:
+        esiti.append(("A7 il pool di auto/* si muove solo per la denylist", "UNKNOWN",
+                      "poolSize non riportato nelle diagnostics"))
+    elif pool_dopo > pool_prima:
+        esiti.append(("A7 il pool di auto/* si muove solo per la denylist", "FAIL",
+                      "il pool e' CRESCIUTO: %d -> %d, senza una causa nella denylist"
+                      % (pool_prima, pool_dopo)))
+    elif misure is not None and not non_misurate and (pool_prima - pool_dopo) > len(unione):
+        esiti.append(("A7 il pool di auto/* si muove solo per la denylist", "FAIL",
+                      "tolti %d candidati ma solo %d modelli negati: differenza non spiegata"
+                      % (pool_prima - pool_dopo, len(unione))))
+    elif pool_prima == pool_dopo and unione:
+        esiti.append(("A7 il pool di auto/* si muove solo per la denylist", "UNKNOWN",
+                      "pool invariato (%d) mentre %d modelli sono spariti dalla vetrina: "
+                      "puo' essere che non fossero candidati. Non deducibile da qui"
+                      % (pool_prima, len(unione))))
+    else:
+        esiti.append(("A7 il pool di auto/* si muove solo per la denylist", "PASS",
+                      "poolSize %d -> %d (%d modelli tolti dalla vetrina)"
+                      % (pool_prima, pool_dopo, len(unione))))
+
     larghezza = max(len(n) for n, _, _ in esiti)
     print("DELTA Candidate A — %s" % os.path.abspath(d))
     print("immagine: %s" % (leggi_testo(os.path.join(d, "immagine.txt")) or "non registrata"))
@@ -277,7 +345,7 @@ def main(argv):
             if tolti is None:
                 print("  %-42s non misurata" % voce)
             elif not tolti:
-                print("  %-42s NIENTE — %s" % (voce, diagnosi_voce_a_vuoto(voce)))
+                print("  %-42s NIENTE — %s" % (voce, diagnosi_voce_a_vuoto(voce, ids_prima)))
             else:
                 elenco = ", ".join(sorted(tolti)[:4])
                 print("  %-42s toglie %d: %s%s" % (voce, len(tolti), elenco,

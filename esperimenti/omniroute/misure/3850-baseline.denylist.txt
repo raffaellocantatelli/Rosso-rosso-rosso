@@ -1,0 +1,5 @@
+kilo-gateway/anthropic/claude-opus-5
+opencode/big-pickle
+oc/big-pickle
+felo/felo-chat
+felo/felo-search

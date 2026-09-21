@@ -31,7 +31,7 @@ def _scrivi(d, nome, oggetto):
 
 def _delta(tmp_path, *, prima=None, dopo, per_voce=None, deny=None, patch="200",
            riletta=None, auto_http=200, auto_modello="or/libero", expl_http=200,
-           auto_http_prima=200, models_status="200"):
+           auto_http_prima=200, models_status="200", pool=(10, 9)):
     """per_voce: una lista di liste di id — il catalogo con la voce N da sola."""
     deny = list(DENY if deny is None else deny)
     prima = list(CATALOGO if prima is None else prima)
@@ -47,7 +47,11 @@ def _delta(tmp_path, *, prima=None, dopo, per_voce=None, deny=None, patch="200",
             {"modelVisibilityDenylist": deny if riletta is None else riletta})
     _scrivi(d, "auto.meta.json", {"http": auto_http, "secondi": 1.0})
     _scrivi(d, "auto_prima.meta.json", {"http": auto_http_prima})
-    _scrivi(d, "auto_risposta.json", {"model": auto_modello})
+    risposta = {"model": auto_modello}
+    if pool is not None:
+        risposta["diagnostics"] = {"poolSize": pool[1]}
+        _scrivi(d, "auto_prima_risposta.json", {"diagnostics": {"poolSize": pool[0]}})
+    _scrivi(d, "auto_risposta.json", risposta)
     _scrivi(d, "explicit.meta.json", {"http": expl_http, "modello": deny[0]})
     if per_voce is not None:
         pv = d / "per_voce"
@@ -159,9 +163,27 @@ def test_diagnosi_provider_ritirato():
     assert "ritirato" in d and "PROVIDER_RETIRED" in d
 
 
+def test_non_dice_ritirato_se_i_modelli_sono_ancora_in_vetrina():
+    # Su 3.8.50 i felo/* ci sono: chiamarli ritirati sarebbe falso.
+    d = fd.diagnosi_voce_a_vuoto("felo/felo-chat", {"felo/felo-chat", "or/libero"})
+    assert "ritirato" not in d
+
+
+def test_diagnosi_provider_assente_dal_catalogo():
+    d = fd.diagnosi_voce_a_vuoto("kilo-gateway/anthropic/claude-opus-5",
+                                 {"oc/big-pickle", "or/libero"})
+    assert "non compare in questo catalogo" in d and "Rimisurala" in d
+
+
+def test_provider_presente_sotto_il_suo_alias_non_e_assente():
+    # 'oc' in vetrina e' opencode: la voce canonica non va chiamata "assente".
+    d = fd.diagnosi_voce_a_vuoto("opencode/big-pickle", {"oc/big-pickle"})
+    assert "non compare" not in d
+
+
 def test_diagnosi_forma_alias_propone_il_canonico():
     # catalog.ts chiama isModelExposureAllowed(aliasToProviderId[k] || k, ...)
-    d = fd.diagnosi_voce_a_vuoto("oc/big-pickle")
+    d = fd.diagnosi_voce_a_vuoto("oc/big-pickle", {"oc/big-pickle", "or/libero"})
     assert "alias" in d and "opencode/big-pickle" in d
 
 
@@ -177,3 +199,36 @@ def test_e1_dispatch_esplicito_viene_sempre_detto(tmp_path, capsys):
     fd.main(["x", d])
     out = capsys.readouterr().out
     assert "E1" in out and "risponde ancora" in out
+
+
+# --- A7: il pool di auto/*, il secondo punto di strozzatura ------------------
+
+def test_a7_pool_che_cresce_boccia(tmp_path, capsys):
+    d = _delta(tmp_path, dopo=["or/libero"], pool=(9, 12),
+               per_voce=[["felo/felo-chat", "or/libero"], ["kg/anthropic/claude-opus-5", "or/libero"]])
+    assert fd.main(["x", d]) == 1
+    out = capsys.readouterr().out
+    assert "A7" in out and "CRESCIUTO" in out
+
+
+def test_a7_pool_che_perde_piu_di_quanto_sparisce_boccia(tmp_path, capsys):
+    # 2 modelli tolti dalla vetrina, 7 candidati in meno: differenza non spiegata.
+    d = _delta(tmp_path, dopo=["or/libero"], pool=(10, 3),
+               per_voce=[["felo/felo-chat", "or/libero"], ["kg/anthropic/claude-opus-5", "or/libero"]])
+    assert fd.main(["x", d]) == 1
+    assert "non spiegata" in capsys.readouterr().out
+
+
+def test_a7_pool_fermo_mentre_la_vetrina_si_svuota_e_unknown(tmp_path, capsys):
+    d = _delta(tmp_path, dopo=["or/libero"], pool=(10, 10),
+               per_voce=[["felo/felo-chat", "or/libero"], ["kg/anthropic/claude-opus-5", "or/libero"]])
+    assert fd.main(["x", d]) == 2
+    out = capsys.readouterr().out
+    assert "A7" in out and "non fossero candidati" in out
+
+
+def test_a7_senza_poolsize_e_unknown(tmp_path, capsys):
+    d = _delta(tmp_path, dopo=["or/libero"], pool=None,
+               per_voce=[["felo/felo-chat", "or/libero"], ["kg/anthropic/claude-opus-5", "or/libero"]])
+    assert fd.main(["x", d]) == 2
+    assert "poolSize non riportato" in capsys.readouterr().out

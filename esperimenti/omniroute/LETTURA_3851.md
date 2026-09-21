@@ -108,16 +108,73 @@ questa: applica **una voce per volta** e guarda che cosa sparisce davvero.
 un id inviato **esplicitamente** non viene mai bloccato al dispatch. La denylist
 toglie dalla vetrina e dal sorteggio di `auto/*`. Se lo scopo era smettere di
 *usare* quei modelli, ne' A ne' B lo ottengono: e' il disegno di upstream.
+**Non e' rimasta una lettura: e' stata misurata** — vedi E1 nella sezione 6.
 
 ---
 
-## 6. Come si esegue
+## 6. Il DELTA, misurato — tre esecuzioni
+
+Container veri, costruiti e avviati in questa sessione. I verdetti integrali
+stanno in `misure/`, le denylist usate accanto a ciascuno.
+
+| | 3.8.50 pubblicata | 3.8.51 con la tua lista | 3.8.51 con la lista corretta |
+|---|---|---|---|
+| modelli in vetrina | 315 | 461 | 458 |
+| **A2** denylist salvata | **FAIL** 0/5 | **PASS** 5/5 | **PASS** 3/3 |
+| **A3** voci efficaci | **FAIL** 0/5 | **FAIL** 1/5 | **PASS** 3/3 |
+| A4 toglie quello che deve | PASS | PASS | PASS |
+| A5 non toglie altro | PASS | PASS | PASS |
+| A6 `auto` | UNKNOWN | UNKNOWN | UNKNOWN |
+| **A7** pool di `auto/*` | PASS 13 → 13 | PASS 10 → 9 | **PASS 10 → 7** |
+| verdetto | REJECT | REJECT (A3) | UNKNOWN: solo A6 non misurabile |
+
+**La meccanica funziona.** A2 passa da FAIL a PASS fra 3.8.50 e 3.8.51: e'
+esattamente la differenza fra le due versioni, misurata. E A7 mostra che il
+**secondo** punto di strozzatura fa il suo lavoro: il pool di candidati di
+`auto/*` cala di uno per ogni modello tolto dalla vetrina — 10 → 9 con una voce
+efficace, 10 → 7 con tre. Su 3.8.50 il pool non si muove (13 → 13). E' la
+lezione di #6512 citata da upstream, verificata invece che creduta: un filtro
+solo sulla vetrina lascerebbe `auto` libero di scegliere lo stesso un modello
+negato.
+
+**Il REJECT e' sulla tua lista, non sul meccanismo.** Delle cinque voci, una
+sola fa qualcosa, e ognuna delle altre quattro ha una causa diversa e misurata:
+
+```
+kilo-gateway/anthropic/claude-opus-5   NIENTE — quel provider non e' nel catalogo
+                                       di prova: va rimisurata dove e' configurato
+opencode/big-pickle                    toglie 1: oc/big-pickle
+oc/big-pickle                          NIENTE — forma alias; serve opencode/big-pickle
+felo/felo-chat                         NIENTE — provider ritirato in 3.8.51 (410)
+felo/felo-search                       NIENTE — provider ritirato in 3.8.51 (410)
+```
+
+**A6 resta UNKNOWN** perche' su un container nuovo nessun provider ha
+credenziali: `auto` risponde 503 `ALL_TARGETS_SKIPPED` sia prima sia dopo il
+PATCH, quindi non dice niente sulla denylist. Non e' una bocciatura gentile: e'
+l'assenza di misura, e si toglie solo su un'istanza con provider attivi.
+
+**E1, misurato e non piu' soltanto letto.** Chiedendo per nome un modello
+negato, OmniRoute lo ha **spedito lo stesso** al provider, e il 403 e' arrivato
+da OpenCode: `OpenCode's free tier can only be used from within OpenCode`. Non
+e' la denylist ad aver fermato la chiamata — la denylist non l'ha fermata
+affatto. Se lo scopo era impedire l'uso, ne' A ne' B lo ottengono.
+
+---
+
+## 7. Come si esegue
 
 ```bash
 git clone --branch release/v3.8.51 https://github.com/diegosouzapw/OmniRoute ./OmniRoute
+git -C ./OmniRoute apply ../esperimenti/omniroute/0001-build-client-bundle.patch  # vedi §8
 bash esperimenti/omniroute/candidate_a.sh                    # costruisce e misura
 python3 esperimenti/omniroute/falsificatore_delta.py ./delta-3851-a
 ```
+
+Senza quel patch la build non arriva in fondo (§8). Serve anche un po' di
+memoria: la build e' passata con
+`--build-arg OMNIROUTE_USE_TURBOPACK=0 --build-arg OMNIROUTE_BUILD_MEMORY_MB=11264`;
+a 6 GB lo heap finisce.
 
 Per misurare la baseline con l'immagine pubblicata:
 
@@ -131,14 +188,14 @@ Verdetto = codice di uscita: **0 ADOPT A**, **1 REJECT A**, **2 UNKNOWN**
 (artefatti insufficienti, o un criterio non misurabile in questo ambiente).
 UNKNOWN non e' una bocciatura gentile: e' l'assenza di misura.
 
-I sei criteri sono dichiarati dentro `falsificatore_delta.py` **prima** di
+I sette criteri sono dichiarati dentro `falsificatore_delta.py` **prima** di
 guardare i dati, e ognuno ha in `tests/test_falsificatore_omniroute.py` un caso
 che lo fa fallire da solo: un verificatore che dice sempre PASS e' il difetto di
 `CLAUDE.md` §4 dentro lo strumento fatto per impedirlo.
 
 ---
 
-## 7. Perche' non esiste un'immagine 3.8.51: la causa, trovata
+## 8. Perche' non esiste un'immagine 3.8.51: la causa, trovata
 
 **RECUPERATO.** Il ramo `release/v3.8.51` **non si costruisce** a questo commit,
 e i due bundler falliscono nello stesso punto:
