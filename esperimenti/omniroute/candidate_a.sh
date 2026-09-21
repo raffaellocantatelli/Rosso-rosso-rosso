@@ -14,7 +14,7 @@
 #      mente non fa niente, ed e' la trappola principale di questa modifica
 #   6. applica modelVisibilityDenylist via PATCH /api/settings -> patch_*.json
 #   7. rilegge /v1/models DOPO                           -> models_dopo.json
-#   8. chiede una completion con model="auto"            -> auto_*.json
+#   8. chiede una completion con model="auto", prima E dopo -> auto_*.json
 #   9. chiede la stessa completion con un modello negato NOMINATO esplicitamente
 #      -> explicit_*.json  (upstream dichiara che questo NON viene bloccato:
 #         serve a misurare il limite reale della modifica, non a superarlo)
@@ -88,6 +88,16 @@ auth_mg=(); [ -n "$MGMT" ] && auth_mg=(-H "Authorization: Bearer $MGMT")
 curl -sS "${auth_v1[@]}" -o "$DELTA_DIR/models_prima.json" \
      -w '%{http_code}' "$BASE/v1/models" > "$DELTA_DIR/models_prima.status"
 log "catalogo prima: HTTP $(cat "$DELTA_DIR/models_prima.status")"
+
+# --- 4-bis. controllo: la stessa chiamata `auto` PRIMA del PATCH -------------
+# Senza questo controllo, un `auto` che fallisce dopo non si distingue da un
+# ambiente in cui `auto` non ha mai funzionato (nessun provider configurato).
+curl -sS "${auth_v1[@]}" -H 'Content-Type: application/json' \
+     -d '{"model":"auto","messages":[{"role":"user","content":"ping"}],"max_tokens":16}' \
+     -o "$DELTA_DIR/auto_prima_risposta.json" \
+     -w '{"http":%{http_code},"secondi":%{time_total}}' \
+     "$BASE/v1/chat/completions" > "$DELTA_DIR/auto_prima.meta.json"
+log "auto prima del PATCH: $(cat "$DELTA_DIR/auto_prima.meta.json")"
 
 # --- 5. le voci corrispondono a qualcosa? ------------------------------------
 printf '%s\n' "$DENY" | tr ',' '\n' | sed '/^$/d' > "$DELTA_DIR/denylist.txt"

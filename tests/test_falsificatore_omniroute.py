@@ -25,7 +25,8 @@ def _catalogo(ids):
 
 
 def _delta(tmp_path, *, prima, dopo, deny=DENY, patch="200", riletta=None,
-           auto_http=200, auto_modello="openrouter/free-model", expl_http=200):
+           auto_http=200, auto_modello="openrouter/free-model", expl_http=200,
+           auto_http_prima=200):
     d = tmp_path / "delta"
     d.mkdir()
     (d / "denylist.txt").write_text("\n".join(deny) + "\n", encoding="utf-8")
@@ -39,6 +40,7 @@ def _delta(tmp_path, *, prima, dopo, deny=DENY, patch="200", riletta=None,
     (d / "auto.meta.json").write_text(json.dumps({"http": auto_http, "secondi": 1.0}),
                                       encoding="utf-8")
     (d / "auto_risposta.json").write_text(json.dumps({"model": auto_modello}), encoding="utf-8")
+    (d / "auto_prima.meta.json").write_text(json.dumps({"http": auto_http_prima}), encoding="utf-8")
     (d / "explicit.meta.json").write_text(json.dumps(
         {"http": expl_http, "modello": deny[0]}), encoding="utf-8")
     return str(d)
@@ -131,3 +133,53 @@ def test_e1_dispatch_esplicito_viene_sempre_detto(tmp_path, capsys):
     fd.main(["x", d])
     out = capsys.readouterr().out
     assert "E1" in out and "risponde ancora" in out
+
+
+# --- diagnosi delle voci a vuoto (fatti letti nel sorgente 3.8.51) -----------
+
+def test_diagnosi_provider_ritirato():
+    # RUNTIME_RETIRED_PROVIDER_IDS in src/shared/constants/providerRetirement.ts
+    d = fd.diagnosi_voce_a_vuoto("felo/felo-chat")
+    assert "ritirato" in d and "PROVIDER_RETIRED" in d
+
+
+def test_diagnosi_forma_alias_propone_il_canonico():
+    # catalog.ts passa isModelExposureAllowed(aliasToProviderId[k] || k, ...)
+    d = fd.diagnosi_voce_a_vuoto("oc/big-pickle")
+    assert "alias" in d and "opencode/big-pickle" in d
+
+
+def test_diagnosi_non_inventa_una_causa():
+    assert fd.diagnosi_voce_a_vuoto("provider-che-non-esiste/x") == \
+        "nessun id del catalogo le corrisponde"
+
+
+def test_le_voci_a_vuoto_sono_stampate_con_la_causa(tmp_path, capsys):
+    d = _delta(tmp_path, prima=["or/libero"], dopo=["or/libero"],
+               deny=["felo/felo-chat", "oc/big-pickle"])
+    assert fd.main(["x", d]) == 1
+    out = capsys.readouterr().out
+    assert "ritirato" in out and "opencode/big-pickle" in out
+
+
+# --- tre stati: PASS, FAIL e UNKNOWN non sono la stessa cosa -----------------
+
+def test_auto_mai_funzionante_e_unknown_non_reject(tmp_path, capsys):
+    # Senza provider configurati `auto` non risponde ne' prima ne' dopo: non
+    # dice niente sulla denylist. UNKNOWN, non una bocciatura.
+    d = _delta(tmp_path,
+               prima=["kilo-gateway/anthropic/claude-opus-5", "felo/felo-chat", "or/libero"],
+               dopo=["or/libero"], auto_http=503, auto_http_prima=503)
+    assert fd.main(["x", d]) == 2
+    out = capsys.readouterr().out
+    assert "UNKNOWN" in out and "non misurabile" in out
+
+
+def test_auto_che_smette_di_funzionare_dopo_il_patch_e_reject(tmp_path, capsys):
+    # Funzionava prima, non funziona dopo: il controllo rende questo un FAIL.
+    d = _delta(tmp_path,
+               prima=["kilo-gateway/anthropic/claude-opus-5", "felo/felo-chat", "or/libero"],
+               dopo=["or/libero"], auto_http=503, auto_http_prima=200)
+    assert fd.main(["x", d]) == 1
+    out = capsys.readouterr().out
+    assert "A6" in out and "rotto il routing" in out

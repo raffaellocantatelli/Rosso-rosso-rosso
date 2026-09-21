@@ -1210,8 +1210,8 @@
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
     "tests/test_falsificatore_omniroute.py": {
-      "byte": 5523,
-      "sha256": "a638a5e619394f8211a359cf14a45887d6a4dfdfe8e5d1dcdb5da09aecff6c5c"
+      "byte": 7771,
+      "sha256": "38ae195c8667a59f4612cd06780b58adc27c24668cc95c0c7ec2e6d2126cc0cb"
     },
     "tests/test_occhio.py": {
       "byte": 77392,
@@ -1238,6 +1238,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-21T04:42:20.327490+00:00",
+  "generato": "2026-09-21T04:51:55.937975+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
