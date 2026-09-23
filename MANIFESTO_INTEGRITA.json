@@ -6,8 +6,8 @@
       "sha256": "395fee429a691de97d9de7400f0ce79ed4cead9338f01d146667bbd8ef01fed7"
     },
     "CLAUDE.md": {
-      "byte": 15444,
-      "sha256": "c16d7b3939bd251f195a77a1b9579cc8095a7b37f11d4c06e31e697a6c42fb10"
+      "byte": 18165,
+      "sha256": "39fc4aab1fbf9f6a9c153e4930fe75658551263e723ffa2c295be193add35d92"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -1221,6 +1221,10 @@
       "byte": 4522,
       "sha256": "5501e0decb1436475d8d74d4448db53dbfa0d8c4d2fb6b437054a2dfe0b23ec2"
     },
+    "tests/test_registro_limiti.py": {
+      "byte": 3433,
+      "sha256": "24d1c519d5e2c67fb44bb25aa8b67dfd53bc96b68a27983e118f05a182509501"
+    },
     "tests/test_rlaif.py": {
       "byte": 5152,
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
@@ -1238,6 +1242,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-21T05:25:08.985449+00:00",
+  "generato": "2026-09-23T05:29:46.278572+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
