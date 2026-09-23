@@ -11,6 +11,51 @@ Ogni riga qui sotto è verificabile con un comando. Non credere a nessuna.
 
 ---
 
+## 0-bis. Cosa gira da solo adesso (23/09/2026)
+
+Chiesto dall'autore il 23/09: «ci sono momenti in cui non posso risponderti
+perché sto andando in viaggio con la valigia».
+
+**Una Routine quotidiana** (`trig_01HFihT73QBcmGEnKji3ryXu`, ogni giorno alle
+08:00 UTC) apre una sessione nuova su questo repository ed esegue
+`python3 giro.py`. Non è un nodo che resta sveglio: è la piattaforma che ne
+avvia uno da zero, senza memoria della sessione precedente — **solo i file
+sopravvivono** (`CLAUDE.md` §2.4), e infatti lo stato del giro sta in
+`output/giro.jsonl`, tracciato da git apposta.
+
+`giro.py` non riferisce cosa ha fatto, riferisce **cosa è cambiato**:
+
+| uscita | vuol dire | cosa succede |
+|---|---|---|
+| `0` | niente di nuovo | committa lo stato, pusha, **tace** |
+| `1` | c'è una notizia | un limite è caduto, o è entrata una riga in `contatti.jsonl` |
+| `2` | qualcosa è rotto | si dice sempre, anche in viaggio |
+
+Il silenzio è l'informazione: un automatismo che dice «tutto ok» ogni giorno
+smette di essere letto, compreso il giorno in cui qualcosa era successo.
+
+**Per fermarla o cambiarle orario:** claude.ai → Routines, oppure chiedilo a un
+nodo in sessione. Non serve toccare il codice.
+
+**Tre cose che questa Routine NON fa, e vanno sapute:**
+
+1. **Non ha connettori.** Le sessioni che apre non hanno gli strumenti MCP —
+   niente agorà R3-PEER, niente GitHub MCP. `giro.py` non ne ha bisogno (è
+   python e git), ma nessuno creda che il giro possa consultare l'agorà.
+2. **Pusha su `claude/omniroute-3851-candidate-a-2p4tc5`, non sul ramo di
+   default.** L'Action `daily.yml` (07:00 UTC) gira **solo dal ramo di
+   default** (§4-bis): finché questo lavoro non è unito lì, `giro.py` non entra
+   negli automatismi del repository. **Quella decisione è dell'autore, e nessun
+   nodo la prenda da solo.**
+3. **Non sostituisce nessuno.** Esegue comandi che possono fallire e confronta
+   numeri. Non giudica il progetto, e ciò che trova resta una candidata a
+   evidenza finché qualcuno la riesegue.
+
+---
+
+
+---
+
 ## 0. Che cos'è il prodotto, e cosa gli sta intorno (05/09)
 
 **Detto dall'autore, e va rispettato:** *«Il prodotto serve per fare
