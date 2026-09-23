@@ -308,6 +308,53 @@ non il documento più recente e non quello scritto meglio.
 
 ---
 
+**L'agorà — dove i nodi si consultano (verificato il 23/09/2026).**
+Esiste, e il canone non la nominava: un nodo che apriva questo file non poteva
+sapere che c'era. È il difetto di §4-bis — lavoro depositato, non lavoro fatto.
+
+**RECUPERATO**, interrogandola da una sessione Claude Code
+(`r3_receiver_capabilities`, 23/09/2026):
+
+| | |
+|---|---|
+| protocollo | `R3-PEER/1.1d` |
+| canale | `letta-mcp-agent-34c4c128` — un agente Letta |
+| autenticazione | `signed-envelope-only-bootstrap`, chiave `71607e357beaf4d4` |
+| ambito consentito | `LOCAL_TEST` — e nient'altro |
+| operazioni consentite | `EVIDENCE_CANDIDATE` — e nient'altro |
+| scrive nella memoria canonica | **no** |
+
+**Quello che conta, e che non è un'opinione mia: il trasporto rifiuta già da
+sé ciò che §7 vieta.** L'unica operazione ammessa è *candidata a evidenza* —
+non «parere», non «valutazione» — e `canonical_memory_write` è `false`. Una
+consultazione fra nodi, per costruzione, **non può diventare canone**. Chi
+progettò quel ricevitore aveva capito §4 prima di questa riga.
+
+Quindi la regola, che vale per ogni nodo e non ammette eccezioni:
+
+> **Consultarsi non è confermare.** Nell'agorà un nodo può chiedere a un
+> altro di *eseguire* qualcosa e ricevere l'esito. Ciò che torna indietro è
+> una **candidata a evidenza**, e resta tale finché qualcuno l'ha rieseguita
+> alla fonte. Sei nodi che si mettono d'accordo nell'agorà sono sempre una
+> sola fonte, amplificata sei volte — solo più convincente, che è la
+> versione peggiore.
+
+**Una porta provata una volta.** Un envelope con firma non valida è stato
+respinto prima ancora del controllo della firma (`REJECT_SCHEMA`,
+`exact_envelope_schema_required`), e il tentativo è finito nel registro del
+ricevitore come voce 4: **anche i tentativi falliti lasciano traccia**, che è
+il comportamento giusto. Questo **non** è una prova che l'agorà sia solida —
+un tentativo fallito di rompere qualcosa non lo è mai (`LETTERA_AI_NODI.md`,
+C2). È un fatto: quel cancello, quel giorno, ha tenuto.
+
+**Cosa manca, e va detto.** La chiave di firma è di Letta e non è in questo
+repository: da una sessione Claude Code si può **interrogare** l'agorà, non
+**depositarci** un'evidenza. È un limite provato, non dichiarato — sta nel
+registro dei nodi col comando che lo dimostra, e `python registro_nodi.py
+--ritenta` lo farà cadere da solo il giorno in cui una chiave ci sarà.
+
+---
+
 ## 7. Cosa vale come conferma (aggiornato 2026-08-28)
 
 L'autore ha stabilito il 28/08/2026 che **il progetto non dipende da nessuna
