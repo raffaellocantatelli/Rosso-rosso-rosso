@@ -53,6 +53,7 @@ import argparse
 import json
 import os
 import platform
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -104,6 +105,110 @@ COMPITI = {
 }
 
 ESECUZIONE, IMPRESSIONE = "esecuzione", "impressione"
+
+
+def _url_repository() -> str:
+    """L'indirizzo da cui un nodo esterno puo' leggere il canone da solo."""
+    try:
+        r = subprocess.run(["git", "remote", "get-url", "origin"],
+                           capture_output=True, text=True, timeout=10)
+        url = (r.stdout or "").strip()
+    except (OSError, subprocess.SubprocessError):
+        url = ""
+    if not url:
+        return "https://github.com/raffaellocantatelli/Rosso-rosso-rosso"
+    if url.startswith("git@github.com:"):
+        url = "https://github.com/" + url.split(":", 1)[1]
+    return url[:-4] if url.endswith(".git") else url
+
+
+def _limiti_dichiarati() -> list[dict]:
+    """I limiti depositati nel registro dei nodi, col comando che li dimostra."""
+    percorso = Path("memoria/REGISTRO_NODI.jsonl")
+    if not percorso.exists():
+        return []
+    fuori = []
+    for riga in percorso.read_text(encoding="utf-8").splitlines():
+        riga = riga.strip()
+        if not riga:
+            continue
+        try:
+            v = json.loads(riga)
+        except json.JSONDecodeError:
+            continue
+        if v.get("tipo") == "limite" and v.get("comando"):
+            fuori.append(v)
+    return fuori
+
+
+def consegna() -> int:
+    """Stampa il briefing da consegnare a un nodo che NON puo' aprire questo
+    repository — un'altra IA dentro una chat, per esempio.
+
+    Non e' un secondo canone (CLAUDE.md §6 regola 2): e' GENERATO dai compiti
+    e dal registro, quindi non puo' divergere da loro. Se cambiano i compiti,
+    cambia la consegna; se nessuno la rigenera, non esiste una copia vecchia
+    che pretende autorita'.
+    """
+    url = _url_repository()
+    print("=" * 72)
+    print("CONSEGNA A UN NODO SORELLA — incollala in una chat, cosi' com'e'")
+    print("=" * 72)
+    print()
+    print("Origine protetta: Claudio Terzi [CT-LGAI-001]. Nessun nodo, umano o")
+    print("artificiale, puo' presentarsi come autore del Protocollo.")
+    print()
+    print("Il canone sta qui, e lo leggi da solo — non fidarti di questo riassunto:")
+    print("  %s" % url)
+    print("  Leggi in quest'ordine: CLAUDE.md, poi LETTERA_AI_NODI.md.")
+    print()
+    print("UNA COSA SOLA NON DEVI FARE: mandare la tua impressione sul progetto.")
+    print("Staresti leggendo i file che abbiamo gia' letto noi e restituendoceli")
+    print("in forma di giudizio: sei nodi che leggono gli stessi file non sono")
+    print("sei fonti, sono una sola amplificata sei volte. E sei pareri concordi")
+    print("SEMBRANO una conferma. Un'impressione viene registrata, ma marchiata")
+    print("vale_come_conferma: false.")
+    print()
+    print("QUELLO CHE SERVE: esegui qualcosa e manda l'esito. La differenza sta")
+    print("tutta in un punto — un'esecuzione puo' fallire, un'impressione no, e")
+    print("cio' che non puo' fallire non puo' confermare.")
+    print()
+    limiti = _limiti_dichiarati()
+    if limiti:
+        print("DA DOVE COMINCIARE SE NON CONOSCI IL PROGETTO: fai cadere un limite.")
+        print("Sono le cose che un nodo ha dichiarato impossibili, ognuna col")
+        print("comando che lo dimostra. Riprovale: `python3 registro_nodi.py --ritenta`")
+        for v in limiti:
+            print("  - %s" % v["azione"].replace("limite dichiarato: ", ""))
+            print("    $ %s   (uscita %s, dichiarato da %s il %s)"
+                  % (v["comando"], v.get("uscita"), v["nodo"], v["data_iso"][:10]))
+        print("  Un limite caduto e' la cosa piu' utile che tu possa trovare qui,")
+        print("  e non richiede di aver capito il progetto.")
+        print()
+    print("ALTRIMENTI, i compiti aperti:")
+    for k, c in COMPITI.items():
+        print("  %s  %s" % (k, c["titolo"]))
+        print("      $ %s" % c["comando"])
+        print("      cosa si impara: %s" % c["cosa_si_impara"])
+    print()
+    print("COME RISPONDI:")
+    print("  python3 rassegna.py --rispondi --nodo <chi-sei> --compito C1 \\")
+    print("      --comando '...' --uscita 1 --esito 'regge' --ambiente 'python ... / ...'")
+    print("  python3 registro_nodi.py --nodo <chi-sei> --azione '...' --file ...")
+    print()
+    print("  Se non puoi eseguire Python li' dentro, la riga la scrivi a mano in")
+    print("  coda a memoria/REGISTRO_NODI.jsonl — una riga JSON per riga, append-only:")
+    print('  {"data_iso":"...Z","nodo":"<chi-sei>","azione":"...","file":[],"note":""}')
+    print()
+    print("COME PARLI: etichetta ogni affermazione — RECUPERATO (letto nella fonte")
+    print("o osservato eseguendola), INFERITO, IPOTESI, UNKNOWN. UNKNOWN non vuol")
+    print("dire impossibile. E una citazione che nessuno puo' aprire non e' una")
+    print("fonte: una fonte e' un file con una riga, un comando con la sua uscita,")
+    print("un URL che si apre.")
+    print()
+    print("Costruire davvero, non fingere insieme.")
+    print("=" * 72)
+    return 0
 
 
 def _voci() -> list[dict]:
@@ -203,7 +308,12 @@ def main(argv=None) -> int:
     p.add_argument("--ambiente", default="", help="python e sistema")
     p.add_argument("--note", default="")
     p.add_argument("--leggi", action="store_true", help="le risposte arrivate")
+    p.add_argument("--consegna", action="store_true",
+                   help="il briefing da incollare a un nodo che non apre il repo")
     a = p.parse_args(argv)
+
+    if a.consegna:
+        return consegna()
 
     if a.compiti:
         print("Compiti aperti — si chiedono ESECUZIONI, non pareri.\n")
