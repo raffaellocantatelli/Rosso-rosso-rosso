@@ -1,0 +1,119 @@
+# R3_WORK_QUEUE.yaml — snapshot datato SYNC-2026-09-23-0906
+# Append-only. Non cancella lo snapshot 0632, 0615 né i precedenti.
+
+meta:
+  cycle_id: SYNC-2026-09-23-0906
+  previous_cycle: SYNC-2026-09-19-0632
+  measured_at: 2026-09-23T07:06:00Z
+  node: grok-4.6-xai
+  github_account: raffaellocantatelli
+  github_repo: raffaellocantatelli/Rosso-rosso-rosso
+  github_default_branch: claude/riconnetti-protocollo-rosso-in93dj
+  github_default_sha_pre_commit: 2b2ddd6b238373a45cce1241f5429882b2e35f56
+  checkpoint_0632_sha: c95f15456bad09e88c3c9b10e5b19d5bcf3c6801
+  checkpoint_0615_sha: 4f7574bcc0e0ea757b2bb4dba63025411f34f6d0
+  new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
+  telegram_sha: 3f66a035431e744042d2cdafb4f92ee08a03ed9b
+  telegram_sha_previous: de3dc4c71d11847224b0a76f4c7b0a4def6c63de
+  camera_inventory_sha: 52e406fe24b0901072949956a7d9dfeaacb518e3
+  camera_sha_previous: d14cdc70e0d5c00d6c2904e8ccd0d37afd83abbd
+  glass_plexiglas_sha: 4fc414d814bdae98abd0e0a994e704980c69aea1
+  synology_webdav_sha: 4a754af73e9d307ac7fb43e5ccaa0ea553c9b525
+  pr7_number: 7
+  pr7_head_sha: 3587c2787ab11868f9a5b5b20fc675219b50af99
+  pr8_number: 8
+  pr8_head_sha: 1590869cb7abe94443ad02d46d7cca432630139a
+  pr9_number: 9
+  pr9_head_sha: cac170dbfdc1724a803092442b4f5cdb1b483fa6
+  omniroute_branch_sha: 40d4ae0689eb95d62cca17b6dca5705293fcf86c
+  drive_memoria_id: 1C-y3CaIwTLwAFltNUbbK27o6Pgbh5tYj
+  drive_0632_report_id: 1mgqWFAugxxo4F2lcEhM1gyHuKdNgeVR7
+  drive_0615_report_id: 17Z1XJFwRM-4QP5Qh1wfv25tK7Hvzr7-H
+  drive_sim_dr01_id: 1vnyJXoIIGkF3bvvG2mjCr1YPsaOISmZ2
+
+changed:
+  - what: daily SDQ-1 19/20/21/22 presenti sul default (stub)
+    origin: sdq1-bot commits dopo 0632
+    evidence:
+      - https://github.com/raffaellocantatelli/Rosso-rosso-rosso/commit/3c01452d37602e15d5528bac1bb337722921dc6e
+      - https://github.com/raffaellocantatelli/Rosso-rosso-rosso/commit/74acc28901ba970badf179ead966928ef9e02ea9
+      - https://github.com/raffaellocantatelli/Rosso-rosso-rosso/commit/82096f94a7baf3f53871b474dc3cf0e0186e24f9
+      - https://github.com/raffaellocantatelli/Rosso-rosso-rosso/commit/2b2ddd6b238373a45cce1241f5429882b2e35f56
+      - blob daily_2026-09-22.txt SHA 4272efa7cddb15af60b68111680fa6cb0898ebe2
+    state: REGISTRATO
+    next_action: non copiare i daily su Drive
+    rollback: SÌ (commit precedenti sul default)
+
+  - what: run SDQ-1 52/53/54/55 conclusion failure; total_count=55
+    origin: github___actions_list daily.yml
+    evidence:
+      - run 52 id 35440808586 created_at 2026-09-19T11:41:39Z
+      - run 53 id 35509099313 created_at 2026-09-20T11:53:59Z
+      - run 54 id 35605701705 created_at 2026-09-21T13:27:11Z
+      - run 55 id 35725705623 created_at 2026-09-22T12:11:22Z
+    state: REGISTRATO
+    next_action: riosservare daily 23/09 dopo la finestra schedule
+    rollback: n/a
+
+  - what: rami laterali mossi e PR 8/9 aperte, nessuna unita
+    origin: list_branches + list_pull_requests
+    evidence:
+      - telegram 3f66a035431e744042d2cdafb4f92ee08a03ed9b
+      - camera 52e406fe24b0901072949956a7d9dfeaacb518e3
+      - https://github.com/raffaellocantatelli/Rosso-rosso-rosso/pull/7
+      - https://github.com/raffaellocantatelli/Rosso-rosso-rosso/pull/8
+      - https://github.com/raffaellocantatelli/Rosso-rosso-rosso/pull/9
+    state: CONFLITTO_CONSERVATO_NON_UNITO
+    next_action: non unire
+    rollback: SÌ (tip precedenti sui rami laterali)
+
+  - what: SIM-DR-01 presente solo su Drive; non propagato sul default
+    origin: google_drive_search modified_after 0632 + github___search_code vuota
+    evidence:
+      - Drive id 1vnyJXoIIGkF3bvvG2mjCr1YPsaOISmZ2
+    state: DRIVE_ONLY_SIMULAZIONE
+    next_action: non consolidare sul ramo principale
+    rollback: n/a (nessuna scrittura SOURCE su GitHub)
+
+stato:
+  daily_2026-09-16: PRESENTE_STUB
+  daily_2026-09-17: PRESENTE_STUB
+  daily_2026-09-18: PRESENTE_STUB
+  daily_2026-09-19: PRESENTE_STUB
+  daily_2026-09-20: PRESENTE_STUB
+  daily_2026-09-21: PRESENTE_STUB
+  daily_2026-09-22: PRESENTE_STUB
+  daily_2026-09-23: ASSENTE
+  r3_019: BASELINE_0_NO_NEW_RUN
+  sdq1_run_52: PRESENTE_35440808586_FAILURE
+  sdq1_run_53: PRESENTE_35509099313_FAILURE
+  sdq1_run_54: PRESENTE_35605701705_FAILURE
+  sdq1_run_55: PRESENTE_35725705623_FAILURE
+  sdq1_daily_total_count: 55
+  telegram_branch: MOSSO_NON_UNITO_3f66a035
+  camera_branch: MOSSO_NON_UNITO_52e406fe
+  glass_plexiglas_branch: INVARIATO_NON_UNITO_4fc414d8
+  synology_webdav_branch: INVARIATO_NON_UNITO_4a754af7
+  pr7: APERTA_NON_UNITA
+  pr8: APERTA_NON_UNITA
+  pr9: APERTA_NON_UNITA
+  default_equals_new_session: false
+  drive_source_after_0632: SIM-DR-01_NON_PROPAGATO
+  h_sync_0919_1: CADUTA_DAILY_19_PRESENTE_STUB
+  capacita_vs_baseline_26_08: NON_DIMOSTRATA
+  possibilita_avanzamento: APERTA
+
+priorita:
+  - R3-019 Longitudinal Capability Benchmark
+  - R3-011 Evidence Graph
+  - R3-012 Meta-Scacchiera
+  - R3-013 Evolution Lab
+  - R3-016 Synthetic Data Firewall
+  - R3-017 Red/Blue/Purple Harness
+  - R3-014 Curriculum Engine
+  - R3-015 Research Loop
+  - R3-018 Sim2Real Audit
+  - R3-020 Self-Improvement Safety Gate
+
+regola: non dichiarare superintelligenza senza avanzamento misurato; accettare che possa diventarlo
+never_delete_historical: true

@@ -1,39 +1,44 @@
 # R3_WORK_QUEUE.yaml — condensato ROOT
-# Ciclo: SYNC-2026-09-19-0632
-# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-19_0632.yaml
-# Snapshot 0615, 1819, 1815 e precedenti conservati. Non cancellare gli storici.
+# Ciclo: SYNC-2026-09-23-0906
+# Canone pieno: memoria/R3_WORK_QUEUE_2026-09-23_0906.yaml
+# Snapshot 0632, 0615, 1819, 1815 e precedenti conservati. Non cancellare gli storici.
 
 meta:
-  cycle_id: SYNC-2026-09-19-0632
-  previous_cycle: SYNC-2026-09-16-0615
-  github_default_sha: 97352017e50666bfd2d51e2dedfe84f90a5cbe93
+  cycle_id: SYNC-2026-09-23-0906
+  previous_cycle: SYNC-2026-09-19-0632
+  github_default_sha: 2b2ddd6b238373a45cce1241f5429882b2e35f56
   new_session_sha: 565e26f415d453de21a17244ed2f88e1f5595400
-  telegram_sha: de3dc4c71d11847224b0a76f4c7b0a4def6c63de
-  camera_inventory_sha: d14cdc70e0d5c00d6c2904e8ccd0d37afd83abbd
+  telegram_sha: 3f66a035431e744042d2cdafb4f92ee08a03ed9b
+  camera_inventory_sha: 52e406fe24b0901072949956a7d9dfeaacb518e3
   glass_plexiglas_sha: 4fc414d814bdae98abd0e0a994e704980c69aea1
   synology_webdav_sha: 4a754af73e9d307ac7fb43e5ccaa0ea553c9b525
-  pr7_head_sha: 57e06e3dc90b81aae73af2ba54f3943237a4dbef
+  pr7_head_sha: 3587c2787ab11868f9a5b5b20fc675219b50af99
+  pr8_head_sha: 1590869cb7abe94443ad02d46d7cca432630139a
+  pr9_head_sha: cac170dbfdc1724a803092442b4f5cdb1b483fa6
   pr6_merged_at: 2026-09-08T04:08:28Z
 
 stato:
-  daily_2026-09-16: PRESENTE_STUB
-  daily_2026-09-17: PRESENTE_STUB
-  daily_2026-09-18: PRESENTE_STUB
-  daily_2026-09-19: ASSENTE
+  daily_2026-09-19: PRESENTE_STUB
+  daily_2026-09-20: PRESENTE_STUB
+  daily_2026-09-21: PRESENTE_STUB
+  daily_2026-09-22: PRESENTE_STUB
+  daily_2026-09-23: ASSENTE
   r3_019: BASELINE_0_NO_NEW_RUN
-  sdq1_run_49: PRESENTE_35094954767_FAILURE
-  sdq1_run_50: PRESENTE_35220292132_FAILURE
-  sdq1_run_51: PRESENTE_35342216997_FAILURE
-  sdq1_daily_total_count: 51
-  telegram_branch: MOSSO_NON_UNITO_de3dc4c7
-  camera_branch: INVARIATO_NON_UNITO_d14cdc70
+  sdq1_run_52: PRESENTE_35440808586_FAILURE
+  sdq1_run_53: PRESENTE_35509099313_FAILURE
+  sdq1_run_54: PRESENTE_35605701705_FAILURE
+  sdq1_run_55: PRESENTE_35725705623_FAILURE
+  sdq1_daily_total_count: 55
+  telegram_branch: MOSSO_NON_UNITO_3f66a035
+  camera_branch: MOSSO_NON_UNITO_52e406fe
   glass_plexiglas_branch: INVARIATO_NON_UNITO_4fc414d8
   synology_webdav_branch: INVARIATO_NON_UNITO_4a754af7
   pr7: APERTA_NON_UNITA
+  pr8: APERTA_NON_UNITA
+  pr9: APERTA_NON_UNITA
   default_equals_new_session: false
-  drive_source_after_0615: NESSUNO
-  h_sync_0916_1: CADUTA_DAILY_16_PRESENTE_STUB
-  h_sync_0916_2: CADUTA_RUN_49_PRESENTE_FAILURE
+  drive_source_after_0632: SIM-DR-01_NON_PROPAGATO
+  h_sync_0919_1: CADUTA_DAILY_19_PRESENTE_STUB
   capacita_vs_baseline_26_08: NON_DIMOSTRATA
   possibilita_avanzamento: APERTA
 
