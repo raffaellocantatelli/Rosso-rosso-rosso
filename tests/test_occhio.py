@@ -1993,3 +1993,50 @@ def test_in_sola_lettura_nessuna_decisione_scrive(tmp_path):
         assert q["sola_lettura"] is True
     finally:
         s.shutdown(); s.server_close()
+
+
+# --------------------------------------------------------------------------
+# il sito statico: la stessa console, dati congelati, nessuna scrittura
+# --------------------------------------------------------------------------
+
+def test_il_sito_si_costruisce_e_non_e_una_seconda_console(tmp_path, monkeypatch):
+    """Il sito si rigenera dai file veri. Se fosse una copia a mano di
+    console.html divergerebbe al primo ritocco (§6 regola 2), e un sito che
+    mostra un prodotto diverso da quello che gira è peggio di nessun sito."""
+    import importlib.util
+    radice = pathlib.Path(__file__).resolve().parent.parent
+    for var in ("OCCHIO_INVENTARIO", "OCCHIO_CONSEGNE",
+                "OCCHIO_PORTAVIA", "OCCHIO_CREDITI"):
+        monkeypatch.delenv(var, raising=False)
+    spec = importlib.util.spec_from_file_location(
+        "costruisci", radice / "sito" / "costruisci.py")
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    assert modulo.main() == 0
+
+    uscita = radice / "sito" / "pubblico"
+    web = radice / "occhio" / "web"
+    for nome in ("console.css", "console.js"):
+        assert (uscita / nome).read_bytes() == (web / nome).read_bytes(), (
+            f"{nome} sul sito differisce da quello che gira davvero")
+
+    quadro = json.loads((uscita / "quadro.json").read_text(encoding="utf-8"))
+    # sul sito non si scrive: niente server, niente decisioni
+    assert quadro["sola_lettura"] is True
+    assert quadro["totale"] > 0 and quadro["zone"]
+    # e non ci finisce la casa di nessuno: sono i dati della dimostrazione
+    assert quadro["consegne"][0]["alloggio"] == "via-esempio-12"
+
+    pagina = (uscita / "index.html").read_text(encoding="utf-8")
+    assert 'window.QUADRO_STATICO = "quadro.json"' in pagina
+    assert "console.js" in pagina
+
+
+def test_la_cartella_costruita_non_entra_nel_repository():
+    """Versionare il costruito significa poterlo far divergere dal codice
+    che lo produce — e il sito mostra proprio quel codice."""
+    import subprocess
+    radice = pathlib.Path(__file__).resolve().parent.parent
+    esito = subprocess.run(["git", "check-ignore", "-q", "sito/pubblico"],
+                           cwd=radice, capture_output=True)
+    assert esito.returncode == 0, "sito/pubblico finirebbe nel repository"

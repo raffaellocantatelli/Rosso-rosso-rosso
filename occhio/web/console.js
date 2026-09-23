@@ -18,7 +18,13 @@ let QUADRO = null, ZONA = null;
 const COLORI = { fatta: "#2ee06a", da_fare: "#ffb020", manca: "#ff4d4d" };
 
 async function carica() {
-  const r = await fetch("/api/quadro");
+  // Due sorgenti, una sola pagina. Dal vivo il quadro arriva dal server;
+  // sul sito statico — dove non c'è nessun server e niente da scrivere —
+  // arriva da un file congelato che la pagina dichiara da sé. Tenere due
+  // copie della console per due sorgenti vorrebbe dire che al primo
+  // ritocco divergono. Chiedere e fallire funzionerebbe, ma lascerebbe un
+  // 404 nel registro del browser a ogni apertura: sembra rotta.
+  const r = await fetch(window.QUADRO_STATICO || "/api/quadro");
   QUADRO = await r.json();
   disegna();
 }

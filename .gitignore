@@ -57,3 +57,8 @@ occhio/privato/
 # comando; averli versionati significherebbe che possono divergere dal
 # codice che li produce.
 dimostrazione/
+sito/pubblico/
+
+# Il sito si rigenera: `python3 sito/costruisci.py`. Versionare
+# la cartella costruita significherebbe poterla far divergere dal
+# codice che la produce — e il sito mostra proprio quel codice.
