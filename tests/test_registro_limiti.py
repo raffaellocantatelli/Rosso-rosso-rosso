@@ -89,3 +89,39 @@ def test_un_comando_che_non_torna_non_blocca_il_registro(tmp_path):
     _isolato(tmp_path)
     uscita, riga = rn._esegui("sleep 5", secondi=1)
     assert uscita == 124 and "scaduto" in riga
+
+
+# --- il loopback dentro lo strumento fatto per impedirlo --------------------
+
+def test_un_comando_che_cerca_nel_progetto_viene_rifiutato(tmp_path, capsys):
+    # Successo il 23/09/2026: il comando cercava una stringa nel repository, e
+    # la stringa e' finita nella documentazione del limite stesso. Il limite
+    # e' "caduto" senza che fosse cambiato niente nel mondo. §4, dentro lo
+    # strumento costruito per impedirlo — come gia' al registro delle ipotesi.
+    reg = _isolato(tmp_path)
+    for comando in ('grep -rqs "X" .', "git grep X", "rg X", "grep -R X ."):
+        assert rn.limite("prova", "x", comando) == 2, comando
+    assert "RIFIUTATO" in capsys.readouterr().out
+    assert _voci(reg) == []
+
+
+def test_una_condizione_del_mondo_va_bene(tmp_path):
+    _isolato(tmp_path)
+    assert rn.limite("prova", "manca la chiave", 'test -n "$CHIAVE_CHE_NON_ESISTE"') == 0
+
+
+def test_l_ultima_dichiarazione_supera_le_precedenti(tmp_path):
+    reg = _isolato(tmp_path)
+    rn.limite("prova", "lo stesso limite", "false")
+    rn.limite("prova", "lo stesso limite", 'test -n "$ALTRA_COSA"')
+    assert len(_voci(reg)) == 2, "append-only: la storia non si cancella"
+    vigenti = rn._limiti_dichiarati()
+    assert len(vigenti) == 1, "ma due dichiarazioni della stessa cosa non valgono entrambe"
+    assert vigenti[0]["comando"] == 'test -n "$ALTRA_COSA"'
+
+
+def test_limiti_diversi_restano_tutti_e_due(tmp_path):
+    _isolato(tmp_path)
+    rn.limite("prova", "primo limite", "false")
+    rn.limite("prova", "secondo limite", "false")
+    assert len(rn._limiti_dichiarati()) == 2

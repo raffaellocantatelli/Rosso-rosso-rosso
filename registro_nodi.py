@@ -102,8 +102,24 @@ def _esegui(comando, secondi=120):
     return r.returncode, riga[:300]
 
 
+#: Un comando che cerca dentro il testo del progetto puo' trovare se stesso:
+#: il registro e la documentazione contengono il comando, quindi il giorno in
+#: cui qualcuno lo scrive da qualche parte il limite "cade" senza che sia
+#: cambiato niente nel mondo. E' il loopback di CLAUDE.md §4 dentro lo
+#: strumento costruito per impedirlo — successo davvero il 23/09/2026.
+CERCA_NEL_PROGETTO = ("grep -r", "grep -R", "git grep", "rg ", "ack ")
+
+
 def limite(nodo, descrizione, comando):
     """Registra un limite SOLO se il comando che dovrebbe dimostrarlo fallisce."""
+    for spia in CERCA_NEL_PROGETTO:
+        if spia in comando:
+            print("RIFIUTATO — `%s` cerca dentro il testo del progetto." % spia.strip())
+            print("Il registro e la documentazione contengono il comando stesso: prima o")
+            print("poi si troverebbe da solo e il limite cadrebbe senza che sia cambiato")
+            print("niente. Prova una condizione del mondo: un file, una variabile, una")
+            print("connessione — non una parola scritta qui dentro.")
+            return 2
     uscita, riga = _esegui(comando)
     if uscita == 0:
         print("RIFIUTATO — `%s` riesce (uscita 0)." % comando)
@@ -132,7 +148,14 @@ def limite(nodo, descrizione, comando):
 
 
 def _limiti_dichiarati():
-    return [v for v in _voci() if v.get("tipo") == "limite" and v.get("comando")]
+    """I limiti in vigore. Append-only vuol dire che non si cancella niente —
+    ma due dichiarazioni della stessa cosa non possono valere entrambe
+    (§6 regola 2). Vince l'ultima: le precedenti restano nella storia."""
+    per_descrizione = {}
+    for v in _voci():
+        if v.get("tipo") == "limite" and v.get("comando"):
+            per_descrizione[v.get("azione", "")] = v
+    return list(per_descrizione.values())
 
 
 def limiti():

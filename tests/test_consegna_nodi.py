@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
 import rassegna  # noqa: E402
+import registro_nodi  # noqa: E402
 
 
 def test_la_consegna_nomina_ogni_compito_aperto(capsys):
@@ -57,21 +58,24 @@ def test_la_consegna_vieta_le_impressioni(capsys):
 
 
 def test_i_limiti_dichiarati_arrivano_dal_registro(tmp_path, monkeypatch, capsys):
+    # Il registro e' una variabile del modulo che lo tiene, non un percorso
+    # ricopiato qui: si punta quella, altrimenti si misura il file sbagliato.
     reg = tmp_path / "memoria"
     reg.mkdir()
+    monkeypatch.setattr(registro_nodi, "REGISTRO", str(reg / "REGISTRO_NODI.jsonl"))
     (reg / "REGISTRO_NODI.jsonl").write_text(json.dumps({
         "data_iso": "2026-09-23T00:00:00Z", "nodo": "prova", "tipo": "limite",
         "azione": "limite dichiarato: la porta e' chiusa",
         "comando": "false", "uscita": 1, "file": [],
     }) + "\n", encoding="utf-8")
-    monkeypatch.chdir(tmp_path)
     rassegna.consegna()
     out = capsys.readouterr().out
     assert "la porta e' chiusa" in out and "--ritenta" in out
 
 
 def test_senza_limiti_non_inventa_una_sezione(tmp_path, monkeypatch, capsys):
-    monkeypatch.chdir(tmp_path)          # nessun memoria/REGISTRO_NODI.jsonl
+    monkeypatch.setattr(registro_nodi, "REGISTRO",
+                        str(tmp_path / "non-esiste.jsonl"))
     rassegna.consegna()
     assert "fai cadere un limite" not in capsys.readouterr().out
 

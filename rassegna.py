@@ -123,22 +123,16 @@ def _url_repository() -> str:
 
 
 def _limiti_dichiarati() -> list[dict]:
-    """I limiti depositati nel registro dei nodi, col comando che li dimostra."""
-    percorso = Path("memoria/REGISTRO_NODI.jsonl")
-    if not percorso.exists():
+    """I limiti in vigore, chiesti a chi li tiene — non ricopiando la logica
+    (CLAUDE.md §6 regola 2: un concetto, un file)."""
+    try:
+        import registro_nodi
+    except ImportError:
         return []
-    fuori = []
-    for riga in percorso.read_text(encoding="utf-8").splitlines():
-        riga = riga.strip()
-        if not riga:
-            continue
-        try:
-            v = json.loads(riga)
-        except json.JSONDecodeError:
-            continue
-        if v.get("tipo") == "limite" and v.get("comando"):
-            fuori.append(v)
-    return fuori
+    try:
+        return registro_nodi._limiti_dichiarati()
+    except OSError:
+        return []
 
 
 def consegna() -> int:
