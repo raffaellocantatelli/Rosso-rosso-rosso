@@ -12,6 +12,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -303,6 +304,40 @@ class TestCrashNonEUnSi(BaseVerificatore):
                          "il crash deve davvero uscire con 1, o il test non prova niente")
         self.assertEqual(risultati[0]["esito"], "verifica_fallita")
         self.assertEqual(self.stato("K1"), registro.APERTA)
+        voce = [h for h in registro.carica() if h["id"] == "K1"][0]
+        self.assertEqual(voce["verifiche"]["eseguite"], 0,
+                         "un crash non deve contare come verifica eseguita")
+        self.assertEqual(voce["verifiche"]["ultimo_esito"], "verifica_fallita")
+
+    def test_riproduce_h5_storico_senza_riscrivere_la_prova(self):
+        radice = Path(__file__).resolve().parent.parent
+        archivio = radice / "output" / "verifiche.jsonl"
+        originale = archivio.read_bytes()
+        evento = next(
+            r for r in map(json.loads, originale.splitlines())
+            if r["ipotesi"] == "H5"
+            and r["data_iso"] == "2026-08-26T00:27:36+00:00"
+        )
+        self.assertEqual(evento["esito"], "regge")
+        self.assertIn("Traceback (most recent call last)", evento["output"])
+        self.scrivi_registro([{
+            "id": "K5", "testo": "replay del crash storico H5",
+            "stato": evento["stato_prima"],
+            "falsificatore": {"comando": ["replay-offline-h5"]},
+        }])
+        # Il processo non viene rilanciato: si usa solo l'evidenza archiviata.
+        with patch.object(verificatore, "esegui_falsificatore", return_value={
+            "codice": evento["exit_code"], "output": evento["output"],
+        }):
+            risultato = verificatore.verifica()[0]
+        self.assertEqual(risultato["esito"], "verifica_fallita")
+        self.assertEqual(risultato["stato_dopo"], evento["stato_prima"])
+        self.assertFalse(risultato["declassamento"])
+        voce = next(h for h in registro.carica() if h["id"] == "K5")
+        self.assertEqual(voce["verifiche"]["eseguite"], 0)
+        self.assertEqual(voce["verifiche"]["cadute"], 0)
+        self.assertEqual(voce["verifiche"]["ultimo_esito"], "verifica_fallita")
+        self.assertEqual(archivio.read_bytes(), originale)
 
     def test_il_guscio_protetto_restituisce_non_conclusa(self):
         import falsificatori

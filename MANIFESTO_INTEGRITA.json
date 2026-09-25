@@ -1,4 +1,16 @@
 {
+  "aggiornato_parzialmente": {
+    "base_sha": "c95f15456bad09e88c3c9b10e5b19d5bcf3c6801",
+    "baseline_completa_rigenerata": false,
+    "data_iso": "2026-09-19T11:23:39+00:00",
+    "file": [
+      "registro_ipotesi.json",
+      "tests/test_verificatore.py",
+      "registro_osservazioni.jsonl",
+      "memoria/BUG_R3_H5_EXITCODE_01.md"
+    ],
+    "motivo": "BUG-R3-H5-EXITCODE-01"
+  },
   "algoritmo": "sha256",
   "file": {
     ".github/workflows/daily.yml": {
@@ -72,6 +84,10 @@
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
       "sha256": "6cc0eaaaf73d66edcc68d19cb49228cab4c04ba1cf2b67cabf0dc24c277c65c2"
+    },
+    "memoria/BUG_R3_H5_EXITCODE_01.md": {
+      "byte": 5427,
+      "sha256": "d983f91d3cc11bdbb0758e1ac35dc1cab5db9785bdec77665a8017633ee73bd8"
     },
     "memoria/CONTRADDITTORIO.md": {
       "byte": 4647,
@@ -554,16 +570,16 @@
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
     "registro_ipotesi.json": {
-      "byte": 9782,
-      "sha256": "4200729dc616a887eee8e8522c164e3151fc4a1d1092ee7945a449e992619d9c"
+      "byte": 9793,
+      "sha256": "d7faf0c9e63e0433144105ccb24e9d33e3791bf9ffe7c0bf7e9f0d0fd0d71626"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
       "sha256": "26d5f1b7623a8113b0327873d531ccea4aaafd105d25b219f7c303a875d9ac55"
     },
     "registro_osservazioni.jsonl": {
-      "byte": 2889,
-      "sha256": "a62674cf119065491a5ebe416f7244caae102b7bff6b458e33e353180592c0b6"
+      "byte": 3785,
+      "sha256": "f145f306ce5e5c47675a21394ea915cc34ee0bb82bd97460abe977af2654c58d"
     },
     "registro_osservazioni.py": {
       "byte": 7570,
@@ -750,8 +766,8 @@
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
     },
     "tests/test_verificatore.py": {
-      "byte": 16718,
-      "sha256": "b85f5d6eeca5508751a23bafd34806e226e4406ac26334a309ecd5d70d2ae5b5"
+      "byte": 18602,
+      "sha256": "7c0b6b8ceb8e8c6d1fc23dfad0bc91d8ee4fb373e953265c7dcc7677891ce409"
     },
     "trasmissione_ciclica.py": {
       "byte": 11893,
