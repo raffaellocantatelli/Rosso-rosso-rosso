@@ -1,0 +1,8 @@
+{
+  "name": "santuario-grafici",
+  "private": true,
+  "description": "Mermaid CLI fissato per esporta_grafici.py",
+  "dependencies": {
+    "@mermaid-js/mermaid-cli": "12.0.0"
+  }
+}

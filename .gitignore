@@ -57,3 +57,8 @@ occhio/privato/
 # comando; averli versionati significherebbe che possono divergere dal
 # codice che li produce.
 dimostrazione/
+
+# santuario — derivati rigenerabili dalle sorgenti mermaid
+santuario/grafici/
+santuario/node_modules/
+santuario/package-lock.json
