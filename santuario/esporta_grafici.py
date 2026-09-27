@@ -77,11 +77,16 @@ def estrai(testo):
                 m = RE_ID_IN_TITOLO.search(ultimo_titolo)
                 if m:
                     gid, titolo = m.group(1), m.group(2).strip()
+            # uno slot con solo commenti %% è un posto da riempire, non un
+            # grafico: renderlo produrrebbe un file che sembra un risultato.
+            vuoto = not any(r.strip() and not r.strip().startswith("%%")
+                            for r in corpo)
             blocchi.append({
                 "id": gid,
                 "titolo": titolo or ultimo_titolo,
                 "sorgente": "\n".join(corpo).rstrip() + "\n",
                 "ordine": n,
+                "vuoto": vuoto,
             })
             continue
         corpo.append(riga)
@@ -154,6 +159,10 @@ def indice_html(elementi, dest, formati):
         link = " ".join(
             f'<a href="{f}/{e["id"]}.{f}" download>{f.upper()}</a>'
             for f in formati if e["esiti"].get(f) == "ok")
+        if e.get("vuoto"):
+            carte.append(f'<div class="card"><h3>{e["id"]} · {escape(e["titolo"])}</h3>'
+                         '<p class="vuoto">da incollare</p></div>')
+            continue
         anteprima = (f'<img src="svg/{e["id"]}.svg" alt="{escape(e["titolo"])}" loading="lazy">'
                      if e["esiti"].get("svg") == "ok"
                      else '<p class="ko">anteprima non disponibile</p>')
@@ -177,6 +186,7 @@ h1{{color:var(--acc)}}
 .card img{{width:100%;display:block;background:#fff}}
 .actions{{padding:.5rem 1rem;display:flex;gap:.75rem;font-size:.875rem}}
 .actions a{{color:var(--acc)}} .ko{{color:var(--ko);padding:0 1rem}}
+.vuoto{{padding:2rem 1rem;opacity:.6;font-style:italic}}
 </style></head><body>
 <h1>Grafici del Santuario</h1>
 <p>{len(elementi)} grafici · generato {time.strftime("%Y-%m-%d %H:%M")}</p>
@@ -247,7 +257,11 @@ def main():
         nota = "  (ID dall'ordine: aggiungi `%% Gnn · Titolo`)" if b.get("id_da_ordine") else ""
         print(f"   {b['id']}  {b['titolo'][:60]}{nota}")
 
-    elementi = [{"id": b["id"], "titolo": b["titolo"], "esiti": {}} for b in blocchi]
+    elementi = [{"id": b["id"], "titolo": b["titolo"], "esiti": {},
+                 "vuoto": b["vuoto"]} for b in blocchi]
+    vuoti = [e["id"] for e in elementi if e["vuoto"]]
+    if vuoti:
+        print(f"━━ {len(vuoti)} slot vuoti, da incollare: {', '.join(vuoti)}")
     fallimenti = []
     if not a.solo_estrai:
         mmdc = trova_mmdc()
@@ -258,6 +272,8 @@ def main():
                 "oppure usa --solo-estrai.")
         pcfg = config_puppeteer(base / ".puppeteer.json")
         for e in elementi:
+            if e["vuoto"]:
+                continue
             src = base / "sorgenti" / f"{e['id']}.mmd"
             for fmt in formati:
                 sfondo = "white" if fmt == "pdf" else "transparent"
@@ -285,7 +301,7 @@ def main():
         print(f"━━ Backup: {backup(base, a.ingresso, elementi)}")
 
     fatti = sum(v == "ok" for e in elementi for v in e["esiti"].values())
-    attesi = len(elementi) * (0 if a.solo_estrai else len(formati))
+    attesi = (len(elementi) - len(vuoti)) * (0 if a.solo_estrai else len(formati))
     print(f"━━ {fatti}/{attesi} file generati · indice: {base / 'index.html'}")
     if fallimenti:
         print(f"✗ {len(fallimenti)} falliti — dettagli in {base / 'fallimenti.json'}")

@@ -25,10 +25,11 @@ Esce con codice 1 e scrive `fallimenti.json` se anche un solo file non si genera
 
 ## Cosa non c'è qui
 
-**UNKNOWN:** i 27 grafici G01–G27 elencati in chat non sono in questo
-repository né in nessun ramo (cercato il 27/09: zero blocchi mermaid, nessun
-`santuario-master.md`). Sono nella conversazione dove sono nati. Per esportarli:
-incollarli in `santuario/santuario-master.md` e lanciare il comando.
+**UNKNOWN:** il contenuto dei 27 grafici G01–G27. Non è in nessun ramo né sul
+Drive (cercato il 27/09); sta nella conversazione dove sono nati.
+`santuario-master.md` ha i 27 posti già pronti, con ID e titolo: si incolla il
+corpo di ogni diagramma sotto la sua riga `%%`. Uno slot lasciato vuoto non viene
+disegnato: lo script lo elenca come «da incollare».
 `esempio.md` è solo la prova della pipeline, non una ricostruzione.
 
 ## Cosa si è imparato dalla guida (verificato eseguendola, 27/09)
@@ -39,7 +40,7 @@ incollarli in `santuario/santuario-master.md` e lanciare il comando.
 | numerazione G01, G02… in ordine | G14 e G17 sono tabelle: dal 15° grafico **ogni ID è sbagliato** | ID dal commento `%%` o dal titolo |
 | `index.html` con `fetch('elenco.json')` | da `file://` il browser blocca: **indice vuoto** | dati scritti dentro l'HTML |
 | `set -e` sul ciclo | si ferma al primo errore, non dice quanti restano | converte tutto, poi riporta |
-| «27 grafici × 3 = 81 file» | 3 sono tabelle: sono **24 × 3 = 72** | conta i file reali |
+| «27 grafici × 3 = 81 file» | le tabelle nel suo elenco sono 2 (G14, G17), non 3: sono **25 × 3 = 75** | conta i file reali |
 | Chromium da root in container | puppeteer rifiuta senza `--no-sandbox` | config generato |
 | comando unico con `open` | `open` esiste solo su macOS; lo script lanciato non esiste ancora nella cartella nuova | — |
 
