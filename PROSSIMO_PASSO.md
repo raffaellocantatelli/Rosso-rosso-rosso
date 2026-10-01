@@ -389,6 +389,24 @@ e un test fallisce se una cronaca rientra.
 - **H2 resta FALSIFICATA sul ramo (b)**: zero contatti reali. Se il criterio
   non è più quello che si vuole misurare, va riformulato da Claudio — il
   verificatore esegue ciò che è scritto, non lo riscrive.
+- **rizzo-flow come Jev locale delle sorelle (24/09 – 01/10, NON installato).**
+  Claudio ha chiesto di installare `Rizzo-AI-Academy/rizzo-flow` (Apache-2.0)
+  e di metterlo a disposizione dei 9 nodi di R3-SISTER/1.
+  RECUPERATO: espone la stessa API HTTP di Jev (`/v1/systemone`,
+  `/v1/decisions`, porta 8017), e le sue probabilità si dichiarano da sole
+  `uncalibrated`. RECUPERATO dal Drive (`R3_SISTER_GROK_VERIFY_2026-09-21`):
+  il posto dove andrebbe è `claudioterzi/Claudio` → `typesafe_sister/`, oggi
+  in `jev: NON_DISPONIBILE → fallback_deterministico`.
+  **Bloccato:** nella sessione cloud l'installazione, l'esecuzione e
+  l'aggiunta di `claudioterzi/Claudio` sono state negate dai permessi.
+  Non genera testo, quindi **non accende il Core** (§1 resta l'unico blocco).
+  Per sbloccarlo serve una regola di permesso per `uv sync` e `uv run rizzo`,
+  oppure una sessione aperta su `claudioterzi/Claudio`.
+  **Criterio d'ingresso (P6), dichiarato prima di eseguirlo:** su 5 daily
+  Stub e 5 reali già noti in `output/`, se non separa gli Stub meglio del
+  caso (≥ 8/10), non entra nel protocollo. Ogni sua risposta è IPOTESI,
+  mai RECUPERATO, e non vale come conferma (§7: nove nodi che leggono gli
+  stessi file sono una fonte sola).
 
 ## 5. Cosa succede senza che nessuno faccia niente
 
