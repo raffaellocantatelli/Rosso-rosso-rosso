@@ -1,5 +1,5 @@
 # ONDA/1.0 — ultimo collaudo Docker LOCALE (non sul NAS)
-# 2026-10-19T08:29Z · host x86_64 · Docker 29.8.2 · commit base 7913c64
+# 2026-10-19T09:39Z · host x86_64 · Docker 29.8.2 · commit base ef8d144
 # file a nome fisso: si riscrive a ogni collaudo, la storia la tiene git
 
 == preparazione
@@ -7,8 +7,8 @@ PASS  avvio: tre agenti online
 == T1 verifica dal vivo (password, AOF, risposte firmate)
 PASS  verifica exit 0 
 PASS  Redis rifiuta chi non ha password 
-== T2 Redis non raggiungibile dall'host
-PASS  nessuna porta pubblicata ()
+== T2 Redis non raggiungibile dalla rete
+PASS  nessuna porta pubblicata fuori dal loopback ()
 == T3 PAUSA durante down/up
 PASS  SENTIN-004 IN_PAUSA 
 PASS  SENTIN-004 torna online 
@@ -16,11 +16,11 @@ PASS  SENTIN-004 resta IN_PAUSA dopo down/up
 PASS  SENTIN-004 rifiuta il lavoro 
 == T4 riavvio di Redis: riconnessione senza identità duplicate
 PASS  tre agenti di nuovo online 
-PASS  RAFFA-001 stessa incarnazione/pid/host ("incarnazione": 18, "pid": 1, "host": "78dd6707eed6")
+PASS  RAFFA-001 stessa incarnazione/pid/host ("incarnazione": 25, "pid": 1, "host": "c752c31dc5dd")
 PASS  la disconnessione è registrata 
 PASS  un solo container raffa 
 == T5 heartbeat: agente non raggiungibile -> OFFLINE entro 30 s
-PASS  MEMO-002 OFFLINE (dopo 27 s, soglia 30)
+PASS  MEMO-002 OFFLINE (dopo 28 s, soglia 30)
 PASS  MEMO-002 torna online 
 == T6 STOP: nessuno riprende prima di RIPRENDI, nemmeno dopo down/up e perdita di data/
 PASS  STOP a tutti: nessuno online 
