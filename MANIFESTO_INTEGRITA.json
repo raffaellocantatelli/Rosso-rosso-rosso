@@ -998,8 +998,8 @@
       "sha256": "a13eea39651f3beeb5a88cda52f79dd96151a9740de873ef6807735a8e5684d1"
     },
     "onda/DEPLOY_DS223.md": {
-      "byte": 10657,
-      "sha256": "e663995bc404eec13ad5667088a4ac149714bbd5f4ce72865dc8b65868f1af3e"
+      "byte": 11084,
+      "sha256": "7c25002517af5b88a6e3753a554a9eb785389a8b90789e95e026f78aa06253e3"
     },
     "onda/Dockerfile": {
       "byte": 595,
@@ -1026,8 +1026,8 @@
       "sha256": "e198e4ac1c13a241a8a87f500e092196ab231be06b5bc052c05066dad48ab924"
     },
     "onda/collaudo_docker.sh": {
-      "byte": 7011,
-      "sha256": "19353032cb5a7d16665cc2b147c935cc60c9c3a3188ef6f2cb0f038b78749706"
+      "byte": 7167,
+      "sha256": "c2f722db37c9fbcaeab2062a7e224b035be27fc22186a950225821829109ed45"
     },
     "onda/connessione.py": {
       "byte": 1916,
@@ -1322,6 +1322,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-10-19T08:29:40.115644+00:00",
+  "generato": "2026-10-19T08:31:35.723136+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

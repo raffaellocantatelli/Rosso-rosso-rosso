@@ -13,8 +13,10 @@ permessi). Ciò che sul NAS può andare diversamente è segnato **IPOTESI** o
 **UNKNOWN**: architettura ARM, versione di Docker, `docker compose` v1/v2.
 
 Ogni passo è in sola lettura fino al §3. Dal §3 in poi si scrive solo
-dentro `/volume1/docker/onda/`. Nessun passo apre porte, tocca il firewall,
-riavvia il NAS o cancella dati.
+dentro `/volume1/docker/onda/`. Nessun passo apre porte, tocca il firewall o
+riavvia il NAS. Solo due toccano dati, e lo dicono: il §5b sposta da parte
+`data/` per qualche minuto e la rimette; l'ultima riga del §7 cancella, e
+solo con il tuo consenso.
 
 ---
 
@@ -150,6 +152,7 @@ Serve la chiave `CONTROLLO-001` sul NAS **per la durata del collaudo**:
 
 ```bash
 mkdir -m 700 /tmp/onda-ctl                         # carica qui CONTROLLO-001.key + portachiavi.json
+sudo chown -R 1000:1000 /tmp/onda-ctl              # il container gira come uid 1000 e deve leggerla
 cd /volume1/docker/onda/repo
 sudo ONDA_BASE=/volume1/docker/onda ONDA_CONTROLLO_DIR=/tmp/onda-ctl \
   bash onda/collaudo_docker.sh | tee /volume1/docker/onda/collaudo_$(date +%Y%m%d).txt
@@ -158,7 +161,7 @@ rm -rf /tmp/onda-ctl                               # la chiave di controllo NON 
 
 | Passo | Criterio |
 |---|---|
-| T1, T2 | Redis con password, nessuna porta pubblicata, agenti che rispondono |
+| T1, T2 | Redis con password, nessuna porta pubblicata fuori dal loopback del NAS, agenti che rispondono |
 | T3 | PAUSA durante down/up |
 | T4 | riavvio di Redis: stessa identità, nessun duplicato |
 | T5 | heartbeat: `docker pause` di MEMO-002 → OFFLINE entro 30 s |
@@ -213,7 +216,9 @@ py -m onda comando RIPRENDI "*" --come CONTROLLO-001
 ```
 
 Il traffico viaggia cifrato nell'SSH che usi già, e Redis resta invisibile
-alla LAN. Le alternative (porta sull'IP di LAN più il firewall DSM, oppure
+alla LAN. Il passo T2 del collaudo accetta questa porta, perché è legata a
+`127.0.0.1`; boccia qualunque porta legata a un'interfaccia raggiungibile
+dalla rete. Le alternative (porta sull'IP di LAN più il firewall DSM, oppure
 Tailscale) espongono Redis senza TLS a una rete più ampia: non le preparo
 senza una tua richiesta esplicita.
 

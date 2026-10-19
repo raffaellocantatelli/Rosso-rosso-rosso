@@ -54,10 +54,12 @@ echo "== T1 verifica dal vivo (password, AOF, risposte firmate)"
 oss verifica --come MONITOR-001 >/tmp/onda_verifica.out; esito "verifica exit 0" $?
 grep -q '"password_obbligatoria", "esito": "VERIFICATO"' /tmp/onda_verifica.out; esito "Redis rifiuta chi non ha password" $?
 
-echo "== T2 Redis non raggiungibile dall'host"
+echo "== T2 Redis non raggiungibile dalla rete"
 # `docker compose port` stampa ":0" ed esce 0 anche senza porta: non distingue.
 # `docker port` sul container stampa una riga per porta pubblicata, niente se nessuna.
-[ -z "$(docker port onda-redis-1)" ]; esito "nessuna porta pubblicata" $? "($(docker port onda-redis-1 | tr '\n' ' '))"
+# Ammessa solo una porta legata al loopback del NAS (tunnel SSH, DEPLOY §6).
+esposte=$(docker port onda-redis-1 | grep -vE -- '-> 127\.0\.0\.1:' || true)
+[ -z "$esposte" ]; esito "nessuna porta pubblicata fuori dal loopback" $? "($(docker port onda-redis-1 | tr '\n' ' '))"
 
 echo "== T3 PAUSA durante down/up"
 ctl comando PAUSA SENTIN-004 --come CONTROLLO-001 >/dev/null
