@@ -47,11 +47,14 @@ SORVEGLIATI = [
     "verificatore.py",
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md",
     ".github/workflows/daily.yml",
+    # ONDA/1.0: l'immagine e la configurazione di Redis che vanno sul NAS.
+    "onda/Dockerfile",
+    "onda/redis.conf.esempio",
 ]
 
 # Tutto il codice del sistema e i documenti depositati, ricorsivamente.
-ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests"]
-ESTENSIONI = (".py", ".yml", ".yaml", ".md")
+ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests", "onda"]
+ESTENSIONI = (".py", ".yml", ".yaml", ".md", ".sh")
 
 
 def file_da_sorvegliare():

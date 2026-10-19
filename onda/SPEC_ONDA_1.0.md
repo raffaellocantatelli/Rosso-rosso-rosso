@@ -31,6 +31,9 @@ R³∞ (PC Windows, NAS Synology DS223) e gli agenti SDQ-1.
   pubblicare rumore), ma non può firmare a nome di un altro.
 - **Un processo per agente.** Ogni agente ONDA è un processo
   `python -m onda agente <ID>`, con una sua chiave privata.
+- **Pub/Sub non è memoria.** Ciò che deve sopravvivere (STOP, PAUSA) non sta
+  nel canale ma in copie persistenti dello stesso envelope firmato: chiave
+  Redis con AOF e copia locale dell'agente (§4).
 
 ### 1.1 Agenti reali e adattatore — la differenza da non nascondere
 
@@ -138,11 +141,33 @@ avvio ──► (legge onda:comando) ──► FERMATO?  sì ──► esce, cod
   non ha una firma valida. Si legge **solo l'envelope firmato**: il campo
   `stato` dell'hash è in chiaro e chi ha la password Redis potrebbe cambiarlo.
 
-**Comandi persistenti.** Il controllo scrive il COMANDO firmato in
-`onda:comando:<ID>` (o `:*`) e lo pubblica. Un agente offline lo trova al
-riavvio; un agente online lo riceve subito. Al riavvio l'agente ri-verifica
-firma ed epoch del comando persistito (non la scadenza: uno STOP non scade).
-Fra `:<ID>` e `:*` vale il più recente per `ts`.
+**Comandi persistenti — dove vive lo STOP.** Pub/Sub non conserva niente:
+un messaggio pubblicato mentre l'agente è giù è perso. Per questo un COMANDO
+non vive nel canale ma in tre copie, tutte dello **stesso envelope firmato**:
+
+| Copia | Dove | Sopravvive a |
+|---|---|---|
+| canale | `onda:a:<ID>` / `onda:tutti` | niente: serve solo all'agente online |
+| Redis | chiave `onda:comando:<ID>` / `onda:comando:*`, AOF su disco | riavvio di agente, Redis, NAS |
+| locale | `$ONDA_STATO_DIR/<ID>.comando.json`, scritta dall'agente con `fsync` | **anche alla perdita del volume Redis** |
+
+Il controllo scrive la chiave Redis **prima** di pubblicare. L'agente scrive
+la copia locale appena riceve il comando, e di nuovo all'avvio se Redis ne ha
+uno più recente. All'avvio vale il più recente per `ts` fra le tre fonti
+valide; ognuna si ri-verifica (firma del controllo, epoch), non la scadenza:
+uno STOP non scade.
+
+**L'autorità è la firma, non lo storage.** Nessuna delle copie è una fonte
+indipendente: valgono perché sono firmate dalla chiave `controllo`, che sta
+sul PC. Conseguenze, ciascuna coperta da un test:
+
+- chi può scrivere su Redis o sul volume può **cancellare** un comando, non
+  **falsificarlo** né sostituirlo con un RIPRENDI;
+- senza `ONDA_STATO_DIR` (sviluppo sul PC) uno STOP **non** sopravvive alla
+  perdita dei dati Redis — limite dichiarato e provato da un test;
+- con `ONDA_STATO_DIR` impostato ma non scrivibile l'agente **non parte**
+  (codice 2): meno protetto di quanto dichiarato non è accettabile;
+- dopo `epoch --avanza` tutte le copie con epoch vecchio smettono di valere.
 
 **Istanza unica.** Ogni agente tiene il lock `onda:lock:istanza:<ID>` (TTL 3
 intervalli, rinnovato a ogni heartbeat). Una seconda istanza con lo stesso ID
@@ -208,26 +233,65 @@ rinnovo successivo, che fallisce.
 4. Il log non contiene mai password, chiavi né il corpo delle richieste
    (solo id, tipo, mittente, esito, dimensione).
 5. Envelope rifiutati: nessuna risposta, solo log.
+6. **Una chiave privata per container**: ogni agente monta solo la propria.
+   Un container compromesso non firma a nome degli altri.
+7. **La chiave `controllo` non vive sul NAS.** Ci entra solo per il tempo del
+   collaudo completo (`DEPLOY_DS223.md` §5b), in `/tmp`, e poi si cancella.
+8. Dentro la rete Docker il traffico Redis non è cifrato: per questo Redis
+   non esce da quella rete, e il PC lo raggiunge solo via tunnel SSH (§6 del
+   deploy).
 
 ## 9. Criteri di collaudo
 
-Ogni criterio è un test eseguibile. Stato ammesso: **VERIFICATO** solo se il
-test è stato eseguito e passato, con Redis reale dove indicato.
+Ogni criterio è un test eseguibile. I livelli sono tre e non si scambiano:
+
+- **Collaudato in locale** — test eseguiti e passati in questa sessione di
+  sviluppo, con Redis reale e processi reali; per lo stack Docker, con
+  `onda/collaudo_docker.sh` su un host Linux x86_64.
+- **Pronto per il deploy** — configurazione e procedura scritte
+  (`DEPLOY_DS223.md`), senza ancora averle eseguite sul NAS.
+- **Verificato sul NAS** — `collaudo_docker.sh` eseguito sul DS223, con
+  l'output conservato. **Al 19/10/2026: nessun criterio è a questo livello.**
+
+### 9.1 I sei criteri di accettazione
+
+| Criterio | Test che lo esegue | Livello |
+|---|---|---|
+| **Persistenza di STOP** — dopo il riavvio nessun agente riprende prima di un RIPRENDI esplicito | `test_c10_stop_sopravvive_al_riavvio`, `test_stop_a_tutti_sopravvive_al_riavvio_di_redis_e_degli_agenti`, `test_stop_sopravvive_alla_perdita_dei_dati_redis`, `test_copia_locale_manomessa_non_vale`; Docker T6 | Collaudato in locale |
+| **PAUSA durante down/up** | `test_c13_…`, `test_pausa_sopravvive_a_down_up_completo`; Docker T3 | Collaudato in locale |
+| **Riavvio Redis** — riconnessione, heartbeat, nessuna identità duplicata | `test_c14_riavvio_di_redis` (stesso pid e incarnazione, un solo lock, seconda istanza rifiutata); Docker T4 | Collaudato in locale |
+| **Heartbeat** — offline entro la soglia (3 × 10 s = 30 s) | `test_c11_kill_9_diventa_offline` (≤ 3 intervalli misurati); Docker T5 con intervallo reale da 10 s | Collaudato in locale |
+| **Sicurezza** — nessun segreto nei log, comandi privilegiati autorizzati | `test_sicurezza_nessun_segreto_nei_log_e_comandi_solo_dal_controllo`, `test_comando_falso_ignorato`, `test_osservatore_non_comanda`, C1–C3; Docker T1, T2, T7 | Collaudato in locale |
+| **Deploy NAS** — container, volumi, rete, persistenza sul dispositivo reale | `collaudo_docker.sh` sul DS223 | **Pronto per il deploy, non verificato** |
+
+### 9.2 Criteri di dettaglio
 
 | # | Criterio | Test |
 |---|---|---|
 | C1 | firma alterata, mittente ignoto, campo in più, >16 KiB, scaduto, futuro → rifiutati | unità |
-| C2 | COMANDO firmato da un `agente` → rifiutato | unità |
+| C2 | COMANDO firmato da un `agente` o da un `osservatore` → rifiutato | unità |
 | C3 | Redis rifiuta connessioni senza password (NOAUTH) | Redis reale |
-| C4 | stesso envelope due volte → il secondo rifiutato | Redis reale |
+| C4 | stesso envelope due volte allo stesso ricevente → il secondo rifiutato | Redis reale |
 | C5 | epoch avanzato → envelope vecchio rifiutato | Redis reale |
 | C6 | lock: esclusivo, rilascio solo col token, scade da solo | Redis reale |
-| C7 | limite di frequenza oltre 50/s | Redis reale |
-| C8 | RAFFA-001, SENTIN-004, MEMO-002: richiesta → risposta uguale alla funzione chiamata direttamente | processi + Redis reale |
+| C7 | limite di frequenza oltre 50/s; un falso non consuma il ritmo altrui | Redis reale |
+| C8 | RAFFA-001, SENTIN-004, MEMO-002: risposta uguale alla funzione chiamata direttamente | processi + Redis reale |
 | C9 | PAUSA → ERRORE IN_PAUSA; RIPRENDI → risponde di nuovo | processi + Redis reale |
-| C10 | STOP → processo esce 0; riavvio → esce 3; RIPRENDI → riparte | processi + Redis reale |
-| C11 | `kill -9` → monitor vede OFFLINE entro 3 intervalli | processi + Redis reale |
+| C10 | STOP → esce 0; riavvio → esce 3; RIPRENDI → riparte | processi + Redis reale |
+| C11 | `kill -9` → OFFLINE entro 3 intervalli | processi + Redis reale |
 | C12 | seconda istanza stesso ID → esce 4 | processi + Redis reale |
 | C13 | PAUSA persiste attraverso il riavvio dell'agente | processi + Redis reale |
-| C14 | Redis riavviato (AOF) → stato persistito, agente si riconnette | processi + Redis reale |
-| C15 | sul DS223: container Redis sano, password attiva, nessuna porta pubblica, `verifica` verde | **solo sul NAS** |
+| C14 | Redis riavviato → agente si riconnette con la stessa identità | processi + Redis reale |
+| C15 | STOP sopravvive alla perdita dei dati Redis (copia locale firmata) | processi + Redis reale |
+| C16 | sul DS223: `collaudo_docker.sh` tutto PASS | **solo sul NAS** |
+
+### 9.3 Come si riproduce
+
+```bash
+pip install -r requirements.txt          # serve anche redis-server nel PATH
+python -m pytest -q tests/test_onda_*.py -rs
+# -rs mostra i test SALTATI: senza redis-server l'integrazione non conta come passata
+
+ONDA_BASE=/volume1/docker/onda ONDA_CONTROLLO_DIR=<cartella con CONTROLLO-001.key> \
+  bash onda/collaudo_docker.sh            # stack Docker, PASS/FAIL per passo
+```

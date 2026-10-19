@@ -8,6 +8,8 @@
 #   /volume1/docker/onda/chiavi/         ← <ID>.key degli agenti + portachiavi.json
 #                                           (MAI la chiave di CONTROLLO-001: resta sul PC)
 #   /volume1/docker/onda/memoria/store.json  ← copia di sdq1/memory/store.json
+#   /volume1/docker/onda/stato/<ID>/     ← copia locale firmata dell'ultimo comando
+#                                           (uno STOP sopravvive anche alla perdita di data/)
 
 x-agente: &agente
   build:
@@ -22,6 +24,7 @@ x-agente: &agente
     ONDA_REDIS_URL: redis://redis:6379/0
     ONDA_REDIS_PASSWORD_FILE: /run/onda/redis-password
     ONDA_CHIAVI_DIR: /run/onda/chiavi
+    ONDA_STATO_DIR: /run/onda/stato
   networks: [onda]
   # Dopo uno STOP persistito l'agente esce con codice 3 e `unless-stopped` lo
   # riavvia (con attesa crescente fino a 1 minuto): ogni riavvio rilegge lo
@@ -53,6 +56,7 @@ services:
       - /volume1/docker/onda/chiavi/portachiavi.json:/run/onda/chiavi/portachiavi.json:ro
       # Solo la propria chiave privata: un container compromesso non firma a nome degli altri.
       - /volume1/docker/onda/chiavi/RAFFA-001.key:/run/onda/chiavi/RAFFA-001.key:ro
+      - /volume1/docker/onda/stato/RAFFA-001:/run/onda/stato
 
   sentin:
     <<: *agente
@@ -62,6 +66,7 @@ services:
       - /volume1/docker/onda/chiavi/portachiavi.json:/run/onda/chiavi/portachiavi.json:ro
       # Solo la propria chiave privata: un container compromesso non firma a nome degli altri.
       - /volume1/docker/onda/chiavi/SENTIN-004.key:/run/onda/chiavi/SENTIN-004.key:ro
+      - /volume1/docker/onda/stato/SENTIN-004:/run/onda/stato
 
   memo:
     <<: *agente
@@ -70,12 +75,14 @@ services:
       ONDA_REDIS_URL: redis://redis:6379/0
       ONDA_REDIS_PASSWORD_FILE: /run/onda/redis-password
       ONDA_CHIAVI_DIR: /run/onda/chiavi
+      ONDA_STATO_DIR: /run/onda/stato
       ONDA_MEMO_STORE: /run/onda/memoria/store.json
     volumes:
       - /volume1/docker/onda/redis-password:/run/onda/redis-password:ro
       - /volume1/docker/onda/chiavi/portachiavi.json:/run/onda/chiavi/portachiavi.json:ro
       # Solo la propria chiave privata: un container compromesso non firma a nome degli altri.
       - /volume1/docker/onda/chiavi/MEMO-002.key:/run/onda/chiavi/MEMO-002.key:ro
+      - /volume1/docker/onda/stato/MEMO-002:/run/onda/stato
       - /volume1/docker/onda/memoria:/run/onda/memoria:ro
 
   monitor:

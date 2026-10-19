@@ -36,8 +36,42 @@ def casella(id_nodo):
     return f"onda:a:{id_nodo}"
 
 
-def comando_persistente(r, pc, id_nodo):
-    """L'ultimo COMANDO valido per questo nodo, fra `:<ID>` e `:*`.
+class CopiaLocale:
+    """Copia su disco dell'ultimo COMANDO firmato ricevuto da questo agente.
+
+    Redis con AOF conserva i comandi attraverso un riavvio, ma non se il suo
+    volume va perso o viene ricreato vuoto: in quel caso uno STOP sparirebbe
+    e gli agenti riprenderebbero a lavorare senza che nessuno l'abbia deciso.
+    La copia locale chiude quel buco. Non è una seconda autorità: vale solo
+    perché è firmata dal controllo, e si ri-verifica a ogni lettura.
+    """
+
+    def __init__(self, cartella, id_nodo):
+        self.percorso = os.path.join(cartella, f"{id_nodo}.comando.json")
+
+    def leggi(self):
+        try:
+            with open(self.percorso, "rb") as f:
+                return f.read()
+        except FileNotFoundError:
+            return None
+
+    def scrivi(self, env):
+        tmp = self.percorso + ".tmp"
+        with open(tmp, "wb") as f:
+            f.write(E.serializza(env))
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp, self.percorso)
+
+    @classmethod
+    def da_ambiente(cls, id_nodo):
+        cartella = os.environ.get("ONDA_STATO_DIR")
+        return cls(cartella, id_nodo) if cartella else None
+
+
+def comando_persistente(r, pc, id_nodo, copia=None):
+    """L'ultimo COMANDO valido per questo nodo, fra `:<ID>`, `:*` e la copia locale.
 
     Si ri-verificano firma, ruolo ed epoch, non la scadenza: uno STOP
     persistito deve fermare anche un riavvio di domani. Un valore
@@ -45,8 +79,10 @@ def comando_persistente(r, pc, id_nodo):
     """
     attuale = epoch_corrente(r)
     migliore = None
-    for chiave in (f"onda:comando:{id_nodo}", "onda:comando:*"):
-        grezzo = r.get(chiave)
+    fonti = [r.get(f"onda:comando:{id_nodo}"), r.get("onda:comando:*")]
+    if copia is not None:
+        fonti.append(copia.leggi())
+    for grezzo in fonti:
         if grezzo is None:
             continue
         try:
@@ -76,6 +112,7 @@ class Agente:
         self.incarnazione = None
         self._termina = False
         self._ultimo_comando = None
+        self.copia = CopiaLocale.da_ambiente(self.id)
 
     # -- ciclo di vita ---------------------------------------------------
 
@@ -120,10 +157,11 @@ class Agente:
 
         if self.incarnazione is None:
             self.incarnazione = int(self.r.incr(f"onda:incarnazione:{self.id}"))
-        cmd = comando_persistente(self.r, self.pc, self.id)
+        cmd = comando_persistente(self.r, self.pc, self.id, self.copia)
         if cmd is not None:
             self._ultimo_comando = cmd["id"]
             self.stato = _STATO_DA_AZIONE[cmd["corpo"]["azione"]]
+            self._conserva(cmd)
         if self.stato == FERMATO:
             evento(self.log, self.id, "fermato_da_comando_persistente", 30,
                    comando=cmd["id"] if cmd else None)
@@ -195,9 +233,21 @@ class Agente:
             self._richiesta(env)
         return None
 
+    def _conserva(self, env):
+        """Scrive la copia locale. Se non riesce, lo dice: una protezione che
+        manca in silenzio è peggio di una che non c'è."""
+        if self.copia is None:
+            return
+        try:
+            self.copia.scrivi(env)
+        except OSError as e:
+            evento(self.log, self.id, "copia_locale_non_scritta", 40,
+                   errore=type(e).__name__)
+
     def _comando(self, env):
         azione = env["corpo"]["azione"]
         self._ultimo_comando = env["id"]
+        self._conserva(env)
         precedente, self.stato = self.stato, _STATO_DA_AZIONE[azione]
         evento(self.log, self.id, "comando", azione=azione, da=env["mittente"],
                id=env["id"], stato_prima=precedente, stato_dopo=self.stato)

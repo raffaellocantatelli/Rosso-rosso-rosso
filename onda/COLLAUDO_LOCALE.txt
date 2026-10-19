@@ -1,0 +1,42 @@
+# ONDA/1.0 — ultimo collaudo Docker LOCALE (non sul NAS)
+# 2026-10-19T08:29Z · host x86_64 · Docker 29.8.2 · commit base 7913c64
+# file a nome fisso: si riscrive a ogni collaudo, la storia la tiene git
+
+== preparazione
+PASS  avvio: tre agenti online 
+== T1 verifica dal vivo (password, AOF, risposte firmate)
+PASS  verifica exit 0 
+PASS  Redis rifiuta chi non ha password 
+== T2 Redis non raggiungibile dall'host
+PASS  nessuna porta pubblicata ()
+== T3 PAUSA durante down/up
+PASS  SENTIN-004 IN_PAUSA 
+PASS  SENTIN-004 torna online 
+PASS  SENTIN-004 resta IN_PAUSA dopo down/up 
+PASS  SENTIN-004 rifiuta il lavoro 
+== T4 riavvio di Redis: riconnessione senza identità duplicate
+PASS  tre agenti di nuovo online 
+PASS  RAFFA-001 stessa incarnazione/pid/host ("incarnazione": 18, "pid": 1, "host": "78dd6707eed6")
+PASS  la disconnessione è registrata 
+PASS  un solo container raffa 
+== T5 heartbeat: agente non raggiungibile -> OFFLINE entro 30 s
+PASS  MEMO-002 OFFLINE (dopo 27 s, soglia 30)
+PASS  MEMO-002 torna online 
+== T6 STOP: nessuno riprende prima di RIPRENDI, nemmeno dopo down/up e perdita di data/
+PASS  STOP a tutti: nessuno online 
+PASS  dopo down/up con Redis vuoto: nessuno online 
+PASS  RAFFA-001 non risponde 
+PASS  RAFFA-001 si è fermato dalla copia firmata 
+PASS  SENTIN-004 non risponde 
+PASS  SENTIN-004 si è fermato dalla copia firmata 
+PASS  MEMO-002 non risponde 
+PASS  MEMO-002 si è fermato dalla copia firmata 
+PASS  dopo RIPRENDI esplicito: tre agenti online 
+PASS  dati Redis originali rimessi, agenti online 
+== T7 sicurezza: comandi non autorizzati, segreti nei log
+PASS  STOP firmato da un osservatore: ignorato 
+PASS  il rifiuto è registrato 
+PASS  nessuna chiave privata né password nei log 
+
+COLLAUDO: tutti i passi PASS
+exit 0

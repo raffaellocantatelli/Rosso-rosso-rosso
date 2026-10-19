@@ -66,8 +66,8 @@
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 5094,
-      "sha256": "50d3143c4761dad6d0628b26cf835dccbd549a509b3eeea1fcc2126c85a16a9f"
+      "byte": 5238,
+      "sha256": "e6742e241af0c71fa3700f34d16044ee0ae03059a01d7c685d0ce57e17012eae"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
@@ -997,6 +997,70 @@
       "byte": 1144,
       "sha256": "a13eea39651f3beeb5a88cda52f79dd96151a9740de873ef6807735a8e5684d1"
     },
+    "onda/DEPLOY_DS223.md": {
+      "byte": 10657,
+      "sha256": "e663995bc404eec13ad5667088a4ac149714bbd5f4ce72865dc8b65868f1af3e"
+    },
+    "onda/Dockerfile": {
+      "byte": 595,
+      "sha256": "fe8bf57adc90ea9bade7bc305dcb93273852125ae24d309559d07f1feaeae1e8"
+    },
+    "onda/SPEC_ONDA_1.0.md": {
+      "byte": 16008,
+      "sha256": "6d054d1db26baf899860be49812e88a7a6fa321fd7e240e5d9577f136eb5ca04"
+    },
+    "onda/__init__.py": {
+      "byte": 231,
+      "sha256": "9dff98e997da5751948476d88d21ab590baf926e869f0e4f4a118d99edd53dfe"
+    },
+    "onda/__main__.py": {
+      "byte": 9811,
+      "sha256": "708145d9e5292b6aab8e6e61524f3e0c9aff4de16a23fedd4e96632cb7092057"
+    },
+    "onda/adattatore.py": {
+      "byte": 2584,
+      "sha256": "6cf525a9a9fc52867be33bc9149eb7b7b0dfd32111656d5785f4764555080205"
+    },
+    "onda/chiavi.py": {
+      "byte": 4344,
+      "sha256": "e198e4ac1c13a241a8a87f500e092196ab231be06b5bc052c05066dad48ab924"
+    },
+    "onda/collaudo_docker.sh": {
+      "byte": 7011,
+      "sha256": "19353032cb5a7d16665cc2b147c935cc60c9c3a3188ef6f2cb0f038b78749706"
+    },
+    "onda/connessione.py": {
+      "byte": 1916,
+      "sha256": "baacc87d6fa5786ba551be6dfc6b7fbd072fb2cbfd6874e997c63d181bd486cb"
+    },
+    "onda/docker-compose.ds223.yml": {
+      "byte": 4412,
+      "sha256": "a8d3d1475b5b49792038d620f1eb81146f34c98be55317a170042348ebd9ca78"
+    },
+    "onda/envelope.py": {
+      "byte": 6197,
+      "sha256": "68314d6016dfe18235b3a4f500a9fa6a6e7419bd63f1f2eed3ee3e568a9410fd"
+    },
+    "onda/lock.py": {
+      "byte": 1287,
+      "sha256": "92264da95b880a534923bfa541f51769a595f7d11f5a549a27eb319921cb8eef"
+    },
+    "onda/nodo.py": {
+      "byte": 14691,
+      "sha256": "34dc44379792874e86f58ea8d440f3ecef75371464effd7b8ebf569c6dfaf28a"
+    },
+    "onda/redis.conf.esempio": {
+      "byte": 1089,
+      "sha256": "376e1abba9c834a78ae18884aea3ae77ade68587cd8eb7ec194366dd66d5367f"
+    },
+    "onda/registro.py": {
+      "byte": 962,
+      "sha256": "aaea0d24d39370285d9f8bc03e71f11be76573c89fb1904a36d16436e26789fe"
+    },
+    "onda/validatore.py": {
+      "byte": 1964,
+      "sha256": "56e2ab50a512707be8d7d250636fe888f5e3e0390f078dd587127633715c9958"
+    },
     "r3/README.md": {
       "byte": 6155,
       "sha256": "a4ccaeb06ec4a960424b4fe9d9adbe808bb43f5eea41f64173d2477ee0aae427"
@@ -1226,8 +1290,8 @@
       "sha256": "ae7fbf8681c858d43ccd1c01f386daef39f72e7aa2a4c187f045f6e18a06ac16"
     },
     "tests/test_onda_agenti.py": {
-      "byte": 9745,
-      "sha256": "118feb8eea24a6a4cc88cd825f3584a9209de621c44daea672016326afba1245"
+      "byte": 16430,
+      "sha256": "76601e5150e3f84960249584f617e64fd6b4f2de0941e4ed57309cf275486267"
     },
     "tests/test_onda_envelope.py": {
       "byte": 7423,
@@ -1258,6 +1322,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-10-19T08:16:19.581040+00:00",
+  "generato": "2026-10-19T08:29:40.115644+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

@@ -14,6 +14,7 @@ ONDA_CHIAVI_DIR (default ~/.r3/onda), ONDA_HB_SECONDI (default 10).
 """
 import argparse
 import json
+import os
 import sys
 import time
 
@@ -53,6 +54,12 @@ def cmd_agente(a):
         print(f"{a.id} non è registrato come agente nel portachiavi", file=sys.stderr)
         return 2
     connetti()  # fallisce subito se manca la password, prima di entrare nel ciclo
+    stato_dir = os.environ.get("ONDA_STATO_DIR")
+    if stato_dir and not os.access(stato_dir, os.W_OK):
+        # Senza copia locale uno STOP non sopravvive alla perdita dei dati Redis:
+        # meglio non partire che partire meno protetti di quanto dichiarato.
+        print(f"ONDA_STATO_DIR non scrivibile: {stato_dir}", file=sys.stderr)
+        return 2
     return Agente(chiave, pc, servizio, connetti).esegui()
 
 
@@ -238,6 +245,9 @@ def main(argv=None):
         return 2
     except FileNotFoundError as e:
         print(f"file mancante: {e.filename}", file=sys.stderr)
+        return 2
+    except PermissionError as e:
+        print(f"non autorizzato: {e}", file=sys.stderr)
         return 2
     except redis.AuthenticationError:  # sottoclasse di ConnectionError: va prima
         print("Redis: password rifiutata", file=sys.stderr)

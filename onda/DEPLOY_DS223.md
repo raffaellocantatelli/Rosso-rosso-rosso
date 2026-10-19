@@ -2,11 +2,15 @@
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
-Questa procedura **non è stata eseguita sul NAS**: nessuna sessione Claude ha
-accesso al DS223. È stata eseguita il 19/10/2026 con lo stesso compose, la
-stessa immagine e gli stessi percorsi `/volume1/docker/onda/` in un container
-Linux x86_64. I problemi trovati lì sono già corretti qui sotto (§3, permessi).
-Ciò che sul NAS può andare diversamente è segnato **IPOTESI** o **UNKNOWN**.
+| Livello | Cosa copre | Al 19/10/2026 |
+|---|---|---|
+| **Collaudato in locale** | 51 test pytest (Redis 7.0 reale, processi veri) + `collaudo_docker.sh` sullo stesso compose, stessa immagine, stessi percorsi `/volume1/docker/onda/`, su un host **Linux x86_64** | sì — vedi SPEC §9.1 |
+| **Pronto per il deploy** | questa procedura, il compose, `redis.conf.esempio`, lo script di collaudo | sì |
+| **Verificato sul NAS** | `collaudo_docker.sh` eseguito **sul DS223** con tutti i passi PASS | **no**: nessuna sessione Claude raggiunge il NAS |
+
+I problemi trovati nel collaudo locale sono già corretti qui sotto (§3,
+permessi). Ciò che sul NAS può andare diversamente è segnato **IPOTESI** o
+**UNKNOWN**: architettura ARM, versione di Docker, `docker compose` v1/v2.
 
 Ogni passo è in sola lettura fino al §3. Dal §3 in poi si scrive solo
 dentro `/volume1/docker/onda/`. Nessun passo apre porte, tocca il firewall,
@@ -68,6 +72,9 @@ chiave che può dare STOP.
 
 ```bash
 sudo mkdir -p /volume1/docker/onda/{data,chiavi,memoria,repo}
+# copia locale firmata dell'ultimo comando, una cartella per agente:
+# è ciò che tiene fermo uno STOP anche se data/ va persa
+sudo mkdir -p /volume1/docker/onda/stato/{RAFFA-001,SENTIN-004,MEMO-002}
 
 # Password Redis generata sul NAS: non passa da chat, mail o repository.
 sudo sh -c 'openssl rand -base64 36 | tr -d "\n/+=" > /volume1/docker/onda/redis-password'
@@ -93,9 +100,10 @@ sudo grep -c '^requirepass SOSTITUISCI' redis.conf   # deve stampare 0
 
 # Permessi: trovati sbagliati nel collaudo del 19/10, ecco perché ci sono.
 # Redis nel container gira come uid 999 e deve leggere redis.conf;
-# gli agenti girano come uid 1000 e devono leggere chiavi, password e memoria.
+# gli agenti girano come uid 1000: leggono chiavi, password e memoria,
+# e SCRIVONO in stato/. Se stato/ non è scrivibile l'agente non parte (codice 2).
 sudo chown 999:999 redis.conf && sudo chmod 600 redis.conf
-sudo chown -R 1000:1000 chiavi memoria redis-password
+sudo chown -R 1000:1000 chiavi memoria stato redis-password
 sudo chmod 600 chiavi/*.key redis-password
 ```
 
@@ -115,15 +123,16 @@ La prima build scarica `python:3.12-slim` e `redis:7.2-alpine`.
 **IPOTESI:** entrambe hanno l'immagine arm64; si falsifica se la build
 fallisce con `exec format error` o `no matching manifest`.
 
-## 5. Collaudo sul NAS (criterio C15)
+## 5. Collaudo sul NAS
+
+### 5a. Controllo rapido — non disturba niente
 
 ```bash
 C="sudo docker compose -p onda -f onda/docker-compose.ds223.yml"
 $C ps                                              # redis (healthy) + raffa sentin memo monitor
 $C run --rm --no-deps -T monitor verifica --come MONITOR-001
 echo "exit $?"                                     # 0 = tutto VERIFICATO
-$C run --rm --no-deps -T monitor stato
-sudo netstat -tlnp | grep 6379 || echo "6379 non esposta: corretto"
+sudo docker port onda-redis-1                      # vuoto = nessuna porta pubblicata
 ```
 
 `verifica` controlla dal vivo: Redis raggiungibile, password obbligatoria
@@ -131,8 +140,34 @@ sudo netstat -tlnp | grep 6379 || echo "6379 non esposta: corretto"
 una richiesta firmata con risposta firmata. RAFFA-001 e SENTIN-004 devono
 rispondere **esattamente** come la funzione della pipeline chiamata lì.
 
-C15 diventa VERIFICATO solo con questo output incollato. Prima, è
-IMPLEMENTATO MA NON COLLAUDATO sul NAS.
+### 5b. Collaudo completo — i sei criteri, sul dispositivo reale
+
+**Disturba ONDA, solo ONDA:** mette in pausa, ferma e riavvia gli agenti,
+riavvia il suo Redis, fa `down`/`up` del progetto, mette da parte per qualche
+minuto `data/` e poi la rimette. Lancialo solo quando decidi tu.
+
+Serve la chiave `CONTROLLO-001` sul NAS **per la durata del collaudo**:
+
+```bash
+mkdir -m 700 /tmp/onda-ctl                         # carica qui CONTROLLO-001.key + portachiavi.json
+cd /volume1/docker/onda/repo
+sudo ONDA_BASE=/volume1/docker/onda ONDA_CONTROLLO_DIR=/tmp/onda-ctl \
+  bash onda/collaudo_docker.sh | tee /volume1/docker/onda/collaudo_$(date +%Y%m%d).txt
+rm -rf /tmp/onda-ctl                               # la chiave di controllo NON resta sul NAS
+```
+
+| Passo | Criterio |
+|---|---|
+| T1, T2 | Redis con password, nessuna porta pubblicata, agenti che rispondono |
+| T3 | PAUSA durante down/up |
+| T4 | riavvio di Redis: stessa identità, nessun duplicato |
+| T5 | heartbeat: `docker pause` di MEMO-002 → OFFLINE entro 30 s |
+| T6 | STOP: nessuno riprende dopo down/up **e** con Redis ripartito vuoto, finché non arriva RIPRENDI |
+| T7 | comandi non autorizzati ignorati, nessun segreto nei log |
+
+Il livello «Verificato sul NAS» si raggiunge **solo** con l'ultima riga
+`COLLAUDO: tutti i passi PASS` di quel file. Un passo FAIL dice quale criterio
+manca sul dispositivo reale: va letto, non ripetuto finché passa.
 
 ### Arresto, diagnosi, emergenza
 
