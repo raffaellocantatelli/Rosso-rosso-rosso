@@ -11,6 +11,25 @@ Ogni riga qui sotto è verificabile con un comando. Non credere a nessuna.
 
 ---
 
+## ONDA/1.0 — aggiunto il 19/10/2026, branch `claude/synology-redis-verification-i7knrf`
+
+**Nuova implementazione, non un protocollo ritrovato**: prima del 19/10 non
+esisteva da nessuna parte (né nel repository né su Drive) una specifica ONDA,
+né Redis, né un documento DS223. L'autore ha autorizzato a crearla partendo
+dal suo incarico. Specifica: `onda/SPEC_ONDA_1.0.md`. Deploy: `onda/DEPLOY_DS223.md`.
+
+| Componente | Stato | Prova |
+|---|---|---|
+| envelope, firme Ed25519, ruoli, limiti | VERIFICATO | `pytest tests/test_onda_envelope.py` |
+| Redis: password, idempotenza, epoch, lock, frequenza | VERIFICATO (Redis 7.0 reale) | `pytest tests/test_onda_redis.py` |
+| RAFFA-001, SENTIN-004, MEMO-002 via adattatore, STOP/PAUSA/RIPRENDI, offline, riavvii | VERIFICATO (processi veri) | `pytest tests/test_onda_agenti.py` |
+| immagine e compose DS223 | VERIFICATO **in un container x86_64**, non sul NAS | `onda/DEPLOY_DS223.md` §5 |
+| ONDA sul DS223 | **BLOCCATO**: nessun accesso al NAS da qui | serve l'output del §1 di DEPLOY |
+| PC ↔ NAS | **BLOCCATO**: decisione dell'autore (tunnel SSH raccomandato) | DEPLOY §6 |
+
+Gli agenti nella pipeline restano funzioni: `python -m sdq1` non usa ONDA.
+L'adattatore li espone come processi senza copiarne la logica.
+
 ## 0. Che cos'è il prodotto, e cosa gli sta intorno (05/09)
 
 **Detto dall'autore, e va rispettato:** *«Il prodotto serve per fare

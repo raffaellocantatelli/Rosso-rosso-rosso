@@ -1,0 +1,92 @@
+# ONDA/1.0 sul Synology DS223 — Container Manager → Progetto → da questo file.
+# Prerequisiti e ordine: onda/DEPLOY_DS223.md. Nessun segreto in questo file.
+#
+# Cartelle sul NAS (create a mano, fuori dal repository):
+#   /volume1/docker/onda/redis.conf      ← da redis.conf.esempio, con la password
+#   /volume1/docker/onda/redis-password  ← la stessa password, una riga, permessi 600
+#   /volume1/docker/onda/data/           ← dati Redis (AOF)
+#   /volume1/docker/onda/chiavi/         ← <ID>.key degli agenti + portachiavi.json
+#                                           (MAI la chiave di CONTROLLO-001: resta sul PC)
+#   /volume1/docker/onda/memoria/store.json  ← copia di sdq1/memory/store.json
+
+x-agente: &agente
+  build:
+    context: ..
+    dockerfile: onda/Dockerfile
+  image: r3-onda:1.0
+  restart: unless-stopped
+  depends_on:
+    redis:
+      condition: service_healthy
+  environment:
+    ONDA_REDIS_URL: redis://redis:6379/0
+    ONDA_REDIS_PASSWORD_FILE: /run/onda/redis-password
+    ONDA_CHIAVI_DIR: /run/onda/chiavi
+  networks: [onda]
+  # Dopo uno STOP persistito l'agente esce con codice 3 e `unless-stopped` lo
+  # riavvia (con attesa crescente fino a 1 minuto): ogni riavvio rilegge lo
+  # STOP ed esce subito, senza servire richieste. Per fermare anche il
+  # container: `docker compose stop <servizio>` (DEPLOY_DS223.md §5).
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    restart: unless-stopped
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - /volume1/docker/onda/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - /volume1/docker/onda/data:/data
+      - /volume1/docker/onda/redis-password:/run/onda/redis-password:ro
+    # Nessuna sezione `ports`: Redis NON è raggiungibile dall'host né dalla LAN.
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$$(cat /run/onda/redis-password) redis-cli ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks: [onda]
+
+  raffa:
+    <<: *agente
+    command: ["agente", "RAFFA-001"]
+    volumes:
+      - /volume1/docker/onda/redis-password:/run/onda/redis-password:ro
+      - /volume1/docker/onda/chiavi/portachiavi.json:/run/onda/chiavi/portachiavi.json:ro
+      # Solo la propria chiave privata: un container compromesso non firma a nome degli altri.
+      - /volume1/docker/onda/chiavi/RAFFA-001.key:/run/onda/chiavi/RAFFA-001.key:ro
+
+  sentin:
+    <<: *agente
+    command: ["agente", "SENTIN-004"]
+    volumes:
+      - /volume1/docker/onda/redis-password:/run/onda/redis-password:ro
+      - /volume1/docker/onda/chiavi/portachiavi.json:/run/onda/chiavi/portachiavi.json:ro
+      # Solo la propria chiave privata: un container compromesso non firma a nome degli altri.
+      - /volume1/docker/onda/chiavi/SENTIN-004.key:/run/onda/chiavi/SENTIN-004.key:ro
+
+  memo:
+    <<: *agente
+    command: ["agente", "MEMO-002"]
+    environment:
+      ONDA_REDIS_URL: redis://redis:6379/0
+      ONDA_REDIS_PASSWORD_FILE: /run/onda/redis-password
+      ONDA_CHIAVI_DIR: /run/onda/chiavi
+      ONDA_MEMO_STORE: /run/onda/memoria/store.json
+    volumes:
+      - /volume1/docker/onda/redis-password:/run/onda/redis-password:ro
+      - /volume1/docker/onda/chiavi/portachiavi.json:/run/onda/chiavi/portachiavi.json:ro
+      # Solo la propria chiave privata: un container compromesso non firma a nome degli altri.
+      - /volume1/docker/onda/chiavi/MEMO-002.key:/run/onda/chiavi/MEMO-002.key:ro
+      - /volume1/docker/onda/memoria:/run/onda/memoria:ro
+
+  monitor:
+    <<: *agente
+    command: ["monitor", "--come", "MONITOR-001"]
+    volumes:
+      - /volume1/docker/onda/redis-password:/run/onda/redis-password:ro
+      - /volume1/docker/onda/chiavi/portachiavi.json:/run/onda/chiavi/portachiavi.json:ro
+      # Solo la propria chiave privata: un container compromesso non firma a nome degli altri.
+      - /volume1/docker/onda/chiavi/MONITOR-001.key:/run/onda/chiavi/MONITOR-001.key:ro
+
+networks:
+  onda:
+    driver: bridge

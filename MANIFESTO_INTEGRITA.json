@@ -1201,6 +1201,10 @@
       "byte": 3161,
       "sha256": "95bcdf24d594e785c73824c0f85b2641c63a5f0b24a0d96e3b1c1c69fb98d99d"
     },
+    "tests/_onda_supporto.py": {
+      "byte": 2812,
+      "sha256": "4aa57341548ff4de369afff62aa4b63b698457f3b4ddc5cd9d1babb01ee30379"
+    },
     "tests/conftest.py": {
       "byte": 1557,
       "sha256": "199afafae11d45e35e0eb0c0d6daa44acfb986181bdc6f140b7894bdc4b26255"
@@ -1220,6 +1224,18 @@
     "tests/test_occhio.py": {
       "byte": 77392,
       "sha256": "ae7fbf8681c858d43ccd1c01f386daef39f72e7aa2a4c187f045f6e18a06ac16"
+    },
+    "tests/test_onda_agenti.py": {
+      "byte": 9745,
+      "sha256": "118feb8eea24a6a4cc88cd825f3584a9209de621c44daea672016326afba1245"
+    },
+    "tests/test_onda_envelope.py": {
+      "byte": 7423,
+      "sha256": "bd3e8f079db2881186303770516988ded83c9a37aaf88c503dd905c319467d5c"
+    },
+    "tests/test_onda_redis.py": {
+      "byte": 4734,
+      "sha256": "ee5d0fffdbf8c988533064bee49138b5c22d42161ffc61c6251760e298f28ab1"
     },
     "tests/test_rassegna.py": {
       "byte": 4522,
@@ -1242,6 +1258,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-26T12:23:51.862628+00:00",
+  "generato": "2026-10-19T08:16:19.581040+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

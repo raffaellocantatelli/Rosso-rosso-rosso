@@ -14,5 +14,8 @@ Pillow>=10,<13
 # Autonomous Core v3 (autonomous_core_v3.py) — interfaccia Telegram
 python-telegram-bot>=21,<23
 
+# ONDA/1.0 (onda/) — bus firmato su Redis
+redis>=5,<6
+
 # Sviluppo
 pytest>=8

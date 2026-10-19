@@ -1,0 +1,31 @@
+# ONDA/1.0 — redis.conf per il DS223. Copialo FUORI dal repository:
+#   /volume1/docker/onda/redis.conf   (permessi 600)
+# e sostituisci la password. Il file vero non va mai in git.
+
+# Nel container Redis ascolta su tutte le interfacce DEL CONTAINER: è la rete
+# Docker interna. Dall'host e dalla LAN non si raggiunge, perché il compose
+# non pubblica la porta 6379. Aprirla è una decisione separata (DEPLOY_DS223.md §6).
+bind 0.0.0.0
+protected-mode yes
+port 6379
+
+requirepass SOSTITUISCI_CON_UNA_PASSWORD_LUNGA_E_CASUALE
+
+# Persistenza: AOF + snapshot. I comandi persistenti (STOP/PAUSA) devono
+# sopravvivere a un riavvio del NAS.
+appendonly yes
+appendfsync everysec
+save 900 1
+save 300 10
+dir /data
+
+# Un bus di messaggi piccoli: memoria limitata, mai swap del NAS.
+maxmemory 128mb
+maxmemory-policy noeviction
+
+# Comandi pericolosi disabilitati. CONFIG resta: `python -m onda verifica`
+# lo usa solo per leggere `appendonly`. Se lo disabiliti, la verifica dirà
+# NON_VERIFICABILE invece di VERIFICATO.
+rename-command FLUSHALL ""
+rename-command FLUSHDB ""
+rename-command DEBUG ""
