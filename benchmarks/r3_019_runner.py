@@ -5,6 +5,8 @@ import json, re, subprocess, sys
 from datetime import datetime, timezone
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1] if Path(__file__).parent.name == "benchmarks" else Path.cwd()
+sys.path.insert(0, str(ROOT))
+from sdq1.contatti import vale_per_h2  # noqa: E402  un solo criterio per «contatto valido»
 
 def run_pytest(target: str) -> dict:
     proc = subprocess.run([sys.executable, "-m", "pytest", target, "-q", "--tb=no"], cwd=ROOT, text=True, capture_output=True)
@@ -49,7 +51,7 @@ def contatti_metrics() -> dict:
             obj = json.loads(l)
         except json.JSONDecodeError:
             continue
-        if isinstance(obj, dict) and obj.get("verifica"):
+        if vale_per_h2(obj):
             valid += 1
     return {"present": True, "contatti_lines": len(lines), "contatti_validi": valid}
 

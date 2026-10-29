@@ -19,6 +19,10 @@ RADICE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUT = os.path.join(RADICE, "output")
 CONTATTI = os.path.join(OUTPUT, "contatti.jsonl")
 
+sys.path.insert(0, RADICE)
+
+from sdq1.contatti import vale_per_h2  # noqa: E402
+
 #: Quanti giorni possono passare senza un daily prima di chiamarlo "fermo".
 GIORNI_BATTITO = 3
 
@@ -36,11 +40,18 @@ def ultimo_daily():
     return max(date_trovate) if date_trovate else None
 
 
-def contatti_validi():
-    """Righe JSON con un campo 'tipo' non vuoto. Le altre non contano."""
+def conta_contatti():
+    """(valide, escluse): le righe che valgono per H2 e quelle che non valgono.
+
+    Vale solo un tipo indipendente, dall'elenco di sdq1/contatti.py. Fino al
+    29/10/2026 qui contava ogni riga con un `tipo` non vuoto: una
+    pubblicazione dell'autore, che la CLI nello stesso momento dichiarava
+    «NON vale per H2», bastava a portare H2 a RETTA. Trasmettere non è
+    essere raggiunti.
+    """
+    valide = escluse = 0
     if not os.path.exists(CONTATTI):
-        return 0
-    validi = 0
+        return valide, escluse
     with open(CONTATTI, "r", encoding="utf-8") as f:
         for riga in f:
             riga = riga.strip()
@@ -50,14 +61,16 @@ def contatti_validi():
                 voce = json.loads(riga)
             except json.JSONDecodeError:
                 continue
-            if str(voce.get("tipo", "")).strip():
-                validi += 1
-    return validi
+            if vale_per_h2(voce):
+                valide += 1
+            else:
+                escluse += 1
+    return valide, escluse
 
 
 def main():
     ultimo = ultimo_daily()
-    n_contatti = contatti_validi()
+    n_contatti, n_esclusi = conta_contatti()
     oggi = date.today()
 
     if ultimo is None:
@@ -71,6 +84,9 @@ def main():
 
     contatto = n_contatti > 0
     print(f"(b) CONTATTO: {n_contatti} voci valide in output/contatti.jsonl")
+    if n_esclusi:
+        print(f"    {n_esclusi} registrate che non valgono per H2: atti tuoi verso "
+              f"l'esterno, o tipi non indipendenti (sdq1/contatti.py)")
 
     if not battito or not contatto:
         rami = []
