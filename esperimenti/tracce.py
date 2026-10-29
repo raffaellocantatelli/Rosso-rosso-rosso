@@ -48,8 +48,8 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from dotenv import load_dotenv
-load_dotenv()
+from ambiente import carica_env
+carica_env()
 
 from sdq1.llm.router import Router
 

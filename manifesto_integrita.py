@@ -11,67 +11,123 @@ Senza di lui la ridondanza copia anche le corruzioni, senza accorgersene.
     python manifesto_integrita.py             # genera/aggiorna il manifesto
     python manifesto_integrita.py --verifica  # confronta e segnala le divergenze
 
-Falsificabile per costruzione (P6): se un file chiave cambia senza che il
-manifesto venga rigenerato, `--verifica` esce con codice 1 e nomina il file.
+Falsificabile per costruzione (P6): se un file del repository cambia, nasce o
+sparisce senza che il manifesto venga rigenerato, `--verifica` esce con codice
+1 e nomina il file.
+
+**La copertura e' per difetto, dal 17/09.** Prima era un elenco scritto a mano
+piu' sei alberi, filtrati per estensione: 434 file nel repository, 308
+sorvegliati. I 126 fuori non erano scelti — erano quelli a cui nessuno aveva
+pensato, e **ogni file nuovo nasceva fuori**. `occhio/`, cioe' il prodotto
+intero, non era coperto; nemmeno `contraddittore.py`, `archivio.py`,
+`rassegna.py`, `esperimenti/`.
+
+Un Layer 4 che non vede i file nuovi non protegge il repository: protegge la
+fotografia che qualcuno ne ha scattato una volta. Adesso il confine del
+manifesto e' il confine del repository — lo decide `.gitignore`, che e'
+dell'autore — e le uniche cose fuori sono elencate in `ESCLUSI`, ciascuna con
+il motivo accanto.
 """
 import argparse
 import hashlib
 import json
 import os
+import subprocess
 import sys
 from datetime import datetime, timezone
 
-MANIFESTO = "MANIFESTO_INTEGRITA.json"
+RADICE = os.path.dirname(os.path.abspath(__file__))
+MANIFESTO = os.path.join(RADICE, "MANIFESTO_INTEGRITA.json")
 
-# File chiave del nucleo di continuità. Il manifesto copre ciò che, se cambiasse
-# in silenzio, cambierebbe il comportamento o l'identità del sistema.
-SORVEGLIATI = [
+# Cio' che il manifesto NON copre, con il motivo accanto. Un'esclusione senza
+# motivo dichiarato e' un buco con una scusa.
+#
+# Le tre esclusioni di runtime sono esattamente i percorsi che la Action
+# giornaliera committa a ogni giro (`git add` in `.github/workflows/daily.yml`).
+# Coprirli significherebbe un avviso rosso ogni notte, per costruzione: e un
+# avviso che si accende sempre e' una lettura che non obbliga a niente — il
+# difetto che `latenza.py` esiste per misurare. Un test lega le due cose: se
+# qualcuno aggiunge un percorso a quel `git add`, deve dichiararlo anche qui.
+ESCLUSI = {
+    "MANIFESTO_INTEGRITA.json": "non puo' contenere il proprio hash",
+    "output": "cio' che il sistema produce: la run giornaliera lo riscrive",
+    "sdq1/memory/store.json": "memoria vettoriale, riscritta a ogni daily",
+    "sdq1/sar/state.json": "stato SAR, riscritto a ogni daily",
+}
+
+# Il nucleo: non e' un elenco di cio' che si copre — si copre tutto — ma di
+# cio' che non puo' restare scoperto. Se un domani qualcuno restringe la
+# copertura, il test su questi file glielo dice. I motivi, in breve: senza
+# `registro_ipotesi.*` il registro puo' dire RETTA senza prova; senza i test
+# delle guardie, P5 e P6 restano nel codice ma smettono di essere verificati;
+# senza `verificatore.py` e i falsificatori, eseguire torna a essere leggere.
+NUCLEO = (
     "CLAUDE.md",
-    "README.md",
     "registro_ipotesi.py",
     "registro_ipotesi.json",
     "registro_osservazioni.py",
-    "registro_osservazioni.jsonl",
-    # I test che tengono in piedi P5 e P6: se qualcuno li svuota in silenzio,
-    # le guardie restano nel codice ma smettono di essere verificate.
     "test_registro_ipotesi.py",
     "test_registro_osservazioni.py",
-    "latenza.py",
-    "test_latenza.py",
-    "test_trasmissione_ciclica.py",
-    "trasmissione_ciclica.py",
-    "manifesto_integrita.py",
-    # Il verificatore e i suoi falsificatori: sono la guardia che esegue P5/P6
-    # invece di leggerli. Se qualcuno li ammorbidisce in silenzio, il registro
-    # continua a dire RETTA senza che niente sia stato messo alla prova.
     "verificatore.py",
-    "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md",
+    "manifesto_integrita.py",
+    "ambiente.py",
+    "test_ambiente.py",
+    "latenza.py",
+    "trasmissione_ciclica.py",
     ".github/workflows/daily.yml",
-]
+)
 
-# Tutto il codice del sistema e i documenti depositati, ricorsivamente.
-ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests"]
-ESTENSIONI = (".py", ".yml", ".yaml", ".md")
+
+class RepositoryAssente(RuntimeError):
+    """Senza git non si sa dove finisce il repository, e non si indovina."""
+
+
+def _file_del_repository():
+    """Ogni file che appartiene al repository, **i nuovi compresi**.
+
+    Tracciati piu' non tracciati e non ignorati: e' la definizione di git di
+    «dentro il repository», e il confine lo disegna `.gitignore`, che e' una
+    decisione dell'autore — i registri di `occhio` stanno fuori apposta,
+    perche' contengono le firme di un ospite e questo repository e' pubblico.
+
+    Se git non c'e', questa funzione **solleva** invece di ripiegare su una
+    camminata del disco: due definizioni diverse di «dentro» darebbero due
+    manifesti diversi a seconda dell'ambiente, ed e' il difetto che il Layer 4
+    dovrebbe scoprire, non commettere.
+    """
+    try:
+        esito = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=RADICE, capture_output=True,
+        )
+    except OSError as e:
+        raise RepositoryAssente(f"git non eseguibile: {e}") from e
+    if esito.returncode != 0:
+        raise RepositoryAssente(
+            "git non riesce a elencare i file "
+            f"({esito.stderr.decode('utf-8', 'replace').strip()})"
+        )
+    return [p for p in esito.stdout.decode("utf-8").split("\0") if p]
+
+
+def escluso(percorso):
+    """True se `percorso` e' fuori dal manifesto per una regola dichiarata."""
+    for voce in ESCLUSI:
+        if percorso == voce or percorso.startswith(voce + "/"):
+            return True
+    return False
 
 
 def file_da_sorvegliare():
-    visti = set()
-    for percorso in SORVEGLIATI:
-        if os.path.isfile(percorso):
-            visti.add(percorso)
-    for albero in ALBERI:
-        for radice, _dirs, files in os.walk(albero):
-            if "__pycache__" in radice:
-                continue
-            for nome in sorted(files):
-                if nome.endswith(ESTENSIONI):
-                    visti.add(os.path.join(radice, nome))
-    return sorted(visti)
+    return sorted(
+        p for p in _file_del_repository()
+        if not escluso(p) and os.path.isfile(os.path.join(RADICE, p))
+    )
 
 
 def sha256(percorso):
     h = hashlib.sha256()
-    with open(percorso, "rb") as f:
+    with open(os.path.join(RADICE, percorso), "rb") as f:
         for blocco in iter(lambda: f.read(65536), b""):
             h.update(blocco)
     return h.hexdigest()
@@ -79,7 +135,10 @@ def sha256(percorso):
 
 def istantanea():
     return {
-        percorso: {"sha256": sha256(percorso), "byte": os.path.getsize(percorso)}
+        percorso: {
+            "sha256": sha256(percorso),
+            "byte": os.path.getsize(os.path.join(RADICE, percorso)),
+        }
         for percorso in file_da_sorvegliare()
     }
 
@@ -94,13 +153,15 @@ def genera():
     }
     with open(MANIFESTO, "w", encoding="utf-8") as f:
         json.dump(manifesto, f, ensure_ascii=False, indent=2, sort_keys=True)
-    print(f"Manifesto scritto: {MANIFESTO} ({len(voci)} file sorvegliati)")
+    print(f"Manifesto scritto: {os.path.basename(MANIFESTO)} "
+          f"({len(voci)} file sorvegliati)")
     return 0
 
 
 def verifica():
     if not os.path.exists(MANIFESTO):
-        print(f"Nessun manifesto trovato ({MANIFESTO}). Generalo con:", file=sys.stderr)
+        print(f"Nessun manifesto trovato ({os.path.basename(MANIFESTO)}). "
+              "Generalo con:", file=sys.stderr)
         print("  python manifesto_integrita.py", file=sys.stderr)
         return 2
 

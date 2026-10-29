@@ -33,9 +33,9 @@ import os
 import sys
 from datetime import datetime, timezone
 
-from dotenv import load_dotenv
+from ambiente import carica_env
 
-load_dotenv()
+carica_env()
 
 from sdq1.llm.router import Router  # noqa: E402
 from sdq1 import daily as daily_mod  # noqa: E402
