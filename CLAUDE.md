@@ -133,6 +133,11 @@ Lo stesso difetto si ripete a tre scale, e va riconosciuto ogni volta che ricomp
    criterio di falsificazione fosse una stringa non vuota: la frase c'era,
    l'esecuzione non era mai avvenuta. Trovato e chiuso il 25/08 — il difetto
    sopravvive volentieri dentro lo strumento costruito per impedirlo.
+5. **Il falsificatore di H2 contava la voce dell'autore come contatto.** Ogni
+   riga di `contatti.jsonl` con un `tipo` valeva, comprese le pubblicazioni
+   che la CLI stessa dichiarava «NON vale per H2»: una sola avrebbe portato H2
+   a RETTA. Riprodotto e chiuso il 29/10; adesso l'elenco è uno,
+   `sdq1/contatti.py`.
 
 **Il sistema parla a sé stesso e registra l'eco come risposta.** Ogni volta che
 una metrica migliora senza che nulla sia entrato dall'esterno, sospetta questo.
@@ -178,6 +183,11 @@ come cronaca, non come stato: lo stato si esegue.
 
 Prima di scrivere codice, controlla da dove parti:
 `git fetch origin --prune && git log --oneline --all --graph | head`.
+
+**29/10: il lavoro vivo sta in `claudioterzi/claudio`.** Qui, dal 26/09, gira
+solo il daily automatico. Quale dei due sia il canone non lo ha ancora deciso
+l'autore: finché non lo decide, questa sezione e la regola §7-bis dicono due
+cose diverse. Dettagli e comandi in `PROSSIMO_PASSO.md` §0.
 
 ---
 

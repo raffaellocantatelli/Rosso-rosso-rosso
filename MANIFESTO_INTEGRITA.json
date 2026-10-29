@@ -1,6 +1,14 @@
 {
   "algoritmo": "sha256",
   "file": {
+    ".claude/hooks/session-start.sh": {
+      "byte": 695,
+      "sha256": "6fff8af167199c431d4aa394f29f12d5fbe0e71c4bd853632f7d308794a88e50"
+    },
+    ".claude/settings.json": {
+      "byte": 225,
+      "sha256": "ef056e55192969b7dfa2e7286657886425112eb7c8de4a55ea55f0ffa5ce7e06"
+    },
     ".env.example": {
       "byte": 733,
       "sha256": "e738162b5e4a3d388dab1c5bcee9d9320ef4e4a135a57a0bee5ec62469e5744c"
@@ -18,8 +26,8 @@
       "sha256": "171162ee693013221134abbcc27fc3c6ff104ad31cda6f1dd91184b33bd0eb33"
     },
     "CLAUDE.md": {
-      "byte": 17724,
-      "sha256": "377ee5123df776bb00a8654bfaaba178f267974d8d27cbf96141ef98ff83d199"
+      "byte": 18345,
+      "sha256": "7a56f7b85cecbd54166f3def5771ed30f4f8c44ccc2507fc3ed0b7abee76a755"
     },
     "INNESTO_PRIVATO.md": {
       "byte": 2267,
@@ -34,16 +42,16 @@
       "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
     },
     "PROSSIMO_PASSO.md": {
-      "byte": 6183,
-      "sha256": "7c8ccb9c37901ac7d410f3251ba61b8c3a6e7fa9dfdb20b8fe39cdce4170bcd9"
+      "byte": 7898,
+      "sha256": "3a1d6419b5dce6c072e9a3a3aacb30ba9664bc2fee99212b6a8890adbec01532"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
       "sha256": "a6f30e17fb1de516356c4400ec2f376ccaf5779ec36f0a51db7c44f3bb1722f8"
     },
     "R3_WORK_QUEUE.yaml": {
-      "byte": 1818,
-      "sha256": "bedc5edde7a40ee8d4d1ce15050689f458d55cfc7c8eeec7f35335aa3ed0b775"
+      "byte": 2223,
+      "sha256": "4bec5f290f93de8265491c8720ba90d51f3ab8028a2504d81b27235dc507f946"
     },
     "README.md": {
       "byte": 20068,
@@ -70,8 +78,8 @@
       "sha256": "10e9beb98a4debe25bfcd8ab13c851686e612eefaa0c563c1248c56b6e5b52b0"
     },
     "benchmarks/r3_019_runner.py": {
-      "byte": 5314,
-      "sha256": "34051fc49bb363c84982e5cf25d21b9a9eb97da95e4334a223720afc63604126"
+      "byte": 5409,
+      "sha256": "e8546706058c05b8dd6adacccfb60d49d179e8a5b1c655020441ac4cfda8acae"
     },
     "contraddittore.py": {
       "byte": 12217,
@@ -114,8 +122,8 @@
       "sha256": "184e531a73dae7353a443940888c0db5cab3f060902c932b2c0b68f475916fa3"
     },
     "falsificatori/h2_battito_e_contatto.py": {
-      "byte": 2695,
-      "sha256": "1edd2c2c5d4516621e68fa28d03067d9081ee6d03bae6aee7b640460306238c0"
+      "byte": 3352,
+      "sha256": "344acbf1889086846a2c2a135b8cbb885d2fa27ab1d55b9333f185a5fbc8e496"
     },
     "falsificatori/h3_italiano.py": {
       "byte": 2719,
@@ -160,6 +168,10 @@
     "memoria/ADDENDUM_ARTEFATTO_PANAJEDREZ.md": {
       "byte": 5454,
       "sha256": "f6e69ce582800cb66b63d8ca423ada1e27d803b9a59bb64dd1e71a31ec369a59"
+    },
+    "memoria/BUG_R3_H5_EXITCODE_01.md": {
+      "byte": 5427,
+      "sha256": "d983f91d3cc11bdbb0758e1ac35dc1cab5db9785bdec77665a8017633ee73bd8"
     },
     "memoria/CONTRADDITTORIO.md": {
       "byte": 4647,
@@ -609,6 +621,14 @@
       "byte": 11362,
       "sha256": "d312ea30dece57ffe911d0a6b627ca2b8cb6e9c42b3250fe4e60a582b3832b02"
     },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-19_0632.md": {
+      "byte": 7818,
+      "sha256": "d68dd727e125affa2e2274c8a5cfd791a6bc506413fa0be58467dad888cdf0ee"
+    },
+    "memoria/R3_DRIVE_SYNC_REPORT_2026-09-23_0906.md": {
+      "byte": 9016,
+      "sha256": "5cbbdc433e971c54886d64e9408c933187d0077f6d94a6a3acef1ffc61b13b58"
+    },
     "memoria/R3_REGOLA_MISURA_NON_DIVIETO_2026-09-03.md": {
       "byte": 1270,
       "sha256": "46cdb913cf19c0f0371b6938a8be6af3f79577709bfe306f5fcff3cbb83e44c0"
@@ -1053,9 +1073,17 @@
       "byte": 3421,
       "sha256": "0b2db6080b9530c89d11f4d1b42ca03928c6b4b716e5c73d6ce036f58d133779"
     },
+    "memoria/R3_WORK_QUEUE_2026-09-19_0632.yaml": {
+      "byte": 4407,
+      "sha256": "0b6cc4c2c3e67aaad39bce40ce92d53640ca8ec97cadc706af046335468fdc91"
+    },
+    "memoria/R3_WORK_QUEUE_2026-09-23_0906.yaml": {
+      "byte": 5212,
+      "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
+    },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 11836,
-      "sha256": "61c15814d172f5aac849ce4ecb64dc9eb8bb7a2dc3dcf7a5f14f0b875f647f45"
+      "byte": 13492,
+      "sha256": "2819349d5c35b05eb52c4d38984ccebd8e5933135a0ab3b44dac7395dbd874de"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1255,7 +1283,7 @@
     },
     "registro_ipotesi.json": {
       "byte": 9954,
-      "sha256": "65cb5d9a128efcedee9e03a2742cb117461763fdcad40de55f36c9f7afd5f282"
+      "sha256": "8b4c84fd89284e5acd7b50776705b511956c8a7dcbe399c565877948afd5cd93"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
@@ -1266,8 +1294,8 @@
       "sha256": "b12380e37e9ed5bb7a1b0b710b1ed3f53a617ea7cd568e7adc8a50bd49612714"
     },
     "registro_osservazioni.jsonl": {
-      "byte": 2889,
-      "sha256": "a62674cf119065491a5ebe416f7244caae102b7bff6b458e33e353180592c0b6"
+      "byte": 3785,
+      "sha256": "f145f306ce5e5c47675a21394ea915cc34ee0bb82bd97460abe977af2654c58d"
     },
     "registro_osservazioni.py": {
       "byte": 7570,
@@ -1286,8 +1314,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 12072,
-      "sha256": "711b1147804290126e6b5db31b08d46d3d0401df7481eec6043db5562ceffbe0"
+      "byte": 10545,
+      "sha256": "e1864e301e011605b77306d12008544d7eca4473bd69806ba79bcaf85d7fa5e1"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -1324,6 +1352,10 @@
     "sdq1/backup.py": {
       "byte": 1516,
       "sha256": "8bbda1d381f589ca780276b0c5a9f4cad74c8ab45455f64c9b83abd7cf2be07e"
+    },
+    "sdq1/contatti.py": {
+      "byte": 3084,
+      "sha256": "6564b64c1b585720c30e792a59ef63b9c015e3881acfd1bc8b33c491984bff82"
     },
     "sdq1/context.py": {
       "byte": 557,
@@ -1501,6 +1533,10 @@
       "byte": 2403,
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
+    "tests/test_h2_contatto.py": {
+      "byte": 3241,
+      "sha256": "661bcc153687fc332867d46674b7240a790c528d9c619af4946b3059108841ea"
+    },
     "tests/test_occhio.py": {
       "byte": 77392,
       "sha256": "ae7fbf8681c858d43ccd1c01f386daef39f72e7aa2a4c187f045f6e18a06ac16"
@@ -1514,8 +1550,8 @@
       "sha256": "f075b646cdacd1c4fa10f9aac375c6f8edfa8c1a72446a2bc3215f5ec7e9e95e"
     },
     "tests/test_verificatore.py": {
-      "byte": 16718,
-      "sha256": "b85f5d6eeca5508751a23bafd34806e226e4406ac26334a309ecd5d70d2ae5b5"
+      "byte": 18602,
+      "sha256": "7c0b6b8ceb8e8c6d1fc23dfad0bc91d8ee4fb373e953265c7dcc7677891ce409"
     },
     "trasmissione_ciclica.py": {
       "byte": 11893,
@@ -1530,6 +1566,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-20T06:50:09.864266+00:00",
+  "generato": "2026-10-29T18:34:09.811652+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

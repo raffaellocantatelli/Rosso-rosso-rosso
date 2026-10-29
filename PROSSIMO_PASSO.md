@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-09-20
+# Prossimo passo — consegna del 2026-10-29
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -7,115 +7,153 @@ Ogni riga ha un comando accanto. Non credere a nessuna.
 
 ---
 
-## 0. Che cosa è questo progetto, in tre righe
+## 0. Il progetto vivo non è più qui
 
-1. **Un prodotto che tocca il mondo:** `occhio` — si fotografa uno scaffale, il
-   sistema scrive cosa c'è. È l'unica parte che misura qualcosa che esiste
-   indipendentemente dal progetto.
-2. **Una macchina che impedisce al progetto di mentirsi:** SDQ-1, il registro
-   delle ipotesi che *esegue* i criteri, il Guardian Layer, il manifesto di
-   integrità, le regole per i nodi concorrenti.
-3. **Un protocollo perché più IA si scambino memoria con provenienza
-   dimostrabile:** il fabric, in `Rosso-rosso-rosso/protocollo-rosso-bot`.
+**RECUPERATO** (`git ls-remote` e `git fetch`, 29/10 sera):
 
-La regola che li ordina è §4: *a parità di tempo, preferisci ciò che porta il
-progetto fuori da sé.* **Negli ultimi giorni non è stata rispettata** — 2 e 3
-hanno avuto tutto il tempo, 1 è fermo dal 05/09.
+- `claudioterzi/claudio`: `main` a `d320f48`, tre PR unite dall'autore il
+  29/10 fra le 07:42 e le 09:07 UTC (#143, #155, #156), un heartbeat
+  quotidiano, PR aperte fino alla #165. La #120 (R3-011 Evidence Graph) è
+  ancora aperta, head `24678d5` del 24/10.
+- Questo repository: dal 26/09 nessun commit che non sia il daily automatico
+  (33 su 33).
 
-## 1. Lo stato, misurato oggi
+**INFERITO.** La regola §7-bis, entrata nel canone oggi, dice che il canone
+operativo è quello che ha PR, CI, HEAD e test misurabili: su questa misura
+oggi è `claudioterzi/claudio`. §4-bis dice ancora che il canone è il ramo di
+default di questo repository. **Le due frasi non possono essere vere
+insieme, e scegliere spetta all'autore.**
+
+```bash
+git ls-remote https://github.com/claudioterzi/claudio HEAD 'refs/pull/120/*'
+git log --oneline --since=2026-09-26 | grep -vc "run giornaliero"   # 0 prima del 29/10
+```
+
+## 1. Lo stato di questo repository, misurato oggi
 
 | | |
 |---|---|
-| **Il Core** | **spento**. 49 daily, **48 Stub**. L'unico pensato resta il 26/08 |
-| Secrets della Action | **nessuno dei sei nomi** è presente. Invariato dal 02/09 — 18 giorni |
-| Run della Action | 52, **tutte rosse**. La spia funziona, la chiave no |
-| `output/contatti.jsonl` | **0 righe**. H2 resta FALSIFICATA sul ramo (b) |
-| `occhio` | fermo dal 05/09. Nessun modello ha ancora guardato un oggetto vero |
-| Layer 4 | **382 file**, integrità verificata |
-| Suite | **306 passate**, 1 saltata (manca PIL) |
+| **Il Core** | **spento**. 89 daily, **88 Stub**: l'unico pensato resta il 26/08 |
+| Secret della Action | i sei nomi assenti nella run #92 del 29/10. Invariato dal 02/09: **57 giorni** |
+| `output/contatti.jsonl` | **0 righe**. H2 FALSIFICATA sul ramo (b). Scadenza 11/12: **43 giorni** |
+| Registro, in prova | 11 eseguite: H2 caduta; H5 e H7 non concluse; le altre reggono |
+| Prove | 288 in `tests/`, 46 in radice, 30 del bot: tutte passate |
 
 ```bash
-ls output/daily_*.txt | wc -l                                  # 49
-grep -l "IL CORE È SPENTO" output/daily_*.txt | wc -l           # 25 (banner, dal 05/09)
-grep -l "modalità offline/stub" output/daily_*.txt | wc -l      # 48 (tutti gli Stub)
-wc -l output/contatti.jsonl                                     # 0
-python3 manifesto_integrita.py --verifica                       # 382 file, OK
+grep -L "modalità offline/stub" output/daily_*.txt        # solo il 26/08
+python3 falsificatori/h2_battito_e_contatto.py             # H2 CADUTA sul ramo (b)
+python -m sdq1 --verifica-ipotesi --prova
+python3 -m pytest tests/ -q && python3 -m pytest -q test_*.py
 ```
 
-## 2. Cosa è stato fatto il 17–18/09, e dove vive
+## 2. Fatto il 29/10
 
-Tutto su `claude/protocollo-rosso-rosso-rosso-3t6r3j`, **PR #7 aperta, non unita.**
+**H2 non può più reggere sulla voce dell'autore.** Il falsificatore contava
+ogni riga di `contatti.jsonl` con un `tipo`. `python -m sdq1 --contatto --tipo
+pubblicazione` scriveva la riga stampando «NON vale per H2», e subito dopo il
+falsificatore rispondeva «H2 REGGE» e il verificatore portava H2 da
+FALSIFICATA a RETTA. **Riprodotto** in una copia del repository. È il
+loopback di `CLAUDE.md` §4 dentro il criterio che misura il progetto, e
+sarebbe scattato alla prima pubblicazione registrata, a sei settimane dalla
+scadenza.
 
-- **`python -m sdq1 --check` non moriva più.** Il primo comando che `CLAUDE.md`
-  §3 impone si rompeva con `ModuleNotFoundError` senza `python-dotenv`. Lo stesso
-  import mancante faceva uscire `h5_tracce.py` con 1, che in quel contratto
-  significa REGGE: un'ipotesi confermata da una libreria assente.
-- **Il Layer 4 non copriva i file nuovi:** 434 file nel repository, 308
-  sorvegliati, e ogni file nuovo nasceva fuori. Adesso la copertura è per
-  difetto, 382 file, zero tolti.
-- **Il registro eseguito davvero:** H6, H8–H11 da `APERTA` a `RETTA`.
-- **`CLAUDE.md` §7-bis** — la regola sui test, decisa da te il 18/09.
-- **`memoria/ADDENDUM_ARTEFATTO_PANAJEDREZ.md`** — l'artefatto del 20/08 non
-  toccato, esteso da un addendum append-only.
+Le definizioni di «contatto valido» erano tre: CLI, falsificatore,
+benchmark R3-019. Adesso ce n'è una, `sdq1/contatti.py`: un tipo
+indipendente, riletto dall'elenco e non dal campo che la riga dichiara di sé,
+più una verifica controllabile da un terzo. Le prove usano la CLI vera e il
+falsificatore vero, e sono state provate rimettendo il difetto (§7-bis): tre
+mutazioni, ognuna fa cadere almeno una prova.
 
-## 2-bis. Una correzione al mio lavoro, trovata da un altro nodo (19/09)
+**PR #7 e #8 unite**, ferme dal 20/09 e dal 19/09. Portano nel canone:
+`.env` letto senza `python-dotenv`, il Layer 4 che copre i file nuovi per
+difetto, **la regola §7-bis stabilita dall'autore il 18/09** (fino a oggi
+nessun nodo la vedeva), e la rettifica di H5 (il crash del 26/08 non conta
+come verifica eseguita). Un conflitto di merito su H5, risolto tenendo il
+vero dei due lati: `eseguite: 0` da #8, `ultima: 17/09` da #7.
 
-**Grok-4.6, usando §7-bis contro chi l'ha proposta.** Il test che pretendeva di
-allineare i due rami di `carica_env` girava con `python -c`: lì `find_dotenv`
-usa la cartella corrente, quindi i due rami coincidevano **per incidente**.
-Chiamata da un file `.py`, `load_dotenv()` risale dalla cartella di
-`ambiente.py` e il ripiego dalla cwd — esito misurato `False|None` contro
-`True|dalla-cwd`. **Riprodotto qui il 20/09 sulla versione precedente: identico.**
+```bash
+python3 -m pytest tests/test_h2_contatto.py -q
+python -m sdq1 --contatto --tipo pubblicazione --nota prova --verifica prova
+python3 falsificatori/h2_battito_e_contatto.py   # in una copia: resta CADUTA
+```
 
-Era un test verde sulla proprietà sbagliata: la stessa malattia della grep su
-`FOR UPDATE`, dentro il file scritto per chiuderla. Adesso la ricerca è una
-sola (`_file_env`), e dotenv — quando c'è — parsea il file già trovato.
+## 3. Il mondo, guardato con i connettori (29/10)
 
-**È il primo caso in cui la regola ha morso un nodo diverso da quello che
-l'ha proposta.** Vale più di qualunque suite verde.
+| canale | esito |
+|---|---|
+| GitHub, 10 repository dell'account | 0 stelle. L'unico fork di questo è dell'account Claudioterzi82, cioè l'autore. Qui 0 issue; negli altri repository chi le ha aperte è **UNKNOWN** |
+| `protocollo-rosso-bot` | 3 fork, proprietari **UNKNOWN** da qui (403) |
+| Posta | nessun messaggio di terzi sul progetto negli ultimi 120 giorni, cercando per parole chiave (una risposta che non le contiene sfugge) |
+| Gamma, «R3∞ — Cosa è stato verificato» | analitiche **UNKNOWN**: serve un piano Pro |
+| Vercel, 2 progetti | visite **UNKNOWN**: serve autorizzare il team nel connettore |
+| Metricool | nessun social collegato |
+| Lovable | nessun progetto |
 
-## 3. Il lavoro sul fabric, e dove NON vive
+**Verdetto:** nessun segnale di ritorno trovato. Tre canali restano UNKNOWN,
+e UNKNOWN non vuol dire zero.
 
-**Fuori da questo repository.** Il canone operativo è
-`Rosso-rosso-rosso/protocollo-rosso-bot`, ramo `feat/efficient-routing-cache`,
-fermo a `23c011d`: **nessuna delle correzioni è stata spinta**, perché da qui
-non ho accesso in scrittura a quell'organizzazione. Esistono come patch
-applicabili e verificate byte per byte:
+## 4. H2: due registri, due definizioni
 
-| patch | cosa | stato |
-|---|---|---|
-| `CANDIDATE-fabric-v2-e-registry` | nove difetti del fabric v2 chiusi + registry | property-tested |
-| `CAP-R3-004-CORRECTION` | le dieci correzioni del gate | PROPERTY-TESTED CANDIDATE |
-| `R3-PEER-1.1c-CONVERGENCE-SPEC` | il COMPRESS dei tre blind review | **DESIGN ONLY** |
+- **Qui**, `CLAUDE.md` §7: vale solo un evento in cui qualcun altro ha agito.
+  Righe: 0.
+- **In `claudioterzi/claudio`**, `output/contatti.jsonl` ha 8 righe dell'11 e
+  12/06, con la definizione «umano=True e verifica non vuota». **INFERITO**,
+  dalle note delle righe: lette con §7 ne resta **una**, la risposta di una
+  persona a un link del progetto. Le altre sono un audit interno, un invio, e
+  incontri della vita quotidiana che col progetto non c'entrano.
 
-Trovati eseguendo contro **PostgreSQL 16.13 vero**, non leggendo: l'adapter che
-non scriveva un solo evento contro il proprio schema; **due figli dello stesso
-head** con due scrittori concorrenti; **due chiavi ACTIVE** con due processi;
-un registry che si fingeva persistente quando il database non c'era.
+Le due definizioni misurano cose diverse. Quale registro conta per H2, e con
+quale definizione, **lo decide l'autore**: il verificatore esegue ciò che è
+scritto, non lo riscrive.
 
-**Se non le porti tu in quel repository, non esistono per nessun automatismo.**
-È §4-bis: un ramo che nessuno apre è lavoro depositato, non lavoro fatto.
+## 5. Cosa resta all'autore, in ordine di costo
 
-## 4. Cosa resta a te, in ordine di quanto costa
+1. **Scegliere il canone**: questo repository o `claudioterzi/claudio`. Da qui
+   dipende tutto il resto: se il canone è l'altro, questo daily va spento o
+   puntato là, e H2 si misura là.
+2. **Unire la PR #120** su `claudioterzi/claudio`. La decisione R3-020 del
+   09/10 la dichiara ammissibile, ma è un documento del nodo Vibe su Drive
+   (DATA_ONLY, non verificato da qui), e quel nodo non ha permesso di
+   scrittura. Venti giorni dopo è ancora aperta.
+3. **La chiave nei secret di questo repository**, 57 giorni dopo, oppure
+   spegnere il daily se il canone è l'altro.
+4. **Una foto di uno scaffale.** Non serve più la chiave per il primo
+   numero: una sessione Claude Code può leggere l'immagine mandata in chat
+   applicando l'`ISTRUZIONE` di `occhio/visione.py`, e l'autore conta a mano
+   gli oggetti presenti. `letti / presenti` è la sola misura che valga.
+5. **PR #9** (`r3_peer`, Grok): la consegna del 20/09 colloca il fabric in
+   `protocollo-rosso-bot`. Va spostata o chiusa.
+6. **H4**: la scadenza del 30/09 è passata con meno di 10 verifiche nella
+   finestra, quindi il criterio non può scattare e il verificatore dirà
+   «regge per ora» per sempre. Va riformulata o chiusa.
 
-1. **La chiave nei secrets.** Due minuti. Diciotto giorni.
-   `https://github.com/raffaellocantatelli/Rosso-rosso-rosso/settings/secrets/actions`
-2. **Una foto di uno scaffale**, e i due numeri contati a mano:
-   `python -m occhio --foto ~/scaffale.jpg --solo-lettura` → *letti / presenti*.
-   Previsione dichiarata il 03/09 e ancora in piedi: fra 0,5 e 0,9.
-3. **Una consegna vera, controfirmata da un ospite vero.** Quel giorno è il
-   primo CONTATTO ai sensi di §7 e H2 smette di essere falsificata.
-4. **Tre decisioni di canone**, che nessun nodo può prendere al posto tuo:
-   - quale indice canonico vince — Drive 28/08 (10.696 byte) o la copia nel
-     repository (6.615 byte, che sul Drive è marcata `ZZ_SUPERATO_`);
-   - quale `protocollo-rosso-bot` è il canone — l'org o il tuo account, oggi
-     con lo stesso `main`;
-   - quale registry è il canone — `cap_r3_004/` o `bot/node_registry.py`.
+## 6. Cosa può fare un nodo da qui (verificato il 29/10)
 
-## 5. Cosa succede senza che nessuno faccia niente
+- **Usato oggi:** posta, Drive, Gamma, Vercel, Lovable, Metricool, log delle
+  Action e API GitHub di questo repository, letture git di repository
+  pubblici.
+- **Negato o limitato:** scrittura e API di repository fuori da questo
+  (negata), pagine web di GitHub (403), analitiche Vercel e Gamma (sopra).
+- **Disponibile, non provato:** task pianificati che avviano una sessione
+  **nuova** a orario fisso. Non è un nodo che resta acceso: è una sessione che
+  riparte dai file (`CLAUDE.md` §2.4), e la si vede nell'elenco dei task.
 
-Domani la Action gira, il daily è Stub, la run è rossa: **cinquantesimo file
-senza pensiero.** Lo si vede dalla tab Actions, senza chiedere a nessuno.
+## 7. Previsioni dichiarate oggi, per non poterle aggiustare dopo
+
+- **IPOTESI**: entro l'11/12 nessun contatto valido per §7 arriverà dal
+  repository pubblico. Se arriva, arriva da un atto dell'autore verso una
+  persona: un invio con risposta, una consegna controfirmata. **Cade** se
+  entro l'11/12 compare una issue, una stella o un fork di un account che non
+  è dell'autore.
+- **IPOTESI**, del 03/09 e ancora in piedi: su una foto frontale e ben
+  illuminata di uno scaffale di DVD, `letti / presenti` starà fra 0,5 e 0,9.
+  **Cade** se il primo tentativo serio esce dalla forbice.
+
+## 8. Cosa succede senza che nessuno faccia niente
+
+Domani la Action gira (cron alle 07:00 UTC, in pratica verso le 13:45):
+daily Stub, run rossa, novantesimo file senza pensiero. Lo si vede dalla tab
+Actions senza chiedere a nessuno.
 
 ---
 
