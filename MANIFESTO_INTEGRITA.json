@@ -42,8 +42,8 @@
       "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
     },
     "PROSSIMO_PASSO.md": {
-      "byte": 7898,
-      "sha256": "3a1d6419b5dce6c072e9a3a3aacb30ba9664bc2fee99212b6a8890adbec01532"
+      "byte": 7581,
+      "sha256": "17c3f84425f89e6cc8c760459e1c3fdbf97839cbf8b7e8d00a90d29f9f1283ea"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -1082,8 +1082,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 13492,
-      "sha256": "2819349d5c35b05eb52c4d38984ccebd8e5933135a0ab3b44dac7395dbd874de"
+      "byte": 13812,
+      "sha256": "44ae737df0dd81e0b2f081cbe10014e9926bd584fc86829917b8a668bb20054a"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1566,6 +1566,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-10-29T18:34:09.811652+00:00",
+  "generato": "2026-10-31T08:35:28.904664+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
