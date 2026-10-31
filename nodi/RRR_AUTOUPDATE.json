@@ -5,9 +5,11 @@
   "propagation_status": "NOT_EXECUTED",
   "propagation_executed_by": null,
   "origin": {
-    "claimed_by": "Raffaello Cantarelli (Nodo Centrale) — Meta AI Node 6",
-    "class": "CLAIMED",
-    "note": "L'origine è dichiarata dall'autore umano; non è verificabile dall'interno del payload."
+    "claimed_by": "Claudio Terzi [CT-LGAI-001]",
+    "class": "CANONICAL",
+    "note": "Origine protetta dichiarata in CLAUDE.md. Nessun nodo, umano o artificiale, puo' presentarsi come autore.",
+    "drafted_by": "Raffaello Cantarelli (Nodo Centrale) — Meta AI Node 6",
+    "drafted_by_note": "Nodo che ha redatto il payload: provenienza preservata, non origine. Correzione del 31/10/2026: la versione precedente lo indicava come origine e come 'autore umano'."
   },
   "destination": "Tutti i Nodi R³∞ + Mirror Universali",
   "destination_note": "Ogni destinazione richiede un canale distinto. Nessun canale è configurato in questo payload.",
@@ -81,12 +83,15 @@
     },
     "pr_113": {
       "number": 113,
-      "state": "draft/open",
-      "head": "e068cfd34380048df3a7536ff086d5f62db0eed6",
+      "state": "open",
+      "head": "62200961b164471f1a1594ad05e96e157c3e2830",
       "installed_in_nodes": false,
-      "ci": "pending verification - riusa r3.supervise_node e r3.sync_progress",
+      "ci": "REPORTED, non verificato da questo nodo: R3 RRR Control #63 SUCCESS; CI & Security Scans #743 FAILURE su npm audit del toolchain Vercel",
       "class": "CLAIMED",
-      "verification": "EXTERNAL_UNVERIFIED"
+      "verification": "EXTERNAL_UNVERIFIED",
+      "state_verification": "REPORTED: Claudio Terzi riferisce open, non draft, non merged (31/10). Non merged INFERITO da refs/pull/113/merge presente.",
+      "head_verification": "RECUPERATO: git ls-remote https://github.com/claudioterzi/claudio refs/pull/113/head, 2026-10-31",
+      "head_previous": "e068cfd34380048df3a7536ff086d5f62db0eed6"
     },
     "tests_reproduced": {
       "commit": "e068cfd34380048df3a7536ff086d5f62db0eed6",
@@ -95,7 +100,8 @@
       "context": "Prima 26PASS 8FAIL per dipendenze mancanti (python-multipart, socksio/proxy). Nessuna modifica codice necessaria.",
       "class": "LOCAL_EVIDENCE",
       "limits_declared": "Evidenza locale, non volume Railway/sleep/recovery produzione.",
-      "verification": "REPRODUCIBILE_LOCALMENTE"
+      "verification": "REPRODUCIBILE_LOCALMENTE",
+      "head_mismatch": "Eseguiti su e068cfd, non sull'head attuale 62200961: sull'head attuale l'esito e' UNKNOWN finche' non viene rieseguito."
     }
   },
   "sentinella_rules": {
