@@ -1,0 +1,16 @@
+{
+  "package": "RAFFAELLO_L10_MAX_RECONSTRUCTED",
+  "created_at": "2026-10-31T12:31:07.517217+00:00",
+  "replaces": "RAFFAELLO_L10_MAX (2026-10-31 12:27 CET, originale non disponibile)",
+  "owner": "Claudio Terzi",
+  "identity": "Raffaello Cantarelli",
+  "status": "RECONSTRUCTED",
+  "files": {
+    "EVIDENCE_REGISTRY.json": "4db106248ed8cf52bf4af8cc2ea88015523e8249dfd9b3a38fbb8773128f9f89",
+    "NODE_REGISTRY.json": "81a9c54fb60269cb0b9cb05a590114a82955a122fec3a5e93e161c320ca5a406",
+    "MEMORY_LEDGER.jsonl": "ab6d5e44c20145d6d35cef78392e9ef303906174046d4aedce351ea55b506788",
+    "GOVERNANCE.md": "74f6bc5003d81c39c172277e3054e28e0ad97e343fe53970b9e4b299e9b07485",
+    "SIGNIFICATO.md": "ddbf2000fd9796f56d8d2e7a75e571e4b03689cf6173472f91c950032656d71b",
+    "RECOVERY.md": "8685036127fcf8c6de84958346539fa36fcb9453798bce0ce99adfab4decf8e0"
+  }
+}

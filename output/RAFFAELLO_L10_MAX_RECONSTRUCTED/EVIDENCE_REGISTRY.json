@@ -1,0 +1,21 @@
+{
+  "registry_version": "1.1",
+  "updated_at": "2026-10-31T12:31:07.517217+00:00",
+  "package_status": "RECONSTRUCTED",
+  "entries": [
+    {
+      "evidence_id": "EV-L10-R001",
+      "claim": "Il pacchetto è una ricostruzione, non l’originale delle 12:27.",
+      "source": "sessione Raffaello 2026-10-31",
+      "verification": "dichiarato",
+      "status": "RECONSTRUCTED"
+    },
+    {
+      "evidence_id": "EV-L10-R002",
+      "claim": "Gli hash del nuovo manifest si applicano solo ai file di questo pacchetto ricostruito.",
+      "source": "output/RAFFAELLO_L10_MAX_RECONSTRUCTED",
+      "verification": "generato",
+      "status": "RECONSTRUCTED"
+    }
+  ]
+}

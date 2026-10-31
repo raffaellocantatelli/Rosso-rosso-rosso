@@ -1,0 +1,3 @@
+{"event_id":"L10-001-R","timestamp":"2026-10-31T12:31:07.517217+00:00","actor":"RAFFAELLO","type":"RECONSTRUCTION","summary":"Ricostruzione dichiarata del pacchetto L10 MAX; l’originale delle 12:27 non è disponibile.","status":"RECONSTRUCTED"}
+{"event_id":"L10-002-R","timestamp":"2026-10-31T12:31:07.517217+00:00","actor":"RAFFAELLO","type":"CANONICAL_UPDATE","summary":"Livello 10 MAX ridefinito come costituzione operativa: identità, memoria, conoscenza, visione, governance, resilienza e significato.","status":"RECONSTRUCTED"}
+{"event_id":"L10-003-R","timestamp":"2026-10-31T12:31:07.517217+00:00","actor":"RAFFAELLO","type":"PROTECTION","summary":"Nuovo manifest e hash generati per il pacchetto ricostruito.","status":"RECONSTRUCTED"}
