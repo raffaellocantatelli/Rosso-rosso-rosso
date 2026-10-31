@@ -81,6 +81,10 @@
       "byte": 5409,
       "sha256": "e8546706058c05b8dd6adacccfb60d49d179e8a5b1c655020441ac4cfda8acae"
     },
+    "collega_nodi.py": {
+      "byte": 11048,
+      "sha256": "096ca8d734092d2859db9ff37670efb975baa9bc6727a657d18248026f5500cd"
+    },
     "contraddittore.py": {
       "byte": 12217,
       "sha256": "3b23568d49c75251205982c1fe29759916359950f86326a92bff35556ba1704a"
@@ -1082,8 +1086,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 13812,
-      "sha256": "44ae737df0dd81e0b2f081cbe10014e9926bd584fc86829917b8a668bb20054a"
+      "byte": 14163,
+      "sha256": "d07dc88b5d81c5f1902a205be16a8cf325956851f030518f57e92935cfc5eaf6"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1100,6 +1104,14 @@
     "memoria/ZZ_SUPERATO_MEMORIA_PERSISTENTE_INDICE_2026-08-19T18-21.md": {
       "byte": 1144,
       "sha256": "a13eea39651f3beeb5a88cda52f79dd96151a9740de873ef6807735a8e5684d1"
+    },
+    "nodi/RRR_AUTOUPDATE.json": {
+      "byte": 9175,
+      "sha256": "14af04b459a0831b9b7f8775f9ab68b8a78dd30dea19f6cb2b24fbc3ac8c7448"
+    },
+    "nodi/contenuto_claude.md": {
+      "byte": 1035,
+      "sha256": "0f44a2b495e2675e0188f2cd7b5661532bcd1ba448224721d9331b818f42319c"
     },
     "occhio/__init__.py": {
       "byte": 1170,
@@ -1533,6 +1545,10 @@
       "byte": 2403,
       "sha256": "9574a8fd7598f7de6924fc3edb0acef4da3fa0b94c14fbc87db1e82d4cec942a"
     },
+    "tests/test_collega_nodi.py": {
+      "byte": 4356,
+      "sha256": "fa014e00eed1e92303f7a178f1ba2c5c6c5cba388074d90804fbbb2b418c7a14"
+    },
     "tests/test_h2_contatto.py": {
       "byte": 3241,
       "sha256": "661bcc153687fc332867d46674b7240a790c528d9c619af4946b3059108841ea"
@@ -1566,6 +1582,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-10-31T08:35:28.904664+00:00",
+  "generato": "2026-10-31T15:46:31.332190+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
