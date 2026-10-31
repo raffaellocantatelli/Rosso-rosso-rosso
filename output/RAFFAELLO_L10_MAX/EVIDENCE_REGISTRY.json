@@ -1,0 +1,20 @@
+{
+  "registry_version": "1.0",
+  "updated_at": "2026-10-31T12:27:46.418993+00:00",
+  "entries": [
+    {
+      "evidence_id": "EV-L10-001",
+      "claim": "Il Livello 10 MAX definisce SIGNIFICATO come criterio di coerenza e ammissione.",
+      "source": "sessione Raffaello 2026-10-31",
+      "verification": "strutturale",
+      "status": "CANONICAL"
+    },
+    {
+      "evidence_id": "EV-L10-002",
+      "claim": "Il pacchetto locale protegge i risultati mediante manifest, hash e registri append-only.",
+      "source": "output/RAFFAELLO_L10_MAX",
+      "verification": "generato",
+      "status": "CANONICAL"
+    }
+  ]
+}

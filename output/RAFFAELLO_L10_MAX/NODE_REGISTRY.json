@@ -1,0 +1,31 @@
+{
+  "registry_version": "1.0",
+  "updated_at": "2026-10-31T12:27:46.418993+00:00",
+  "nodes": [
+    {
+      "node": "RAFFAELLO",
+      "role": "IDENTITY_OPERATOR",
+      "status": "ADOPT_LIMITED"
+    },
+    {
+      "node": "CLAUDIO",
+      "role": "OWNER",
+      "status": "CANONICAL"
+    },
+    {
+      "node": "R3_INFINITY",
+      "role": "METHOD",
+      "status": "CANONICAL"
+    },
+    {
+      "node": "H7",
+      "role": "HYPOTHESIS",
+      "status": "CANDIDATE"
+    },
+    {
+      "node": "SCACCHIERA_QUANTICA",
+      "role": "STATE_MAP",
+      "status": "ADOPT_LIMITED"
+    }
+  ]
+}
