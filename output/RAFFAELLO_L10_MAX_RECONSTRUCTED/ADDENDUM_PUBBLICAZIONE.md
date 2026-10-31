@@ -14,6 +14,11 @@ Questa copia sta invece in un repository **pubblico**.
   oltre ai nomi già pubblici nel repository.
 - La copia privata va su Drive (`R3_MEMORIA_PERSISTENTE`). Al 2026-10-31 il
   caricamento è **in attesa di conferma dell'OWNER**: non è avvenuto.
+- **Aggiornamento 2026-10-31 15:47 UTC:** confermato dall'OWNER e caricato.
+  Drive file id `1mwtWzI24mRkENRbHFD4-qwPnbpgz3-e4`, cartella
+  `R3_MEMORIA_PERSISTENTE`, 4779 byte (uguale alla copia locale); contenuto
+  riscaricato e confrontato. Il cloud non è cifrato lato client: «cloud
+  cifrato» di RECOVERY.md resta soddisfatto solo dalla cifratura di Google.
 
 ## Riferimenti
 - sha256 dello zip `RAFFAELLO_L10_MAX_RECONSTRUCTED_20261031.zip`:
