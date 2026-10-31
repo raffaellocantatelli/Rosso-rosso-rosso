@@ -78,6 +78,21 @@ class Router:
         """Provider che possono davvero generare testo con un modello."""
         return [n for n in REAL_PROVIDERS if self.providers[n].available()]
 
+    def profilo_reale_disponibile(self, preferiti=("default", "locale", "economia")):
+        """Primo profilo che oggi contiene almeno un provider reale disponibile.
+
+        Serve ai gate automatici che devono *eseguire* qualcosa, non dimostrare
+        che uno specifico profilo sia configurato. Un profilo esplicito resta
+        sempre rispettato da generate; questa funzione sceglie solo quando il
+        chiamante chiede esplicitamente una selezione automatica.
+        """
+        stato = self.stato_provider()
+        for profilo in preferiti:
+            if any(nome in REAL_PROVIDERS and stato.get(nome)
+                   for nome in self.cascade(profilo)):
+                return profilo
+        return None
+
     def generate(self, prompt, profile="default", hedge=False):
         cached = self.cache.get(prompt, profile)
         if cached is not None:

@@ -246,12 +246,29 @@ def main(argv=None):
 
     if args.daily:
         profilo = profilo_da_args(args)
+        aveva_modello = "OLLAMA_MODEL" in os.environ
+        modello_prima = os.environ.get("OLLAMA_MODEL")
+        if profilo == "locale" and not aveva_modello:
+            os.environ["OLLAMA_MODEL"] = os.environ.get("OLLAMA_DAILY_MODEL", os.environ.get("OLLAMA_GATE_MODEL", "qwen3.5:4b"))
         prompt = daily_mod.costruisci_prompt(router)
+        aveva_limite = "OLLAMA_NUM_PREDICT" in os.environ
+        limite_prima = os.environ.get("OLLAMA_NUM_PREDICT")
+        if profilo == "locale" and not aveva_limite:
+            os.environ["OLLAMA_NUM_PREDICT"] = "120"
         try:
             ctx = pipeline.esegui(prompt, profilo, router, memory, memorizza=False)
         except RuntimeError as exc:
             print(f"[sdq1] {exc}", file=sys.stderr)
             sys.exit(2)
+        finally:
+            if profilo == "locale" and not aveva_limite:
+                os.environ.pop("OLLAMA_NUM_PREDICT", None)
+            elif profilo == "locale" and aveva_limite:
+                os.environ["OLLAMA_NUM_PREDICT"] = limite_prima
+            if profilo == "locale" and not aveva_modello:
+                os.environ.pop("OLLAMA_MODEL", None)
+            elif profilo == "locale" and aveva_modello:
+                os.environ["OLLAMA_MODEL"] = modello_prima
         if ctx.provider_used and ctx.provider_used.startswith("stub"):
             print(BANNER_SPENTO)
         print(ctx.final)

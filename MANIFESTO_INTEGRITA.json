@@ -21,6 +21,14 @@
       "byte": 8258,
       "sha256": "abf07dfbe02143773f0ff7528ef2177efea5784b997f44238bed0a6f914d8f2d"
     },
+    "contraddittore.py": {
+      "byte": 13648,
+      "sha256": "fd3d33aa6ce82445fc354de48efcaf801a4b1859f7dc55514768bbe9d3aa0337"
+    },
+    "esperimenti/tracce.py": {
+      "byte": 8860,
+      "sha256": "2ee9b0fc8b63e89eff3f8573ef65774ad04100b46f998a01b83aa88cbf48adeb"
+    },
     "falsificatori/__init__.py": {
       "byte": 1321,
       "sha256": "e11880d315ca08302b3039ecd95340a7f23caa8cbf8cad6215186f46d70cbe39"
@@ -46,8 +54,8 @@
       "sha256": "590a6b08b9300f37191671b9bd91181af88537acb16f0a886f9ae27032258c8e"
     },
     "falsificatori/h5_tracce.py": {
-      "byte": 2979,
-      "sha256": "62712170c902550c411363bbffc9676db4b19c3032c3febf4235bf44fdad9504"
+      "byte": 3220,
+      "sha256": "8f776927d9020af43b0a983959123442869c5075061f775c3ea0be85d7b8064a"
     },
     "falsificatori/h6_occhio_ripasso.py": {
       "byte": 5733,
@@ -74,8 +82,8 @@
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 5726,
-      "sha256": "4fbf4099517bdf23ff06275c54e9b010b7690a49f357e8e3b5e1da69cce01aae"
+      "byte": 5780,
+      "sha256": "d497597bdd3a9ed7ed2ed7ee8802c5e3753e1c6e6cade1483f9722820b397cf2"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
@@ -1038,8 +1046,8 @@
       "sha256": "11491e95cd5f0fdd2d25a7b2392dc9535aff8ab97b87ed5595eaef66544b8d5b"
     },
     "registro_ipotesi.json": {
-      "byte": 9782,
-      "sha256": "4200729dc616a887eee8e8522c164e3151fc4a1d1092ee7945a449e992619d9c"
+      "byte": 9827,
+      "sha256": "4b22554918a5335e37ca581b9519f1d35a9be21d43620056e1d32e5712e15791"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
@@ -1062,8 +1070,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 12058,
-      "sha256": "4e970a043b852ad7b76c8d9245f66eb3015d48b0c7f2059f788c9d1a22bb46ff"
+      "byte": 13051,
+      "sha256": "75364e874987a776be6883815160a0b31a859fda812c38e6c8b6763a190c5694"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -1142,16 +1150,16 @@
       "sha256": "89585e8dd201763e782d86b35bd3235ed7299c32b4aaf7bd457beb0c69f014cc"
     },
     "sdq1/llm/providers/ollama_provider.py": {
-      "byte": 880,
-      "sha256": "f4db9542c5c9e2791df5cb821e0dfd54bfbda15d5dc2c599b333ac4d11eab4d0"
+      "byte": 3369,
+      "sha256": "08dcd16cfcb2873deecde79d80a3b5716c2d28e0bf08d83f0ecdafcae8f19495"
     },
     "sdq1/llm/providers/stub_provider.py": {
       "byte": 791,
       "sha256": "cedd53ddc846a0fc471663e57afe605652fd6c7c435b218b61f8b6813fac3ca4"
     },
     "sdq1/llm/router.py": {
-      "byte": 5404,
-      "sha256": "13a3d91fe83154fdc9e249abfc5f9ba406e52adca7dbb6ef529fcc6c6ccc208f"
+      "byte": 6127,
+      "sha256": "2d53ab66d86a8d17e5da9b23af6e49dedd5fee2dd5a1ba23e986ea7cacd78095"
     },
     "sdq1/memory/__init__.py": {
       "byte": 0,
@@ -1233,6 +1241,10 @@
       "byte": 10242,
       "sha256": "9d3a86fba0275c5ab2c8a1a270bc0f9683cacce97c3891becc05bafa0297f785"
     },
+    "tests/test_gate_runtime.py": {
+      "byte": 1719,
+      "sha256": "e01bc68dde1f577fa0a3556204a950c4bdf7ba6cb42cae4f45e8dcfae38bab34"
+    },
     "tests/test_giro.py": {
       "byte": 4277,
       "sha256": "6e6630ac70a800caeeffd1ed3a0b27d0ec3e1c0a236e417a91161ec56f8acc63"
@@ -1266,10 +1278,10 @@
       "sha256": "15d394dd66455e0dc4753c4127a2ff32396be7e9ba78a7bb7db9af041332cc88"
     },
     "verificatore.py": {
-      "byte": 9001,
-      "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
+      "byte": 10000,
+      "sha256": "07a05650e7889ed8fc818361d1014b6817b1fd4617ec77b65751d08e1acfeacb"
     }
   },
-  "generato": "2026-10-31T16:35:12.228537+00:00",
+  "generato": "2026-10-31T17:28:44.190537+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

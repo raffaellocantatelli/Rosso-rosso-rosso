@@ -36,7 +36,11 @@ def main():
     # c'e', e H5 risultava «regge» senza che una sola domanda fosse partita.
     from esperimenti import tracce
 
-    esito = tracce.esegui("economia")
+    # H5 misura conoscenza/non-conoscenza, non la capacità del modello di
+    # dilungarsi. Sul modello locale CPU un tetto breve evita che la latenza
+    # diventi il risultato dell'esperimento.
+    os.environ.setdefault("OLLAMA_NUM_PREDICT", "64")
+    esito = tracce.esegui()
     if esito is None:
         print("Core spento: H5 non e' verificabile adesso.", file=sys.stderr)
         return 2

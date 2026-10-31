@@ -46,6 +46,8 @@ SORVEGLIATI = [
     "registro_nodi.py",
     "archivio.py",
     "rassegna.py",
+    "contraddittore.py",
+    "esperimenti/tracce.py",
     # Il verificatore e i suoi falsificatori: sono la guardia che esegue P5/P6
     # invece di leggerli. Se qualcuno li ammorbidisce in silenzio, il registro
     # continua a dire RETTA senza che niente sia stato messo alla prova.

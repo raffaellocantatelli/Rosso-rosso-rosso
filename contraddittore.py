@@ -194,17 +194,49 @@ cercalo davvero prima.
 
 
 def _genera(router, prompt, profilo):
-    testo, provider = router.generate(prompt, profile=profilo)
-    return testo, provider
+    # Sul 4B locale il limite di output evita che un gate analitico diventi
+    # una generazione interminabile. Chi vuole più ampiezza può sovrascriverlo.
+    aveva_limite = "OLLAMA_NUM_PREDICT" in os.environ
+    limite_prima = os.environ.get("OLLAMA_NUM_PREDICT")
+    if profilo == "locale" and not aveva_limite:
+        os.environ["OLLAMA_NUM_PREDICT"] = "160"
+    try:
+        testo, provider = router.generate(prompt, profile=profilo)
+        return testo, provider
+    finally:
+        if profilo == "locale" and not aveva_limite:
+            os.environ.pop("OLLAMA_NUM_PREDICT", None)
+        elif profilo == "locale" and aveva_limite:
+            os.environ["OLLAMA_NUM_PREDICT"] = limite_prima
 
 
-def esegui(profilo="economia"):
+def esegui(profilo=None):
+    aveva_modello = "OLLAMA_MODEL" in os.environ
+    modello_prima = os.environ.get("OLLAMA_MODEL")
+    if profilo in (None, "locale") and not aveva_modello:
+        os.environ["OLLAMA_MODEL"] = os.environ.get("OLLAMA_CONTRADDITTORIO_MODEL", os.environ.get("OLLAMA_GATE_MODEL", "qwen3.5:4b"))
+    try:
+        return _esegui(profilo)
+    finally:
+        if not aveva_modello:
+            os.environ.pop("OLLAMA_MODEL", None)
+        else:
+            os.environ["OLLAMA_MODEL"] = modello_prima
+
+
+def _esegui(profilo=None):
     router = Router()
     reali = router.provider_reali_disponibili()
     if not reali:
         print("[contraddittore] Nessun provider reale: il Core e' spento. "
               "Un contraddittorio con lo Stub sarebbe teatro.", file=sys.stderr)
         return None
+    if profilo is None:
+        profilo = router.profilo_reale_disponibile()
+    if profilo is None:
+        print("[contraddittore] Nessun profilo reale eseguibile.", file=sys.stderr)
+        return None
+    print(f"[contraddittore] profilo reale: {profilo}")
 
     dati = json.dumps(dossier(), ensure_ascii=False, indent=2)
 
@@ -263,7 +295,7 @@ def deposita(esito):
 
 
 if __name__ == "__main__":
-    profilo = "economia" if "--economia" in sys.argv else "default"
+    profilo = "economia" if "--economia" in sys.argv else ("locale" if "--locale" in sys.argv else None)
     esito = esegui(profilo)
     if not esito:
         sys.exit(2)

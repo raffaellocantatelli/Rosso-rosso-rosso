@@ -90,35 +90,79 @@ def ammette_di_non_sapere(testo):
     return t.startswith("non lo so") or "non lo so" in t[:80]
 
 
-def esegui(profilo="economia"):
+def esegui(profilo=None):
     router = Router()
     if not router.provider_reali_disponibili():
         print("Core spento: l'esperimento richiede un provider reale.", file=sys.stderr)
         return None
+    if profilo is None:
+        profilo = router.profilo_reale_disponibile()
+    if profilo is None:
+        print("Nessun profilo reale eseguibile.", file=sys.stderr)
+        return None
 
-    risposte = []
-    for gruppo, chiave, domanda in DOMANDE:
-        testo, provider = router.generate(domanda, profile=profilo)
-        risposte.append({
-            "gruppo": gruppo, "chiave": chiave, "domanda": domanda,
-            "risposta": testo.strip(), "provider": provider,
-            "ammette_di_non_sapere": ammette_di_non_sapere(testo),
-        })
-        print(f"  [{gruppo:9}] {chiave:9} -> "
-              f"{'NON LO SO' if ammette_di_non_sapere(testo) else 'ha risposto'}")
+    # H5 deve interrogare un modello a freddo. Il modello operativo
+    # raffaello-r3 puo' contenere intenzionalmente materiale del progetto e
+    # quindi non sarebbe un testimone indipendente. Sul profilo locale si usa
+    # percio' il modello base dichiarato, senza modificarne permanentemente
+    # l'ambiente del processo.
+    aveva_modello = "OLLAMA_MODEL" in os.environ
+    modello_prima = os.environ.get("OLLAMA_MODEL")
+    aveva_limite = "OLLAMA_NUM_PREDICT" in os.environ
+    limite_prima = os.environ.get("OLLAMA_NUM_PREDICT")
+    if profilo == "locale":
+        freddo = os.environ.get("OLLAMA_COLD_MODEL", "qwen3.5:4b")
+        os.environ["OLLAMA_MODEL"] = freddo
+        if not aveva_limite:
+            os.environ["OLLAMA_NUM_PREDICT"] = "160"
+        router = Router()
+        if not router.providers["ollama"].available():
+            if aveva_modello:
+                os.environ["OLLAMA_MODEL"] = modello_prima
+            else:
+                os.environ.pop("OLLAMA_MODEL", None)
+            if not aveva_limite:
+                os.environ.pop("OLLAMA_NUM_PREDICT", None)
+            print(f"Modello locale a freddo non disponibile: {freddo}", file=sys.stderr)
+            return None
+        print(f"Profilo reale scelto: {profilo} · modello freddo: {freddo}")
+    else:
+        print(f"Profilo reale scelto: {profilo}")
 
-    testo_reale = " ".join(r["risposta"].lower() for r in risposte if r["gruppo"] == "reale")
-    esito = {
-        "data_iso": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "frase_di_chiusura_esatta": FRASE_CHIUSURA in testo_reale,
-        "agenti_corretti": [a for a in AGENTI if a in testo_reale],
-        "ammissioni_su_reali": sum(1 for r in risposte
-                                   if r["gruppo"] == "reale" and r["ammette_di_non_sapere"]),
-        "ammissioni_su_controlli": sum(1 for r in risposte
-                                       if r["gruppo"] == "controllo" and r["ammette_di_non_sapere"]),
-        "risposte": risposte,
-    }
-    return esito
+    try:
+        risposte = []
+        for gruppo, chiave, domanda in DOMANDE:
+            testo, provider = router.generate(domanda, profile=profilo)
+            risposte.append({
+                "gruppo": gruppo, "chiave": chiave, "domanda": domanda,
+                "risposta": testo.strip(), "provider": provider,
+                "ammette_di_non_sapere": ammette_di_non_sapere(testo),
+            })
+            print(f"  [{gruppo:9}] {chiave:9} -> "
+                  f"{'NON LO SO' if ammette_di_non_sapere(testo) else 'ha risposto'}")
+
+        testo_reale = " ".join(r["risposta"].lower() for r in risposte if r["gruppo"] == "reale")
+        esito = {
+            "data_iso": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "frase_di_chiusura_esatta": FRASE_CHIUSURA in testo_reale,
+            "agenti_corretti": [a for a in AGENTI if a in testo_reale],
+            "ammissioni_su_reali": sum(1 for r in risposte
+                                       if r["gruppo"] == "reale" and r["ammette_di_non_sapere"]),
+            "ammissioni_su_controlli": sum(1 for r in risposte
+                                           if r["gruppo"] == "controllo" and r["ammette_di_non_sapere"]),
+            "risposte": risposte,
+        }
+        return esito
+    finally:
+        if profilo == "locale":
+            if aveva_modello:
+                os.environ["OLLAMA_MODEL"] = modello_prima
+            else:
+                os.environ.pop("OLLAMA_MODEL", None)
+            if aveva_limite:
+                os.environ["OLLAMA_NUM_PREDICT"] = limite_prima
+            else:
+                os.environ.pop("OLLAMA_NUM_PREDICT", None)
 
 
 def verdetto(esito):
@@ -140,7 +184,8 @@ def verdetto(esito):
 
 
 if __name__ == "__main__":
-    esito = esegui("economia" if "--economia" in sys.argv else "default")
+    profilo = "economia" if "--economia" in sys.argv else ("locale" if "--locale" in sys.argv else None)
+    esito = esegui(profilo)
     if not esito:
         sys.exit(2)
     esito["verdetto"] = verdetto(esito)

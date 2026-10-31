@@ -48,7 +48,10 @@ import registro_ipotesi as registro
 RADICE = os.path.dirname(os.path.abspath(__file__))
 VERIFICHE_PATH = os.path.join(RADICE, "output", "verifiche.jsonl")
 
-TIMEOUT = 90
+try:
+    TIMEOUT = float(os.environ.get("R3_VERIFIER_TIMEOUT", "240"))
+except ValueError:
+    TIMEOUT = 240.0
 
 CADUTA, REGGE, NON_CONCLUSA = 0, 1, 2
 
@@ -67,6 +70,21 @@ def _adesso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
+def _comando_eseguibile(comando):
+    """Adatta solo l'ambiente, non il criterio di falsificazione.
+
+    I registri storici usano spesso python3 e ~/.... Su Windows il primo può
+    puntare a un interprete diverso (o privo delle dipendenze) e il secondo
+    non viene espanso senza shell. Il verificatore deve eseguire lo stesso
+    criterio nello stesso ambiente in cui gira lui.
+    """
+    fuori = list(comando)
+    if fuori and fuori[0] in ("python", "python3", "py"):
+        fuori[0] = sys.executable
+    fuori = [os.path.expanduser(x) if isinstance(x, str) else x for x in fuori]
+    return fuori
+
+
 def esegui_falsificatore(falsificatore: dict) -> dict:
     """Lancia il comando dichiarato e restituisce cosa ha risposto.
 
@@ -76,9 +94,15 @@ def esegui_falsificatore(falsificatore: dict) -> dict:
     «va tutto bene» è l'intero punto di questo file.
     """
     comando = falsificatore["comando"]
+    comando_effettivo = _comando_eseguibile(comando)
+    timeout = float(falsificatore.get("timeout", TIMEOUT))
+    env = os.environ.copy()
+    env.setdefault("PYTHONUTF8", "1")
+    env.setdefault("PYTHONIOENCODING", "utf-8")
     try:
         esito = subprocess.run(
-            comando, cwd=RADICE, capture_output=True, text=True, timeout=TIMEOUT,
+            comando_effettivo, cwd=RADICE, capture_output=True, text=True,
+            encoding="utf-8", errors="replace", timeout=timeout, env=env,
         )
         uscita = (esito.stdout or "") + (esito.stderr or "")
         return {"codice": esito.returncode, "output": uscita.strip()}
@@ -87,7 +111,7 @@ def esegui_falsificatore(falsificatore: dict) -> dict:
                 "output": f"comando non trovato: {' '.join(comando)}"}
     except subprocess.TimeoutExpired:
         return {"codice": NON_CONCLUSA,
-                "output": f"il falsificatore non ha risposto entro {TIMEOUT}s"}
+                "output": f"il falsificatore non ha risposto entro {timeout:g}s"}
     except Exception as errore:  # un falsificatore rotto non è una conferma
         return {"codice": NON_CONCLUSA, "output": f"errore di esecuzione: {errore}"}
 
