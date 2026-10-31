@@ -101,6 +101,14 @@
       "byte": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "esperimenti/seme_v1_2_campo/handoff_in_arrivo.txt": {
+      "byte": 482,
+      "sha256": "a170e40e72fa8fa646236bd79544bbb08cfacae0616f6e1ccd4352bc99f54519"
+    },
+    "esperimenti/seme_v1_2_campo/handoff_in_uscita.txt": {
+      "byte": 1999,
+      "sha256": "c2120265ff3bfae3a460e24d166453948c3ae4f9d9d84e5a8a29a62cb8a9d9fa"
+    },
     "esperimenti/tracce.json": {
       "byte": 2723,
       "sha256": "5ce50de5eae85401e5d9752e59be86505ef50295d3a2414e94f283e1f79b7242"
@@ -154,8 +162,8 @@
       "sha256": "8ff3e3f63c5dc39c78f32a63f8750c24ab8adcaba5941acde814baf98f139aea"
     },
     "handoff.py": {
-      "byte": 3608,
-      "sha256": "0d729063b6aff85a33fa5efa8ae1f2373b88ce42d4a760dc47e8ec0ce1df61d1"
+      "byte": 4515,
+      "sha256": "0c87de60ed244dd3c1a24606ca08920185394ec8721f2c18cca323396c80d359"
     },
     "latenza.py": {
       "byte": 5373,
@@ -1086,16 +1094,16 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 14987,
-      "sha256": "8dfac90f9898918fb9bb1f8ff2d1187798cf95b06ea04188bee6fd800cf2707c"
+      "byte": 15329,
+      "sha256": "6b887f2d80998539107f91f923eddff75c8c31d14febf9818eed42d02804b4a9"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
       "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
     },
     "memoria/SEME_R3_CONTRATTO.md": {
-      "byte": 9145,
-      "sha256": "32974cd83d8d90b80226286678fc2aec4c0d91d4a076e37f308e0ba95f080385"
+      "byte": 10483,
+      "sha256": "e995e9c178b44b9629427f2be88f7c93315b65304f0fbb58f9dfc0ade4f9aab6"
     },
     "memoria/SYNC_DRIVE_GITHUB_2026-08-26.md": {
       "byte": 1069,
@@ -1490,8 +1498,8 @@
       "sha256": "f1b37929cd0ac4379881446057dd903e73fc3d07a2ff99cebe79667e41cfcfb5"
     },
     "test_handoff.py": {
-      "byte": 2852,
-      "sha256": "c58277a00678e46004ae33175da3673966d24c0b1cab210a1f7ad9a3490940ec"
+      "byte": 3849,
+      "sha256": "6485bfa4224b98f773375790dc4b85c96eff00f2a94b48d1deca2bec5ebff0ed"
     },
     "test_latenza.py": {
       "byte": 5541,
@@ -1578,6 +1586,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-10-31T17:49:04.886184+00:00",
+  "generato": "2026-10-31T17:53:15.122067+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

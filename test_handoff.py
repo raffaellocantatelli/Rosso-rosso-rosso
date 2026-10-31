@@ -74,6 +74,30 @@ def test_parola_tutta_lettere_non_e_un_hash():
     assert any("EVIDENZA" in e for e in handoff.analizza(finto)[1])
 
 
+def _con_allegato(carico, hash_citato=None):
+    import hashlib
+    h = hash_citato or hashlib.sha256(carico.strip().encode("utf-8")).hexdigest()
+    return BUONO.replace("zip 51a52dff97f3", f"seme sha256:{h}") + "ALLEGATO:\n" + carico
+
+
+SEME = "*   **STATO:** cosa è verificato adesso.\n*   **EVIDENZA:** file / hash.\n"
+
+
+def test_allegato_con_nomi_dei_campi_non_e_letto_come_handoff():
+    """v1.1 non poteva trasportare sé stesso: i campi del seme si contavano due volte."""
+    assert handoff.analizza(_con_allegato(SEME))[1] == []
+
+
+def test_allegato_con_hash_sbagliato_rifiutato():
+    assert any("sha256" in e for e in handoff.analizza(_con_allegato(SEME, "0" * 63 + "1"))[1])
+
+
+def test_allegato_alterato_dopo_la_firma_rifiutato():
+    """Provenienza: si ricalcola l'hash del carico, non si legge il campo che lo dichiara."""
+    testo = _con_allegato(SEME).replace("cosa è verificato adesso", "tutto è verificato")
+    assert any("sha256" in e for e in handoff.analizza(testo)[1])
+
+
 if __name__ == "__main__":
     test = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for t in test:

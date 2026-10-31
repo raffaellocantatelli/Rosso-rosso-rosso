@@ -10,7 +10,10 @@ Cosa controlla (forma, non verità):
   2. niente testo prima del primo campo (il seme: «esclusivamente questi 5 campi»);
   3. STATO non contiene mosse future: i «campi mescolati» del seme;
   4. EVIDENZA contiene almeno un riferimento che un terzo può aprire:
-     un file con estensione, un hash, un URL. «Il documento che segue» non lo è.
+     un file con estensione, un hash, un URL. «Il documento che segue» non lo è;
+  5. (v1.2) tutto ciò che segue una riga `ALLEGATO:` è carico, non handoff:
+     non viene letto come campi. Se EVIDENZA cita `sha256:<hash>`, l'hash deve
+     essere quello dell'allegato — la prova si ricalcola, non si dichiara.
 
 Cosa NON controlla: che lo STATO sia vero. Un handoff può passare con
 contenuto falso. Passare questo controllo è condizione necessaria, mai prova
@@ -19,6 +22,7 @@ contenuto falso. Passare questo controllo è condizione necessaria, mai prova
     python handoff.py file.txt        # exit 0 conforme, 1 rifiutato
     cat file.txt | python handoff.py
 """
+import hashlib
 import re
 import sys
 
@@ -31,6 +35,10 @@ _INTESTAZIONE = re.compile(
     r"^[ \t>#*_\-]*(" + "|".join(CAMPI) + r")[ \t*_]*:[ \t*_]*(.*)$",
     re.MULTILINE,
 )
+# Confine fra handoff e carico allegato (v1.2).
+_ALLEGATO = re.compile(r"^[ \t>#*_\-]*ALLEGATO[ \t*_]*:[ \t*_]*$", re.MULTILINE)
+_SHA256 = re.compile(r"sha256:([0-9a-f]{64})", re.IGNORECASE)
+
 # Marcatori di intenzione futura: non appartengono a STATO.
 _FUTURO = re.compile(
     r"\b(prossim[aoei]|propong[oa]|dovr[eòà]\w*|far[òe]\w*|"
@@ -49,6 +57,10 @@ _RIFERIMENTO = re.compile(
 def analizza(testo):
     """Ritorna (campi, errori). `campi` mappa nome -> contenuto."""
     errori = []
+    allegato = None
+    confine = _ALLEGATO.search(testo)
+    if confine:
+        testo, allegato = testo[:confine.start()], testo[confine.end():].strip()
     trovate = list(_INTESTAZIONE.finditer(testo))
     nomi = [m.group(1) for m in trovate]
 
@@ -77,6 +89,12 @@ def analizza(testo):
 
     if "EVIDENZA" in campi and campi["EVIDENZA"] and not _RIFERIMENTO.search(campi["EVIDENZA"]):
         errori.append("EVIDENZA senza riferimento verificabile (file, hash o URL)")
+
+    citati = _SHA256.findall(campi.get("EVIDENZA", ""))
+    if allegato is not None and citati:
+        reale = hashlib.sha256(allegato.encode("utf-8")).hexdigest()
+        if reale not in (h.lower() for h in citati):
+            errori.append(f"sha256 dell'ALLEGATO non corrisponde (reale: {reale[:12]}…)")
 
     return campi, errori
 
