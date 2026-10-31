@@ -1,0 +1,63 @@
+ Destinazione: .github/workflows/copilot-setup-steps.yml
+# Base: claudioterzi/Claudio, CI e manifest verificati il 2026-10-31.
+# Prepara Copilot su GitHub Actions; non attiva nodi, provider o servizi.
+name: Copilot Setup Steps
+
+# Test manuale; Copilot usa il file presente nel branch predefinito.
+# Nessun trigger push, pull_request o pianificazione aggiuntiva.
+"on":
+  workflow_dispatch: {}
+
+jobs:
+  # Identificatore obbligatorio per il riconoscimento da parte di Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout del repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # Versioni coerenti con il Test Runner del repository.
+      - name: Prepara Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-test.txt
+
+      - name: Installa runtime condiviso e strumenti di test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install -r requirements.txt -r requirements-test.txt
+          python -m pip check
+
+      - name: Prepara Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: tests/package-lock.json
+
+      - name: Installa dipendenze dei test frontend
+        shell: bash
+        run: npm ci --prefix tests --ignore-scripts --no-audit --no-fund
+
+      # Non avvia applicazioni, non legge segreti e non contatta provider.
+      # Le dipendenze specifiche di r3/, bot e studio/web restano separate:
+      # installarle solo quando richieste dal compito e dalla CI pertinente.
+      # Il setup non sostituisce l'esecuzione dei test del codice modificato.
+      - name: Verifica strumenti installati
+        shell: bash
+        run: |
+          set -euo pipefail
+          python --version
+          python -m pytest --version
+          node --version
+          npm --version
