@@ -153,6 +153,10 @@
       "byte": 5789,
       "sha256": "8ff3e3f63c5dc39c78f32a63f8750c24ab8adcaba5941acde814baf98f139aea"
     },
+    "handoff.py": {
+      "byte": 3608,
+      "sha256": "0d729063b6aff85a33fa5efa8ae1f2373b88ce42d4a760dc47e8ec0ce1df61d1"
+    },
     "latenza.py": {
       "byte": 5373,
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
@@ -1082,12 +1086,16 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 14690,
-      "sha256": "3dccebac8290e403f55fbbc0c6b598041cd4f9e2fa306a3e742c5fbef7e26551"
+      "byte": 14987,
+      "sha256": "8dfac90f9898918fb9bb1f8ff2d1187798cf95b06ea04188bee6fd800cf2707c"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
       "sha256": "af7445ab0dc3fb3224336d7dfb94099e5aea7d78b5a7c46a3f1416fe3f150ae6"
+    },
+    "memoria/SEME_R3_CONTRATTO.md": {
+      "byte": 9145,
+      "sha256": "32974cd83d8d90b80226286678fc2aec4c0d91d4a076e37f308e0ba95f080385"
     },
     "memoria/SYNC_DRIVE_GITHUB_2026-08-26.md": {
       "byte": 1069,
@@ -1481,6 +1489,10 @@
       "byte": 8217,
       "sha256": "f1b37929cd0ac4379881446057dd903e73fc3d07a2ff99cebe79667e41cfcfb5"
     },
+    "test_handoff.py": {
+      "byte": 2852,
+      "sha256": "c58277a00678e46004ae33175da3673966d24c0b1cab210a1f7ad9a3490940ec"
+    },
     "test_latenza.py": {
       "byte": 5541,
       "sha256": "90fc0f335a35a7ca7e15d43e31031fc5dd87e8b2154e4ccec609d51da670e06f"
@@ -1566,6 +1578,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-10-31T15:48:16.691735+00:00",
+  "generato": "2026-10-31T17:49:04.886184+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
