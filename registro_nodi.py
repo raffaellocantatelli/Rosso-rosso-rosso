@@ -46,6 +46,7 @@ Origine protetta: Claudio Terzi [CT-LGAI-001].
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -87,12 +88,50 @@ def annota(nodo, azione, file_toccati, note=""):
     return 0
 
 
+def _testo_comando(comando):
+    if isinstance(comando, (list, tuple)):
+        return " ".join(str(x) for x in comando)
+    return str(comando)
+
+
+def _adatta_comando(comando):
+    """Rende portabili alcune primitive POSIX usate nei limiti storici.
+
+    Non traduce shell arbitraria: solo predicati semplici il cui significato e'
+    identico su ogni piattaforma. In questo modo Windows non scambia
+    «comando inesistente» per «limite che regge».
+    """
+    if not isinstance(comando, str):
+        return comando
+    s = comando.strip()
+    if s == "true":
+        return [sys.executable, "-c", "raise SystemExit(0)"]
+    if s == "false":
+        return [sys.executable, "-c", "raise SystemExit(1)"]
+    m = re.fullmatch(r"sleep\s+([0-9]+(?:\.[0-9]+)?)", s)
+    if m:
+        return [sys.executable, "-c", "import time; time.sleep(float(__import__('sys').argv[1]))", m.group(1)]
+    m = re.fullmatch(r'test\s+-n\s+"\$([A-Za-z_][A-Za-z0-9_]*)"', s)
+    if m:
+        return [sys.executable, "-c", "import os,sys; raise SystemExit(0 if os.environ.get(sys.argv[1]) else 1)", m.group(1)]
+    m = re.fullmatch(r"test\s+-f\s+(.+)", s)
+    if m:
+        percorso = m.group(1).strip().strip('"').strip("'")
+        return [sys.executable, "-c", "import os,sys; raise SystemExit(0 if os.path.isfile(sys.argv[1]) else 1)", percorso]
+    return comando
+
+
 def _esegui(comando, secondi=120):
     """Esegue e restituisce (uscita, prima riga utile). Il registro esegue, non
     crede: un limite senza un comando che lo dimostri non e' un limite."""
+    comando_effettivo = _adatta_comando(comando)
+    env = os.environ.copy()
+    env.setdefault("PYTHONUTF8", "1")
+    env.setdefault("PYTHONIOENCODING", "utf-8")
     try:
-        r = subprocess.run(comando, shell=True, capture_output=True,
-                           text=True, timeout=secondi)
+        r = subprocess.run(comando_effettivo, shell=isinstance(comando_effettivo, str),
+                           capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", timeout=secondi, env=env)
     except subprocess.TimeoutExpired:
         return 124, "scaduto dopo %ds" % secondi
     except OSError as e:
@@ -112,8 +151,9 @@ CERCA_NEL_PROGETTO = ("grep -r", "grep -R", "git grep", "rg ", "ack ")
 
 def limite(nodo, descrizione, comando):
     """Registra un limite SOLO se il comando che dovrebbe dimostrarlo fallisce."""
+    testo_comando = _testo_comando(comando)
     for spia in CERCA_NEL_PROGETTO:
-        if spia in comando:
+        if spia in testo_comando:
             print("RIFIUTATO — `%s` cerca dentro il testo del progetto." % spia.strip())
             print("Il registro e la documentazione contengono il comando stesso: prima o")
             print("poi si troverebbe da solo e il limite cadrebbe senza che sia cambiato")
@@ -122,7 +162,7 @@ def limite(nodo, descrizione, comando):
             return 2
     uscita, riga = _esegui(comando)
     if uscita == 0:
-        print("RIFIUTATO — `%s` riesce (uscita 0)." % comando)
+        print("RIFIUTATO — `%s` riesce (uscita 0)." % testo_comando)
         print("Non e' un limite: e' una cosa che non era stata provata.")
         if riga:
             print("  prima riga: %s" % riga)
@@ -134,6 +174,7 @@ def limite(nodo, descrizione, comando):
         "tipo": "limite",
         "azione": "limite dichiarato: " + descrizione,
         "comando": comando,
+        "piattaforma": sys.platform,
         "uscita": uscita,
         "prima_riga": riga,
         "file": [],
@@ -142,7 +183,7 @@ def limite(nodo, descrizione, comando):
     with open(REGISTRO, "a", encoding="utf-8") as f:
         f.write(json.dumps(voce, ensure_ascii=False) + "\n")
     print("Limite registrato: %s" % descrizione)
-    print("  `%s` -> uscita %d%s" % (comando, uscita, (": " + riga) if riga else ""))
+    print("  `%s` -> uscita %d%s" % (testo_comando, uscita, (": " + riga) if riga else ""))
     print("  Resta valido finche' qualcuno non lo fa cadere: --ritenta")
     return 0
 
@@ -167,7 +208,7 @@ def limiti():
     for v in voci:
         print("%s  [%s]" % (v["data_iso"], v["nodo"]))
         print("      %s" % v["azione"])
-        print("      $ %s   -> uscita %s" % (v["comando"], v.get("uscita")))
+        print("      $ %s   -> uscita %s" % (_testo_comando(v["comando"]), v.get("uscita")))
         if v.get("prima_riga"):
             print("      %s" % v["prima_riga"])
     print("\n%d limiti. Non sono fatti del mondo: sono misure di un momento." % len(voci))
@@ -189,7 +230,7 @@ def ritenta():
             caduti += 1
             print("CADUTO   %s" % v["azione"])
             print("         `%s` adesso riesce. Dichiarato da %s il %s."
-                  % (v["comando"], v["nodo"], v["data_iso"][:10]))
+                  % (_testo_comando(v["comando"]), v["nodo"], v["data_iso"][:10]))
         else:
             print("regge    %s  (uscita %d)" % (v["azione"], uscita))
     print()

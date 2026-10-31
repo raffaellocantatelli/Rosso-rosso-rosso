@@ -17,6 +17,10 @@
       "byte": 20068,
       "sha256": "b9df841852c49e56ef03c83c98b1ef3d0cd2bb9fe74d08fded6e1fea1064889e"
     },
+    "archivio.py": {
+      "byte": 8258,
+      "sha256": "abf07dfbe02143773f0ff7528ef2177efea5784b997f44238bed0a6f914d8f2d"
+    },
     "falsificatori/__init__.py": {
       "byte": 1321,
       "sha256": "e11880d315ca08302b3039ecd95340a7f23caa8cbf8cad6215186f46d70cbe39"
@@ -61,13 +65,17 @@
       "byte": 5789,
       "sha256": "8ff3e3f63c5dc39c78f32a63f8750c24ab8adcaba5941acde814baf98f139aea"
     },
+    "giro.py": {
+      "byte": 7331,
+      "sha256": "93c3c99bb48c56542c0c8a4ad6ecaf89f29edaa936c1c58c2b7cb1655d9df610"
+    },
     "latenza.py": {
       "byte": 5373,
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 5094,
-      "sha256": "50d3143c4761dad6d0628b26cf835dccbd549a509b3eeea1fcc2126c85a16a9f"
+      "byte": 5726,
+      "sha256": "4fbf4099517bdf23ff06275c54e9b010b7690a49f357e8e3b5e1da69cce01aae"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 6615,
@@ -1025,6 +1033,10 @@
       "byte": 3925,
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
     },
+    "rassegna.py": {
+      "byte": 15917,
+      "sha256": "11491e95cd5f0fdd2d25a7b2392dc9535aff8ab97b87ed5595eaef66544b8d5b"
+    },
     "registro_ipotesi.json": {
       "byte": 9782,
       "sha256": "4200729dc616a887eee8e8522c164e3151fc4a1d1092ee7945a449e992619d9c"
@@ -1032,6 +1044,10 @@
     "registro_ipotesi.py": {
       "byte": 15024,
       "sha256": "26d5f1b7623a8113b0327873d531ccea4aaafd105d25b219f7c303a875d9ac55"
+    },
+    "registro_nodi.py": {
+      "byte": 12920,
+      "sha256": "3583e2935250f1ce94c259c81da1e0865da7b10d6df2702a24d49f1fa341bbca"
     },
     "registro_osservazioni.jsonl": {
       "byte": 2889,
@@ -1218,8 +1234,12 @@
       "sha256": "9d3a86fba0275c5ab2c8a1a270bc0f9683cacce97c3891becc05bafa0297f785"
     },
     "tests/test_giro.py": {
-      "byte": 4083,
-      "sha256": "587b2770e586035b714621583ef680379560b1d47d33d6457f7aab32683b46f8"
+      "byte": 4277,
+      "sha256": "6e6630ac70a800caeeffd1ed3a0b27d0ec3e1c0a236e417a91161ec56f8acc63"
+    },
+    "tests/test_manifesto_integrita.py": {
+      "byte": 509,
+      "sha256": "17c82cc9b85f871e3980d5ec995f65fd0c6cc886a9f0b09b18a8ad05544885c9"
     },
     "tests/test_occhio.py": {
       "byte": 77392,
@@ -1250,6 +1270,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-09-23T05:53:07.860579+00:00",
+  "generato": "2026-10-31T16:35:12.228537+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

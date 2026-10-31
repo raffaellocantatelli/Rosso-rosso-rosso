@@ -32,21 +32,23 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 
 STORICO = Path(os.environ.get("R3_GIRO", "output/giro.jsonl"))
+PYTEST_BASE = Path(tempfile.gettempdir()) / ("r3-giro-pytest-%d" % os.getpid())
 
 #: Ogni voce e' un comando che PUO' FALLIRE, con cosa significa la sua uscita.
 #: Niente che non possa fallire: cio' che non puo' fallire non dice niente.
 CONTROLLI = [
-    ("limiti", "python3 registro_nodi.py --ritenta",
+    ("limiti", [sys.executable, "registro_nodi.py", "--ritenta"],
      "0 = un limite e' CADUTO (la notizia piu' utile che ci sia), 1 = reggono"),
-    ("integrita", "python3 manifesto_integrita.py --verifica",
+    ("integrita", [sys.executable, "manifesto_integrita.py", "--verifica"],
      "0 = nessuna divergenza; altro = un file sorvegliato e' cambiato"),
-    ("test", "python3 -m pytest tests/ -q",
+    ("test", [sys.executable, "-m", "pytest", "tests/", "-q", "--basetemp", str(PYTEST_BASE)],
      "0 = la suite regge; altro = qualcosa si e' rotto e va detto subito"),
-    ("core", "python3 -m sdq1 --check",
+    ("core", [sys.executable, "-m", "sdq1", "--check"],
      "0 = il Core ha un provider reale; altro = gira a vuoto"),
 ]
 
@@ -60,9 +62,13 @@ CONTATORI = {
 
 
 def _esegui(comando, secondi=600):
+    env = os.environ.copy()
+    env.setdefault("PYTHONUTF8", "1")
+    env.setdefault("PYTHONIOENCODING", "utf-8")
     try:
-        r = subprocess.run(comando, shell=True, capture_output=True,
-                           text=True, timeout=secondi)
+        r = subprocess.run(comando, shell=isinstance(comando, str), capture_output=True,
+                           text=True, encoding="utf-8", errors="replace",
+                           timeout=secondi, env=env)
     except subprocess.TimeoutExpired:
         return 124, "scaduto dopo %ds" % secondi
     except OSError as e:

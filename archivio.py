@@ -130,7 +130,7 @@ def _percorsi():
             continue
         for nome in sorted(os.listdir(piena)):
             if nome.endswith(estensione) and not GENERATI.search(nome):
-                yield os.path.join(piena, nome), os.path.join(cartella, nome)
+                yield os.path.join(piena, nome), os.path.join(cartella, nome).replace(os.sep, "/")
     for nome in FILE_SINGOLI:
         piena = os.path.join(RADICE, nome)
         if os.path.isfile(piena):
@@ -142,7 +142,8 @@ def _percorsi():
             for nome in sorted(files):
                 if nome.endswith((".md", ".txt")) and not GENERATI.search(nome):
                     piena = os.path.join(radice, nome)
-                    yield piena, os.path.relpath(piena, extra) + "  [privato]"
+                    relativo = os.path.relpath(piena, extra).replace(os.sep, "/")
+                    yield piena, relativo + "  [privato]"
 
 
 def costruisci_indice():

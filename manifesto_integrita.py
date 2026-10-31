@@ -20,6 +20,7 @@ import json
 import os
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 MANIFESTO = "MANIFESTO_INTEGRITA.json"
 
@@ -41,6 +42,10 @@ SORVEGLIATI = [
     "test_trasmissione_ciclica.py",
     "trasmissione_ciclica.py",
     "manifesto_integrita.py",
+    "giro.py",
+    "registro_nodi.py",
+    "archivio.py",
+    "rassegna.py",
     # Il verificatore e i suoi falsificatori: sono la guardia che esegue P5/P6
     # invece di leggerli. Se qualcuno li ammorbidisce in silenzio, il registro
     # continua a dire RETTA senza che niente sia stato messo alla prova.
@@ -52,6 +57,11 @@ SORVEGLIATI = [
 # Tutto il codice del sistema e i documenti depositati, ricorsivamente.
 ALBERI = ["sdq1", "r3", "testi", "memoria", "falsificatori", "tests"]
 ESTENSIONI = (".py", ".yml", ".yaml", ".md")
+
+
+def _chiave(percorso):
+    """Nome canonico nel manifesto: sempre POSIX, anche su Windows."""
+    return Path(percorso).as_posix()
 
 
 def file_da_sorvegliare():
@@ -66,20 +76,30 @@ def file_da_sorvegliare():
             for nome in sorted(files):
                 if nome.endswith(ESTENSIONI):
                     visti.add(os.path.join(radice, nome))
-    return sorted(visti)
+    return sorted(visti, key=_chiave)
+
+
+def _dati_normalizzati(percorso):
+    with open(percorso, "rb") as f:
+        return f.read().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
 
 
 def sha256(percorso):
-    h = hashlib.sha256()
-    with open(percorso, "rb") as f:
-        for blocco in iter(lambda: f.read(65536), b""):
-            h.update(blocco)
-    return h.hexdigest()
+    """Hash logico del testo: CRLF/CR e LF rappresentano lo stesso contenuto.
+
+    Git puo' materializzare gli stessi file con terminatori diversi a seconda
+    della piattaforma. Il Guardian deve rilevare modifiche al contenuto, non il
+    sistema operativo che ha fatto il checkout.
+    """
+    return hashlib.sha256(_dati_normalizzati(percorso)).hexdigest()
 
 
 def istantanea():
     return {
-        percorso: {"sha256": sha256(percorso), "byte": os.path.getsize(percorso)}
+        _chiave(percorso): {
+            "sha256": sha256(percorso),
+            "byte": len(_dati_normalizzati(percorso)),
+        }
         for percorso in file_da_sorvegliare()
     }
 
