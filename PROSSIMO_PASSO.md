@@ -34,7 +34,7 @@ git log --oneline --since=2026-09-26 | grep -v "run giornaliero"
 | | |
 |---|---|
 | **Il Core, sul ramo di default** | **spento**. 103 daily, **102 Stub**: l'unico pensato resta il 26/08 |
-| **Il Core, su questo ramo** | **acceso, verificato**: quattro run lanciate su questo ramo con `prova: true` (#111–#114), tutte verdi, daily pensato da un modello locale |
+| **Il Core, su questo ramo** | **acceso, verificato**: cinque run lanciate su questo ramo con `prova: true` (#111–#115), tutte verdi, daily pensato da un modello locale |
 | Chiavi nei secrets | nessuna, letto nel log della run #111. Invariato dal 02/09: **72 giorni** |
 | `output/contatti.jsonl` | **0 righe**. H2 FALSIFICATA sul ramo (b). Scadenza 11/12: **28 giorni** |
 | Registro, in prova | 11 eseguite: H2 caduta; H5 e H7 non concluse; le altre reggono |
@@ -64,12 +64,13 @@ sapeva solo il log della run.
 | #112 | `gemma3:12b` | con l'involucro | 8 min 51 s | «10 ipotesi non RETTA» (sono 4); non nomina H2; zero contatti etichettato UNKNOWN |
 | #113 | `gemma3:4b` | diretto | 93 s | «104 rilevazioni» (sono 110); H5 e H7 date prima per positive, poi per fallite |
 | #114 | `gemma3:12b` | diretto | 5 min 49 s | «11 ipotesi non RETTA» (sono 4). Il resto corrisponde: nomina H2 falsificata e zero contatti |
+| #115 | `gemma3:12b`, predefinito | diretto | 5 min 39 s | «10 ipotesi non RETTA» (sono 4). Il resto corrisponde. È la run sullo stato finale del ramo: 7 minuti in tutto, integrità Layer 4 OK |
 
 Due correzioni ne sono uscite. **Il prompt del daily ora arriva diretto**: prima
 passava per l'involucro della pipeline e i DATI arrivavano due volte, una
 intera e una a pezzi. **Il modello predefinito è `gemma3:12b`.**
 
-**Quattro run, quattro daily pensati, quattro con almeno un numero sbagliato.**
+**Cinque run, cinque daily pensati, cinque con almeno un numero sbagliato.**
 Il Core è acceso; non è affidabile. Un daily `ollama:` è una bozza da
 controllare sui dati (`CLAUDE.md` §3).
 
