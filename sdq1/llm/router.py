@@ -8,7 +8,6 @@ import threading
 VARIABILI_SEGRETE = (
     "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "DEEPSEEK_API_KEY",
     "GEMINI_API_KEY", "OPENAI_API_KEY", "TELEGRAM_BOT_TOKEN",
-    "GITHUB_MODELS_TOKEN",
 )
 
 
@@ -30,7 +29,6 @@ from .providers.anthropic_provider import AnthropicProvider
 from .providers.gemini_provider import GeminiProvider
 from .providers.deepseek_provider import DeepSeekProvider
 from .providers.ollama_provider import OllamaProvider
-from .providers.github_models_provider import GitHubModelsProvider
 from .providers.stub_provider import StubProvider
 from .circuit_breaker import CircuitBreaker
 from .cache import ResponseCache
@@ -39,18 +37,21 @@ from .cache import ResponseCache
 # riuscirebbe sempre e il fallback esplicito (--economia, --no-api) non
 # verrebbe mai raggiunto. Chi vuole lo stub lo chiede con --no-api.
 #
-# `github_models` sta in fondo: e' il provider che non richiede una chiave
-# all'autore (vedi providers/github_models_provider.py). Chi ha una chiave
-# propria viene sempre prima.
+# Il provider che non richiede una chiave all'autore e' `ollama`, profilo
+# `locale`: un modello aperto che gira sulla macchina stessa. Il daily
+# automatico lo usa come ultimo passo prima dello Stub (daily.yml).
+# NON aggiungere qui GitHub Models: provato il 13/11/2026 con due run vere,
+# e' stato ritirato il 30/07/2026 e il suo host risponde «OK» a qualunque
+# richiesta — un 200 che non e' una risposta (PROSSIMO_PASSO.md §2).
 PROFILES = {
-    "default": ["anthropic", "gemini", "deepseek", "github_models"],
-    "economia": ["gemini", "deepseek", "github_models"],
+    "default": ["anthropic", "gemini", "deepseek"],
+    "economia": ["gemini", "deepseek"],
     "locale": ["ollama", "gemini"],
     "no-api": ["stub"],
 }
 
 # Provider che parlano davvero con un modello linguistico.
-REAL_PROVIDERS = ("anthropic", "gemini", "deepseek", "ollama", "github_models")
+REAL_PROVIDERS = ("anthropic", "gemini", "deepseek", "ollama")
 
 # Come si accende ciascun provider, per la diagnostica di `--check`.
 COME_ATTIVARE = {
@@ -58,7 +59,6 @@ COME_ATTIVARE = {
     "gemini": "GOOGLE_API_KEY in .env (o nei secrets della Action)",
     "deepseek": "DEEPSEEK_API_KEY in .env (o nei secrets della Action)",
     "ollama": "un'istanza Ollama in ascolto su OLLAMA_BASE_URL (default http://localhost:11434/v1)",
-    "github_models": "GITHUB_MODELS_TOKEN — nella Action e' il GITHUB_TOKEN con `models: read`: nessuna chiave da aggiungere",
 }
 
 
@@ -69,7 +69,6 @@ class Router:
             "gemini": GeminiProvider(),
             "deepseek": DeepSeekProvider(),
             "ollama": OllamaProvider(),
-            "github_models": GitHubModelsProvider(),
             "stub": StubProvider(),
         }
         self.breaker = CircuitBreaker()
@@ -111,7 +110,7 @@ class Router:
                 text = provider.generate(prompt)
                 self.breaker.record_success(name)
                 # Chi ha pensato, non solo attraverso chi: un provider che
-                # sceglie fra piu' modelli dice quale ha risposto.
+                # puo' usare piu' modelli dice quale ha risposto.
                 etichetta = getattr(provider, "ultima_etichetta", None) or name
                 self.cache.set(prompt, profile, (text, etichetta))
                 return text, etichetta

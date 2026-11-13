@@ -18,8 +18,8 @@
       "sha256": "23ef8e2559eccc2315d48b4759b8c757efe16797bc462618e4953093a70729c8"
     },
     ".github/workflows/daily.yml": {
-      "byte": 5622,
-      "sha256": "802a233315ec4c75c843c89575ffcabf4710de6da918a42bc9614fe5b73818fa"
+      "byte": 6435,
+      "sha256": "aa30656a409555e8dbdd1eabb0b24fb3a6f09d38f6a7d22af53cfe284bfb951e"
     },
     ".gitignore": {
       "byte": 2234,
@@ -30,8 +30,8 @@
       "sha256": "171162ee693013221134abbcc27fc3c6ff104ad31cda6f1dd91184b33bd0eb33"
     },
     "CLAUDE.md": {
-      "byte": 18345,
-      "sha256": "7a56f7b85cecbd54166f3def5771ed30f4f8c44ccc2507fc3ed0b7abee76a755"
+      "byte": 19107,
+      "sha256": "e790250d032460b5933464aa750bd926830604c08b02e1f1698ffe0d067ace0e"
     },
     "INNESTO_PRIVATO.md": {
       "byte": 2267,
@@ -170,8 +170,8 @@
       "sha256": "4545fd483f5368a9f6042c59b84f832839f38da5f0967f0218d3ec4b5cd92ee1"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
-      "byte": 6615,
-      "sha256": "6cc0eaaaf73d66edcc68d19cb49228cab4c04ba1cf2b67cabf0dc24c277c65c2"
+      "byte": 8080,
+      "sha256": "265ac7b60b5df2744bb1def135b41c4411dc0c02d3ae326703684c11b0481f58"
     },
     "memoria/ADDENDUM_ARTEFATTO_PANAJEDREZ.md": {
       "byte": 5454,
@@ -1413,21 +1413,17 @@
       "byte": 1431,
       "sha256": "89585e8dd201763e782d86b35bd3235ed7299c32b4aaf7bd457beb0c69f014cc"
     },
-    "sdq1/llm/providers/github_models_provider.py": {
-      "byte": 4591,
-      "sha256": "bc2aeb9a3946641775ec5734f301d1517fbefc3f46d605eee081c902c6dfcd2c"
-    },
     "sdq1/llm/providers/ollama_provider.py": {
-      "byte": 880,
-      "sha256": "f4db9542c5c9e2791df5cb821e0dfd54bfbda15d5dc2c599b333ac4d11eab4d0"
+      "byte": 1644,
+      "sha256": "d8eaf7a9074a1fe13d10c2c6214737ecb5faa0d54b333165b9039d91ff6549fd"
     },
     "sdq1/llm/providers/stub_provider.py": {
       "byte": 791,
       "sha256": "cedd53ddc846a0fc471663e57afe605652fd6c7c435b218b61f8b6813fac3ca4"
     },
     "sdq1/llm/router.py": {
-      "byte": 6145,
-      "sha256": "063b74f0abb88c4a36d90d7120d12a641b45b46e4b2f85cec47527c42e405581"
+      "byte": 6074,
+      "sha256": "425089f118e953b831fb06de3e3fafbf7ee36c13f7cb67710186fd983bfcb5ce"
     },
     "sdq1/memory/__init__.py": {
       "byte": 0,
@@ -1557,9 +1553,9 @@
       "byte": 4356,
       "sha256": "fa014e00eed1e92303f7a178f1ba2c5c6c5cba388074d90804fbbb2b418c7a14"
     },
-    "tests/test_github_models.py": {
-      "byte": 10346,
-      "sha256": "80f59f1ed7c598b0a1b31aad7ee12d76f24554d980142c8fe2f59bff978c6f9a"
+    "tests/test_core_locale.py": {
+      "byte": 6818,
+      "sha256": "517fc76e2b27572b97d19a71363d1bb2c137f1eafafb82b8d5d994d77f80430a"
     },
     "tests/test_h2_contatto.py": {
       "byte": 3241,
@@ -1594,6 +1590,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-11-13T11:43:39.802979+00:00",
+  "generato": "2026-11-13T11:48:38.085301+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
