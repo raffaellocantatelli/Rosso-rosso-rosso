@@ -13,9 +13,13 @@
       "byte": 733,
       "sha256": "e738162b5e4a3d388dab1c5bcee9d9320ef4e4a135a57a0bee5ec62469e5744c"
     },
+    ".github/workflows/copilot-setup-steps.yml": {
+      "byte": 2108,
+      "sha256": "23ef8e2559eccc2315d48b4759b8c757efe16797bc462618e4953093a70729c8"
+    },
     ".github/workflows/daily.yml": {
-      "byte": 4499,
-      "sha256": "395fee429a691de97d9de7400f0ce79ed4cead9338f01d146667bbd8ef01fed7"
+      "byte": 5622,
+      "sha256": "802a233315ec4c75c843c89575ffcabf4710de6da918a42bc9614fe5b73818fa"
     },
     ".gitignore": {
       "byte": 2234,
@@ -1086,8 +1090,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 14422,
-      "sha256": "25b798b56c11ab5c9d2ace082a6f2e8bf5832d8c71216a5c47614e1c6ca94157"
+      "byte": 14644,
+      "sha256": "b2c8ac8e0a3506f22ffe37f56aad412d040fbafd08d9696865e96a28283a2b84"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1326,8 +1330,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 10545,
-      "sha256": "e1864e301e011605b77306d12008544d7eca4473bd69806ba79bcaf85d7fa5e1"
+      "byte": 10778,
+      "sha256": "c2b73e8bfa1e33f50d13ee3cb0da73ee138d695d16d9fcccdca9ecb63b0da01f"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -1374,8 +1378,8 @@
       "sha256": "a869b03228d4bfdef17fbae1619dd2b7a7c87ecec4d2683880a29bebcb6efbd2"
     },
     "sdq1/daily.py": {
-      "byte": 5133,
-      "sha256": "79ea3a8f8714589237ab12bd45c5abb1af729fc870ec6426bf4379a1c95b2679"
+      "byte": 5259,
+      "sha256": "622a97212a2a397a6df363da873806d5ce29c14a51df0e7829ef50776eebe935"
     },
     "sdq1/llm/__init__.py": {
       "byte": 0,
@@ -1409,6 +1413,10 @@
       "byte": 1431,
       "sha256": "89585e8dd201763e782d86b35bd3235ed7299c32b4aaf7bd457beb0c69f014cc"
     },
+    "sdq1/llm/providers/github_models_provider.py": {
+      "byte": 3992,
+      "sha256": "b745d9f6c3050d93703f0a68779e295106c7ff24074009ba6a608ca31a78b248"
+    },
     "sdq1/llm/providers/ollama_provider.py": {
       "byte": 880,
       "sha256": "f4db9542c5c9e2791df5cb821e0dfd54bfbda15d5dc2c599b333ac4d11eab4d0"
@@ -1418,8 +1426,8 @@
       "sha256": "cedd53ddc846a0fc471663e57afe605652fd6c7c435b218b61f8b6813fac3ca4"
     },
     "sdq1/llm/router.py": {
-      "byte": 5404,
-      "sha256": "13a3d91fe83154fdc9e249abfc5f9ba406e52adca7dbb6ef529fcc6c6ccc208f"
+      "byte": 6145,
+      "sha256": "063b74f0abb88c4a36d90d7120d12a641b45b46e4b2f85cec47527c42e405581"
     },
     "sdq1/memory/__init__.py": {
       "byte": 0,
@@ -1549,6 +1557,10 @@
       "byte": 4356,
       "sha256": "fa014e00eed1e92303f7a178f1ba2c5c6c5cba388074d90804fbbb2b418c7a14"
     },
+    "tests/test_github_models.py": {
+      "byte": 9136,
+      "sha256": "79e13cf264bf60fc2b5635baf0607ae4a9ac0633d17902712d255eae53c70d65"
+    },
     "tests/test_h2_contatto.py": {
       "byte": 3241,
       "sha256": "661bcc153687fc332867d46674b7240a790c528d9c619af4946b3059108841ea"
@@ -1582,6 +1594,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-11-13T11:32:18.274790+00:00",
+  "generato": "2026-11-13T11:42:17.615781+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

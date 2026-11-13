@@ -8,6 +8,7 @@ import threading
 VARIABILI_SEGRETE = (
     "ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "DEEPSEEK_API_KEY",
     "GEMINI_API_KEY", "OPENAI_API_KEY", "TELEGRAM_BOT_TOKEN",
+    "GITHUB_MODELS_TOKEN",
 )
 
 
@@ -29,6 +30,7 @@ from .providers.anthropic_provider import AnthropicProvider
 from .providers.gemini_provider import GeminiProvider
 from .providers.deepseek_provider import DeepSeekProvider
 from .providers.ollama_provider import OllamaProvider
+from .providers.github_models_provider import GitHubModelsProvider
 from .providers.stub_provider import StubProvider
 from .circuit_breaker import CircuitBreaker
 from .cache import ResponseCache
@@ -36,15 +38,19 @@ from .cache import ResponseCache
 # Lo stub NON compare nelle cascate reali: se ci fosse, ogni profilo
 # riuscirebbe sempre e il fallback esplicito (--economia, --no-api) non
 # verrebbe mai raggiunto. Chi vuole lo stub lo chiede con --no-api.
+#
+# `github_models` sta in fondo: e' il provider che non richiede una chiave
+# all'autore (vedi providers/github_models_provider.py). Chi ha una chiave
+# propria viene sempre prima.
 PROFILES = {
-    "default": ["anthropic", "gemini", "deepseek"],
-    "economia": ["gemini", "deepseek"],
+    "default": ["anthropic", "gemini", "deepseek", "github_models"],
+    "economia": ["gemini", "deepseek", "github_models"],
     "locale": ["ollama", "gemini"],
     "no-api": ["stub"],
 }
 
 # Provider che parlano davvero con un modello linguistico.
-REAL_PROVIDERS = ("anthropic", "gemini", "deepseek", "ollama")
+REAL_PROVIDERS = ("anthropic", "gemini", "deepseek", "ollama", "github_models")
 
 # Come si accende ciascun provider, per la diagnostica di `--check`.
 COME_ATTIVARE = {
@@ -52,6 +58,7 @@ COME_ATTIVARE = {
     "gemini": "GOOGLE_API_KEY in .env (o nei secrets della Action)",
     "deepseek": "DEEPSEEK_API_KEY in .env (o nei secrets della Action)",
     "ollama": "un'istanza Ollama in ascolto su OLLAMA_BASE_URL (default http://localhost:11434/v1)",
+    "github_models": "GITHUB_MODELS_TOKEN — nella Action e' il GITHUB_TOKEN con `models: read`: nessuna chiave da aggiungere",
 }
 
 
@@ -62,6 +69,7 @@ class Router:
             "gemini": GeminiProvider(),
             "deepseek": DeepSeekProvider(),
             "ollama": OllamaProvider(),
+            "github_models": GitHubModelsProvider(),
             "stub": StubProvider(),
         }
         self.breaker = CircuitBreaker()
@@ -102,8 +110,11 @@ class Router:
             try:
                 text = provider.generate(prompt)
                 self.breaker.record_success(name)
-                self.cache.set(prompt, profile, (text, name))
-                return text, name
+                # Chi ha pensato, non solo attraverso chi: un provider che
+                # sceglie fra piu' modelli dice quale ha risposto.
+                etichetta = getattr(provider, "ultima_etichetta", None) or name
+                self.cache.set(prompt, profile, (text, etichetta))
+                return text, etichetta
             except Exception as exc:  # provider non affidabile: registra e prova il prossimo
                 self.breaker.record_failure(name)
                 errors.append(oscura_segreti(f"{name}: {exc}"))

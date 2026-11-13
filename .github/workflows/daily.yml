@@ -4,9 +4,19 @@ on:
   schedule:
     - cron: '0 7 * * *'
   workflow_dispatch:
+    inputs:
+      prova:
+        description: "Esegue senza committare: il daily finisce nel log, non nel repository"
+        type: boolean
+        default: false
 
+# `models: read` permette al GITHUB_TOKEN di questa run di interrogare GitHub
+# Models: e' il provider che non richiede una chiave nei secrets
+# (sdq1/llm/providers/github_models_provider.py). Dal 02/09 al 13/11 il Core e'
+# rimasto spento ad aspettare un secret che non e' arrivato.
 permissions:
   contents: write
+  models: read
 
 jobs:
   daily-run:
@@ -28,14 +38,17 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITHUB_MODELS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python -m sdq1 --check
 
       - name: Avviso — Core spento
         if: steps.core.outcome == 'failure'
         run: |
-          echo "::warning title=Core spento::Nessun provider LLM disponibile. \
+          echo "::warning title=Core spento::Nessun provider LLM disponibile, \
+          nemmeno GitHub Models col token di questa run. \
           La riflessione di oggi sarà uno Stub: attività senza pensiero. \
-          Aggiungi ANTHROPIC_API_KEY, GOOGLE_API_KEY o DEEPSEEK_API_KEY nei \
+          Controlla 'permissions: models: read' in questo workflow, oppure \
+          aggiungi ANTHROPIC_API_KEY, GOOGLE_API_KEY o DEEPSEEK_API_KEY nei \
           secrets della repository (Settings > Secrets and variables > Actions)."
 
       - name: Integrità Layer 4 (nodi concorrenti)
@@ -70,6 +83,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITHUB_MODELS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p output
           DATE=$(date -u +%F)
@@ -78,7 +92,15 @@ jobs:
             || python -m sdq1 --daily --no-api > "output/daily_${DATE}.txt"
           python -m sdq1 --health
 
+      # Una prova non lascia tracce nel repository: serve a vedere se il Core
+      # pensa su un ramo qualunque senza scrivere un daily che poi andrebbe
+      # riconciliato con quello del ramo di default.
+      - name: Prova — il daily nel log, non nel repository
+        if: ${{ inputs.prova }}
+        run: cat "output/daily_$(date -u +%F).txt"
+
       - name: Committa l'output
+        if: ${{ !inputs.prova }}
         run: |
           git config user.name "sdq1-bot"
           git config user.email "sdq1-bot@users.noreply.github.com"
@@ -98,8 +120,8 @@ jobs:
           if grep -q "IL CORE È SPENTO" "output/daily_${DATE}.txt"; then
             echo "::error title=Daily Stub::La riflessione di oggi non e' stata \
             pensata da nessun modello. Il file e' stato salvato con il suo banner, \
-            ma questa run e' rossa apposta: aggiungi GOOGLE_API_KEY (o una delle \
-            altre) nei secrets della repository."
+            ma questa run e' rossa apposta: GitHub Models non ha risposto (vedi \
+            il passo precedente) e nei secrets non c'e' nessuna chiave."
             exit 1
           fi
           echo "Daily generato da un provider reale."

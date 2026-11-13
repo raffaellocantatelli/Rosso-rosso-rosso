@@ -222,6 +222,9 @@ def main(argv=None):
         if ctx.provider_used and ctx.provider_used.startswith("stub"):
             print(BANNER_SPENTO)
         print(ctx.final)
+        # Nel file, non solo su stderr: il daily e' il verbale, e un verbale
+        # dice chi lo ha scritto. Prima di oggi lo sapeva solo il log della run.
+        print(f"\n[pensato da: {ctx.provider_used} | profilo: {profilo}]")
         print(f"\n[provider: {ctx.provider_used} | profilo: {profilo}]", file=sys.stderr)
         return
 
