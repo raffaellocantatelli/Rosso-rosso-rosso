@@ -9,6 +9,10 @@ on:
         description: "Esegue senza committare: il daily finisce nel log, non nel repository"
         type: boolean
         default: false
+      modello:
+        description: "Modello locale da provare al posto di quello predefinito (es. gemma3:12b)"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -20,7 +24,7 @@ permissions:
 # chiave viene sempre prima: il locale e' l'ultimo passo prima dello Stub.
 # Il modello e' piccolo e gira su CPU: il daily dice nel file chi lo ha pensato.
 env:
-  OLLAMA_MODEL: gemma3:4b
+  OLLAMA_MODEL: ${{ inputs.modello || 'gemma3:4b' }}
   LLM_TIMEOUT: "900"
 
 jobs:
