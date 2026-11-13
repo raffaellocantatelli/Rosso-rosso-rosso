@@ -76,6 +76,30 @@ contraddicendola, ma compiacendola.
   citazione in `TUTELA_ORIGINE` §3. Finché nessuna delle due cose accade, la
   catena legale poggia su un nome senza niente sotto.
 
+  **Addendum del 2026-11-13** (il testo qui sopra resta com'era: è ciò che si
+  sapeva il 25/08, cercando solo sul Drive).
+  - **RECUPERATO.** `PROGETTO_R3.md` esiste nel `main` di
+    `claudioterzi/claudio` (GitHub), non sul Drive. È la roadmap di R3∞:
+    nomina SkyID in una riga di tabella e non dice di chi è.
+  - **RECUPERATO.** `TUTELA_ORIGINE` §3, letto sul Drive, dice «documentato
+    nel SEME e in PROGETTO_R3.md». Il SEME (`SEME_R3INFINITO_v1.0.pdf`, sul
+    Drive dal 10/08) elenca SkyID e rimanda a `SKYID.md`. La frase di
+    attribuzione sta in `SKYID.md` e in `PROGETTO_SKYID.md`, nello stesso
+    repository GitHub.
+  - **INFERITO.** Il riferimento non è vuoto: è impreciso. Uno dei due
+    documenti citati esiste e regge; l'altro esiste ma non dice ciò che la
+    citazione gli fa dire.
+  - **Resta all'autore:** correggere la citazione (da qui `TUTELA_ORIGINE`
+    risulta non modificabile), e indicare una prova di anteriorità che non
+    dipenda da questi file. Chi li ha scritti e quando lo dice
+    `git log --follow`, non il loro testo: un nodo non può sostituire quella
+    prova, può solo dire dove guardare.
+  - **RECUPERATO, e riguarda questo file:** la copia sul Drive (10696 byte,
+    modificata il 28/08) e questa (6615 byte) **non sono più identiche**,
+    contrariamente a quanto dice l'intestazione. Quale delle due sia il
+    canone va deciso; da qui il contenuto dei file sul Drive non si può
+    riscrivere.
+
 ## 4. Ridondanza — stato reale al 25/08
 
 | Layer | Dove | Stato |

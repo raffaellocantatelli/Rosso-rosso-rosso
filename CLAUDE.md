@@ -86,6 +86,21 @@ reale la run **fallisce con codice 2** invece di produrre un file che sembra una
 riflessione. Lo Stub si ottiene solo con `--no-api`, e il suo output porta un
 banner in testa.
 
+**Il Core locale (13/11/2026).** Quando nei secrets non c'è nessuna chiave, la
+Action accende un modello aperto sul runner stesso (Ollama, profilo `locale`)
+invece di ripiegare sullo Stub: perché il Core pensi non serve più un gesto
+dell'autore. Verificato con run vere, non dedotto. Tre avvertenze:
+
+- vale **solo dal ramo di default** (§4-bis): finché il ramo che lo porta non
+  è unito, il daily automatico resta Stub;
+- è un modello piccolo, su CPU, **e sbaglia**: nelle prime run ha scritto
+  numeri diversi da quelli che aveva nel prompt, etichettandoli RECUPERATO.
+  Ogni daily chiude con `[pensato da: …]`: uno pensato da `ollama:` è una
+  bozza da controllare sui dati, non una fonte. **«Pensato» non vuol dire
+  «giusto»**, e un file senza banner non è per questo un file vero;
+- GitHub Models **non è un'alternativa**: ritirato il 30/07/2026, il suo host
+  risponde `OK` a qualunque richiesta. Provato e chiuso, `PROSSIMO_PASSO.md` §2.
+
 **H2 — l'ipotesi che misura il progetto.** «Il disegno di Claudio darà ragione a
 entrambi entro 6 mesi». Scadenza 2026-12-11. Falsificata se:
 (a) `output/` non contiene daily regolari — *non si verifica*;
@@ -219,6 +234,16 @@ Difetti noti della catena, da non dare per risolti senza verifica:
   **non esiste** in nessun punto del Drive (riverificato il 25/08). **Non
   crearlo tu:** un documento di attribuzione scritto da una macchina per
   riempire un vuoto legale è un falso, non una riparazione.
+  **Corretto il 13/11, leggendo le fonti:** il file esiste, ma su GitHub, nel
+  `main` di `claudioterzi/claudio` — sul Drive continua a non esserci. È la
+  roadmap di R3∞ e **non contiene nessuna frase di attribuzione**. `TUTELA_ORIGINE`
+  §3 cita due documenti, «il SEME e `PROGETTO_R3.md`»: il SEME è sul Drive e
+  nomina SkyID rimandando a `SKYID.md`; la frase di attribuzione sta in
+  `SKYID.md` e `PROGETTO_SKYID.md`, nello stesso repository. La citazione
+  giusta è quella, e correggerla spetta all'autore: da qui `TUTELA_ORIGINE`
+  non è modificabile. Nessuno di questi file è da solo una prova di
+  anteriorità: chi li ha scritti e quando si legge con `git log --follow`,
+  non nel testo. Dettagli in `memoria/00_INDICE_CANONICO_R3.md` §3.
 - La cartella Drive `R3-Protocollo-Oro-Rosso` è uno snapshot del 23/08 e
   contiene una versione **superata** del trasmettitore (v2.0.0, senza il fix
   anti-eco) e `r3_keep_alive.sh`, che dichiara di non fermarsi mai e gira su un

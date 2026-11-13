@@ -18,8 +18,8 @@
       "sha256": "23ef8e2559eccc2315d48b4759b8c757efe16797bc462618e4953093a70729c8"
     },
     ".github/workflows/daily.yml": {
-      "byte": 6435,
-      "sha256": "aa30656a409555e8dbdd1eabb0b24fb3a6f09d38f6a7d22af53cfe284bfb951e"
+      "byte": 6822,
+      "sha256": "18ddf1e580d5f3d162822697be49fac16290ded2d949d2ae76014d3c5dd941ce"
     },
     ".gitignore": {
       "byte": 2234,
@@ -30,8 +30,8 @@
       "sha256": "171162ee693013221134abbcc27fc3c6ff104ad31cda6f1dd91184b33bd0eb33"
     },
     "CLAUDE.md": {
-      "byte": 19107,
-      "sha256": "e790250d032460b5933464aa750bd926830604c08b02e1f1698ffe0d067ace0e"
+      "byte": 20072,
+      "sha256": "f471608e6c2557ee2aa8273c250f2ebf867c234dad98521d8ba61f2858388371"
     },
     "INNESTO_PRIVATO.md": {
       "byte": 2267,
@@ -46,8 +46,8 @@
       "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
     },
     "PROSSIMO_PASSO.md": {
-      "byte": 7581,
-      "sha256": "17c3f84425f89e6cc8c760459e1c3fdbf97839cbf8b7e8d00a90d29f9f1283ea"
+      "byte": 10690,
+      "sha256": "77cdfe9f65922ec50de180c30b8696bd8395b860dd3db390b99e8f1fb18b21f2"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -1090,8 +1090,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 15040,
-      "sha256": "61cda53941aabd9fa1e18f70a7014f29c6ed4f2117e4f9b38f20aa4083192d3b"
+      "byte": 15832,
+      "sha256": "0c9db257109ef852edd549ae10517f7047e6932de3ef592df60310116fa996a3"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1330,8 +1330,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 10778,
-      "sha256": "c2b73e8bfa1e33f50d13ee3cb0da73ee138d695d16d9fcccdca9ecb63b0da01f"
+      "byte": 10792,
+      "sha256": "0f83e25383b62de3f4d73c687fe67f2014175745823bfc4dde845bba22a35365"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -1342,16 +1342,16 @@
       "sha256": "00415defc8f4c5e3271c79cdd63e2d7afe2cc082b7b0b92102fcbce44497ad7a"
     },
     "sdq1/agents/gen.py": {
-      "byte": 1921,
-      "sha256": "9249c92dd41168e3903ce74f676a561ed30f493e5d300c971a198d3bb6e3c647"
+      "byte": 1978,
+      "sha256": "23131d30324bd487931e014808aa4a0c363f58653741feda8093c514c1b64adf"
     },
     "sdq1/agents/memo.py": {
       "byte": 384,
       "sha256": "ab0aa221da78b9f728069b5ec80bc7eea358c96e1ec26d0eb06fce4cf4136e00"
     },
     "sdq1/agents/pipeline.py": {
-      "byte": 1046,
-      "sha256": "f6b27a96249afb68c128dc847885e7a6474680a775934f86a73e67639dca66f4"
+      "byte": 1541,
+      "sha256": "f26ffeaf9c6e8cf9efe5a4ffd19673db0108c7d0c29c81dd3026362848055915"
     },
     "sdq1/agents/raffa.py": {
       "byte": 1110,
@@ -1554,8 +1554,8 @@
       "sha256": "fa014e00eed1e92303f7a178f1ba2c5c6c5cba388074d90804fbbb2b418c7a14"
     },
     "tests/test_core_locale.py": {
-      "byte": 6818,
-      "sha256": "517fc76e2b27572b97d19a71363d1bb2c137f1eafafb82b8d5d994d77f80430a"
+      "byte": 7047,
+      "sha256": "ebab808be13465064cc648573c43d7f45443e38e8f0e95df0b77753ce098b03f"
     },
     "tests/test_h2_contatto.py": {
       "byte": 3241,
@@ -1590,6 +1590,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-11-13T11:48:38.085301+00:00",
+  "generato": "2026-11-13T12:13:00.979894+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }

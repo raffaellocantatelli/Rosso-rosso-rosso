@@ -10,7 +10,7 @@ on:
         type: boolean
         default: false
       modello:
-        description: "Modello locale da provare al posto di quello predefinito (es. gemma3:12b)"
+        description: "Modello locale da provare al posto di quello predefinito (es. gemma3:4b)"
         type: string
         default: ""
 
@@ -23,8 +23,11 @@ permissions:
 # nessun fornitore, nessun costo — il repository e' pubblico. Chi ha una
 # chiave viene sempre prima: il locale e' l'ultimo passo prima dello Stub.
 # Il modello e' piccolo e gira su CPU: il daily dice nel file chi lo ha pensato.
+# gemma3:12b e non 4b: provati entrambi il 13/11 (run #111-#114). Il 12b
+# impiega circa 6 minuti invece di 90 secondi, ma sbaglia molto meno sui
+# numeri che ha nel prompt. Nessuno dei due e' senza errori.
 env:
-  OLLAMA_MODEL: ${{ inputs.modello || 'gemma3:4b' }}
+  OLLAMA_MODEL: ${{ inputs.modello || 'gemma3:12b' }}
   LLM_TIMEOUT: "900"
 
 jobs:
