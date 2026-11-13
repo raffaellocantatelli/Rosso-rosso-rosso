@@ -228,3 +228,34 @@ def test_check_dice_acceso_solo_col_token(finto):
     acceso = _sdq1(finto, "--check", token=TOKEN)
     assert acceso.returncode == 0
     assert "CORE ACCESO" in acceso.stdout and "github_models" in acceso.stdout
+
+
+def test_un_200_che_non_e_una_risposta_dice_cosa_e_arrivato(ambiente, finto):
+    """Il 13/11 la prima run vera rispondeva 200 con un corpo non JSON, e
+    l'errore era «Expecting value: line 1 column 1»: non si poteva sapere
+    cosa avesse risposto GitHub. Il messaggio deve portare il corpo."""
+    ambiente.setenv("GITHUB_MODELS_TOKEN", TOKEN)
+
+    class _Pagina(BaseHTTPRequestHandler):
+        def do_POST(self):
+            self.rfile.read(int(self.headers["content-length"]))
+            dati = b"<html>Sign in to GitHub</html>"
+            self.send_response(200)
+            self.send_header("content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(dati)
+
+        def log_message(self, *a):
+            pass
+
+    srv = HTTPServer(("127.0.0.1", 0), _Pagina)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    ambiente.setenv("GITHUB_MODELS_URL", f"http://127.0.0.1:{srv.server_address[1]}/x")
+    try:
+        with pytest.raises(RuntimeError) as exc:
+            Router().providers["github_models"].generate("prova")
+    finally:
+        srv.shutdown()
+
+    assert "Sign in to GitHub" in str(exc.value)
+    assert "text/html" in str(exc.value)

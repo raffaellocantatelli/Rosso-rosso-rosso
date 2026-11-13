@@ -75,13 +75,23 @@ class GitHubModelsProvider(Provider):
                     json={"model": modello, "messages": [{"role": "user", "content": prompt}]},
                     timeout=timeout_richiesta(),
                 )
+                # Il corpo dice PERCHE' (modello sconosciuto, permesso
+                # mancante, limite superato, pagina al posto di una risposta):
+                # senza, dal log della Action si puo' solo indovinare. La
+                # prima run vera, il 13/11, rispondeva 200 con un corpo che
+                # non era JSON, e l'errore non diceva cosa fosse. Mai il
+                # token, pero'.
+                corpo = resp.text[:300].replace(token, f"<{VARIABILE_TOKEN} oscurata>")
                 if resp.status_code != 200:
-                    # Il corpo dice PERCHE' (modello sconosciuto, permesso
-                    # mancante, limite superato): senza, dal log della Action
-                    # si puo' solo indovinare. Mai il token, pero'.
-                    corpo = resp.text[:300].replace(token, f"<{VARIABILE_TOKEN} oscurata>")
                     raise RuntimeError(f"HTTP {resp.status_code}: {corpo}")
-                testo = resp.json()["choices"][0]["message"]["content"]
+                try:
+                    testo = resp.json()["choices"][0]["message"]["content"]
+                except (ValueError, KeyError, IndexError, TypeError) as exc:
+                    tipo = resp.headers.get("content-type", "senza content-type")
+                    raise RuntimeError(
+                        f"HTTP 200 ma non e' una risposta di chat ({tipo}, "
+                        f"{len(resp.content)} byte, url finale {resp.url}): {corpo!r}"
+                    ) from exc
                 if not testo or not testo.strip():
                     raise RuntimeError("risposta vuota")
             except Exception as exc:  # questo modello no: si prova il prossimo

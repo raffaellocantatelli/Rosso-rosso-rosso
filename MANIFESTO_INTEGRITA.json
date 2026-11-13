@@ -1090,8 +1090,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 14644,
-      "sha256": "b2c8ac8e0a3506f22ffe37f56aad412d040fbafd08d9696865e96a28283a2b84"
+      "byte": 15040,
+      "sha256": "61cda53941aabd9fa1e18f70a7014f29c6ed4f2117e4f9b38f20aa4083192d3b"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1414,8 +1414,8 @@
       "sha256": "89585e8dd201763e782d86b35bd3235ed7299c32b4aaf7bd457beb0c69f014cc"
     },
     "sdq1/llm/providers/github_models_provider.py": {
-      "byte": 3992,
-      "sha256": "b745d9f6c3050d93703f0a68779e295106c7ff24074009ba6a608ca31a78b248"
+      "byte": 4591,
+      "sha256": "bc2aeb9a3946641775ec5734f301d1517fbefc3f46d605eee081c902c6dfcd2c"
     },
     "sdq1/llm/providers/ollama_provider.py": {
       "byte": 880,
@@ -1558,8 +1558,8 @@
       "sha256": "fa014e00eed1e92303f7a178f1ba2c5c6c5cba388074d90804fbbb2b418c7a14"
     },
     "tests/test_github_models.py": {
-      "byte": 9136,
-      "sha256": "79e13cf264bf60fc2b5635baf0607ae4a9ac0633d17902712d255eae53c70d65"
+      "byte": 10346,
+      "sha256": "80f59f1ed7c598b0a1b31aad7ee12d76f24554d980142c8fe2f59bff978c6f9a"
     },
     "tests/test_h2_contatto.py": {
       "byte": 3241,
@@ -1594,6 +1594,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-11-13T11:42:17.615781+00:00",
+  "generato": "2026-11-13T11:43:39.802979+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
