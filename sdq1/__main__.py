@@ -215,7 +215,7 @@ def main(argv=None):
         profilo = profilo_da_args(args)
         prompt = daily_mod.costruisci_prompt(router)
         try:
-            ctx = pipeline.esegui(prompt, profilo, router, memory, memorizza=False)
+            ctx = pipeline.esegui(prompt, profilo, router, memory, memorizza=False, diretto=True)
         except RuntimeError as exc:
             print(f"[sdq1] {exc}", file=sys.stderr)
             sys.exit(2)

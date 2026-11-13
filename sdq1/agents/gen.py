@@ -6,6 +6,8 @@ corta), ritenta una volta con un prompt arricchito.
 
 
 def build_prompt(ctx):
+    if ctx.meta.get("diretto"):
+        return ctx.input
     righe = [
         "Sei GEN-006, l'agente generatore della pipeline SDQ-1.",
         "Rispondi sempre in italiano, in modo diretto e concreto.",

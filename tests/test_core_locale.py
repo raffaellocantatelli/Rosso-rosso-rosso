@@ -152,8 +152,12 @@ def test_il_daily_locale_e_pensato_e_dice_da_chi(ollama):
     assert "IL CORE È SPENTO" not in esito.stdout
     # Sta nello stdout, cioe' nel file: il verbale dice chi lo ha scritto.
     assert f"[pensato da: ollama:{MODELLO} | profilo: locale]" in esito.stdout
-    # E al modello sono arrivati i DATI, non una frase vuota.
-    assert "contatti_registrati" in ollama.richieste[0]["corpo"]["messages"][0]["content"]
+    # Al modello arrivano i DATI, e una volta sola: non anche a pezzi nei
+    # «sotto-obiettivi», dove il 13/11 un modello vero li ha letti male.
+    arrivato = ollama.richieste[0]["corpo"]["messages"][0]["content"]
+    assert arrivato.count('"contatti_registrati"') == 1
+    assert "Sotto-obiettivi" not in arrivato
+    assert "Contesto rilevante dalla memoria" not in arrivato
 
 
 def test_senza_modello_il_daily_locale_fallisce_invece_di_fingere():
