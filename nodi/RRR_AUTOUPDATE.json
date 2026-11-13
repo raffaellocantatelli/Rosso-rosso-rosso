@@ -83,15 +83,20 @@
     },
     "pr_113": {
       "number": 113,
-      "state": "open",
-      "head": "62200961b164471f1a1594ad05e96e157c3e2830",
+      "state": "merged",
+      "head": "13688d90bb93180089ee53ee1c94e1a7e5d2635f",
       "installed_in_nodes": false,
-      "ci": "REPORTED, non verificato da questo nodo: R3 RRR Control #63 SUCCESS; CI & Security Scans #743 FAILURE su npm audit del toolchain Vercel",
+      "ci": "UNKNOWN da questo nodo sull'head finale. Storico REPORTED al 31/10 su 62200961: R3 RRR Control #63 SUCCESS; CI & Security Scans #743 FAILURE su npm audit Vercel.",
       "class": "CLAIMED",
       "verification": "EXTERNAL_UNVERIFIED",
-      "state_verification": "REPORTED: Claudio Terzi riferisce open, non draft, non merged (31/10). Non merged INFERITO da refs/pull/113/merge presente.",
-      "head_verification": "RECUPERATO: git ls-remote https://github.com/claudioterzi/claudio refs/pull/113/head, 2026-10-31",
-      "head_previous": "e068cfd34380048df3a7536ff086d5f62db0eed6"
+      "state_verification": "RECUPERATO 2026-11-13: merge commit 6883c2a (2026-11-13T02:10+01:00) su main di claudioterzi/claudio; refs/pull/113/merge non esiste piu'; head 13688d9 e' antenato di main (git merge-base --is-ancestor).",
+      "head_verification": "RECUPERATO: git ls-remote + fetch, 2026-11-13",
+      "head_previous": [
+        "e068cfd34380048df3a7536ff086d5f62db0eed6",
+        "62200961b164471f1a1594ad05e96e157c3e2830"
+      ],
+      "merge_commit": "6883c2a",
+      "installed_in_nodes_note": "Unita in main non significa installata su Railway: il runtime resta EXTERNAL_UNVERIFIED."
     },
     "tests_reproduced": {
       "commit": "e068cfd34380048df3a7536ff086d5f62db0eed6",
@@ -101,7 +106,15 @@
       "class": "LOCAL_EVIDENCE",
       "limits_declared": "Evidenza locale, non volume Railway/sleep/recovery produzione.",
       "verification": "REPRODUCIBILE_LOCALMENTE",
-      "head_mismatch": "Eseguiti su e068cfd, non sull'head attuale 62200961: sull'head attuale l'esito e' UNKNOWN finche' non viene rieseguito."
+      "head_mismatch": "I 35 test sono su e068cfd. Vedi rerun_main per l'esito sul codice unito.",
+      "rerun_main": {
+        "commit": "261a46d6c621e34587c6a2d27faa61fc066d1393",
+        "date": "2026-11-13",
+        "result": "29 passed in 16.05s",
+        "suites": "test_r3_failure_cooldown, test_r3_supervise_node, test_r3_supervise_node_review, test_r3_supervisor_adoption_resume, test_r3_supervisor_escaped_descendants, test_r3_sync_progress",
+        "class": "LOCAL_EVIDENCE",
+        "limits_declared": "Solo i sei file di test introdotti dalla PR #113, in un container di sessione dopo pip install python-multipart socksio. Non copre replication_proof, persistence_readiness, rrr_two_process, ne' Railway. Non provati rimettendo il difetto (CLAUDE.md 7-bis)."
+      }
     }
   },
   "sentinella_rules": {
