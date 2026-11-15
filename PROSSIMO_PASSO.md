@@ -102,6 +102,22 @@ python3 -m pytest tests/test_core_locale.py -q
 python3 collega_nodi.py --stato
 ```
 
+## 2-bis. Fatto il 15/11: il documento «ONDA v1.1 — Audit P5»
+
+Un altro modello ha scritto un audit di «ONDA v1.1» con sette test proposti;
+l'autore lo ha portato qui. **RECUPERATO:** il core che quei test devono
+collaudare non è in nessun repository né sul Drive, e i documenti che l'audit
+cita nemmeno. Come codice esiste ONDA/1.0 (`sdq1/onda_protocol.py`, in
+`claudioterzi/claudio`).
+
+I test e le correzioni proposte sono stati **eseguiti** contro
+un'implementazione di riferimento: di dieci affermazioni tecniche ne reggono
+due; rimessi 28 difetti, i sette test del documento ne prendono 11 e la suite
+riscritta 28. Il materiale parla di falle e sta nel repository **privato**
+`R3-Protocollo-Oro-Rosso`, ramo `claude/rrr-onda-verification-1twqhp`,
+cartella `onda_verifica/` (`README.md` per primo). Qui non è copiato, e non
+va copiato: questo repository è pubblico (`CLAUDE.md` §2.5).
+
 ## 3. Il mondo, guardato con i connettori (ricontrollato il 13/11)
 
 | canale | esito |
