@@ -1090,8 +1090,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 16503,
-      "sha256": "e5d2cdd75987ede0d3de4c317828ae0e8cff0b83eb80ff5e25f46cfd51b1feb0"
+      "byte": 16765,
+      "sha256": "179e8b58ef42812cef8ef9755c6a4d6e8a4dccacc947a9e794473d73816f168d"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1292,6 +1292,46 @@
     "r3/sync.py": {
       "byte": 3925,
       "sha256": "866a66e17ae6d6d6409a68e50d114a48ebc9f44d83a12cc0d3cda19fb5b7773e"
+    },
+    "r3_peer/README.md": {
+      "byte": 1268,
+      "sha256": "127aa090e96277a9c9a235a79d5d415be951042da0272981fe94019252dd4d65"
+    },
+    "r3_peer/__init__.py": {
+      "byte": 317,
+      "sha256": "8d81ac18b2447034abe7b7eb7e359ce8020b33f340b6857d602dbb073a6a5bba"
+    },
+    "r3_peer/backup.py": {
+      "byte": 561,
+      "sha256": "7676b9982ad9926d7d46b78ad9d7c222a03b97cd214a8f89d3c2d59c67604cb7"
+    },
+    "r3_peer/channels.py": {
+      "byte": 1454,
+      "sha256": "e2061dd4b415f56d8a6da071b94741a839f491a423f45a142b1672dd1d93a689"
+    },
+    "r3_peer/fabric_node.py": {
+      "byte": 3492,
+      "sha256": "e189737768e71d7a652f049e0de26775f0145e424b16930d815e8692daf7740c"
+    },
+    "r3_peer/factory.py": {
+      "byte": 1540,
+      "sha256": "e07782706b754f45e54570d0940d4e5e7b5107b41c13266d3308aa825f3a00f9"
+    },
+    "r3_peer/in_memory.py": {
+      "byte": 1807,
+      "sha256": "8ae5f8130fa11ae372b3e3e28d9433f0de5bd3b99d5b4a9495793d2f2de97b88"
+    },
+    "r3_peer/postgres.py": {
+      "byte": 5070,
+      "sha256": "97d622166f3365c24d359544b90f6b78841c16983c46a3d61ac346d35b772675"
+    },
+    "r3_peer/provref.py": {
+      "byte": 1192,
+      "sha256": "e32b42400cc8e724b80d6224bc0d7660f7c0ad4c87945d65566b5006189edfdb"
+    },
+    "r3_peer/store.py": {
+      "byte": 1118,
+      "sha256": "6a1ed9077414240a91bfc01eaa86682e97a344eb05bc0de30d5259aeb6480de7"
     },
     "rassegna.py": {
       "byte": 11102,
@@ -1557,6 +1597,10 @@
       "byte": 7047,
       "sha256": "ebab808be13465064cc648573c43d7f45443e38e8f0e95df0b77753ce098b03f"
     },
+    "tests/test_fabric_node.py": {
+      "byte": 2998,
+      "sha256": "d9bed8481dd7cdd61ec15b8998984b3a4aca4db360301942528c182503bfc573"
+    },
     "tests/test_h2_contatto.py": {
       "byte": 3241,
       "sha256": "661bcc153687fc332867d46674b7240a790c528d9c619af4946b3059108841ea"
@@ -1590,6 +1634,6 @@
       "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
     }
   },
-  "generato": "2026-11-15T18:30:09.843641+00:00",
+  "generato": "2026-11-15T18:39:01.179864+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
