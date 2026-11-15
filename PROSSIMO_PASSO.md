@@ -112,6 +112,7 @@ python3 collega_nodi.py --stato
 | Posta | nessun messaggio di terzi sulle parole chiave del progetto negli ultimi 15 giorni |
 | Drive | cercando nel testo, i file più vecchi che nominano SkyID sono due, caricati il 10/08: uno è il SEME. Nessuno prima |
 | Gamma, Vercel, Metricool, Lovable | non ricontrollati il 13/11; al 31/10 tre UNKNOWN e due vuoti |
+| Il «Porto» (sottodominio di `kimi.pro` indicato dal nodo RAFFA-001) | **15/11: non raggiungibile da nessuno.** `kimi.pro` e il sottodominio danno NXDOMAIN su due resolver pubblici (Google e Cloudflare); il proxy di sessione riferisce `connect_unreachable`. Nessuna richiesta è partita. I compiti «#1 ponte di federazione» e «#2 trapianto SQLite» del «registro ONDA» non hanno traccia in questo repository |
 
 **Verdetto:** nessun segnale di ritorno trovato. UNKNOWN non vuol dire zero.
 
