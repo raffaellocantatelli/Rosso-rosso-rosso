@@ -91,8 +91,8 @@ Action accende un modello aperto sul runner stesso (Ollama, profilo `locale`)
 invece di ripiegare sullo Stub: perché il Core pensi non serve più un gesto
 dell'autore. Verificato con run vere, non dedotto. Tre avvertenze:
 
-- vale **solo dal ramo di default** (§4-bis): finché il ramo che lo porta non
-  è unito, il daily automatico resta Stub;
+- vale **solo dal ramo di default** (§4-bis), dove sta dal 15/11 (PR #13): un
+  ramo che non lo contiene continua a produrre Stub;
 - è un modello piccolo, su CPU, **e sbaglia**: nelle prime run ha scritto
   numeri diversi da quelli che aveva nel prompt, etichettandoli RECUPERATO.
   Ogni daily chiude con `[pensato da: …]`: uno pensato da `ollama:` è una

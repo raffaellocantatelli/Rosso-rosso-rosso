@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-11-13
+# Prossimo passo — consegna del 2026-11-15
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -15,8 +15,9 @@ Ogni riga ha un comando accanto. Non credere a nessuna.
   unita il 13/11 alle 02:10 (merge `6883c2a`, head finale `13688d9`). I sei
   file di prova che introduce, rieseguiti qui sul codice unito: 29 passati.
 - Questo repository: dal 26/09 l'unico lavoro che non sia il daily
-  automatico è quello del 29/10 e quello di oggi (§2), **che sta su un ramo
-  non ancora unito** (§5.1).
+  automatico è quello del 29/10 e quello del 13–15/11 (§2), **unito nel ramo
+  di default il 15/11 con la PR #13**, su richiesta dell'autore («Accetta il
+  ramo»).
 
 **INFERITO.** La regola §7-bis dice che il canone operativo è quello che ha
 PR, CI, HEAD e test misurabili: su questa misura è `claudioterzi/claudio`.
@@ -33,10 +34,10 @@ git log --oneline --since=2026-09-26 | grep -v "run giornaliero"
 
 | | |
 |---|---|
-| **Il Core, sul ramo di default** | **spento**. 103 daily, **102 Stub**: l'unico pensato resta il 26/08 |
-| **Il Core, su questo ramo** | **acceso, verificato**: cinque run lanciate su questo ramo con `prova: true` (#111–#115), tutte verdi, daily pensato da un modello locale |
-| Chiavi nei secrets | nessuna, letto nel log della run #111. Invariato dal 02/09: **72 giorni** |
-| `output/contatti.jsonl` | **0 righe**. H2 FALSIFICATA sul ramo (b). Scadenza 11/12: **28 giorni** |
+| **Il Core, sul ramo di default** | il codice del Core locale **c'è dal 15/11** (PR #13). Fino al daily del 15/11 compreso: 106 daily, **105 Stub**, l'unico pensato resta il 26/08. Il primo daily automatico col codice nuovo è quello del 16/11: è lì che la previsione di §7 regge o cade |
+| **Il Core, prima dell'unione** | **verificato in prova**: cinque run lanciate sul ramo con `prova: true` (#111–#115), tutte verdi, daily pensato da un modello locale |
+| Chiavi nei secrets | nessuna, letto nel log della run #111. Invariato dal 02/09: **74 giorni** al 15/11 |
+| `output/contatti.jsonl` | **0 righe**. H2 FALSIFICATA sul ramo (b). Scadenza 11/12: **26 giorni** al 15/11 |
 | Registro, in prova | 11 eseguite: H2 caduta; H5 e H7 non concluse; le altre reggono |
 | Prove | 302 in `tests/`, 46 in radice: passate. Layer 4: integrità OK |
 
@@ -122,7 +123,7 @@ va copiato: questo repository è pubblico (`CLAUDE.md` §2.5).
 
 | canale | esito |
 |---|---|
-| GitHub | 0 stelle, 0 osservatori. L'unico fork è di `Claudioterzi82`: è l'autore, e ora è **RECUPERATO** — il SEME indica `github.com/Claudioterzi82/Claudio` come repository principale. Nessuna issue; PR aperte #9 e #11, la seconda dello stesso account |
+| GitHub | 0 stelle, 0 osservatori. L'unico fork è di `Claudioterzi82`: è l'autore, e ora è **RECUPERATO** — il SEME indica `github.com/Claudioterzi82/Claudio` come repository principale. Nessuna issue; al 15/11 resta aperta la PR #11, dello stesso account |
 | Traffico del repository (cloni, visite) | **UNKNOWN**: 403 con le credenziali di una sessione |
 | `protocollo-rosso-bot` | non ricontrollato il 13/11; al 31/10: 3 fork, proprietari UNKNOWN |
 | Posta | nessun messaggio di terzi sulle parole chiave del progetto negli ultimi 15 giorni |
@@ -149,11 +150,9 @@ scritto, non lo riscrive.
 
 ## 5. Cosa resta all'autore, in ordine di costo
 
-1. **Unire il ramo `claude/rrr-onda-verification-1twqhp`** nel ramo di
-   default. Finché non succede, il lavoro di oggi è depositato, non fatto
-   (`CLAUDE.md` §4-bis): il daily automatico gira dal ramo di default e
-   continuerà a produrre Stub. Una sessione può aprire la PR se l'autore lo
-   chiede; unirla resta suo.
+1. **Guardare il daily del 16/11.** Il ramo è stato unito il 15/11 (PR #13):
+   non è più lavoro depositato. Resta da vedere se il primo daily automatico
+   è davvero pensato (§7). Se porta il banner, il log della run dice perché.
 2. **Scegliere il canone**: questo repository o `claudioterzi/claudio`. Se il
    canone è l'altro, questo daily va spento o puntato là, e H2 si misura là.
 3. **Un contatto reale prima dell'11/12.** È l'unica cosa che muove H2, e
@@ -168,7 +167,7 @@ scritto, non lo riscrive.
    locale. Non è più una condizione perché il Core pensi.
 7. **Una foto di uno scaffale** (`occhio/visione.py`): `letti / presenti` è
    la sola misura che valga, e non serve una chiave per il primo numero.
-8. **PR #9** (`r3_peer`) e **PR #11**: da spostare, unire o chiudere.
+8. **PR #11** (`Claudioterzi82`): da unire o chiudere. La #9 (`r3_peer`) l'autore l'ha unita il 13/11.
 9. **H4**: la scadenza del 30/09 è passata con meno di 10 verifiche nella
    finestra; il verificatore dirà «regge per ora» per sempre. Va riformulata
    o chiusa.
@@ -209,8 +208,12 @@ scritto, non lo riscrive.
 ## 8. Cosa succede senza che nessuno faccia niente
 
 La Action gira dal ramo di default (cron alle 07:00 UTC, in pratica verso le
-15:40): daily Stub, run rossa, centoquattresimo file senza pensiero. La
-sentinella lo riferirà lunedì 16/11. Il 12/12 H2 sarà scaduta da falsificata.
+15:40). Dal 16/11 prova prima le chiavi, che non ci sono, poi il modello
+locale. Se la previsione di §7 regge: daily pensato da `ollama:gemma3:12b`,
+run verde, e un testo da controllare sui dati perché quel modello sbaglia. Se
+cade: Stub e run rossa, come prima. La sentinella lo riferisce lunedì 16/11
+alle 20:47. Il 12/12 H2 sarà scaduta da falsificata, se nel frattempo nessun
+contatto è stato registrato.
 
 ---
 
