@@ -43,3 +43,4 @@
 {"data_iso": "2026-11-15T17:58:18Z", "nodo": "claude-code", "azione": "15/11: provato a raggiungere il Porto indicato da RAFFA-001: il dominio non esiste nel DNS pubblico, nessun invio", "file": ["PROSSIMO_PASSO.md"], "note": ""}
 {"data_iso": "2026-11-15T18:16:22Z", "nodo": "claude-code", "azione": "15/11: verifica eseguita del documento ONDA v1.1 Audit P5, depositata nel repository privato; qui solo il rimando", "file": ["PROSSIMO_PASSO.md"], "note": ""}
 {"data_iso": "2026-11-15T18:30:09Z", "nodo": "claude-code", "azione": "15/11: consegna aggiornata in vista dell'unione della PR #13, chiesta dall'autore", "file": ["CLAUDE.md", "PROSSIMO_PASSO.md"], "note": ""}
+{"data_iso": "2026-11-15T18:39:01Z", "nodo": "claude-code", "azione": "15/11: manifesto rigenerato sul ramo di default dopo la PR #13: copre anche gli 11 file della PR #9 (r3_peer), che non lo aveva aggiornato", "file": ["MANIFESTO_INTEGRITA.json"], "note": ""}
