@@ -3,9 +3,16 @@ from ..context import Context
 from . import raffa, decomp, memo, sentin, gen, wave
 
 
-def esegui(testo_utente, profilo, router, memory, memorizza=True):
+def esegui(testo_utente, profilo, router, memory, memorizza=True, diretto=False):
     ctx = Context(testo_utente)
     ctx.meta["profile"] = profilo
+    # diretto=True serve al daily: il suo prompt e' gia' un'istruzione completa
+    # con i DATI dentro. Passato attraverso l'involucro della pipeline, il
+    # modello li riceveva due volte — una intera, una a pezzi nei
+    # «sotto-obiettivi», JSON spezzato alle virgole — piu' un ricordo che non
+    # c'entrava. Il 13/11, nella prima run con un modello vero dopo 79 giorni,
+    # il daily ha sbagliato numeri che aveva sotto gli occhi.
+    ctx.meta["diretto"] = diretto
 
     raffa.run(ctx)
     decomp.run(ctx)

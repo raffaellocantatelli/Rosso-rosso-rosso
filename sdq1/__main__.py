@@ -215,13 +215,16 @@ def main(argv=None):
         profilo = profilo_da_args(args)
         prompt = daily_mod.costruisci_prompt(router)
         try:
-            ctx = pipeline.esegui(prompt, profilo, router, memory, memorizza=False)
+            ctx = pipeline.esegui(prompt, profilo, router, memory, memorizza=False, diretto=True)
         except RuntimeError as exc:
             print(f"[sdq1] {exc}", file=sys.stderr)
             sys.exit(2)
         if ctx.provider_used and ctx.provider_used.startswith("stub"):
             print(BANNER_SPENTO)
         print(ctx.final)
+        # Nel file, non solo su stderr: il daily e' il verbale, e un verbale
+        # dice chi lo ha scritto. Prima di oggi lo sapeva solo il log della run.
+        print(f"\n[pensato da: {ctx.provider_used} | profilo: {profilo}]")
         print(f"\n[provider: {ctx.provider_used} | profilo: {profilo}]", file=sys.stderr)
         return
 

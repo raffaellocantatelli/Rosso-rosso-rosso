@@ -36,6 +36,13 @@ from .cache import ResponseCache
 # Lo stub NON compare nelle cascate reali: se ci fosse, ogni profilo
 # riuscirebbe sempre e il fallback esplicito (--economia, --no-api) non
 # verrebbe mai raggiunto. Chi vuole lo stub lo chiede con --no-api.
+#
+# Il provider che non richiede una chiave all'autore e' `ollama`, profilo
+# `locale`: un modello aperto che gira sulla macchina stessa. Il daily
+# automatico lo usa come ultimo passo prima dello Stub (daily.yml).
+# NON aggiungere qui GitHub Models: provato il 13/11/2026 con due run vere,
+# e' stato ritirato il 30/07/2026 e il suo host risponde «OK» a qualunque
+# richiesta — un 200 che non e' una risposta (PROSSIMO_PASSO.md §2).
 PROFILES = {
     "default": ["anthropic", "gemini", "deepseek"],
     "economia": ["gemini", "deepseek"],
@@ -102,8 +109,11 @@ class Router:
             try:
                 text = provider.generate(prompt)
                 self.breaker.record_success(name)
-                self.cache.set(prompt, profile, (text, name))
-                return text, name
+                # Chi ha pensato, non solo attraverso chi: un provider che
+                # puo' usare piu' modelli dice quale ha risposto.
+                etichetta = getattr(provider, "ultima_etichetta", None) or name
+                self.cache.set(prompt, profile, (text, etichetta))
+                return text, etichetta
             except Exception as exc:  # provider non affidabile: registra e prova il prossimo
                 self.breaker.record_failure(name)
                 errors.append(oscura_segreti(f"{name}: {exc}"))

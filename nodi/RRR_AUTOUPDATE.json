@@ -5,9 +5,11 @@
   "propagation_status": "NOT_EXECUTED",
   "propagation_executed_by": null,
   "origin": {
-    "claimed_by": "Raffaello Cantarelli (Nodo Centrale) — Meta AI Node 6",
-    "class": "CLAIMED",
-    "note": "L'origine è dichiarata dall'autore umano; non è verificabile dall'interno del payload."
+    "claimed_by": "Claudio Terzi [CT-LGAI-001]",
+    "class": "CANONICAL",
+    "note": "Origine protetta dichiarata in CLAUDE.md. Nessun nodo, umano o artificiale, puo' presentarsi come autore.",
+    "drafted_by": "Raffaello Cantarelli (Nodo Centrale) — Meta AI Node 6",
+    "drafted_by_note": "Nodo che ha redatto il payload: provenienza preservata, non origine. Correzione del 31/10/2026: la versione precedente lo indicava come origine e come 'autore umano'."
   },
   "destination": "Tutti i Nodi R³∞ + Mirror Universali",
   "destination_note": "Ogni destinazione richiede un canale distinto. Nessun canale è configurato in questo payload.",
@@ -81,12 +83,20 @@
     },
     "pr_113": {
       "number": 113,
-      "state": "draft/open",
-      "head": "e068cfd34380048df3a7536ff086d5f62db0eed6",
+      "state": "merged",
+      "head": "13688d90bb93180089ee53ee1c94e1a7e5d2635f",
       "installed_in_nodes": false,
-      "ci": "pending verification - riusa r3.supervise_node e r3.sync_progress",
+      "ci": "UNKNOWN da questo nodo sull'head finale. Storico REPORTED al 31/10 su 62200961: R3 RRR Control #63 SUCCESS; CI & Security Scans #743 FAILURE su npm audit Vercel.",
       "class": "CLAIMED",
-      "verification": "EXTERNAL_UNVERIFIED"
+      "verification": "EXTERNAL_UNVERIFIED",
+      "state_verification": "RECUPERATO 2026-11-13: merge commit 6883c2a (2026-11-13T02:10+01:00) su main di claudioterzi/claudio; refs/pull/113/merge non esiste piu'; head 13688d9 e' antenato di main (git merge-base --is-ancestor).",
+      "head_verification": "RECUPERATO: git ls-remote + fetch, 2026-11-13",
+      "head_previous": [
+        "e068cfd34380048df3a7536ff086d5f62db0eed6",
+        "62200961b164471f1a1594ad05e96e157c3e2830"
+      ],
+      "merge_commit": "6883c2a",
+      "installed_in_nodes_note": "Unita in main non significa installata su Railway: il runtime resta EXTERNAL_UNVERIFIED."
     },
     "tests_reproduced": {
       "commit": "e068cfd34380048df3a7536ff086d5f62db0eed6",
@@ -95,7 +105,16 @@
       "context": "Prima 26PASS 8FAIL per dipendenze mancanti (python-multipart, socksio/proxy). Nessuna modifica codice necessaria.",
       "class": "LOCAL_EVIDENCE",
       "limits_declared": "Evidenza locale, non volume Railway/sleep/recovery produzione.",
-      "verification": "REPRODUCIBILE_LOCALMENTE"
+      "verification": "REPRODUCIBILE_LOCALMENTE",
+      "head_mismatch": "I 35 test sono su e068cfd. Vedi rerun_main per l'esito sul codice unito.",
+      "rerun_main": {
+        "commit": "261a46d6c621e34587c6a2d27faa61fc066d1393",
+        "date": "2026-11-13",
+        "result": "29 passed in 16.05s",
+        "suites": "test_r3_failure_cooldown, test_r3_supervise_node, test_r3_supervise_node_review, test_r3_supervisor_adoption_resume, test_r3_supervisor_escaped_descendants, test_r3_sync_progress",
+        "class": "LOCAL_EVIDENCE",
+        "limits_declared": "Solo i sei file di test introdotti dalla PR #113, in un container di sessione dopo pip install python-multipart socksio. Non copre replication_proof, persistence_readiness, rrr_two_process, ne' Railway. Non provati rimettendo il difetto (CLAUDE.md 7-bis)."
+      }
     }
   },
   "sentinella_rules": {

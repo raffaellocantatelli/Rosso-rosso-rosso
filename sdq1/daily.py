@@ -62,8 +62,10 @@ def raccogli_fatti(router=None):
     senza_provider = 0
     for record in health:
         provider = record.get("providers") or {}
-        reali = [n for n in ("anthropic", "gemini", "deepseek", "ollama")
-                 if (provider.get(n) or {}).get("disponibile")]
+        # Ogni provider che non sia lo Stub: un elenco scritto a mano qui
+        # smetterebbe di vedere il primo provider nuovo aggiunto al router.
+        reali = [n for n, v in provider.items()
+                 if n != "stub" and (v or {}).get("disponibile")]
         if not reali:
             senza_provider += 1
     fatti["health"] = {
