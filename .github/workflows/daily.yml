@@ -29,6 +29,11 @@ permissions:
 env:
   OLLAMA_MODEL: ${{ inputs.modello || 'gemma3:12b' }}
   LLM_TIMEOUT: "900"
+  # Senza questo, `python -m sdq1 --daily --locale` si da' da solo un tetto di
+  # 120 token: e' la scelta giusta per un PC che gira su CPU (ramo omniroute,
+  # 31/10), ma qui taglierebbe il daily a meta' frase. Il prompt chiede al
+  # massimo 300 parole: 700 token bastano, e fermano un modello che divaga.
+  OLLAMA_NUM_PREDICT: "700"
 
 jobs:
   daily-run:

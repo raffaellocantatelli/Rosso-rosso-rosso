@@ -35,6 +35,7 @@ import os
 import subprocess
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 RADICE = os.path.dirname(os.path.abspath(__file__))
 MANIFESTO = os.path.join(RADICE, "MANIFESTO_INTEGRITA.json")
@@ -68,6 +69,16 @@ NUCLEO = (
     "registro_osservazioni.py",
     "test_registro_ipotesi.py",
     "test_registro_osservazioni.py",
+    # Aggiunti dal ramo omniroute (23/09–31/10): gli strumenti nati dopo, che
+    # se venissero ammorbiditi in silenzio toglierebbero una guardia.
+    "test_latenza.py",
+    "test_trasmissione_ciclica.py",
+    "giro.py",
+    "registro_nodi.py",
+    "archivio.py",
+    "rassegna.py",
+    "contraddittore.py",
+    "esperimenti/tracce.py",
     "verificatore.py",
     "manifesto_integrita.py",
     "ambiente.py",
@@ -118,6 +129,11 @@ def escluso(percorso):
     return False
 
 
+def _chiave(percorso):
+    """Nome canonico nel manifesto: sempre POSIX, anche su Windows."""
+    return Path(percorso).as_posix()
+
+
 def file_da_sorvegliare():
     return sorted(
         p for p in _file_del_repository()
@@ -125,19 +141,26 @@ def file_da_sorvegliare():
     )
 
 
-def sha256(percorso):
-    h = hashlib.sha256()
+def _dati_normalizzati(percorso):
     with open(os.path.join(RADICE, percorso), "rb") as f:
-        for blocco in iter(lambda: f.read(65536), b""):
-            h.update(blocco)
-    return h.hexdigest()
+        return f.read().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
+
+def sha256(percorso):
+    """Hash logico del testo: CRLF/CR e LF rappresentano lo stesso contenuto.
+
+    Git puo' materializzare gli stessi file con terminatori diversi a seconda
+    della piattaforma. Il Guardian deve rilevare modifiche al contenuto, non il
+    sistema operativo che ha fatto il checkout.
+    """
+    return hashlib.sha256(_dati_normalizzati(percorso)).hexdigest()
 
 
 def istantanea():
     return {
-        percorso: {
+        _chiave(percorso): {
             "sha256": sha256(percorso),
-            "byte": os.path.getsize(os.path.join(RADICE, percorso)),
+            "byte": len(_dati_normalizzati(percorso)),
         }
         for percorso in file_da_sorvegliare()
     }
