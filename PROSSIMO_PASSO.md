@@ -148,7 +148,11 @@ regole già decise e nessuna nuova:
   riga di nessuno dei due; il manifesto tiene la copertura completa del ramo
   di default e prende dal ramo l'hash che non dipende dai fine riga.
 
-**Sul runner:** non ancora provato al momento di questo commit.
+**Sul runner, prima di unire** (run #121, `prova: true`, sul ramo
+integrato): verde in 5 minuti, integrità OK su 427 file, daily intero (209
+parole) scritto da `ollama:gemma3:12b` attraverso il provider fuso, con H5
+riportata `RETTA`. I numeri corrispondono ai dati tranne uno: dà per
+sconosciute le verifiche di H1, che sono 0.
 
 **Arrivano col ramo, e un nodo deve saperlo:** le otto regole di `CLAUDE.md`
 §6 (le ultime quattro su cosa si passa a un altro nodo), la sezione

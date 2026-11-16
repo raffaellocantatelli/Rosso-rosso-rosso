@@ -46,8 +46,8 @@
       "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
     },
     "PROSSIMO_PASSO.md": {
-      "byte": 15753,
-      "sha256": "b4ce19155a2e01b43b5c45426a84379badf5cf8e493a1290b85a5169410316b1"
+      "byte": 16020,
+      "sha256": "6c62bb335faf32218cacc5c910f6ad405f311472125eb7156ea6c9aa91024aa1"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -1710,6 +1710,6 @@
       "sha256": "07a05650e7889ed8fc818361d1014b6817b1fd4617ec77b65751d08e1acfeacb"
     }
   },
-  "generato": "2026-11-16T19:56:45.996902+00:00",
+  "generato": "2026-11-16T20:03:50.168027+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
