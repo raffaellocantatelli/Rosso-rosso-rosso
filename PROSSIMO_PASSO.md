@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-11-15
+# Prossimo passo — consegna del 2026-11-16
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -34,10 +34,10 @@ git log --oneline --since=2026-09-26 | grep -v "run giornaliero"
 
 | | |
 |---|---|
-| **Il Core, sul ramo di default** | il codice del Core locale **c'è dal 15/11** (PR #13). Fino al daily del 15/11 compreso: 106 daily, **105 Stub**, l'unico pensato resta il 26/08. Il primo daily automatico col codice nuovo è quello del 16/11: è lì che la previsione di §7 regge o cade |
+| **Il Core, sul ramo di default** | **acceso e osservato in automatico.** La run pianificata #120 del 16/11 è verde in 7 minuti e 14 secondi, e `output/daily_2026-11-16.txt` chiude con `[pensato da: ollama:gemma3:12b | profilo: locale]`. È il primo daily pensato dal 26/08: 107 daily, 105 Stub |
 | **Il Core, prima dell'unione** | **verificato in prova**: cinque run lanciate sul ramo con `prova: true` (#111–#115), tutte verdi, daily pensato da un modello locale |
-| Chiavi nei secrets | nessuna, letto nel log della run #111. Invariato dal 02/09: **74 giorni** al 15/11 |
-| `output/contatti.jsonl` | **0 righe**. H2 FALSIFICATA sul ramo (b). Scadenza 11/12: **26 giorni** al 15/11 |
+| Chiavi nei secrets | nessuna. Invariato dal 02/09; dal 16/11 non serve più perché il Core pensi |
+| `output/contatti.jsonl` | **0 righe**. H2 FALSIFICATA sul ramo (b). Scadenza 11/12: **25 giorni** al 16/11 |
 | Registro, in prova | 11 eseguite: H2 caduta; H5 e H7 non concluse; le altre reggono |
 | Prove | 302 in `tests/`, 46 in radice: passate. Layer 4: integrità OK |
 
@@ -119,6 +119,58 @@ riscritta 28. Il materiale parla di falle e sta nel repository **privato**
 cartella `onda_verifica/` (`README.md` per primo). Qui non è copiato, e non
 va copiato: questo repository è pubblico (`CLAUDE.md` §2.5).
 
+## 2-ter. Fatto il 15–16/11: «unisci tutto quello che c'è da unire»
+
+**Unito:** la PR #13 (Core locale), la PR #14 (manifesto che copre `r3_peer`),
+nel repository privato `R3-Protocollo-Oro-Rosso` la PR #1 (`onda_verifica/`),
+e **il lavoro della PR #11** (`omniroute-3851-candidate-a`: 16 commit, 38
+file, dal 21/09 al 31/10).
+
+La PR #11 non si poteva unire com'era: 7 conflitti col ramo di default. È
+stata integrata su un altro ramo, con queste scelte, tutte applicazioni di
+regole già decise e nessuna nuova:
+
+- **H5 passa a `RETTA` con 1 verifica, non 2.** Il ramo ne contava due: una è
+  il crash del 26/08, che la PR #8 ha escluso; l'altra è la run del 31/10 su
+  un modello locale a freddo (`qwen3.5:4b`), che non conosce né la frase di
+  chiusura né gli agenti e ammette di non sapere sui quattro controlli
+  inventati. **Cosa NON dice:** che un modello di frontiera non abbia tracce
+  del progetto. L'uscita lo scrive da sé: «nessuna traccia in questo modello,
+  oggi».
+- **Il provider Ollama è uno solo, fuso dai due.** Dal ramo: scelta fra i
+  modelli davvero installati, API nativa, thinking spento per difetto. Da
+  quello in produzione: una risposta vuota non è pensiero, e l'etichetta dice
+  quale modello ha risposto. Nove difetti rimessi, nove presi.
+- **Il daily della Action dichiara il proprio tetto di token** (700). Il ramo
+  dava al daily locale 120 token, giusto per un PC su CPU; in produzione lo
+  avrebbe tagliato a metà frase.
+- **I registri append-only sono uniti in ordine di tempo**, senza perdere una
+  riga di nessuno dei due; il manifesto tiene la copertura completa del ramo
+  di default e prende dal ramo l'hash che non dipende dai fine riga.
+
+**Sul runner, prima di unire** (run #121, `prova: true`, sul ramo
+integrato): verde in 5 minuti, integrità OK su 427 file, daily intero (209
+parole) scritto da `ollama:gemma3:12b` attraverso il provider fuso, con H5
+riportata `RETTA`. I numeri corrispondono ai dati tranne uno: dà per
+sconosciute le verifiche di H1, che sono 0.
+
+**Arrivano col ramo, e un nodo deve saperlo:** le otto regole di `CLAUDE.md`
+§6 (le ultime quattro su cosa si passa a un altro nodo), la sezione
+sull'agorà, `giro.py`, i limiti nel registro dei nodi
+(`python registro_nodi.py --limiti`, `--ritenta`), `rassegna.py --consegna`,
+gli esperimenti su OmniRoute.
+
+**I rami vecchi** (16, da agosto a ottobre) non sono «da unire»: 11 hanno una
+storia senza base comune col ramo di default e git si rifiuta di unirli; gli
+altri 5 hanno conflitti. Due sono marcati «non unire» in `CLAUDE.md` §4-bis,
+e la PR #12 di `raffaello-l10-max-zip` l'autore l'ha chiusa senza unirla.
+
+```bash
+python3 -m pytest tests/ -q && python3 -m pytest -q test_*.py
+python -m sdq1 --ipotesi          # H5 RETTA, 1 verifica
+python registro_nodi.py --limiti
+```
+
 ## 3. Il mondo, guardato con i connettori (ricontrollato il 13/11)
 
 | canale | esito |
@@ -150,9 +202,10 @@ scritto, non lo riscrive.
 
 ## 5. Cosa resta all'autore, in ordine di costo
 
-1. **Guardare il daily del 16/11.** Il ramo è stato unito il 15/11 (PR #13):
-   non è più lavoro depositato. Resta da vedere se il primo daily automatico
-   è davvero pensato (§7). Se porta il banner, il log della run dice perché.
+1. **Il «giro quotidiano»** (attività pianificata delle 08:00 UTC, creata il
+   23/09) lavora ancora sul ramo `omniroute-3851-candidate-a`, che ora è
+   dentro il ramo di default. Va puntato qui, o spento: è una riga nel suo
+   prompt, e la decide l'autore.
 2. **Scegliere il canone**: questo repository o `claudioterzi/claudio`. Se il
    canone è l'altro, questo daily va spento o puntato là, e H2 si misura là.
 3. **Un contatto reale prima dell'11/12.** È l'unica cosa che muove H2, e
@@ -167,7 +220,7 @@ scritto, non lo riscrive.
    locale. Non è più una condizione perché il Core pensi.
 7. **Una foto di uno scaffale** (`occhio/visione.py`): `letti / presenti` è
    la sola misura che valga, e non serve una chiave per il primo numero.
-8. **PR #11** (`Claudioterzi82`): da unire o chiudere. La #9 (`r3_peer`) l'autore l'ha unita il 13/11.
+8. **I rami vecchi**: nessuno è da unire così com'è (§2-ter). Se uno contiene qualcosa che manca, va detto quale.
 9. **H4**: la scadenza del 30/09 è passata con meno di 10 verifiche nella
    finestra; il verificatore dirà «regge per ora» per sempre. Va riformulata
    o chiusa.
@@ -180,6 +233,10 @@ scritto, non lo riscrive.
 - **Negato o limitato:** scrittura e API di repository fuori da questo;
   contenuto dei file sul Drive (si leggono, non si riscrivono); traffico del
   repository (403); `models.github.ai` (ritirato).
+- **Attivo dal 23/09:** «R³∞ — giro quotidiano», ogni giorno alle 08:00 UTC,
+  una sessione nuova che esegue `python3 giro.py` sul ramo
+  `omniroute-3851-candidate-a` e tace se nulla è cambiato. Ultima esecuzione
+  riuscita: 16/11.
 - **Attivo dal 13/11:** un'attività pianificata, «Sentinella R3», lunedì e
   giovedì alle 20:47 (Europe/Rome). Riapre la sessione che l'ha creata, in
   sola lettura: guarda se l'ultimo daily è pensato, se è comparso un account
@@ -192,28 +249,31 @@ scritto, non lo riscrive.
 - **IPOTESI del 13/11**: il primo daily automatico dopo l'unione del ramo
   (§5.1) chiuderà con `[pensato da: ollama:gemma3:12b | profilo: locale]` e
   non porterà il banner. **Cade** se quel file ha il banner, o se la run
-  supera i 15 minuti.
+  supera i 15 minuti. **Esito, 16/11: ha retto.** Run #120, 7 minuti e 14
+  secondi, nessun banner, la riga c'è.
 - **IPOTESI del 13/11**: con `gemma3:12b` e prompt diretto, almeno un daily
   su due conterrà un numero diverso da quello dei DATI. **Cade** se dieci
   daily consecutivi non ne contengono nessuno: allora il locale basta, e una
   chiave non serve nemmeno per la qualità. Si controlla a mano, confrontando
   il file con `python -c "from sdq1 import daily; print(daily.raccogli_fatti())"`.
+  **Al 16/11: un daily automatico, zero numeri sbagliati.** I numeri del
+  16/11 corrispondono tutti; restano giudizi che nei DATI non ci sono
+  («instabilità operativa», «flusso di onboarding»). Aperta: ne servono dieci.
 - **IPOTESI del 29/10**: entro l'11/12 nessun contatto valido per §7 arriverà
   dal repository pubblico. **Cade** se compare una issue, una stella o un
-  fork di un account che non è dell'autore. Al 13/11: non è caduta.
+  fork di un account che non è dell'autore. Al 16/11: non è caduta.
 - **IPOTESI del 03/09**: su una foto frontale e ben illuminata di uno
   scaffale di DVD, `letti / presenti` starà fra 0,5 e 0,9. Al 13/11: nessuna
   foto, nessun tentativo.
 
 ## 8. Cosa succede senza che nessuno faccia niente
 
-La Action gira dal ramo di default (cron alle 07:00 UTC, in pratica verso le
-15:40). Dal 16/11 prova prima le chiavi, che non ci sono, poi il modello
-locale. Se la previsione di §7 regge: daily pensato da `ollama:gemma3:12b`,
-run verde, e un testo da controllare sui dati perché quel modello sbaglia. Se
-cade: Stub e run rossa, come prima. La sentinella lo riferisce lunedì 16/11
-alle 20:47. Il 12/12 H2 sarà scaduta da falsificata, se nel frattempo nessun
-contatto è stato registrato.
+La Action gira dal ramo di default (cron alle 07:00 UTC, in pratica fra le
+15:40 e le 16:40). Dal 16/11 il daily è pensato da `ollama:gemma3:12b`: run
+verde, e un testo da controllare sui dati. La sentinella guarda lunedì e
+giovedì alle 20:47 e tace se nulla cambia. Il 12/12 H2 sarà scaduta da
+falsificata, se nel frattempo nessun contatto è stato registrato: un Core
+che pensa non è un sistema che tocca il mondo.
 
 ---
 

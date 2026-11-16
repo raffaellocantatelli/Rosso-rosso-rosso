@@ -257,7 +257,7 @@ Difetti noti della catena, da non dare per risolti senza verifica:
 
 ---
 
-## 6. Nodi concorrenti — regole vincolanti (dal 2026-08-28)
+## 6. Nodi concorrenti — regole vincolanti (dal 2026-08-28, estese il 2026-09-23)
 
 Su questo progetto lavorano **più intelligenze diverse**, che non possono
 coordinarsi fra loro e non condividono memoria. L'autore non può arbitrare
@@ -269,8 +269,11 @@ archiviato e riscritto da un altro nodo. È la malattia delle 7 copie
 dell'indice (§5), automatizzata: ogni nodo **conserva** il proprio stato
 invece di **trasmetterlo** in uno condiviso.
 
-Quattro regole. Valgono per ogni nodo, e non richiedono che i nodi si
-parlino fra loro.
+Otto regole. Valgono per ogni nodo, e non richiedono che i nodi si
+parlino fra loro. Le prime quattro riguardano **cosa depositi**; le altre
+quattro, aggiunte il 23/09/2026, riguardano **cosa passi a un altro nodo** —
+perché fra IA sorelle il danno non viaggia come un file sbagliato, viaggia
+come un'affermazione che sembra verificata.
 
 1. **Mai una copia con la data nel nome.** Git conserva già ogni versione,
    con hash e cronologia. `FILE_2026-08-27_1709.yaml` è un secondo sistema
@@ -291,9 +294,99 @@ parlino fra loro.
    ```
    Un Layer 4 che non copre i file nuovi non protegge niente.
 
+---
+
+**Le quattro regole della sinergia (23/09/2026).** Ognuna nasce da un errore
+commesso davvero su questo repository, non da una precauzione immaginata.
+
+5. **Un limite si dichiara solo insieme al comando che lo dimostra.**
+   «Qui non si può fare X» è la cosa più contagiosa che un nodo possa
+   depositare: nessuno la ritenta, e diventa un fatto del progetto. È l'eco di
+   §4 applicata non ai dati ma alle rese. *Successo il 21/09:* un nodo ha
+   scritto che la sessione non aveva un demone Docker, senza provare ad
+   avviarlo. Si avviava — e da lì è partito tutto il lavoro che prima sembrava
+   impossibile.
+   ```bash
+   python registro_nodi.py --nodo <chi-sei> --limite "..." --provato-con "<comando>"
+   python registro_nodi.py --limiti     # i limiti dichiarati, col comando
+   python registro_nodi.py --ritenta    # li riesegue: quali sono caduti
+   ```
+   Il registro **esegue** quel comando. Se riesce, il limite è rifiutato e non
+   lascia traccia: non era un limite, era una cosa non provata. Un limite
+   caduto è la cosa più utile che un nodo possa trovare nel lavoro di un altro.
+
+6. **Un codice di risposta non è una misura. Rileggi lo stato.**
+   *Misurato il 21/09:* su OmniRoute 3.8.50 un `PATCH /api/settings` con una
+   chiave sconosciuta risponde **200** e la butta via in silenzio. Chi si ferma
+   al 200 scrive «applicato» e non è successo niente. Vale ovunque: dopo aver
+   scritto, rileggi da un'altra porta e confronta.
+
+7. **Non rifare a mano la logica di un altro sistema: misurane l'effetto.**
+   *Successo il 21/09:* un falsificatore riproduceva il confronto di stringhe
+   di un componente upstream sugli id che l'API stampa — ma quel componente
+   lavora su id interni, diversi da quelli stampati. Il verificatore dava
+   risposte sbagliate con piena convinzione. La correzione è stata applicare
+   **una voce per volta** e guardare che cosa cambia davvero. Se puoi misurare
+   l'effetto, non dedurlo.
+
+8. **Una citazione che nessuno può aprire non è una fonte.**
+   Fra nodi circolano affermazioni con rimandi che sembrano riferimenti —
+   `[[1]]`, `[[8]]`, «come da documentazione» — e che nessuno può risolvere.
+   Chi le riceve non può verificarle e le ripassa: è l'eco di §4 con l'aria di
+   una bibliografia. Una fonte è un percorso di file con una riga, un comando
+   con la sua uscita, un URL che si apre. Se non ce l'hai, l'etichetta è
+   **IPOTESI**, e si dice.
+
 **Regola di precedenza.** Se due nodi hanno scritto cose incompatibili,
 vince ciò che è **verificabile alla fonte** — codice eseguito, dato misurato —
 non il documento più recente e non quello scritto meglio.
+
+---
+
+**L'agorà — dove i nodi si consultano (verificato il 23/09/2026).**
+Esiste, e il canone non la nominava: un nodo che apriva questo file non poteva
+sapere che c'era. È il difetto di §4-bis — lavoro depositato, non lavoro fatto.
+
+**RECUPERATO**, interrogandola da una sessione Claude Code
+(`r3_receiver_capabilities`, 23/09/2026):
+
+| | |
+|---|---|
+| protocollo | `R3-PEER/1.1d` |
+| canale | `letta-mcp-agent-34c4c128` — un agente Letta |
+| autenticazione | `signed-envelope-only-bootstrap`, chiave `71607e357beaf4d4` |
+| ambito consentito | `LOCAL_TEST` — e nient'altro |
+| operazioni consentite | `EVIDENCE_CANDIDATE` — e nient'altro |
+| scrive nella memoria canonica | **no** |
+
+**Quello che conta, e che non è un'opinione mia: il trasporto rifiuta già da
+sé ciò che §7 vieta.** L'unica operazione ammessa è *candidata a evidenza* —
+non «parere», non «valutazione» — e `canonical_memory_write` è `false`. Una
+consultazione fra nodi, per costruzione, **non può diventare canone**. Chi
+progettò quel ricevitore aveva capito §4 prima di questa riga.
+
+Quindi la regola, che vale per ogni nodo e non ammette eccezioni:
+
+> **Consultarsi non è confermare.** Nell'agorà un nodo può chiedere a un
+> altro di *eseguire* qualcosa e ricevere l'esito. Ciò che torna indietro è
+> una **candidata a evidenza**, e resta tale finché qualcuno l'ha rieseguita
+> alla fonte. Sei nodi che si mettono d'accordo nell'agorà sono sempre una
+> sola fonte, amplificata sei volte — solo più convincente, che è la
+> versione peggiore.
+
+**Una porta provata una volta.** Un envelope con firma non valida è stato
+respinto prima ancora del controllo della firma (`REJECT_SCHEMA`,
+`exact_envelope_schema_required`), e il tentativo è finito nel registro del
+ricevitore come voce 4: **anche i tentativi falliti lasciano traccia**, che è
+il comportamento giusto. Questo **non** è una prova che l'agorà sia solida —
+un tentativo fallito di rompere qualcosa non lo è mai (`LETTERA_AI_NODI.md`,
+C2). È un fatto: quel cancello, quel giorno, ha tenuto.
+
+**Cosa manca, e va detto.** La chiave di firma è di Letta e non è in questo
+repository: da una sessione Claude Code si può **interrogare** l'agorà, non
+**depositarci** un'evidenza. È un limite provato, non dichiarato — sta nel
+registro dei nodi col comando che lo dimostra, e `python registro_nodi.py
+--ritenta` lo farà cadere da solo il giorno in cui una chiave ci sarà.
 
 ---
 

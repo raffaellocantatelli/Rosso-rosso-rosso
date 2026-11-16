@@ -35,11 +35,15 @@ CHIAVI = ("ANTHROPIC_API_KEY", "GOOGLE_API_KEY", "GEMINI_API_KEY", "DEEPSEEK_API
 
 
 class _OllamaFinto:
-    """Le due rotte che il provider usa davvero: /api/tags e /v1/chat/completions."""
+    """Le rotte che il provider usa davvero: /api/tags per sapere quali modelli
+    ci sono, /api/chat (nativa) per generare, /v1/chat/completions come ripiego
+    quando la nativa non esiste (`solo_openai=True`)."""
 
-    def __init__(self):
+    def __init__(self, installati=(MODELLO,), solo_openai=False):
         self.richieste = []
         self.risposta = PENSIERO
+        self.installati = list(installati)
+        self.solo_openai = solo_openai
         esterno = self
 
         class H(BaseHTTPRequestHandler):
@@ -51,12 +55,19 @@ class _OllamaFinto:
                 self.wfile.write(dati)
 
             def do_GET(self):
-                self._manda({"models": []})
+                self._manda({"models": [{"name": n} for n in esterno.installati]})
 
             def do_POST(self):
                 corpo = json.loads(self.rfile.read(int(self.headers["content-length"])))
                 esterno.richieste.append({"percorso": self.path, "corpo": corpo})
-                self._manda({"choices": [{"message": {"content": esterno.risposta}}]})
+                if self.path == "/api/chat":
+                    if esterno.solo_openai:
+                        self.send_response(404)
+                        self.end_headers()
+                        return
+                    self._manda({"message": {"role": "assistant", "content": esterno.risposta}})
+                else:
+                    self._manda({"choices": [{"message": {"content": esterno.risposta}}]})
 
             def log_message(self, *a):
                 pass
@@ -95,8 +106,41 @@ def test_il_router_dice_quale_modello_ha_pensato(ambiente, ollama):
 
     assert testo == PENSIERO
     assert chi == f"ollama:{MODELLO}"  # non «ollama» e basta
-    assert ollama.richieste[0]["percorso"] == "/v1/chat/completions"
+    assert ollama.richieste[0]["percorso"] == "/api/chat"
     assert ollama.richieste[0]["corpo"]["model"] == MODELLO
+    assert ollama.richieste[0]["corpo"]["think"] is False   # spento per difetto
+
+
+def test_il_ripiego_openai_dice_lo_stesso_chi_ha_pensato(ambiente):
+    """Un server che non ha l'API nativa: si passa da /v1, e le due guardie
+    (etichetta col modello, niente risposte vuote) valgono anche li'."""
+    vecchio = _OllamaFinto(solo_openai=True)
+    try:
+        ambiente.setenv("OLLAMA_BASE_URL", vecchio.base_url)
+        testo, chi = Router().generate("prova", profile="locale")
+        assert testo == PENSIERO and chi == f"ollama:{MODELLO}"
+        assert [r["percorso"] for r in vecchio.richieste] == ["/api/chat", "/v1/chat/completions"]
+        vecchio.risposta = ""
+        with pytest.raises(RuntimeError) as exc:
+            Router().generate("un'altra prova", profile="locale")
+        assert "risposta vuota" in str(exc.value)
+    finally:
+        vecchio.chiudi()
+
+
+def test_un_ollama_senza_il_modello_non_e_un_core_acceso(ambiente):
+    """Un server che risponde ma non ha il modello chiesto non puo' pensare:
+    `--check` non deve dire «acceso» perche' una porta e' aperta."""
+    vuoto = _OllamaFinto(installati=["un-altro-modello:1b"])
+    try:
+        ambiente.setenv("OLLAMA_BASE_URL", vuoto.base_url)
+        router = Router()
+        assert router.provider_reali_disponibili() == []
+        with pytest.raises(RuntimeError):
+            router.generate("prova", profile="locale")
+        assert vuoto.richieste == []      # nessuna generazione tentata
+    finally:
+        vuoto.chiudi()
 
 
 def test_risposta_vuota_non_e_pensiero(ambiente, ollama):
@@ -129,8 +173,8 @@ def test_il_daily_conta_ogni_provider_che_non_sia_lo_stub(tmp_path, monkeypatch)
 
 # --- come lo lancia la Action: un processo, non una funzione ---------------
 
-def _sdq1(*argomenti, base_url):
-    env = dict(os.environ)
+def _sdq1(*argomenti, base_url, extra=None):
+    env = {k: v for k, v in os.environ.items() if k != "OLLAMA_NUM_PREDICT"}
     # Stringa vuota, non assente: un `.env` dell'autore con una chiave vera
     # non deve poter trasformare questa prova in una chiamata a pagamento.
     env.update({nome: "" for nome in CHIAVI})
@@ -138,6 +182,7 @@ def _sdq1(*argomenti, base_url):
         "NO_PROXY": "127.0.0.1,localhost", "no_proxy": "127.0.0.1,localhost",
         "OLLAMA_BASE_URL": base_url, "OLLAMA_MODEL": MODELLO,
     })
+    env.update(extra or {})
     return subprocess.run(
         [sys.executable, "-m", "sdq1", *argomenti],
         cwd=RADICE, env=env, capture_output=True, text=True, timeout=120,
@@ -158,6 +203,19 @@ def test_il_daily_locale_e_pensato_e_dice_da_chi(ollama):
     assert arrivato.count('"contatti_registrati"') == 1
     assert "Sotto-obiettivi" not in arrivato
     assert "Contesto rilevante dalla memoria" not in arrivato
+
+
+def test_il_tetto_di_token_dichiarato_arriva_al_modello(ollama):
+    """Senza un tetto esplicito il daily locale si limita a 120 token (scelta
+    del 31/10 per i PC su CPU). La Action ne dichiara uno piu' largo: deve
+    arrivare al modello, o il daily automatico esce tagliato a meta' frase."""
+    esito = _sdq1("--daily", "--locale", base_url=ollama.base_url, extra={"OLLAMA_NUM_PREDICT": "700"})
+    assert esito.returncode == 0, esito.stderr
+    assert ollama.richieste[0]["corpo"]["options"]["num_predict"] == 700
+
+    ollama.richieste.clear()
+    assert _sdq1("--daily", "--locale", base_url=ollama.base_url).returncode == 0
+    assert ollama.richieste[0]["corpo"]["options"]["num_predict"] == 120
 
 
 def test_senza_modello_il_daily_locale_fallisce_invece_di_fingere():

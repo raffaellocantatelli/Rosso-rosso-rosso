@@ -18,8 +18,8 @@
       "sha256": "23ef8e2559eccc2315d48b4759b8c757efe16797bc462618e4953093a70729c8"
     },
     ".github/workflows/daily.yml": {
-      "byte": 6822,
-      "sha256": "18ddf1e580d5f3d162822697be49fac16290ded2d949d2ae76014d3c5dd941ce"
+      "byte": 7158,
+      "sha256": "0b7f7686bfc4a2152a50b0dbc33957f89fbb95f03c4be96585a9f085b5eec4fb"
     },
     ".gitignore": {
       "byte": 2234,
@@ -30,24 +30,24 @@
       "sha256": "171162ee693013221134abbcc27fc3c6ff104ad31cda6f1dd91184b33bd0eb33"
     },
     "CLAUDE.md": {
-      "byte": 20080,
-      "sha256": "a9b2a24999ae792f315dc70095afd9df28d28f3a8d6690f30cc18100b6f729c3"
+      "byte": 25251,
+      "sha256": "c5290f60f1652972833b2fcc155b9881ed03393db11eeba275bf33793324dc1e"
     },
     "INNESTO_PRIVATO.md": {
       "byte": 2267,
       "sha256": "803b551a828ffc32d6812233247d85af058ce000369935256628767da1c610c8"
     },
     "LETTERA_AI_NODI.md": {
-      "byte": 4015,
-      "sha256": "38b232ba041b70280f4f4374da021d409df3c3d81fdfd49e06507b8a03d16926"
+      "byte": 7087,
+      "sha256": "4cb456e3c385904c2d647ecf6dab56705c7835c9bfc8c13ebe5813375feda497"
     },
     "OCCHIO.md": {
       "byte": 40409,
       "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
     },
     "PROSSIMO_PASSO.md": {
-      "byte": 12675,
-      "sha256": "21a3884833232022ef655b031f24a1adca57a2c2a587f96a6e29fbefa78c037a"
+      "byte": 16020,
+      "sha256": "6c62bb335faf32218cacc5c910f6ad405f311472125eb7156ea6c9aa91024aa1"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -70,8 +70,8 @@
       "sha256": "3ae9ba5bccac0d705374b9032fe08b364db5a4f7c0cea651362d242c47f9925a"
     },
     "archivio.py": {
-      "byte": 8176,
-      "sha256": "988b8a42e63876cd071fc5c47349327f4fd282b140eb2af66d58839cae7028f0"
+      "byte": 8258,
+      "sha256": "abf07dfbe02143773f0ff7528ef2177efea5784b997f44238bed0a6f914d8f2d"
     },
     "autonomous_core_v3.py": {
       "byte": 32401,
@@ -90,8 +90,8 @@
       "sha256": "096ca8d734092d2859db9ff37670efb975baa9bc6727a657d18248026f5500cd"
     },
     "contraddittore.py": {
-      "byte": 12217,
-      "sha256": "3b23568d49c75251205982c1fe29759916359950f86326a92bff35556ba1704a"
+      "byte": 13648,
+      "sha256": "f8bcfd7556d4a05df7701a2ee29ab9a57c708ae6b91ec8af2a59483569f0433e"
     },
     "costituzione_cev.json": {
       "byte": 3492,
@@ -109,13 +109,61 @@
       "byte": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
+    "esperimenti/omniroute/0001-build-client-bundle.patch": {
+      "byte": 1719,
+      "sha256": "e8d5cc70bb0364ed101f6cab1386f9cb118170813b310f3dd6eb72e7ab4eebcd"
+    },
+    "esperimenti/omniroute/LETTURA_3851.md": {
+      "byte": 10971,
+      "sha256": "78ad05befa2de5e4e5ba565707e41887931bee9dd4e4deebfa63d63fbab008cf"
+    },
+    "esperimenti/omniroute/__init__.py": {
+      "byte": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "esperimenti/omniroute/candidate_a.sh": {
+      "byte": 10487,
+      "sha256": "c787b64b17069e3c6ceb584ba08b263f062b0fe1008405f6f3b96e76ca2716ee"
+    },
+    "esperimenti/omniroute/falsificatore_delta.py": {
+      "byte": 18147,
+      "sha256": "4dddef42abb4c02ad81f163868205ebd7fd7483cd9e002ceb8659f0c1eb83a82"
+    },
+    "esperimenti/omniroute/misure/3850-baseline.denylist.txt": {
+      "byte": 103,
+      "sha256": "27656aeb078139453cad76c00ade5ffe011a3fbe7d1ed2a7c49006dfaf6742fe"
+    },
+    "esperimenti/omniroute/misure/3850-baseline.txt": {
+      "byte": 2025,
+      "sha256": "ac6064147333be3988caf2679e02a8a28d61fab9e29e95eef6b76902520ffa6c"
+    },
+    "esperimenti/omniroute/misure/3851-a.denylist.txt": {
+      "byte": 103,
+      "sha256": "27656aeb078139453cad76c00ade5ffe011a3fbe7d1ed2a7c49006dfaf6742fe"
+    },
+    "esperimenti/omniroute/misure/3851-a.txt": {
+      "byte": 1997,
+      "sha256": "cdff13d5527290841a63cc50f17ae98c5bbc5293ceff31ffe7f28cfe234fe4ca"
+    },
+    "esperimenti/omniroute/misure/3851-corretta.denylist.txt": {
+      "byte": 76,
+      "sha256": "f7a813b8cf83c699a5df1ea14b83c698d8379837a43d47478c413491348d02a6"
+    },
+    "esperimenti/omniroute/misure/3851-corretta.txt": {
+      "byte": 1584,
+      "sha256": "3862f9cd3a91585f1400c7b4b20e4c4623619d08d6426f05d8d679dbaf7a5450"
+    },
+    "esperimenti/omniroute/provider_3851.json": {
+      "byte": 9479,
+      "sha256": "7c64b2ef00c0e755bd34ab10d873380135d5d0c3b8de1791cc82ac2562d208ee"
+    },
     "esperimenti/tracce.json": {
       "byte": 2723,
       "sha256": "5ce50de5eae85401e5d9752e59be86505ef50295d3a2414e94f283e1f79b7242"
     },
     "esperimenti/tracce.py": {
-      "byte": 6802,
-      "sha256": "183c81a9199054fa31827b2c1be725840f353093206b6f6a22eabe3e867eecde"
+      "byte": 8860,
+      "sha256": "885c8056df04ab3a311d2c2c14b6ef71cc7063c082839eca458bde1bff09cb47"
     },
     "falsificatori/__init__.py": {
       "byte": 1321,
@@ -142,8 +190,8 @@
       "sha256": "590a6b08b9300f37191671b9bd91181af88537acb16f0a886f9ae27032258c8e"
     },
     "falsificatori/h5_tracce.py": {
-      "byte": 2979,
-      "sha256": "62712170c902550c411363bbffc9676db4b19c3032c3febf4235bf44fdad9504"
+      "byte": 3220,
+      "sha256": "8f776927d9020af43b0a983959123442869c5075061f775c3ea0be85d7b8064a"
     },
     "falsificatori/h6_occhio_ripasso.py": {
       "byte": 5733,
@@ -161,13 +209,17 @@
       "byte": 5789,
       "sha256": "8ff3e3f63c5dc39c78f32a63f8750c24ab8adcaba5941acde814baf98f139aea"
     },
+    "giro.py": {
+      "byte": 7331,
+      "sha256": "93c3c99bb48c56542c0c8a4ad6ecaf89f29edaa936c1c58c2b7cb1655d9df610"
+    },
     "latenza.py": {
       "byte": 5373,
       "sha256": "c1f8ace3943eae38b7c61f8d2916dd227ba9f36c2f2bfbf8e1c8d27758b2005a"
     },
     "manifesto_integrita.py": {
-      "byte": 7875,
-      "sha256": "4545fd483f5368a9f6042c59b84f832839f38da5f0967f0218d3ec4b5cd92ee1"
+      "byte": 8700,
+      "sha256": "533a99282e130fabe15356055d55e8fa172d39a53aad428beff23818a1775ffd"
     },
     "memoria/00_INDICE_CANONICO_R3.md": {
       "byte": 8080,
@@ -1090,8 +1142,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 16765,
-      "sha256": "179e8b58ef42812cef8ef9755c6a4d6e8a4dccacc947a9e794473d73816f168d"
+      "byte": 22907,
+      "sha256": "fbc414f7e52568299346f71c916a287b76ccc105db261519cd0961a2853cf34a"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1334,20 +1386,20 @@
       "sha256": "6a1ed9077414240a91bfc01eaa86682e97a344eb05bc0de30d5259aeb6480de7"
     },
     "rassegna.py": {
-      "byte": 11102,
-      "sha256": "d02cf51d8939be74a9aacab766ad561e74ad6ac6e91f51aebb28772c772a25b1"
+      "byte": 15917,
+      "sha256": "11491e95cd5f0fdd2d25a7b2392dc9535aff8ab97b87ed5595eaef66544b8d5b"
     },
     "registro_ipotesi.json": {
-      "byte": 9954,
-      "sha256": "8b4c84fd89284e5acd7b50776705b511956c8a7dcbe399c565877948afd5cd93"
+      "byte": 9964,
+      "sha256": "7ea889e5052a761eabce1fd8d3d7db1a64a6a8042978e316eb941f18277bebce"
     },
     "registro_ipotesi.py": {
       "byte": 15024,
       "sha256": "26d5f1b7623a8113b0327873d531ccea4aaafd105d25b219f7c303a875d9ac55"
     },
     "registro_nodi.py": {
-      "byte": 4812,
-      "sha256": "b12380e37e9ed5bb7a1b0b710b1ed3f53a617ea7cd568e7adc8a50bd49612714"
+      "byte": 12920,
+      "sha256": "3583e2935250f1ce94c259c81da1e0865da7b10d6df2702a24d49f1fa341bbca"
     },
     "registro_osservazioni.jsonl": {
       "byte": 3785,
@@ -1370,8 +1422,8 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "sdq1/__main__.py": {
-      "byte": 10792,
-      "sha256": "0f83e25383b62de3f4d73c687fe67f2014175745823bfc4dde845bba22a35365"
+      "byte": 11785,
+      "sha256": "960e977d84ad9621c2756073f37857189df9f74a8b0873ea3a377dd9d5c83041"
     },
     "sdq1/agents/__init__.py": {
       "byte": 0,
@@ -1454,16 +1506,16 @@
       "sha256": "89585e8dd201763e782d86b35bd3235ed7299c32b4aaf7bd457beb0c69f014cc"
     },
     "sdq1/llm/providers/ollama_provider.py": {
-      "byte": 1644,
-      "sha256": "d8eaf7a9074a1fe13d10c2c6214737ecb5faa0d54b333165b9039d91ff6549fd"
+      "byte": 4777,
+      "sha256": "ed00707912f65471588676ac0d9ecdcd1ba1379ff49837c51179c6697f091d70"
     },
     "sdq1/llm/providers/stub_provider.py": {
       "byte": 791,
       "sha256": "cedd53ddc846a0fc471663e57afe605652fd6c7c435b218b61f8b6813fac3ca4"
     },
     "sdq1/llm/router.py": {
-      "byte": 6074,
-      "sha256": "425089f118e953b831fb06de3e3fafbf7ee36c13f7cb67710186fd983bfcb5ce"
+      "byte": 6797,
+      "sha256": "2c8cc963bc502a952e13556371d44f4ebfc4a163ab6f5eae95efe86325c83f79"
     },
     "sdq1/memory/__init__.py": {
       "byte": 0,
@@ -1593,17 +1645,37 @@
       "byte": 4356,
       "sha256": "fa014e00eed1e92303f7a178f1ba2c5c6c5cba388074d90804fbbb2b418c7a14"
     },
+    "tests/test_consegna_nodi.py": {
+      "byte": 3208,
+      "sha256": "fac73ec4e0da68228b2a91d0c3dfedf40a6b7d9003dad89edc40e3ac0eead921"
+    },
     "tests/test_core_locale.py": {
-      "byte": 7047,
-      "sha256": "ebab808be13465064cc648573c43d7f45443e38e8f0e95df0b77753ce098b03f"
+      "byte": 9974,
+      "sha256": "4569ba414a7df3a0fd0e27534344ae9f6ca584e7970e37dc5ce5d8ec63a7adb1"
     },
     "tests/test_fabric_node.py": {
       "byte": 2998,
       "sha256": "d9bed8481dd7cdd61ec15b8998984b3a4aca4db360301942528c182503bfc573"
     },
+    "tests/test_falsificatore_omniroute.py": {
+      "byte": 10242,
+      "sha256": "9d3a86fba0275c5ab2c8a1a270bc0f9683cacce97c3891becc05bafa0297f785"
+    },
+    "tests/test_gate_runtime.py": {
+      "byte": 1719,
+      "sha256": "e01bc68dde1f577fa0a3556204a950c4bdf7ba6cb42cae4f45e8dcfae38bab34"
+    },
+    "tests/test_giro.py": {
+      "byte": 4277,
+      "sha256": "6e6630ac70a800caeeffd1ed3a0b27d0ec3e1c0a236e417a91161ec56f8acc63"
+    },
     "tests/test_h2_contatto.py": {
       "byte": 3241,
       "sha256": "661bcc153687fc332867d46674b7240a790c528d9c619af4946b3059108841ea"
+    },
+    "tests/test_manifesto_integrita.py": {
+      "byte": 509,
+      "sha256": "17c82cc9b85f871e3980d5ec995f65fd0c6cc886a9f0b09b18a8ad05544885c9"
     },
     "tests/test_occhio.py": {
       "byte": 77392,
@@ -1612,6 +1684,10 @@
     "tests/test_rassegna.py": {
       "byte": 4522,
       "sha256": "5501e0decb1436475d8d74d4448db53dbfa0d8c4d2fb6b437054a2dfe0b23ec2"
+    },
+    "tests/test_registro_limiti.py": {
+      "byte": 5022,
+      "sha256": "e4af861624ddbff84aed3d77d4819ca5ed9a48e6807e00a4710274608f703515"
     },
     "tests/test_rlaif.py": {
       "byte": 5152,
@@ -1630,10 +1706,10 @@
       "sha256": "33981ea8640a70c5d2d2a58c8b393ca564378351d05d4ce67418f8d901b4129a"
     },
     "verificatore.py": {
-      "byte": 9001,
-      "sha256": "37be8ab9c317ae49c2c5ba9d9dd7a3535fe4528333cc26559b422fb9092c8f55"
+      "byte": 10000,
+      "sha256": "07a05650e7889ed8fc818361d1014b6817b1fd4617ec77b65751d08e1acfeacb"
     }
   },
-  "generato": "2026-11-15T18:39:01.179864+00:00",
+  "generato": "2026-11-16T20:03:50.168027+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
