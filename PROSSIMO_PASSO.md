@@ -1,4 +1,4 @@
-# Prossimo passo — consegna del 2026-11-16
+# Prossimo passo — consegna del 2026-11-19
 
 **Origine protetta: Claudio Terzi [CT-LGAI-001].**
 
@@ -6,6 +6,27 @@ Nome fisso, riscritto. Qui c'è lo stato; la cronaca sta nei commit.
 Ogni riga ha un comando accanto. Non credere a nessuna.
 
 ---
+
+## 0-bis. Aggiornamento del 19/11 (misurato, non riportato)
+
+- **Il Core continua a pensare.** Daily del 16, 17 e 18/11 tutti chiusi con
+  `[pensato da: ollama:gemma3:12b | profilo: locale]`; run #122 e #123
+  (pianificate) verdi. 109 daily, 4 pensati (26/08 e i tre di novembre).
+  Il numero «dieci consecutivi» della previsione sui numeri sbagliati: **3
+  controllati su 10**, non controllati a mano oggi, quindi **UNKNOWN**.
+- **H2: 22 giorni all'11/12.** `contatti.jsonl` 0 righe; nessuna issue, PR
+  aperta, stella o fork nuovo (API GitHub, 19/11). Invariato.
+- **Trovato e corretto:** `copilot-setup-steps.yml` era rosso a ogni push dal
+  16/11 con **zero job**: la riga 1 non era un commento (YAML non valido) e
+  il file citava `requirements-test.txt` e `tests/package-lock.json`, che qui
+  non esistono (copiato da `claudioterzi/Claudio`). Ora YAML valido, senza
+  Node. **Non provato sul runner**: è `workflow_dispatch`, va lanciato a mano.
+- Prove: 370 in `tests/`, 46 in radice, passate. `collega_nodi.py --stato`:
+  ancora `NOT_EXECUTED` (mancano chiavi, identità, firma).
+
+```bash
+python3 -c "import yaml;yaml.safe_load(open('.github/workflows/copilot-setup-steps.yml'))"
+```
 
 ## 0. Il progetto vivo non è più qui
 

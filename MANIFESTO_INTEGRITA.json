@@ -14,8 +14,8 @@
       "sha256": "e738162b5e4a3d388dab1c5bcee9d9320ef4e4a135a57a0bee5ec62469e5744c"
     },
     ".github/workflows/copilot-setup-steps.yml": {
-      "byte": 2108,
-      "sha256": "23ef8e2559eccc2315d48b4759b8c757efe16797bc462618e4953093a70729c8"
+      "byte": 1695,
+      "sha256": "43e5f5ca5b29075202a9add249311dd0c3a57ca9cdc96fbdf7070f414db6dfa8"
     },
     ".github/workflows/daily.yml": {
       "byte": 7158,
@@ -46,8 +46,8 @@
       "sha256": "d76e9c2038bc7d7b149e3ae6b4034ed43f750eef307b395beefb0366a4bd4589"
     },
     "PROSSIMO_PASSO.md": {
-      "byte": 16020,
-      "sha256": "6c62bb335faf32218cacc5c910f6ad405f311472125eb7156ea6c9aa91024aa1"
+      "byte": 17215,
+      "sha256": "58998e9a5ff2dba83ae6671396eb95bf000f1db4fa662b6dc8866ec6c76c9ad9"
     },
     "R3_DECISIONI_E_PROTOCOLLO_2026-08-10.md": {
       "byte": 291,
@@ -1142,8 +1142,8 @@
       "sha256": "a965aa4505f29809254954bab07ea119131e76af52da4cd88127cbf5d2c6c491"
     },
     "memoria/REGISTRO_NODI.jsonl": {
-      "byte": 22907,
-      "sha256": "fbc414f7e52568299346f71c916a287b76ccc105db261519cd0961a2853cf34a"
+      "byte": 23207,
+      "sha256": "79a068916eecd3601771a0490875c94ddc69d13aa527d6180e479296aef51a57"
     },
     "memoria/SAR_CONSERVARE_TRASMETTERE_2026-08-23.md": {
       "byte": 9861,
@@ -1710,6 +1710,6 @@
       "sha256": "07a05650e7889ed8fc818361d1014b6817b1fd4617ec77b65751d08e1acfeacb"
     }
   },
-  "generato": "2026-11-16T20:03:50.168027+00:00",
+  "generato": "2026-11-19T14:23:36.493476+00:00",
   "origine": "Claudio Terzi [CT-LGAI-001]"
 }
